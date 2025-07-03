@@ -9,10 +9,10 @@
   including commercial applications, and to alter it and redistribute it
   freely.
 */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -20,8 +20,7 @@
 
 #include "SDL_test_common.h"
 
-#if defined(__IPHONEOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__NACL__) \
-    || defined(__WINDOWS__) || defined(__LINUX__)
+#if defined(__IPHONEOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__NACL__) || defined(__WINDOWS__) || defined(__LINUX__)
 #ifndef HAVE_OPENGLES2
 #define HAVE_OPENGLES2
 #endif
@@ -33,7 +32,7 @@
 
 typedef struct GLES2_Context
 {
-#define SDL_PROC(ret, func, params) ret (APIENTRY *func) params;
+#define SDL_PROC(ret, func, params) ret(APIENTRY *func) params;
 #include "../src/render/opengles2/SDL_gles2funcs.h"
 #undef SDL_PROC
 } GLES2_Context;
@@ -261,11 +260,11 @@ link_program(struct shader_data *data)
     GL_CHECK(ctx.glGetProgramiv(data->shader_program, GL_LINK_STATUS, &status));
 
     if (status != GL_TRUE) {
-         ctx.glGetProgramInfoLog(data->shader_program, sizeof(buffer), &length, &buffer[0]);
-         buffer[length] = '\0';
-         SDL_Log("Program linking failed: %s", buffer);
-         fflush(stderr);
-         quit(-1);
+        ctx.glGetProgramInfoLog(data->shader_program, sizeof(buffer), &length, &buffer[0]);
+        buffer[length] = '\0';
+        SDL_Log("Program linking failed: %s", buffer);
+        fflush(stderr);
+        quit(-1);
     }
 }
 

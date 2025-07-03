@@ -22,12 +22,12 @@
 
 /* Allow access to a raw mixing buffer */
 
+#include "../SDL_utils_c.h"
+#include "../thread/SDL_systhread.h"
 #include "SDL.h"
 #include "SDL_audio.h"
 #include "SDL_audio_c.h"
 #include "SDL_sysaudio.h"
-#include "../thread/SDL_systhread.h"
-#include "../SDL_utils_c.h"
 
 #define _THIS SDL_AudioDevice *_this
 
@@ -671,7 +671,7 @@ extern void Android_JNI_AudioSetThreadPriority(int, int);
 /* The general mixing thread function */
 static int SDLCALL SDL_RunAudio(void *userdata)
 {
-    const AudioThreadStartupData *startup_data = (const AudioThreadStartupData *) userdata;
+    const AudioThreadStartupData *startup_data = (const AudioThreadStartupData *)userdata;
     SDL_AudioDevice *device = startup_data->device;
     void *udata = device->callbackspec.userdata;
     SDL_AudioCallback callback = device->callbackspec.callback;
@@ -694,7 +694,7 @@ static int SDLCALL SDL_RunAudio(void *userdata)
     /* Perform any thread setup */
     device->threadid = SDL_ThreadID();
 
-    SDL_SemPost(startup_data->startup_semaphore);  /* SDL_OpenAudioDevice may now continue. */
+    SDL_SemPost(startup_data->startup_semaphore); /* SDL_OpenAudioDevice may now continue. */
 
     current_audio.impl.ThreadInit(device);
 
@@ -802,7 +802,7 @@ static int SDLCALL SDL_RunAudio(void *userdata)
 /* The general capture thread function */
 static int SDLCALL SDL_CaptureAudio(void *userdata)
 {
-    const AudioThreadStartupData *startup_data = (const AudioThreadStartupData *) userdata;
+    const AudioThreadStartupData *startup_data = (const AudioThreadStartupData *)userdata;
     SDL_AudioDevice *device = startup_data->device;
     const int silence = (int)device->spec.silence;
     const Uint32 delay = ((device->spec.samples * 1000) / device->spec.freq);
@@ -826,7 +826,7 @@ static int SDLCALL SDL_CaptureAudio(void *userdata)
     /* Perform any thread setup */
     device->threadid = SDL_ThreadID();
 
-    SDL_SemPost(startup_data->startup_semaphore);  /* SDL_OpenAudioDevice may now continue. */
+    SDL_SemPost(startup_data->startup_semaphore); /* SDL_OpenAudioDevice may now continue. */
 
     current_audio.impl.ThreadInit(device);
 
@@ -1603,8 +1603,8 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
 }
 
 SDL_AudioDeviceID SDL_OpenAudioDevice(const char *device, int iscapture,
-                    const SDL_AudioSpec *desired, SDL_AudioSpec *obtained,
-                    int allowed_changes)
+                                      const SDL_AudioSpec *desired, SDL_AudioSpec *obtained,
+                                      int allowed_changes)
 {
     return open_audio_device(device, iscapture, desired, obtained,
                              allowed_changes, 2);

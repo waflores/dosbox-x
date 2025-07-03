@@ -21,12 +21,13 @@ namespace SRCTools {
 
 typedef float FloatSample;
 
-/** Interface defines an abstract source of samples. It can either define a single channel stream or a stream with interleaved channels. */
+/** Interface defines an abstract source of samples. It can either define a
+ * single channel stream or a stream with interleaved channels. */
 class FloatSampleProvider {
 public:
-	virtual ~FloatSampleProvider() {}
+  virtual ~FloatSampleProvider() {}
 
-	virtual void getOutputSamples(FloatSample *outBuffer, unsigned int size) = 0;
+  virtual void getOutputSamples(FloatSample *outBuffer, unsigned int size) = 0;
 };
 
 } // namespace SRCTools

@@ -69,9 +69,9 @@
 
 #ifndef ASSEMBLER
 
+#include <Availability.h>
 #include <arm/_types.h>
 #include <stdint.h>
-#include <Availability.h>
 
 /*
  * natural_t and integer_t are Mach's legacy types for machine-
@@ -90,32 +90,32 @@
  *
  * New use of these types is discouraged.
  */
-typedef __darwin_natural_t      natural_t;
-typedef int                     integer_t;
+typedef __darwin_natural_t natural_t;
+typedef int integer_t;
 
 /*
  * A vm_offset_t is a type-neutral pointer,
  * e.g. an offset into a virtual memory space.
  */
 #ifdef __LP64__
-typedef uintptr_t               vm_offset_t;
-typedef uintptr_t               vm_size_t;
+typedef uintptr_t vm_offset_t;
+typedef uintptr_t vm_size_t;
 
-typedef uint64_t                mach_vm_address_t;
-typedef uint64_t                mach_vm_offset_t;
-typedef uint64_t                mach_vm_size_t;
+typedef uint64_t mach_vm_address_t;
+typedef uint64_t mach_vm_offset_t;
+typedef uint64_t mach_vm_size_t;
 
-typedef uint64_t                vm_map_offset_t;
-typedef uint64_t                vm_map_address_t;
-typedef uint64_t                vm_map_size_t;
+typedef uint64_t vm_map_offset_t;
+typedef uint64_t vm_map_address_t;
+typedef uint64_t vm_map_size_t;
 #else
-typedef natural_t               vm_offset_t;
+typedef natural_t vm_offset_t;
 /*
  * A vm_size_t is the proper type for e.g.
  * expressing the difference between two
  * vm_offset_t entities.
  */
-typedef natural_t               vm_size_t;
+typedef natural_t vm_size_t;
 
 /*
  * This new type is independent of a particular vm map's
@@ -124,34 +124,33 @@ typedef natural_t               vm_size_t;
  * where the size of the map is not known - or we don't
  * want to have to distinguish.
  */
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0)
-typedef uint32_t                mach_vm_address_t;
-typedef uint32_t                mach_vm_offset_t;
-typedef uint32_t                mach_vm_size_t;
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) &&                               \
+    (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0)
+typedef uint32_t mach_vm_address_t;
+typedef uint32_t mach_vm_offset_t;
+typedef uint32_t mach_vm_size_t;
 #else
-typedef uint64_t                mach_vm_address_t;
-typedef uint64_t                mach_vm_offset_t;
-typedef uint64_t                mach_vm_size_t;
+typedef uint64_t mach_vm_address_t;
+typedef uint64_t mach_vm_offset_t;
+typedef uint64_t mach_vm_size_t;
 #endif
 
-typedef uint32_t                vm_map_offset_t;
-typedef uint32_t                vm_map_address_t;
-typedef uint32_t                vm_map_size_t;
+typedef uint32_t vm_map_offset_t;
+typedef uint32_t vm_map_address_t;
+typedef uint32_t vm_map_size_t;
 #endif /* __LP64__ */
 
+typedef uint32_t vm32_offset_t;
+typedef uint32_t vm32_address_t;
+typedef uint32_t vm32_size_t;
 
-typedef uint32_t                vm32_offset_t;
-typedef uint32_t                vm32_address_t;
-typedef uint32_t                vm32_size_t;
+typedef vm_offset_t mach_port_context_t;
 
-typedef vm_offset_t             mach_port_context_t;
-
-
-#endif  /* ASSEMBLER */
+#endif /* ASSEMBLER */
 
 /*
  * If composing messages by hand (please do not)
  */
 #define MACH_MSG_TYPE_INTEGER_T MACH_MSG_TYPE_INTEGER_32
 
-#endif  /* _MACH_ARM_VM_TYPES_H_ */
+#endif /* _MACH_ARM_VM_TYPES_H_ */

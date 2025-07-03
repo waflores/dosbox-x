@@ -18,29 +18,36 @@
 #ifndef MT32EMU_B_REVERB_MODEL_H
 #define MT32EMU_B_REVERB_MODEL_H
 
-#include "globals.h"
-#include "internals.h"
 #include "Enumerations.h"
 #include "Types.h"
+#include "globals.h"
+#include "internals.h"
 
 namespace MT32Emu {
 
 class BReverbModel {
 public:
-	static BReverbModel *createBReverbModel(const ReverbMode mode, const bool mt32CompatibleModel, const RendererType rendererType);
+  static BReverbModel *createBReverbModel(const ReverbMode mode,
+                                          const bool mt32CompatibleModel,
+                                          const RendererType rendererType);
 
-	virtual ~BReverbModel() {}
-	virtual bool isOpen() const = 0;
-	// After construction or a close(), open() must be called at least once before any other call (with the exception of close()).
-	virtual void open() = 0;
-	// May be called multiple times without an open() in between.
-	virtual void close() = 0;
-	virtual void mute() = 0;
-	virtual void setParameters(Bit8u time, Bit8u level) = 0;
-	virtual bool isActive() const = 0;
-	virtual bool isMT32Compatible(const ReverbMode mode) const = 0;
-	virtual bool process(const IntSample *inLeft, const IntSample *inRight, IntSample *outLeft, IntSample *outRight, Bit32u numSamples) = 0;
-	virtual bool process(const FloatSample *inLeft, const FloatSample *inRight, FloatSample *outLeft, FloatSample *outRight, Bit32u numSamples) = 0;
+  virtual ~BReverbModel() {}
+  virtual bool isOpen() const = 0;
+  // After construction or a close(), open() must be called at least once before
+  // any other call (with the exception of close()).
+  virtual void open() = 0;
+  // May be called multiple times without an open() in between.
+  virtual void close() = 0;
+  virtual void mute() = 0;
+  virtual void setParameters(Bit8u time, Bit8u level) = 0;
+  virtual bool isActive() const = 0;
+  virtual bool isMT32Compatible(const ReverbMode mode) const = 0;
+  virtual bool process(const IntSample *inLeft, const IntSample *inRight,
+                       IntSample *outLeft, IntSample *outRight,
+                       Bit32u numSamples) = 0;
+  virtual bool process(const FloatSample *inLeft, const FloatSample *inRight,
+                       FloatSample *outLeft, FloatSample *outRight,
+                       Bit32u numSamples) = 0;
 };
 
 } // namespace MT32Emu

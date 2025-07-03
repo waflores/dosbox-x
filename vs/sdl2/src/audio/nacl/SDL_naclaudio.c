@@ -25,30 +25,30 @@
 
 #include "SDL_naclaudio.h"
 
-#include "SDL_audio.h"
-#include "SDL_mutex.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_audiodev_c.h"
+#include "SDL_audio.h"
+#include "SDL_mutex.h"
 
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi_simple/ps.h"
-#include "ppapi_simple/ps_interface.h"
 #include "ppapi_simple/ps_event.h"
+#include "ppapi_simple/ps_interface.h"
 
 /* The tag name used by NACL audio */
-#define NACLAUDIO_DRIVER_NAME         "nacl"
+#define NACLAUDIO_DRIVER_NAME "nacl"
 
 #define SAMPLE_FRAME_COUNT 4096
 
 /* Audio driver functions */
-static void nacl_audio_callback(void* samples, uint32_t buffer_size, PP_TimeDelta latency, void* data);
+static void nacl_audio_callback(void *samples, uint32_t buffer_size, PP_TimeDelta latency, void *data);
 
 /* FIXME: Make use of latency if needed */
-static void nacl_audio_callback(void* stream, uint32_t buffer_size, PP_TimeDelta latency, void* data)
+static void nacl_audio_callback(void *stream, uint32_t buffer_size, PP_TimeDelta latency, void *data)
 {
-    const int len = (int) buffer_size;
-    SDL_AudioDevice* _this = (SDL_AudioDevice*) data;
+    const int len = (int)buffer_size;
+    SDL_AudioDevice *_this = (SDL_AudioDevice *)data;
     SDL_AudioCallback callback = _this->callbackspec.callback;
 
     SDL_LockMutex(_this->mixer_lock);
@@ -62,9 +62,9 @@ static void nacl_audio_callback(void* stream, uint32_t buffer_size, PP_TimeDelta
     } else {
         SDL_assert(_this->spec.size == len);
 
-        if (!_this->stream) {  /* no conversion necessary. */
+        if (!_this->stream) { /* no conversion necessary. */
             callback(_this->callbackspec.userdata, stream, len);
-        } else {  /* streaming/converting */
+        } else { /* streaming/converting */
             const int stream_len = _this->callbackspec.size;
             while (SDL_AudioStreamAvailable(_this->stream) < len) {
                 callback(_this->callbackspec.userdata, _this->work_buffer, stream_len);
@@ -90,7 +90,7 @@ static void NACLAUDIO_CloseDevice(SDL_AudioDevice *device)
 {
     const PPB_Core *core = PSInterfaceCore();
     const PPB_Audio *ppb_audio = PSInterfaceAudio();
-    SDL_PrivateAudioData *hidden = (SDL_PrivateAudioData *) device->hidden;
+    SDL_PrivateAudioData *hidden = (SDL_PrivateAudioData *)device->hidden;
 
     ppb_audio->StopPlayback(hidden->audio);
     core->ReleaseResource(hidden->audio);
@@ -130,7 +130,7 @@ static int NACLAUDIO_OpenDevice(_THIS, const char *devname)
     return 0;
 }
 
-static SDL_bool NACLAUDIO_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool NACLAUDIO_Init(SDL_AudioDriverImpl *impl)
 {
     if (PSGetInstanceId() == 0) {
         return SDL_FALSE;

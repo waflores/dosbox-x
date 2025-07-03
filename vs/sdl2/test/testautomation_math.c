@@ -49,10 +49,11 @@ typedef struct
     double expected;
 } dd_to_d;
 
-#define DD_TO_D_CASE(IDX, X, Y, E) do { \
-        cases[IDX].x_input = (X);       \
-        cases[IDX].y_input = (Y);       \
-        cases[IDX].expected = (E);      \
+#define DD_TO_D_CASE(IDX, X, Y, E) \
+    do {                           \
+        cases[IDX].x_input = (X);  \
+        cases[IDX].y_input = (Y);  \
+        cases[IDX].expected = (E); \
     } while (0)
 
 /*
@@ -2610,9 +2611,9 @@ static int
 atan2_bothInfCases(void *args)
 {
     dd_to_d cases[4];
-    DD_TO_D_CASE(0,  INFINITY,  INFINITY,  1.0 * M_PI / 4.0);
-    DD_TO_D_CASE(1,  INFINITY, -INFINITY,  3.0 * M_PI / 4.0);
-    DD_TO_D_CASE(2, -INFINITY,  INFINITY, -1.0 * M_PI / 4.0);
+    DD_TO_D_CASE(0, INFINITY, INFINITY, 1.0 * M_PI / 4.0);
+    DD_TO_D_CASE(1, INFINITY, -INFINITY, 3.0 * M_PI / 4.0);
+    DD_TO_D_CASE(2, -INFINITY, INFINITY, -1.0 * M_PI / 4.0);
     DD_TO_D_CASE(3, -INFINITY, -INFINITY, -3.0 * M_PI / 4.0);
     return helper_ddtod("SDL_atan2(bothInfCases)", SDL_atan2, cases, SDL_arraysize(cases));
 }
@@ -2625,9 +2626,9 @@ static int
 atan2_yInfCases(void *args)
 {
     dd_to_d cases[4];
-    DD_TO_D_CASE(0,  INFINITY,  1.0,  1.0 * M_PI / 2.0);
-    DD_TO_D_CASE(1,  INFINITY, -1.0,  1.0 * M_PI / 2.0);
-    DD_TO_D_CASE(2, -INFINITY,  1.0, -1.0 * M_PI / 2.0);
+    DD_TO_D_CASE(0, INFINITY, 1.0, 1.0 * M_PI / 2.0);
+    DD_TO_D_CASE(1, INFINITY, -1.0, 1.0 * M_PI / 2.0);
+    DD_TO_D_CASE(2, -INFINITY, 1.0, -1.0 * M_PI / 2.0);
     DD_TO_D_CASE(3, -INFINITY, -1.0, -1.0 * M_PI / 2.0);
     return helper_ddtod("SDL_atan2(atan2_yInfCases)", SDL_atan2, cases, SDL_arraysize(cases));
 }
@@ -2642,9 +2643,9 @@ static int
 atan2_xInfCases(void *args)
 {
     dd_to_d cases[4];
-    DD_TO_D_CASE(0,  1.0,  INFINITY,  0.0);
-    DD_TO_D_CASE(1, -1.0,  INFINITY, -0.0);
-    DD_TO_D_CASE(2,  1.0, -INFINITY,  M_PI);
+    DD_TO_D_CASE(0, 1.0, INFINITY, 0.0);
+    DD_TO_D_CASE(1, -1.0, INFINITY, -0.0);
+    DD_TO_D_CASE(2, 1.0, -INFINITY, M_PI);
     DD_TO_D_CASE(3, -1.0, -INFINITY, -M_PI);
     return helper_ddtod("atan2_xInfCases(atan2_yInfCases)", SDL_atan2, cases, SDL_arraysize(cases));
 }

@@ -18,13 +18,13 @@
 
 #ifndef DOSBOX_JOYSTICK_H
 #define DOSBOX_JOYSTICK_H
-void JOYSTICK_Enable(Bitu which,bool enabled);
+void JOYSTICK_Enable(Bitu which, bool enabled);
 
-void JOYSTICK_Button(Bitu which,Bitu num,bool pressed);
+void JOYSTICK_Button(Bitu which, Bitu num, bool pressed);
 
-void JOYSTICK_Move_X(Bitu which,float x);
+void JOYSTICK_Move_X(Bitu which, float x);
 
-void JOYSTICK_Move_Y(Bitu which,float y);
+void JOYSTICK_Move_Y(Bitu which, float y);
 
 bool JOYSTICK_IsEnabled(Bitu which);
 
@@ -35,13 +35,13 @@ float JOYSTICK_GetMove_X(Bitu which);
 float JOYSTICK_GetMove_Y(Bitu which);
 
 enum JoystickType {
-	JOY_NONE,
-	JOY_AUTO,
-	JOY_2AXIS,
-	JOY_4AXIS,
-	JOY_4AXIS_2,
-	JOY_FCS,
-	JOY_CH
+  JOY_NONE,
+  JOY_AUTO,
+  JOY_2AXIS,
+  JOY_4AXIS,
+  JOY_4AXIS_2,
+  JOY_FCS,
+  JOY_CH
 };
 
 extern JoystickType joytype;

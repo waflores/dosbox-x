@@ -27,14 +27,13 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the audio functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
 struct SDL_PrivateAudioData {
-	/* The file descriptor for the audio device */
-	//Uint8 *mixbuf;
-	//Uint32 mixlen;
-}; 
-unsigned short SDL_NDSAudio_mutex=0; 
- 
+  /* The file descriptor for the audio device */
+  // Uint8 *mixbuf;
+  // Uint32 mixlen;
+};
+unsigned short SDL_NDSAudio_mutex = 0;
 
 #endif /* _SDL_lowaudio_h */

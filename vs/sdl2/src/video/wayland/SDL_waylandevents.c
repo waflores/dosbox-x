@@ -23,26 +23,26 @@
 
 #ifdef SDL_VIDEO_DRIVER_WAYLAND
 
+#include "SDL_hints.h"
 #include "SDL_stdinc.h"
 #include "SDL_timer.h"
-#include "SDL_hints.h"
 
 #include "../../core/unix/SDL_poll.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_scancode_tables_c.h"
 #include "../SDL_sysvideo.h"
 
-#include "SDL_waylandvideo.h"
 #include "SDL_waylandevents_c.h"
+#include "SDL_waylandvideo.h"
 #include "SDL_waylandwindow.h"
 
-#include "pointer-constraints-unstable-v1-client-protocol.h"
-#include "relative-pointer-unstable-v1-client-protocol.h"
-#include "xdg-shell-client-protocol.h"
 #include "keyboard-shortcuts-inhibit-unstable-v1-client-protocol.h"
-#include "text-input-unstable-v3-client-protocol.h"
-#include "tablet-unstable-v2-client-protocol.h"
+#include "pointer-constraints-unstable-v1-client-protocol.h"
 #include "primary-selection-unstable-v1-client-protocol.h"
+#include "relative-pointer-unstable-v1-client-protocol.h"
+#include "tablet-unstable-v2-client-protocol.h"
+#include "text-input-unstable-v3-client-protocol.h"
+#include "xdg-shell-client-protocol.h"
 
 #ifdef HAVE_LIBDECOR_H
 #include <libdecor.h>
@@ -57,14 +57,14 @@
 #define BTN_SIDE   (0x113)
 #define BTN_EXTRA  (0x114)
 #endif
+#include "../../events/SDL_keysym_to_scancode_c.h"
+#include "../../events/imKStoUCS.h"
+#include "cursor-shape-v1-client-protocol.h"
+#include <errno.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <errno.h>
-#include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-compose.h>
-#include "../../events/imKStoUCS.h"
-#include "../../events/SDL_keysym_to_scancode_c.h"
-#include "cursor-shape-v1-client-protocol.h"
+#include <xkbcommon/xkbcommon.h>
 
 /* Clamp the wl_seat version on older versions of libwayland. */
 #if SDL_WAYLAND_CHECK_VERSION(1, 21, 0)
@@ -932,28 +932,28 @@ static void touch_handler_frame(void *data, struct wl_touch *touch)
 
 static void touch_handler_cancel(void *data, struct wl_touch *touch)
 {
-	struct SDL_WaylandTouchPoint *tp;
-	while ((tp = touch_points.head)) {
-		wl_fixed_t fx = 0, fy = 0;
-		struct wl_surface *surface = NULL;
-		int id = tp->id;
+    struct SDL_WaylandTouchPoint *tp;
+    while ((tp = touch_points.head)) {
+        wl_fixed_t fx = 0, fy = 0;
+        struct wl_surface *surface = NULL;
+        int id = tp->id;
 
-		touch_del(id, &fx, &fy, &surface);
+        touch_del(id, &fx, &fy, &surface);
 
-		if (surface) {
-			SDL_WindowData *window_data = (SDL_WindowData *)wl_surface_get_user_data(surface);
+        if (surface) {
+            SDL_WindowData *window_data = (SDL_WindowData *)wl_surface_get_user_data(surface);
 
-			if (window_data) {
-				const double dblx = wl_fixed_to_double(fx) * window_data->pointer_scale_x;
-				const double dbly = wl_fixed_to_double(fy) * window_data->pointer_scale_y;
-				const float x = dblx / window_data->sdlwindow->w;
-				const float y = dbly / window_data->sdlwindow->h;
+            if (window_data) {
+                const double dblx = wl_fixed_to_double(fx) * window_data->pointer_scale_x;
+                const double dbly = wl_fixed_to_double(fy) * window_data->pointer_scale_y;
+                const float x = dblx / window_data->sdlwindow->w;
+                const float y = dbly / window_data->sdlwindow->h;
 
-				SDL_SendTouch((SDL_TouchID)(intptr_t)touch, (SDL_FingerID)id,
-					      window_data->sdlwindow, SDL_FALSE, x, y, 1.0f);
-			}
-		}
-	}
+                SDL_SendTouch((SDL_TouchID)(intptr_t)touch, (SDL_FingerID)id,
+                              window_data->sdlwindow, SDL_FALSE, x, y, 1.0f);
+            }
+        }
+    }
 }
 
 static const struct wl_touch_listener touch_listener = {
@@ -1369,7 +1369,7 @@ static void keyboard_handle_modifiers(void *data, struct wl_keyboard *keyboard,
 
     if (input->xkb.state == NULL) {
         /* if we get a modifier notification before the keymap, there's nothing we can do with the information
-        */
+         */
         return;
     }
 
@@ -1701,10 +1701,10 @@ static void data_device_handle_enter(void *data, struct wl_data_device *wl_data_
 
         /* find the current window */
         if (surface && SDL_WAYLAND_own_surface(surface)) {
-           SDL_WindowData *window = (SDL_WindowData *)wl_surface_get_user_data(surface);
-           if (window) {
-              data_device->dnd_window = window->sdlwindow;
-           }
+            SDL_WindowData *window = (SDL_WindowData *)wl_surface_get_user_data(surface);
+            if (window) {
+                data_device->dnd_window = window->sdlwindow;
+            }
         }
     }
 }
@@ -1855,7 +1855,7 @@ static void data_device_handle_drop(void *data, struct wl_data_device *wl_data_d
         SDL_bool drop_handled = SDL_FALSE;
 #ifdef SDL_USE_LIBDBUS
         if (Wayland_data_offer_has_mime(
-            data_device->drag_offer, FILE_PORTAL_MIME)) {
+                data_device->drag_offer, FILE_PORTAL_MIME)) {
             void *buffer = Wayland_data_offer_receive(data_device->drag_offer,
                                                       &length, FILE_PORTAL_MIME, SDL_TRUE);
             if (buffer) {
@@ -1883,7 +1883,7 @@ static void data_device_handle_drop(void *data, struct wl_data_device *wl_data_d
          * non paths that are not visible to the application
          */
         if (!drop_handled && Wayland_data_offer_has_mime(
-                                                         data_device->drag_offer, FILE_MIME)) {
+                                 data_device->drag_offer, FILE_MIME)) {
             void *buffer = Wayland_data_offer_receive(data_device->drag_offer,
                                                       &length, FILE_MIME, SDL_TRUE);
             if (buffer) {
@@ -1903,7 +1903,7 @@ static void data_device_handle_drop(void *data, struct wl_data_device *wl_data_d
         }
 
         if (drop_handled && wl_data_offer_get_version(data_device->drag_offer->offer) >=
-            WL_DATA_OFFER_FINISH_SINCE_VERSION) {
+                                WL_DATA_OFFER_FINISH_SINCE_VERSION) {
             wl_data_offer_finish(data_device->drag_offer->offer);
         }
         Wayland_data_offer_destroy(data_device->drag_offer);

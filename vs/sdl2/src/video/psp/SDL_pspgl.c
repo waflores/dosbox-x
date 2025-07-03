@@ -26,8 +26,8 @@
 #include <string.h>
 
 #include "SDL_error.h"
-#include "SDL_pspvideo.h"
 #include "SDL_pspgl_c.h"
+#include "SDL_pspvideo.h"
 
 /*****************************************************************************/
 /* SDL OpenGL/OpenGL ES functions                                            */

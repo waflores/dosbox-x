@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "SDL.h"
+#include <stdio.h>
 
 /* !!! FIXME: rewrite this to be wired in to test framework. */
 

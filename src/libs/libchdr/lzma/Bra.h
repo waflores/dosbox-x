@@ -10,34 +10,35 @@ EXTERN_C_BEGIN
 
 /* #define PPC BAD_PPC_11 // for debug */
 
-#define Z7_BRANCH_CONV_DEC_2(name)  z7_ ## name ## _Dec
-#define Z7_BRANCH_CONV_ENC_2(name)  z7_ ## name ## _Enc
-#define Z7_BRANCH_CONV_DEC(name)    Z7_BRANCH_CONV_DEC_2(BranchConv_ ## name)
-#define Z7_BRANCH_CONV_ENC(name)    Z7_BRANCH_CONV_ENC_2(BranchConv_ ## name)
-#define Z7_BRANCH_CONV_ST_DEC(name) z7_BranchConvSt_ ## name ## _Dec
-#define Z7_BRANCH_CONV_ST_ENC(name) z7_BranchConvSt_ ## name ## _Enc
+#define Z7_BRANCH_CONV_DEC_2(name) z7_##name##_Dec
+#define Z7_BRANCH_CONV_ENC_2(name) z7_##name##_Enc
+#define Z7_BRANCH_CONV_DEC(name) Z7_BRANCH_CONV_DEC_2(BranchConv_##name)
+#define Z7_BRANCH_CONV_ENC(name) Z7_BRANCH_CONV_ENC_2(BranchConv_##name)
+#define Z7_BRANCH_CONV_ST_DEC(name) z7_BranchConvSt_##name##_Dec
+#define Z7_BRANCH_CONV_ST_ENC(name) z7_BranchConvSt_##name##_Enc
 
-#define Z7_BRANCH_CONV_DECL(name)    Byte * name(Byte *data, SizeT size, UInt32 pc)
-#define Z7_BRANCH_CONV_ST_DECL(name) Byte * name(Byte *data, SizeT size, UInt32 pc, UInt32 *state)
+#define Z7_BRANCH_CONV_DECL(name) Byte *name(Byte *data, SizeT size, UInt32 pc)
+#define Z7_BRANCH_CONV_ST_DECL(name)                                           \
+  Byte *name(Byte *data, SizeT size, UInt32 pc, UInt32 *state)
 
-typedef Z7_BRANCH_CONV_DECL(   (*z7_Func_BranchConv));
+typedef Z7_BRANCH_CONV_DECL((*z7_Func_BranchConv));
 typedef Z7_BRANCH_CONV_ST_DECL((*z7_Func_BranchConvSt));
 
 #define Z7_BRANCH_CONV_ST_X86_STATE_INIT_VAL 0
-Z7_BRANCH_CONV_ST_DECL (Z7_BRANCH_CONV_ST_DEC(X86));
-Z7_BRANCH_CONV_ST_DECL (Z7_BRANCH_CONV_ST_ENC(X86));
+Z7_BRANCH_CONV_ST_DECL(Z7_BRANCH_CONV_ST_DEC(X86));
+Z7_BRANCH_CONV_ST_DECL(Z7_BRANCH_CONV_ST_ENC(X86));
 
-#define Z7_BRANCH_FUNCS_DECL(name) \
-Z7_BRANCH_CONV_DECL (Z7_BRANCH_CONV_DEC_2(name)); \
-Z7_BRANCH_CONV_DECL (Z7_BRANCH_CONV_ENC_2(name));
+#define Z7_BRANCH_FUNCS_DECL(name)                                             \
+  Z7_BRANCH_CONV_DECL(Z7_BRANCH_CONV_DEC_2(name));                             \
+  Z7_BRANCH_CONV_DECL(Z7_BRANCH_CONV_ENC_2(name));
 
-Z7_BRANCH_FUNCS_DECL (BranchConv_ARM64)
-Z7_BRANCH_FUNCS_DECL (BranchConv_ARM)
-Z7_BRANCH_FUNCS_DECL (BranchConv_ARMT)
-Z7_BRANCH_FUNCS_DECL (BranchConv_PPC)
-Z7_BRANCH_FUNCS_DECL (BranchConv_SPARC)
-Z7_BRANCH_FUNCS_DECL (BranchConv_IA64)
-Z7_BRANCH_FUNCS_DECL (BranchConv_RISCV)
+Z7_BRANCH_FUNCS_DECL(BranchConv_ARM64)
+Z7_BRANCH_FUNCS_DECL(BranchConv_ARM)
+Z7_BRANCH_FUNCS_DECL(BranchConv_ARMT)
+Z7_BRANCH_FUNCS_DECL(BranchConv_PPC)
+Z7_BRANCH_FUNCS_DECL(BranchConv_SPARC)
+Z7_BRANCH_FUNCS_DECL(BranchConv_IA64)
+Z7_BRANCH_FUNCS_DECL(BranchConv_RISCV)
 
 /*
 These functions convert data that contain CPU instructions.
@@ -60,14 +61,14 @@ In/Out param:
 
 Return:
   The pointer to position in (data) buffer after last byte that was processed.
-  If the caller calls converter again, it must call it starting with that position.
-  But the caller is allowed to move data in buffer. So pointer to
+  If the caller calls converter again, it must call it starting with that
+position. But the caller is allowed to move data in buffer. So pointer to
   current processed position also will be changed for next call.
   Also the caller must increase internal (pc) value for next call.
-  
+
 Each converter has some characteristics: Endian, Alignment, LookAhead.
   Type   Endian  Alignment  LookAhead
-  
+
   X86    little      1          4
   ARMT   little      2          2
   RISCV  little      2          6

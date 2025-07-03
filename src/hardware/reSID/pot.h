@@ -22,8 +22,7 @@
 
 #include "siddefs.h"
 
-class Potentiometer
-{
+class Potentiometer {
 public:
   reg8 readPOT();
 };

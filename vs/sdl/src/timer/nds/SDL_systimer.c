@@ -21,53 +21,39 @@
 */
 #include "SDL_config.h"
 
+#include "../SDL_timer_c.h"
+#include "SDL_error.h"
 #include "SDL_thread.h"
 #include "SDL_timer.h"
-#include "SDL_error.h"
-#include "../SDL_timer_c.h"
 
 #include <nds.h>
 
-#define timers2ms(tlow,thigh)(tlow | (thigh<<16)) >> 5
+#define timers2ms(tlow, thigh) (tlow | (thigh << 16)) >> 5
 
-
-void SDL_StartTicks(void)
-{
-   TIMER0_DATA=0; 
-   TIMER1_DATA=0; 
-   TIMER0_CR=TIMER_ENABLE|TIMER_DIV_1024; 
-   TIMER1_CR=TIMER_ENABLE|TIMER_CASCADE;
+void SDL_StartTicks(void) {
+  TIMER0_DATA = 0;
+  TIMER1_DATA = 0;
+  TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1024;
+  TIMER1_CR = TIMER_ENABLE | TIMER_CASCADE;
 }
 
-Uint32 SDL_GetTicks(void)
-{
-	return timers2ms(TIMER0_DATA, TIMER1_DATA);
-}
+Uint32 SDL_GetTicks(void) { return timers2ms(TIMER0_DATA, TIMER1_DATA); }
 
-void SDL_Delay(Uint32 ms)
-{
-   Uint32 now; 
-   now=timers2ms(TIMER0_DATA, TIMER1_DATA); 
-   while((Uint32)timers2ms(TIMER0_DATA, TIMER1_DATA)<now+ms); 
-
+void SDL_Delay(Uint32 ms) {
+  Uint32 now;
+  now = timers2ms(TIMER0_DATA, TIMER1_DATA);
+  while ((Uint32)timers2ms(TIMER0_DATA, TIMER1_DATA) < now + ms)
+    ;
 }
 
 /* This is only called if the event thread is not running */
-int SDL_SYS_TimerInit(void)
-{
-	return 0;
+int SDL_SYS_TimerInit(void) { return 0; }
+
+void SDL_SYS_TimerQuit(void) {}
+
+int SDL_SYS_StartTimer(void) {
+  SDL_SetError("Timers not implemented on NDS");
+  return -1;
 }
 
-void SDL_SYS_TimerQuit(void)
-{
-}
-
-int SDL_SYS_StartTimer(void)
-{
-	SDL_SetError("Timers not implemented on NDS");
-	return -1;
-}
-
-void SDL_SYS_StopTimer(void)
-{
-}
+void SDL_SYS_StopTimer(void) {}

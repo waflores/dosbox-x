@@ -74,41 +74,37 @@
  *	| system(6) | subsystem(12) | code(14) |
  */
 
+#define err_none (mach_error_t)0
+#define ERR_SUCCESS (mach_error_t)0
+#define ERR_ROUTINE_NIL (mach_error_fn_t)0
 
-#define err_none                (mach_error_t)0
-#define ERR_SUCCESS             (mach_error_t)0
-#define ERR_ROUTINE_NIL         (mach_error_fn_t)0
+#define err_system(x) ((signed)((((unsigned)(x)) & 0x3f) << 26))
+#define err_sub(x) (((x) & 0xfff) << 14)
 
+#define err_get_system(err) (((err) >> 26) & 0x3f)
+#define err_get_sub(err) (((err) >> 14) & 0xfff)
+#define err_get_code(err) ((err) & 0x3fff)
 
-#define err_system(x)           ((signed)((((unsigned)(x))&0x3f)<<26))
-#define err_sub(x)              (((x)&0xfff)<<14)
-
-#define err_get_system(err)     (((err)>>26)&0x3f)
-#define err_get_sub(err)        (((err)>>14)&0xfff)
-#define err_get_code(err)       ((err)&0x3fff)
-
-#define system_emask            (err_system(0x3f))
-#define sub_emask               (err_sub(0xfff))
-#define code_emask              (0x3fff)
-
+#define system_emask (err_system(0x3f))
+#define sub_emask (err_sub(0xfff))
+#define code_emask (0x3fff)
 
 /*	major error systems	*/
-#define err_kern                err_system(0x0)         /* kernel */
-#define err_us                  err_system(0x1)         /* user space library */
-#define err_server              err_system(0x2)         /* user space servers */
-#define err_ipc                 err_system(0x3)         /* old ipc errors */
-#define err_mach_ipc            err_system(0x4)         /* mach-ipc errors */
-#define err_dipc                err_system(0x7)         /* distributed ipc */
-#define err_local               err_system(0x3e)        /* user defined errors */
-#define err_ipc_compat          err_system(0x3f)        /* (compatibility) mach-ipc errors */
+#define err_kern err_system(0x0)        /* kernel */
+#define err_us err_system(0x1)          /* user space library */
+#define err_server err_system(0x2)      /* user space servers */
+#define err_ipc err_system(0x3)         /* old ipc errors */
+#define err_mach_ipc err_system(0x4)    /* mach-ipc errors */
+#define err_dipc err_system(0x7)        /* distributed ipc */
+#define err_local err_system(0x3e)      /* user defined errors */
+#define err_ipc_compat err_system(0x3f) /* (compatibility) mach-ipc errors */
 
-#define err_max_system          0x3f
-
+#define err_max_system 0x3f
 
 /*	unix errors get lumped into one subsystem  */
-#define unix_err(errno)         (err_kern|err_sub(3)|errno)
+#define unix_err(errno) (err_kern | err_sub(3) | errno)
 
-typedef kern_return_t   mach_error_t;
-typedef mach_error_t    (* mach_error_fn_t)( void );
+typedef kern_return_t mach_error_t;
+typedef mach_error_t (*mach_error_fn_t)(void);
 
-#endif  /* _MACH_ERROR_H_ */
+#endif /* _MACH_ERROR_H_ */

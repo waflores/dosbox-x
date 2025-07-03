@@ -21,8 +21,8 @@
 #include "../SDL_internal.h"
 
 #include "SDL_endian.h"
-#include "SDL_video.h"
 #include "SDL_pixels_c.h"
+#include "SDL_video.h"
 #include "SDL_yuv_c.h"
 
 #include "yuv2rgb/yuv_rgb.h"
@@ -76,7 +76,7 @@ int SDL_CalculateYUVSize(Uint32 format, int w, int h, size_t *size, int *pitch)
             if (SDL_size_mul_overflow(w, h, &s1) < 0) {
                 return -1;
             }
-            sz_plane = (int) s1;
+            sz_plane = (int)s1;
         }
 
         {
@@ -93,7 +93,7 @@ int SDL_CalculateYUVSize(Uint32 format, int w, int h, size_t *size, int *pitch)
             if (SDL_size_mul_overflow(s1, s2, &s3) < 0) {
                 return -1;
             }
-            sz_plane_chroma = (int) s3;
+            sz_plane_chroma = (int)s3;
         }
     } else {
         /* sz_plane_packed == ((w + 1) / 2) * h; */
@@ -105,7 +105,7 @@ int SDL_CalculateYUVSize(Uint32 format, int w, int h, size_t *size, int *pitch)
         if (SDL_size_mul_overflow(s1, h, &s2) < 0) {
             return -1;
         }
-        sz_plane_packed = (int) s2;
+        sz_plane_packed = (int)s2;
     }
 
     switch (format) {
@@ -135,15 +135,15 @@ int SDL_CalculateYUVSize(Uint32 format, int w, int h, size_t *size, int *pitch)
 
         if (pitch) {
             /* pitch == ((w + 1) / 2) * 4; */
-           size_t p1, p2;
-           if (SDL_size_add_overflow(w, 1, &p1) < 0) {
-               return -1;
-           }
-           p1 = p1 / 2;
-           if (SDL_size_mul_overflow(p1, 4, &p2) < 0) {
-               return -1;
-           }
-           *pitch = (int) p2;
+            size_t p1, p2;
+            if (SDL_size_add_overflow(w, 1, &p1) < 0) {
+                return -1;
+            }
+            p1 = p1 / 2;
+            if (SDL_size_mul_overflow(p1, 4, &p2) < 0) {
+                return -1;
+            }
+            *pitch = (int)p2;
         }
 
         if (size) {
@@ -152,7 +152,7 @@ int SDL_CalculateYUVSize(Uint32 format, int w, int h, size_t *size, int *pitch)
             if (SDL_size_mul_overflow(sz_plane_packed, 4, &s1) < 0) {
                 return -1;
             }
-            *size = (int) s1;
+            *size = (int)s1;
         }
         break;
 
@@ -171,7 +171,7 @@ int SDL_CalculateYUVSize(Uint32 format, int w, int h, size_t *size, int *pitch)
             if (SDL_size_add_overflow(s1, sz_plane_chroma, &s2) < 0) {
                 return -1;
             }
-            *size = (int) s2;
+            *size = (int)s2;
         }
         break;
 

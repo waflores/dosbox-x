@@ -27,23 +27,23 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
-#define NUM_BUFFERS 2			/* -- Don't lower this! */
+#define NUM_BUFFERS 2 /* -- Don't lower this! */
 
 struct SDL_PrivateAudioData {
-	HWAVEOUT sound;
-	HANDLE audio_sem;
-	Uint8 *mixbuf;		/* The raw allocated mixing buffer */
-	WAVEHDR wavebuf[NUM_BUFFERS];	/* Wave audio fragments */
-	int next_buffer;
+  HWAVEOUT sound;
+  HANDLE audio_sem;
+  Uint8 *mixbuf;                /* The raw allocated mixing buffer */
+  WAVEHDR wavebuf[NUM_BUFFERS]; /* Wave audio fragments */
+  int next_buffer;
 };
 
 /* Old variable names */
-#define sound			(this->hidden->sound)
-#define audio_sem 		(this->hidden->audio_sem)
-#define mixbuf			(this->hidden->mixbuf)
-#define wavebuf			(this->hidden->wavebuf)
-#define next_buffer		(this->hidden->next_buffer)
+#define sound (this->hidden->sound)
+#define audio_sem (this->hidden->audio_sem)
+#define mixbuf (this->hidden->mixbuf)
+#define wavebuf (this->hidden->wavebuf)
+#define next_buffer (this->hidden->next_buffer)
 
 #endif /* _SDL_lowaudio_h */

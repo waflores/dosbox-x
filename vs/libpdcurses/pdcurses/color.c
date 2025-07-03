@@ -107,190 +107,172 @@ static bool pair_set[PDC_COLOR_PAIRS];
 static bool default_colors = FALSE;
 static short first_col = 0;
 
-int start_color(void)
-{
-    PDC_LOG(("start_color() - called\n"));
+int start_color(void) {
+  PDC_LOG(("start_color() - called\n"));
 
-    if (SP->mono)
-        return ERR;
+  if (SP->mono)
+    return ERR;
 
-    pdc_color_started = TRUE;
+  pdc_color_started = TRUE;
 
-    PDC_set_blink(FALSE);   /* Also sets COLORS */
+  PDC_set_blink(FALSE); /* Also sets COLORS */
 
-    if (!default_colors && SP->orig_attr && getenv("PDC_ORIGINAL_COLORS"))
-        default_colors = TRUE;
-
-    PDC_init_atrtab();
-
-    memset(pair_set, 0, PDC_COLOR_PAIRS);
-
-    return OK;
-}
-
-static void _normalize(short *fg, short *bg)
-{
-    if (*fg == -1)
-        *fg = SP->orig_attr ? SP->orig_fore : COLOR_WHITE;
-
-    if (*bg == -1)
-        *bg = SP->orig_attr ? SP->orig_back : COLOR_BLACK;
-}
-
-int init_pair(short pair, short fg, short bg)
-{
-    PDC_LOG(("init_pair() - called: pair %d fg %d bg %d\n", pair, fg, bg));
-
-    if (!pdc_color_started || pair < 1 || pair >= COLOR_PAIRS ||
-        fg < first_col || fg >= COLORS || bg < first_col || bg >= COLORS)
-        return ERR;
-
-    _normalize(&fg, &bg);
-
-    /* To allow the PDC_PRESERVE_SCREEN option to work, we only reset
-       curscr if this call to init_pair() alters a color pair created by
-       the user. */
-
-    if (pair_set[pair])
-    {
-        short oldfg, oldbg;
-
-        PDC_pair_content(pair, &oldfg, &oldbg);
-
-        if (oldfg != fg || oldbg != bg)
-            curscr->_clear = TRUE;
-    }
-
-    PDC_init_pair(pair, fg, bg);
-
-    pair_set[pair] = TRUE;
-
-    return OK;
-}
-
-bool has_colors(void)
-{
-    PDC_LOG(("has_colors() - called\n"));
-
-    return !(SP->mono);
-}
-
-int init_color(short color, short red, short green, short blue)
-{
-    PDC_LOG(("init_color() - called\n"));
-
-    if (color < 0 || color >= COLORS || !PDC_can_change_color() ||
-        red < 0 || red > 1000 || green < 0 || green > 1000 ||
-        blue < 0 || blue > 1000)
-        return ERR;
-
-    return PDC_init_color(color, red, green, blue);
-}
-
-int color_content(short color, short *red, short *green, short *blue)
-{
-    PDC_LOG(("color_content() - called\n"));
-
-    if (color < 0 || color >= COLORS || !red || !green || !blue)
-        return ERR;
-
-    if (PDC_can_change_color())
-        return PDC_color_content(color, red, green, blue);
-    else
-    {
-        /* Simulated values for platforms that don't support palette
-           changing */
-
-        short maxval = (color & 8) ? 1000 : 680;
-
-        *red = (color & COLOR_RED) ? maxval : 0;
-        *green = (color & COLOR_GREEN) ? maxval : 0;
-        *blue = (color & COLOR_BLUE) ? maxval : 0;
-
-        return OK;
-    }
-}
-
-bool can_change_color(void)
-{
-    PDC_LOG(("can_change_color() - called\n"));
-
-    return PDC_can_change_color();
-}
-
-int pair_content(short pair, short *fg, short *bg)
-{
-    PDC_LOG(("pair_content() - called\n"));
-
-    if (pair < 0 || pair >= COLOR_PAIRS || !fg || !bg)
-        return ERR;
-
-    return PDC_pair_content(pair, fg, bg);
-}
-
-int assume_default_colors(int f, int b)
-{
-    PDC_LOG(("assume_default_colors() - called: f %d b %d\n", f, b));
-
-    if (f < -1 || f >= COLORS || b < -1 || b >= COLORS)
-        return ERR;
-
-    if (pdc_color_started)
-    {
-        short fg, bg, oldfg, oldbg;
-
-        fg = f;
-        bg = b;
-
-        _normalize(&fg, &bg);
-
-        PDC_pair_content(0, &oldfg, &oldbg);
-
-        if (oldfg != fg || oldbg != bg)
-            curscr->_clear = TRUE;
-
-        PDC_init_pair(0, fg, bg);
-    }
-
-    return OK;
-}
-
-int use_default_colors(void)
-{
-    PDC_LOG(("use_default_colors() - called\n"));
-
+  if (!default_colors && SP->orig_attr && getenv("PDC_ORIGINAL_COLORS"))
     default_colors = TRUE;
-    first_col = -1;
 
-    return assume_default_colors(-1, -1);
+  PDC_init_atrtab();
+
+  memset(pair_set, 0, PDC_COLOR_PAIRS);
+
+  return OK;
 }
 
-int PDC_set_line_color(short color)
-{
-    PDC_LOG(("PDC_set_line_color() - called: %d\n", color));
+static void _normalize(short *fg, short *bg) {
+  if (*fg == -1)
+    *fg = SP->orig_attr ? SP->orig_fore : COLOR_WHITE;
 
-    if (color < -1 || color >= COLORS)
-        return ERR;
+  if (*bg == -1)
+    *bg = SP->orig_attr ? SP->orig_back : COLOR_BLACK;
+}
 
-    SP->line_color = color;
+int init_pair(short pair, short fg, short bg) {
+  PDC_LOG(("init_pair() - called: pair %d fg %d bg %d\n", pair, fg, bg));
+
+  if (!pdc_color_started || pair < 1 || pair >= COLOR_PAIRS || fg < first_col ||
+      fg >= COLORS || bg < first_col || bg >= COLORS)
+    return ERR;
+
+  _normalize(&fg, &bg);
+
+  /* To allow the PDC_PRESERVE_SCREEN option to work, we only reset
+     curscr if this call to init_pair() alters a color pair created by
+     the user. */
+
+  if (pair_set[pair]) {
+    short oldfg, oldbg;
+
+    PDC_pair_content(pair, &oldfg, &oldbg);
+
+    if (oldfg != fg || oldbg != bg)
+      curscr->_clear = TRUE;
+  }
+
+  PDC_init_pair(pair, fg, bg);
+
+  pair_set[pair] = TRUE;
+
+  return OK;
+}
+
+bool has_colors(void) {
+  PDC_LOG(("has_colors() - called\n"));
+
+  return !(SP->mono);
+}
+
+int init_color(short color, short red, short green, short blue) {
+  PDC_LOG(("init_color() - called\n"));
+
+  if (color < 0 || color >= COLORS || !PDC_can_change_color() || red < 0 ||
+      red > 1000 || green < 0 || green > 1000 || blue < 0 || blue > 1000)
+    return ERR;
+
+  return PDC_init_color(color, red, green, blue);
+}
+
+int color_content(short color, short *red, short *green, short *blue) {
+  PDC_LOG(("color_content() - called\n"));
+
+  if (color < 0 || color >= COLORS || !red || !green || !blue)
+    return ERR;
+
+  if (PDC_can_change_color())
+    return PDC_color_content(color, red, green, blue);
+  else {
+    /* Simulated values for platforms that don't support palette
+       changing */
+
+    short maxval = (color & 8) ? 1000 : 680;
+
+    *red = (color & COLOR_RED) ? maxval : 0;
+    *green = (color & COLOR_GREEN) ? maxval : 0;
+    *blue = (color & COLOR_BLUE) ? maxval : 0;
 
     return OK;
+  }
 }
 
-void PDC_init_atrtab(void)
-{
-    short i, fg, bg;
+bool can_change_color(void) {
+  PDC_LOG(("can_change_color() - called\n"));
 
-    if (pdc_color_started && !default_colors)
-    {
-        fg = COLOR_WHITE;
-        bg = COLOR_BLACK;
-    }
-    else
-        fg = bg = -1;
+  return PDC_can_change_color();
+}
+
+int pair_content(short pair, short *fg, short *bg) {
+  PDC_LOG(("pair_content() - called\n"));
+
+  if (pair < 0 || pair >= COLOR_PAIRS || !fg || !bg)
+    return ERR;
+
+  return PDC_pair_content(pair, fg, bg);
+}
+
+int assume_default_colors(int f, int b) {
+  PDC_LOG(("assume_default_colors() - called: f %d b %d\n", f, b));
+
+  if (f < -1 || f >= COLORS || b < -1 || b >= COLORS)
+    return ERR;
+
+  if (pdc_color_started) {
+    short fg, bg, oldfg, oldbg;
+
+    fg = f;
+    bg = b;
 
     _normalize(&fg, &bg);
 
-    for (i = 0; i < PDC_COLOR_PAIRS; i++)
-        PDC_init_pair(i, fg, bg);
+    PDC_pair_content(0, &oldfg, &oldbg);
+
+    if (oldfg != fg || oldbg != bg)
+      curscr->_clear = TRUE;
+
+    PDC_init_pair(0, fg, bg);
+  }
+
+  return OK;
+}
+
+int use_default_colors(void) {
+  PDC_LOG(("use_default_colors() - called\n"));
+
+  default_colors = TRUE;
+  first_col = -1;
+
+  return assume_default_colors(-1, -1);
+}
+
+int PDC_set_line_color(short color) {
+  PDC_LOG(("PDC_set_line_color() - called: %d\n", color));
+
+  if (color < -1 || color >= COLORS)
+    return ERR;
+
+  SP->line_color = color;
+
+  return OK;
+}
+
+void PDC_init_atrtab(void) {
+  short i, fg, bg;
+
+  if (pdc_color_started && !default_colors) {
+    fg = COLOR_WHITE;
+    bg = COLOR_BLACK;
+  } else
+    fg = bg = -1;
+
+  _normalize(&fg, &bg);
+
+  for (i = 0; i < PDC_COLOR_PAIRS; i++)
+    PDC_init_pair(i, fg, bg);
 }

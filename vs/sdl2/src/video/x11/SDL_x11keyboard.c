@@ -29,11 +29,11 @@
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_scancode_tables_c.h"
 
-#include <X11/keysym.h>
 #include <X11/XKBlib.h>
+#include <X11/keysym.h>
 
-#include "../../events/imKStoUCS.h"
 #include "../../events/SDL_keysym_to_scancode_c.h"
+#include "../../events/imKStoUCS.h"
 
 #ifdef X_HAVE_UTF8_STRING
 #include <locale.h>

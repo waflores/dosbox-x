@@ -29,15 +29,15 @@
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
-#include <unistd.h>
 #include <sys/types.h>
+#include <unistd.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
-#include "../SDL_audio_c.h"
-#include "SDL_pulseaudio.h"
-#include "SDL_loadso.h"
 #include "../../thread/SDL_systhread.h"
+#include "../SDL_audio_c.h"
+#include "SDL_audio.h"
+#include "SDL_loadso.h"
+#include "SDL_pulseaudio.h"
+#include "SDL_timer.h"
 
 /* should we include monitors in the device list? Set at SDL_Init time */
 static SDL_bool include_monitors = SDL_FALSE;
@@ -53,7 +53,6 @@ static char *default_source_path = NULL;
 /* ... and these are the descriptions we use in GetDefaultAudioInfo. */
 static char *default_sink_name = NULL;
 static char *default_source_name = NULL;
-
 
 static const char *(*PULSEAUDIO_pa_get_library_version)(void);
 static pa_channel_map *(*PULSEAUDIO_pa_channel_map_init_auto)(
@@ -278,7 +277,7 @@ static void WaitForPulseOperation(pa_operation *o)
     SDL_assert(pulseaudio_threaded_mainloop != NULL);
     if (o) {
         while (PULSEAUDIO_pa_operation_get_state(o) == PA_OPERATION_RUNNING) {
-            PULSEAUDIO_pa_threaded_mainloop_wait(pulseaudio_threaded_mainloop);  /* this releases the lock and blocks on an internal condition variable. */
+            PULSEAUDIO_pa_threaded_mainloop_wait(pulseaudio_threaded_mainloop); /* this releases the lock and blocks on an internal condition variable. */
         }
         PULSEAUDIO_pa_operation_unref(o);
     }
@@ -302,7 +301,7 @@ static void DisconnectFromPulseServer(void)
 
 static void PulseContextStateChangeCallback(pa_context *context, void *userdata)
 {
-    PULSEAUDIO_pa_threaded_mainloop_signal(pulseaudio_threaded_mainloop, 0);  /* just signal any waiting code, it can look up the details. */
+    PULSEAUDIO_pa_threaded_mainloop_signal(pulseaudio_threaded_mainloop, 0); /* just signal any waiting code, it can look up the details. */
 }
 
 static int ConnectToPulseServer(void)
@@ -432,7 +431,7 @@ static Uint8 *PULSEAUDIO_GetDeviceBuf(_THIS)
 static void ReadCallback(pa_stream *p, size_t nbytes, void *userdata)
 {
     /*printf("PULSEAUDIO READ CALLBACK! nbytes=%u\n", (unsigned int) nbytes);*/
-    PULSEAUDIO_pa_threaded_mainloop_signal(pulseaudio_threaded_mainloop, 0);  /* the capture code queries what it needs, we just need to signal to end any wait */
+    PULSEAUDIO_pa_threaded_mainloop_signal(pulseaudio_threaded_mainloop, 0); /* the capture code queries what it needs, we just need to signal to end any wait */
 }
 
 static int PULSEAUDIO_CaptureFromDevice(_THIS, void *buffer, int buflen)
@@ -469,7 +468,7 @@ static int PULSEAUDIO_CaptureFromDevice(_THIS, void *buffer, int buflen)
             }
         }
 
-        if ((retval == -1) || !SDL_AtomicGet(&this->enabled)) {  /* in case this happened while we were blocking. */
+        if ((retval == -1) || !SDL_AtomicGet(&this->enabled)) { /* in case this happened while we were blocking. */
             retval = -1;
             break;
         }
@@ -581,7 +580,7 @@ static SDL_bool FindDeviceName(struct SDL_PrivateAudioData *h, const SDL_bool is
 
 static void PulseStreamStateChangeCallback(pa_stream *stream, void *userdata)
 {
-    PULSEAUDIO_pa_threaded_mainloop_signal(pulseaudio_threaded_mainloop, 0);  /* just signal any waiting code, it can look up the details. */
+    PULSEAUDIO_pa_threaded_mainloop_signal(pulseaudio_threaded_mainloop, 0); /* just signal any waiting code, it can look up the details. */
 }
 
 static int PULSEAUDIO_OpenDevice(_THIS, const char *devname)
@@ -727,7 +726,6 @@ static int PULSEAUDIO_OpenDevice(_THIS, const char *devname)
     /* We're (hopefully) ready to rock and roll. :-) */
     return retval;
 }
-
 
 /* device handles are device index + 1, cast to void*, so we never pass a NULL. */
 
@@ -901,7 +899,7 @@ static void PULSEAUDIO_DetectDevices(void)
     if (pulseaudio_hotplug_thread) {
         SDL_SemWait(ready_sem);
     } else {
-        SDL_AtomicSet(&pulseaudio_hotplug_thread_active, 0);  // thread failed to start, we'll go on without hotplug.
+        SDL_AtomicSet(&pulseaudio_hotplug_thread_active, 0); // thread failed to start, we'll go on without hotplug.
     }
     SDL_DestroySemaphore(ready_sem);
 }

@@ -22,11 +22,11 @@
 
 #ifdef SDL_AUDIO_DRIVER_AAUDIO
 
+#include "../../core/android/SDL_android.h"
+#include "../SDL_audio_c.h"
+#include "SDL_aaudio.h"
 #include "SDL_audio.h"
 #include "SDL_loadso.h"
-#include "../SDL_audio_c.h"
-#include "../../core/android/SDL_android.h"
-#include "SDL_aaudio.h"
 
 /* Debug */
 #if 0
@@ -39,7 +39,7 @@ typedef struct AAUDIO_Data
 {
     AAudioStreamBuilder *builder;
     void *handle;
-#define SDL_PROC(ret, func, params) ret (*func) params;
+#define SDL_PROC(ret, func, params) ret(*func) params;
 #include "SDL_aaudiofuncs.h"
 #undef SDL_PROC
 } AAUDIO_Data;
@@ -101,7 +101,7 @@ static int aaudio_OpenDevice(_THIS, const char *devname)
 
     ctx.AAudioStreamBuilder_setSampleRate(ctx.builder, this->spec.freq);
     ctx.AAudioStreamBuilder_setChannelCount(ctx.builder, this->spec.channels);
-    if(devname) {
+    if (devname) {
         private->devid = SDL_atoi(devname);
         LOGI("Opening device id %d", private->devid);
         ctx.AAudioStreamBuilder_setDeviceId(ctx.builder, private->devid);
@@ -224,7 +224,7 @@ static int RebuildAAudioStream(SDL_AudioDevice *device)
 
     ctx.AAudioStreamBuilder_setSampleRate(ctx.builder, device->spec.freq);
     ctx.AAudioStreamBuilder_setChannelCount(ctx.builder, device->spec.channels);
-    if(hidden->devid) {
+    if (hidden->devid) {
         LOGI("Reopening device id %d", hidden->devid);
         ctx.AAudioStreamBuilder_setDeviceId(ctx.builder, hidden->devid);
     }
@@ -251,7 +251,7 @@ static int RebuildAAudioStream(SDL_AudioDevice *device)
 
     {
         const aaudio_format_t fmt = ctx.AAudioStream_getFormat(hidden->stream);
-        SDL_AudioFormat sdlfmt = (SDL_AudioFormat) 0;
+        SDL_AudioFormat sdlfmt = (SDL_AudioFormat)0;
         if (fmt == AAUDIO_FORMAT_PCM_I16) {
             sdlfmt = AUDIO_S16SYS;
         } else if (fmt == AAUDIO_FORMAT_PCM_FLOAT) {
@@ -259,9 +259,9 @@ static int RebuildAAudioStream(SDL_AudioDevice *device)
         }
 
         /* We handle this better in SDL3, but this _needs_ to match the previous stream for SDL2. */
-        if ( (device->spec.freq != ctx.AAudioStream_getSampleRate(hidden->stream)) ||
-             (device->spec.channels != ctx.AAudioStream_getChannelCount(hidden->stream)) ||
-             (device->spec.format != sdlfmt) ) {
+        if ((device->spec.freq != ctx.AAudioStream_getSampleRate(hidden->stream)) ||
+            (device->spec.channels != ctx.AAudioStream_getChannelCount(hidden->stream)) ||
+            (device->spec.format != sdlfmt)) {
             LOGI("Didn't get an identical spec from AAudioStream during reopen!");
             ctx.AAudioStream_close(hidden->stream);
             hidden->stream = NULL;
@@ -289,12 +289,11 @@ static int RecoverAAudioDevice(SDL_AudioDevice *device)
     ctx.AAudioStream_close(stream);
 
     if (RebuildAAudioStream(device) < 0) {
-        return -1;  // oh well, we tried.
+        return -1; // oh well, we tried.
     }
 
     return 0;
 }
-
 
 static void aaudio_PlayDevice(_THIS)
 {
@@ -305,7 +304,7 @@ static void aaudio_PlayDevice(_THIS)
     if (res < 0) {
         LOGI("%s : %s", __func__, ctx.AAudio_convertResultToText(res));
         if (RecoverAAudioDevice(this) < 0) {
-            return;  /* oh well, we went down hard. */
+            return; /* oh well, we went down hard. */
         }
     } else {
         LOGI("SDL AAudio play: %d frames, wanted:%d frames", (int)res, private->mixlen / private->frame_size);

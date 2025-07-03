@@ -23,8 +23,8 @@
 #ifndef SDL_os2video_h_
 #define SDL_os2video_h_
 
-#include "../SDL_sysvideo.h"
 #include "../../core/os2/SDL_os2.h"
+#include "../SDL_sysvideo.h"
 
 #define INCL_DOS
 #define INCL_DOSERRORS
@@ -38,43 +38,47 @@
 #include "SDL_os2mouse.h"
 #include "SDL_os2output.h"
 
-typedef struct SDL_VideoData {
-    HAB             hab;
-    HMQ             hmq;
+typedef struct SDL_VideoData
+{
+    HAB hab;
+    HMQ hmq;
     OS2VIDEOOUTPUT *pOutput; /* Video output routines */
 } SDL_VideoData;
 
-typedef struct _WINDATA {
-    SDL_Window     *window;
+typedef struct _WINDATA
+{
+    SDL_Window *window;
     OS2VIDEOOUTPUT *pOutput; /* Video output routines */
-    HWND            hwndFrame;
-    HWND            hwnd;
-    PFNWP           fnUserWndProc;
-    PFNWP           fnWndFrameProc;
+    HWND hwndFrame;
+    HWND hwnd;
+    PFNWP fnUserWndProc;
+    PFNWP fnWndFrameProc;
 
-    PVODATA         pVOData; /* Video output data */
+    PVODATA pVOData; /* Video output data */
 
-    HRGN            hrgnShape;
-    HPOINTER        hptrIcon;
-    RECTL           rectlBeforeFS;
+    HRGN hrgnShape;
+    HPOINTER hptrIcon;
+    RECTL rectlBeforeFS;
 
-    LONG            lSkipWMSize;
-    LONG            lSkipWMMove;
-    LONG            lSkipWMMouseMove;
-    LONG            lSkipWMVRNEnabled;
-    LONG            lSkipWMAdjustFramePos;
+    LONG lSkipWMSize;
+    LONG lSkipWMMove;
+    LONG lSkipWMMouseMove;
+    LONG lSkipWMVRNEnabled;
+    LONG lSkipWMAdjustFramePos;
 } WINDATA;
 
-typedef struct _DISPLAYDATA {
-    ULONG           ulDPIHor;
-    ULONG           ulDPIVer;
-    ULONG           ulDPIDiag;
+typedef struct _DISPLAYDATA
+{
+    ULONG ulDPIHor;
+    ULONG ulDPIVer;
+    ULONG ulDPIDiag;
 } DISPLAYDATA;
 
-typedef struct _MODEDATA {
-    ULONG           ulDepth;
-    ULONG           fccColorEncoding;
-    ULONG           ulScanLineBytes;
+typedef struct _MODEDATA
+{
+    ULONG ulDepth;
+    ULONG fccColorEncoding;
+    ULONG ulScanLineBytes;
 } MODEDATA;
 
 #endif /* SDL_os2video_h_ */

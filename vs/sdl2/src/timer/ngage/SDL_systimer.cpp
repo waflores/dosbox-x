@@ -22,8 +22,8 @@
 
 #if defined(SDL_TIMER_NGAGE)
 
-#include <e32std.h>
 #include <e32hal.h>
+#include <e32std.h>
 
 #include "SDL_timer.h"
 

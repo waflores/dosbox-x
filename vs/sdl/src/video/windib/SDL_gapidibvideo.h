@@ -28,7 +28,7 @@
 #include <windows.h>
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
 /* typedef these to be able to define pointers, but still force everybody who
  * wants to access them to include the corresponding header */
@@ -36,21 +36,20 @@ typedef struct GapiInfo GapiInfo;
 typedef struct DibInfo DibInfo;
 
 /* for PDA */
-typedef enum
-{
-	SDL_ORIENTATION_UP,
-	SDL_ORIENTATION_DOWN,
-	SDL_ORIENTATION_LEFT,
-	SDL_ORIENTATION_RIGHT
+typedef enum {
+  SDL_ORIENTATION_UP,
+  SDL_ORIENTATION_DOWN,
+  SDL_ORIENTATION_LEFT,
+  SDL_ORIENTATION_RIGHT
 } SDL_ScreenOrientation;
 
 /* Private display data shared by gapi and windib*/
 struct SDL_PrivateVideoData {
-	int supportRotation; /* for Pocket PC devices */
-	DWORD origRotation; /* for Pocket PC devices */
-	
-	GapiInfo* gapiInfo;
-	DibInfo* dibInfo;
+  int supportRotation; /* for Pocket PC devices */
+  DWORD origRotation;  /* for Pocket PC devices */
+
+  GapiInfo *gapiInfo;
+  DibInfo *dibInfo;
 };
 
 #endif

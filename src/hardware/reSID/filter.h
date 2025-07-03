@@ -58,7 +58,7 @@
 //
 // SID filter
 // ----------
-// 
+//
 //     -----------------------------------------------
 //    |                                               |
 //    |            ---Rq--                            |
@@ -67,15 +67,15 @@
 //    | |                               |             |
 //    | |                        ---C---|      ---C---|
 //    | |                       |       |     |       |
-//    |  --R1--    ---R1--      |---Rs--|     |---Rs--| 
+//    |  --R1--    ---R1--      |---Rs--|     |---Rs--|
 //    |        |  |       |     |       |     |       |
 //     ----R1--|-----[A>--|--R-----[A>--|--R-----[A>--|
 //             |          |             |             |
 // vi -----R1--           |             |             |
-// 
+//
 //                       vhp           vbp           vlp
-// 
-// 
+//
+//
 // vi  - input voltage
 // vhp - highpass output
 // vbp - bandpass output
@@ -86,14 +86,14 @@
 // R   - NMOS FET voltage controlled resistor controlling cutoff frequency
 // Rs  - shunt resistor
 // C   - capacitor
-// 
-// 
-// 
+//
+//
+//
 // SID integrator
 // --------------
-// 
+//
 //                                   V+
-// 
+//
 //                                   |
 //                                   |
 //                              -----|
@@ -115,12 +115,11 @@
 //          R1                       V-
 //          |
 //          |
-// 
+//
 //          Vw
 //
 // ----------------------------------------------------------------------------
-class Filter
-{
+class Filter {
 public:
   Filter();
 
@@ -129,11 +128,10 @@ public:
 
   RESID_INLINE
   void clock(sound_sample voice1, sound_sample voice2, sound_sample voice3,
-	     sound_sample ext_in);
+             sound_sample ext_in);
   RESID_INLINE
-  void clock(cycle_count delta_t,
-  	     sound_sample voice1, sound_sample voice2, sound_sample voice3,
-	     sound_sample ext_in);
+  void clock(cycle_count delta_t, sound_sample voice1, sound_sample voice2,
+             sound_sample voice3, sound_sample ext_in);
   void reset();
 
   // Write registers.
@@ -146,11 +144,11 @@ public:
   sound_sample output();
 
   // Spline functions.
-  void fc_default(const fc_point*& points, int& count);
+  void fc_default(const fc_point *&points, int &count);
   PointPlotter<sound_sample> fc_plotter();
 
-	void SaveState( std::ostream& stream );
-	void LoadState( std::istream& stream );
+  void SaveState(std::ostream &stream);
+  void LoadState(std::istream &stream);
 
 protected:
   void set_w0();
@@ -194,15 +192,14 @@ protected:
   // FC is an 11 bit register.
   sound_sample f0_6581[2048];
   sound_sample f0_8580[2048];
-  sound_sample* f0;
+  sound_sample *f0;
   static fc_point f0_points_6581[];
   static fc_point f0_points_8580[];
-  fc_point* f0_points;
+  fc_point *f0_points;
   int f0_count;
 
-friend class SID2;
+  friend class SID2;
 };
-
 
 // ----------------------------------------------------------------------------
 // Inline functions.
@@ -216,11 +213,8 @@ friend class SID2;
 // SID clocking - 1 cycle.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void Filter::clock(sound_sample voice1,
-		   sound_sample voice2,
-		   sound_sample voice3,
-		   sound_sample ext_in)
-{
+void Filter::clock(sound_sample voice1, sound_sample voice2,
+                   sound_sample voice3, sound_sample ext_in) {
   // Scale each voice down from 20 to 13 bits.
   voice1 >>= 7;
   voice2 >>= 7;
@@ -229,8 +223,7 @@ void Filter::clock(sound_sample voice1,
   // the filter.
   if (voice3off && !(filt & 0x04)) {
     voice3 = 0;
-  }
-  else {
+  } else {
     voice3 >>= 7;
   }
 
@@ -318,7 +311,7 @@ void Filter::clock(sound_sample voice1,
     Vnf = 0;
     break;
   }
-    
+
   // delta_t = 1 is converted to seconds given a 1MHz clock by dividing
   // with 1 000 000.
 
@@ -327,23 +320,20 @@ void Filter::clock(sound_sample voice1,
   // dVbp = -w0*Vhp*dt;
   // dVlp = -w0*Vbp*dt;
 
-  sound_sample dVbp = (w0_ceil_1*Vhp >> 20);
-  sound_sample dVlp = (w0_ceil_1*Vbp >> 20);
+  sound_sample dVbp = (w0_ceil_1 * Vhp >> 20);
+  sound_sample dVlp = (w0_ceil_1 * Vbp >> 20);
   Vbp -= dVbp;
   Vlp -= dVlp;
-  Vhp = (Vbp*_1024_div_Q >> 10) - Vlp - Vi;
+  Vhp = (Vbp * _1024_div_Q >> 10) - Vlp - Vi;
 }
 
 // ----------------------------------------------------------------------------
 // SID clocking - delta_t cycles.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void Filter::clock(cycle_count delta_t,
-		   sound_sample voice1,
-		   sound_sample voice2,
-		   sound_sample voice3,
-		   sound_sample ext_in)
-{
+void Filter::clock(cycle_count delta_t, sound_sample voice1,
+                   sound_sample voice2, sound_sample voice3,
+                   sound_sample ext_in) {
   // Scale each voice down from 20 to 13 bits.
   voice1 >>= 7;
   voice2 >>= 7;
@@ -352,8 +342,7 @@ void Filter::clock(cycle_count delta_t,
   // the filter.
   if (voice3off && !(filt & 0x04)) {
     voice3 = 0;
-  }
-  else {
+  } else {
     voice3 >>= 7;
   }
 
@@ -462,28 +451,26 @@ void Filter::clock(cycle_count delta_t,
     // Vhp = Vbp/Q - Vlp - Vi;
     // dVbp = -w0*Vhp*dt;
     // dVlp = -w0*Vbp*dt;
-    sound_sample w0_delta_t = w0_ceil_dt*delta_t_flt >> 6;
+    sound_sample w0_delta_t = w0_ceil_dt * delta_t_flt >> 6;
 
-    sound_sample dVbp = (w0_delta_t*Vhp >> 14);
-    sound_sample dVlp = (w0_delta_t*Vbp >> 14);
+    sound_sample dVbp = (w0_delta_t * Vhp >> 14);
+    sound_sample dVlp = (w0_delta_t * Vbp >> 14);
     Vbp -= dVbp;
     Vlp -= dVlp;
-    Vhp = (Vbp*_1024_div_Q >> 10) - Vlp - Vi;
+    Vhp = (Vbp * _1024_div_Q >> 10) - Vlp - Vi;
 
     delta_t -= delta_t_flt;
   }
 }
 
-
 // ----------------------------------------------------------------------------
 // SID audio output (20 bits).
 // ----------------------------------------------------------------------------
 RESID_INLINE
-sound_sample Filter::output()
-{
+sound_sample Filter::output() {
   // This is handy for testing.
   if (!enabled) {
-    return (Vnf + mixer_DC)*static_cast<sound_sample>(vol);
+    return (Vnf + mixer_DC) * static_cast<sound_sample>(vol);
   }
 
   // Mix highpass, bandpass, and lowpass outputs. The sum is not
@@ -527,7 +514,7 @@ sound_sample Filter::output()
 
   // Sum non-filtered and filtered output.
   // Multiply the sum with volume.
-  return (Vnf + Vf + mixer_DC)*static_cast<sound_sample>(vol);
+  return (Vnf + Vf + mixer_DC) * static_cast<sound_sample>(vol);
 }
 
 #endif // RESID_INLINING || defined(__FILTER_CC__)

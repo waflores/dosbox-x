@@ -10,12 +10,12 @@
 #include <math.h>
 #include <time.h>
 
-#define ACCEL 0.0001f           /* acceleration due to gravity, units in pixels per millesecond squared */
-#define WIND_RESISTANCE 0.00005f        /* acceleration per unit velocity due to wind resistance */
-#define MAX_PARTICLES 2000      /* maximum number of particles displayed at once */
+#define ACCEL           0.0001f  /* acceleration due to gravity, units in pixels per millesecond squared */
+#define WIND_RESISTANCE 0.00005f /* acceleration per unit velocity due to wind resistance */
+#define MAX_PARTICLES   2000     /* maximum number of particles displayed at once */
 
-static GLuint particleTextureID;        /* OpenGL particle texture id */
-static SDL_bool pointSizeExtensionSupported;    /* is GL_OES_point_size_array supported ? */
+static GLuint particleTextureID;             /* OpenGL particle texture id */
+static SDL_bool pointSizeExtensionSupported; /* is GL_OES_point_size_array supported ? */
 static float pointSizeScale;
 /*
     used to describe what type of particle a given struct particle is.
@@ -34,17 +34,17 @@ enum particleType
 */
 struct particle
 {
-    GLfloat x;                  /* x position of particle */
-    GLfloat y;                  /* y position of particle */
-    GLubyte color[4];           /* rgba color of particle */
-    GLfloat size;               /* size of particle in pixels */
-    GLfloat xvel;               /* x velocity of particle in pixels per milesecond */
-    GLfloat yvel;               /* y velocity of particle in pixels per millescond */
-    int isActive;               /* if not active, then particle is overwritten */
-    enum particleType type;     /* see enum particleType */
-} particles[MAX_PARTICLES];     /* this array holds all our particles */
+    GLfloat x;              /* x position of particle */
+    GLfloat y;              /* y position of particle */
+    GLubyte color[4];       /* rgba color of particle */
+    GLfloat size;           /* size of particle in pixels */
+    GLfloat xvel;           /* x velocity of particle in pixels per milesecond */
+    GLfloat yvel;           /* y velocity of particle in pixels per millescond */
+    int isActive;           /* if not active, then particle is overwritten */
+    enum particleType type; /* see enum particleType */
+} particles[MAX_PARTICLES]; /* this array holds all our particles */
 
-static int num_active_particles;        /* how many members of the particle array are actually being drawn / animated? */
+static int num_active_particles; /* how many members of the particle array are actually being drawn / animated? */
 static int screen_w, screen_h;
 
 /* function declarations */
@@ -60,8 +60,7 @@ void stepParticles(double deltaTime);
 /*  helper function (used in texture loading)
     returns next power of two greater than or equal to x
 */
-int
-nextPowerOfTwo(int x)
+int nextPowerOfTwo(int x)
 {
     int val = 1;
     while (val < x) {
@@ -73,8 +72,7 @@ nextPowerOfTwo(int x)
 /*
     steps each active particle by timestep deltaTime
 */
-void
-stepParticles(double deltaTime)
+void stepParticles(double deltaTime)
 {
     float deltaMilliseconds = deltaTime * 1000;
     int i;
@@ -122,7 +120,7 @@ stepParticles(double deltaTime)
                     curr->yvel -=
                         normy * WIND_RESISTANCE * deltaMilliseconds;
                 } else {
-                    curr->xvel = curr->yvel = 0;        /* stop particle */
+                    curr->xvel = curr->yvel = 0; /* stop particle */
                 }
 
                 if (curr->color[3] <= deltaMilliseconds * 0.1275f) {
@@ -138,7 +136,6 @@ stepParticles(double deltaTime)
                 if (curr->type == dust) {
                     curr->size -= deltaMilliseconds * 0.010f;
                 }
-
             }
 
             /* if we're still active, pack ourselves in the array next
@@ -146,20 +143,19 @@ stepParticles(double deltaTime)
             if (curr->isActive) {
                 *(slot++) = *curr;
             }
-        }                       /* endif (curr->isActive) */
+        } /* endif (curr->isActive) */
         curr++;
     }
     /* the number of active particles is computed as the difference between
        old number of active particles, where slot points, and the
        new size of the array, where particles points */
-    num_active_particles = (int) (slot - particles);
+    num_active_particles = (int)(slot - particles);
 }
 
 /*
     This draws all the particles shown on screen
 */
-void
-drawParticles(void)
+void drawParticles(void)
 {
 
     /* draw the background */
@@ -178,14 +174,12 @@ drawParticles(void)
 
     /* draw our particles! */
     glDrawArrays(GL_POINTS, 0, num_active_particles);
-
 }
 
 /*
     This causes an emitter to explode in a circular bloom of dust particles
 */
-void
-explodeEmitter(struct particle *emitter)
+void explodeEmitter(struct particle *emitter)
 {
     /* first off, we're done with this particle, so turn active off */
     emitter->isActive = 0;
@@ -221,14 +215,12 @@ explodeEmitter(struct particle *emitter)
         /* our array has expanded at the end */
         num_active_particles++;
     }
-
 }
 
 /*
     This spawns a trail particle from an emitter
 */
-void
-spawnTrailFromEmitter(struct particle *emitter)
+void spawnTrailFromEmitter(struct particle *emitter)
 {
 
     if (num_active_particles >= MAX_PARTICLES) {
@@ -257,15 +249,13 @@ spawnTrailFromEmitter(struct particle *emitter)
 
     /* our array has expanded at the end */
     num_active_particles++;
-
 }
 
 /*
     spawns a new emitter particle at the bottom of the screen
     destined for the point (x,y).
 */
-void
-spawnEmitterParticle(GLfloat x, GLfloat y)
+void spawnEmitterParticle(GLfloat x, GLfloat y)
 {
 
     if (num_active_particles >= MAX_PARTICLES) {
@@ -314,8 +304,7 @@ spawnEmitterParticle(GLfloat x, GLfloat y)
 }
 
 /* just sets the endpoint of the particle array to element zero */
-void
-initializeParticles(void)
+void initializeParticles(void)
 {
     num_active_particles = 0;
 }
@@ -323,15 +312,14 @@ initializeParticles(void)
 /*
     loads the particle texture
  */
-void
-initializeTexture(void)
+void initializeTexture(void)
 {
 
-    int bpp;                    /* texture bits per pixel */
-    Uint32 Rmask, Gmask, Bmask, Amask;  /* masks for pixel format passed into OpenGL */
-    SDL_Surface *bmp_surface;   /* the bmp is loaded here */
-    SDL_Surface *bmp_surface_rgba8888;  /* this serves as a destination to convert the BMP
-                                           to format passed into OpenGL */
+    int bpp;                           /* texture bits per pixel */
+    Uint32 Rmask, Gmask, Bmask, Amask; /* masks for pixel format passed into OpenGL */
+    SDL_Surface *bmp_surface;          /* the bmp is loaded here */
+    SDL_Surface *bmp_surface_rgba8888; /* this serves as a destination to convert the BMP
+                                          to format passed into OpenGL */
 
     bmp_surface = SDL_LoadBMP("stroke.bmp");
     if (!bmp_surface) {
@@ -363,16 +351,14 @@ initializeTexture(void)
     /* free bmp surface and converted bmp surface */
     SDL_FreeSurface(bmp_surface);
     SDL_FreeSurface(bmp_surface_rgba8888);
-
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    SDL_Window *window;         /* main window */
+    SDL_Window *window; /* main window */
     SDL_GLContext context;
     int drawableW, drawableH;
-    int done;                   /* should we clean up and exit? */
+    int done; /* should we clean up and exit? */
 
     /* initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -397,7 +383,7 @@ main(int argc, char *argv[])
 
     /* create main window and renderer */
     window = SDL_CreateWindow(NULL, 0, 0, 320, 480,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALLOW_HIGHDPI);
+                              SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALLOW_HIGHDPI);
     context = SDL_GL_CreateContext(window);
 
     /* The window size and drawable size may be different when highdpi is enabled,
@@ -407,7 +393,7 @@ main(int argc, char *argv[])
 
     /* In OpenGL, point sizes are always in pixels. We don't want them looking
      * tiny on a retina screen. */
-    pointSizeScale = (float) drawableH / (float) screen_h;
+    pointSizeScale = (float)drawableH / (float)screen_h;
 
     /* load the particle texture */
     initializeTexture();
@@ -429,10 +415,10 @@ main(int argc, char *argv[])
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrthof((GLfloat) 0,
-             (GLfloat) screen_w,
-             (GLfloat) screen_h,
-             (GLfloat) 0, 0.0, 1.0);
+    glOrthof((GLfloat)0,
+             (GLfloat)screen_w,
+             (GLfloat)screen_h,
+             (GLfloat)0, 0.0, 1.0);
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);

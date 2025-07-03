@@ -25,15 +25,15 @@
 
 #ifdef SDL_JOYSTICK_HIDAPI
 
-#include "SDL_events.h"
-#include "SDL_timer.h"
-#include "SDL_joystick.h"
-#include "SDL_gamecontroller.h"
 #include "../../SDL_hints_c.h"
 #include "../SDL_sysjoystick.h"
-#include "SDL_hidapijoystick_c.h"
-#include "SDL_hidapi_rumble.h"
+#include "SDL_events.h"
+#include "SDL_gamecontroller.h"
 #include "SDL_hidapi_nintendo.h"
+#include "SDL_hidapi_rumble.h"
+#include "SDL_hidapijoystick_c.h"
+#include "SDL_joystick.h"
+#include "SDL_timer.h"
 
 #ifdef SDL_JOYSTICK_HIDAPI_SWITCH
 
@@ -772,10 +772,10 @@ static Uint8 GetDefaultInputMode(SDL_DriverSwitch_Context *ctx)
      * battery level over Bluetooth anyway.
      */
     if (ctx->device->vendor_id == USB_VENDOR_NINTENDO) {
-        /* However, switching to full controller state breaks DirectInput, so let's not do that */
-        #if 0
+/* However, switching to full controller state breaks DirectInput, so let's not do that */
+#if 0
         input_mode = k_eSwitchInputReportIDs_FullControllerState;
-        #endif
+#endif
 
         /* However, Joy-Con controllers switch their thumbsticks into D-pad mode in simple mode,
          * so let's enable full controller state for them.
@@ -1059,7 +1059,7 @@ static ESwitchDeviceInfoControllerType ReadJoyConControllerType(SDL_HIDAPI_Devic
         ctx->m_bSyncWrite = SDL_TRUE;
         ctx->m_nMaxWriteAttempts = GetMaxWriteAttempts(device);
 
-        for ( ; ; ) {
+        for (;;) {
             ++attempts;
             device->is_bluetooth = SDL_FALSE;
             if (WriteProprietary(ctx, k_eSwitchProprietaryCommandIDs_Status, NULL, 0, SDL_TRUE)) {

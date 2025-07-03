@@ -15,19 +15,17 @@
  *
  */
 
-
 #ifndef AFWS_DECL_H_
 #define AFWS_DECL_H_
 
-  /* Since preprocessor directives can't create other preprocessor */
-  /* directives, we have to include the header files manually.     */
+/* Since preprocessor directives can't create other preprocessor */
+/* directives, we have to include the header files manually.     */
 
-#include "afdummy.h"
-#include "aflatin.h"
 #include "afcjk.h"
+#include "afdummy.h"
 #include "afindic.h"
+#include "aflatin.h"
 
 #endif /* AFWS_DECL_H_ */
-
 
 /* END */

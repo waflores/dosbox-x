@@ -26,12 +26,12 @@
 #ifdef __WINRT__
 
 extern "C" {
-#include "SDL_filesystem.h"
+#include "../../core/windows/SDL_windows.h"
 #include "SDL_error.h"
+#include "SDL_filesystem.h"
 #include "SDL_hints.h"
 #include "SDL_stdinc.h"
 #include "SDL_system.h"
-#include "../../core/windows/SDL_windows.h"
 }
 
 #include <string>

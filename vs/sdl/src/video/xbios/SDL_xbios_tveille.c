@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -22,9 +23,9 @@
 #include "SDL_config.h"
 
 /*
-	Turbo veille screensaver
+        Turbo veille screensaver
 
-	Patrice Mandin
+        Patrice Mandin
 */
 
 #include <mint/cookie.h>
@@ -35,29 +36,26 @@
 static tveille_t *cookie_veil = NULL;
 static int status;
 
-int SDL_XBIOS_TveillePresent(_THIS)
-{
-	long dummy;
+int SDL_XBIOS_TveillePresent(_THIS) {
+  long dummy;
 
-	cookie_veil = NULL;
-	if (Getcookie(C_VeiL, &dummy) == C_FOUND) {
-		cookie_veil = (tveille_t *) dummy;
-	}
+  cookie_veil = NULL;
+  if (Getcookie(C_VeiL, &dummy) == C_FOUND) {
+    cookie_veil = (tveille_t *)dummy;
+  }
 
-	return (cookie_veil != NULL);
+  return (cookie_veil != NULL);
 }
 
-void SDL_XBIOS_TveilleDisable(_THIS)
-{
-	if (cookie_veil) {
-		status = cookie_veil->enabled;
-		cookie_veil->enabled = 0xff;
-	}
+void SDL_XBIOS_TveilleDisable(_THIS) {
+  if (cookie_veil) {
+    status = cookie_veil->enabled;
+    cookie_veil->enabled = 0xff;
+  }
 }
 
-void SDL_XBIOS_TveilleEnable(_THIS)
-{
-	if (cookie_veil) {
-		cookie_veil->enabled = status;
-	}
+void SDL_XBIOS_TveilleEnable(_THIS) {
+  if (cookie_veil) {
+    cookie_veil->enabled = status;
+  }
 }

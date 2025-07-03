@@ -40,58 +40,58 @@ typedef struct SDL_EGL_VideoData
     int egl_surfacetype;
     int egl_version_major, egl_version_minor;
     EGLint egl_required_visual_id;
-    SDL_bool is_offscreen;  /* whether EGL display was offscreen */
-    EGLenum apitype;  /* EGL_OPENGL_ES_API, EGL_OPENGL_API, etc */
+    SDL_bool is_offscreen; /* whether EGL display was offscreen */
+    EGLenum apitype;       /* EGL_OPENGL_ES_API, EGL_OPENGL_API, etc */
 
-    EGLDisplay(EGLAPIENTRY *eglGetDisplay) (NativeDisplayType display);
-    EGLDisplay(EGLAPIENTRY *eglGetPlatformDisplay) (EGLenum platform,
-                                void *native_display,
-                                const EGLint *attrib_list);
-    EGLDisplay(EGLAPIENTRY *eglGetPlatformDisplayEXT) (EGLenum platform,
-                                void *native_display,
-                                const EGLint *attrib_list);
-    EGLBoolean(EGLAPIENTRY *eglInitialize) (EGLDisplay dpy, EGLint * major,
-                                EGLint * minor);
-    EGLBoolean(EGLAPIENTRY  *eglTerminate) (EGLDisplay dpy);
+    EGLDisplay(EGLAPIENTRY *eglGetDisplay)(NativeDisplayType display);
+    EGLDisplay(EGLAPIENTRY *eglGetPlatformDisplay)(EGLenum platform,
+                                                   void *native_display,
+                                                   const EGLint *attrib_list);
+    EGLDisplay(EGLAPIENTRY *eglGetPlatformDisplayEXT)(EGLenum platform,
+                                                      void *native_display,
+                                                      const EGLint *attrib_list);
+    EGLBoolean(EGLAPIENTRY *eglInitialize)(EGLDisplay dpy, EGLint *major,
+                                           EGLint *minor);
+    EGLBoolean(EGLAPIENTRY *eglTerminate)(EGLDisplay dpy);
 
-    void *(EGLAPIENTRY *eglGetProcAddress) (const char * procName);
+    void *(EGLAPIENTRY *eglGetProcAddress)(const char *procName);
 
-    EGLBoolean(EGLAPIENTRY *eglChooseConfig) (EGLDisplay dpy,
-                                  const EGLint * attrib_list,
-                                  EGLConfig * configs,
-                                  EGLint config_size, EGLint * num_config);
+    EGLBoolean(EGLAPIENTRY *eglChooseConfig)(EGLDisplay dpy,
+                                             const EGLint *attrib_list,
+                                             EGLConfig *configs,
+                                             EGLint config_size, EGLint *num_config);
 
-    EGLContext(EGLAPIENTRY *eglCreateContext) (EGLDisplay dpy,
-                                   EGLConfig config,
-                                   EGLContext share_list,
-                                   const EGLint * attrib_list);
+    EGLContext(EGLAPIENTRY *eglCreateContext)(EGLDisplay dpy,
+                                              EGLConfig config,
+                                              EGLContext share_list,
+                                              const EGLint *attrib_list);
 
-    EGLBoolean(EGLAPIENTRY *eglDestroyContext) (EGLDisplay dpy, EGLContext ctx);
+    EGLBoolean(EGLAPIENTRY *eglDestroyContext)(EGLDisplay dpy, EGLContext ctx);
 
     EGLSurface(EGLAPIENTRY *eglCreatePbufferSurface)(EGLDisplay dpy, EGLConfig config,
-                                                     EGLint const* attrib_list);
+                                                     EGLint const *attrib_list);
 
-    EGLSurface(EGLAPIENTRY *eglCreateWindowSurface) (EGLDisplay dpy,
-                                         EGLConfig config,
-                                         NativeWindowType window,
-                                         const EGLint * attrib_list);
-    EGLBoolean(EGLAPIENTRY *eglDestroySurface) (EGLDisplay dpy, EGLSurface surface);
+    EGLSurface(EGLAPIENTRY *eglCreateWindowSurface)(EGLDisplay dpy,
+                                                    EGLConfig config,
+                                                    NativeWindowType window,
+                                                    const EGLint *attrib_list);
+    EGLBoolean(EGLAPIENTRY *eglDestroySurface)(EGLDisplay dpy, EGLSurface surface);
 
-    EGLBoolean(EGLAPIENTRY *eglMakeCurrent) (EGLDisplay dpy, EGLSurface draw,
-                                 EGLSurface read, EGLContext ctx);
+    EGLBoolean(EGLAPIENTRY *eglMakeCurrent)(EGLDisplay dpy, EGLSurface draw,
+                                            EGLSurface read, EGLContext ctx);
 
-    EGLBoolean(EGLAPIENTRY *eglSwapBuffers) (EGLDisplay dpy, EGLSurface draw);
+    EGLBoolean(EGLAPIENTRY *eglSwapBuffers)(EGLDisplay dpy, EGLSurface draw);
 
-    EGLBoolean(EGLAPIENTRY *eglSwapInterval) (EGLDisplay dpy, EGLint interval);
+    EGLBoolean(EGLAPIENTRY *eglSwapInterval)(EGLDisplay dpy, EGLint interval);
 
-    const char *(EGLAPIENTRY *eglQueryString) (EGLDisplay dpy, EGLint name);
+    const char *(EGLAPIENTRY *eglQueryString)(EGLDisplay dpy, EGLint name);
 
     EGLenum(EGLAPIENTRY *eglQueryAPI)(void);
 
-    EGLBoolean(EGLAPIENTRY  *eglGetConfigAttrib) (EGLDisplay dpy, EGLConfig config,
-                                     EGLint attribute, EGLint * value);
+    EGLBoolean(EGLAPIENTRY *eglGetConfigAttrib)(EGLDisplay dpy, EGLConfig config,
+                                                EGLint attribute, EGLint *value);
 
-    EGLBoolean(EGLAPIENTRY *eglWaitNative) (EGLint  engine);
+    EGLBoolean(EGLAPIENTRY *eglWaitNative)(EGLint engine);
 
     EGLBoolean(EGLAPIENTRY *eglWaitGL)(void);
 
@@ -100,10 +100,10 @@ typedef struct SDL_EGL_VideoData
     EGLint(EGLAPIENTRY *eglGetError)(void);
 
     EGLBoolean(EGLAPIENTRY *eglQueryDevicesEXT)(EGLint max_devices,
-                                            void **devices,
-                                            EGLint *num_devices);
+                                                void **devices,
+                                                EGLint *num_devices);
 
-   /* Atomic functions */
+    /* Atomic functions */
 
     EGLSyncKHR(EGLAPIENTRY *eglCreateSyncKHR)(EGLDisplay dpy, EGLenum type, const EGLint *attrib_list);
 
@@ -160,21 +160,21 @@ extern int SDL_EGL_SetErrorEx(const char *message, const char *eglFunctionName, 
 
 #define SDL_EGL_SwapWindow_impl(BACKEND)                                                        \
     int                                                                                         \
-        BACKEND##_GLES_SwapWindow(_THIS, SDL_Window *window)                                    \
+    BACKEND##_GLES_SwapWindow(_THIS, SDL_Window *window)                                        \
     {                                                                                           \
         return SDL_EGL_SwapBuffers(_this, ((SDL_WindowData *)window->driverdata)->egl_surface); \
     }
 
 #define SDL_EGL_MakeCurrent_impl(BACKEND)                                                                                          \
     int                                                                                                                            \
-        BACKEND##_GLES_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)                                               \
+    BACKEND##_GLES_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)                                                   \
     {                                                                                                                              \
         return SDL_EGL_MakeCurrent(_this, window ? ((SDL_WindowData *)window->driverdata)->egl_surface : EGL_NO_SURFACE, context); \
     }
 
 #define SDL_EGL_CreateContext_impl(BACKEND)                                                       \
     SDL_GLContext                                                                                 \
-        BACKEND##_GLES_CreateContext(_THIS, SDL_Window *window)                                   \
+    BACKEND##_GLES_CreateContext(_THIS, SDL_Window *window)                                       \
     {                                                                                             \
         return SDL_EGL_CreateContext(_this, ((SDL_WindowData *)window->driverdata)->egl_surface); \
     }

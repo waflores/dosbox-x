@@ -37,7 +37,6 @@
 #if defined(__MINGW64_VERSION_MAJOR)
 #include <sensapi.h>
 
-
 #include "MbcsBuffer.h"
 
 // ----------------------------------------------------------------------------
@@ -45,43 +44,37 @@
 
 extern HMODULE g_hSensapi;
 
-
 // ----------------------------------------------------------------------------
 // API
 EXTERN_C {
-typedef BOOL (APIENTRY *fpIsDestinationReachableA)(
-    LPCSTR lpszDestination,
-    LPQOCINFO lpQOCInfo
-    );
+  typedef BOOL(APIENTRY * fpIsDestinationReachableA)(LPCSTR lpszDestination,
+                                                     LPQOCINFO lpQOCInfo);
 
-OCOW_DEF(BOOL, IsDestinationReachableW,
-    (LPCWSTR lpszDestination,
-    LPQOCINFO lpQOCInfo
-    ))
-{
+  OCOW_DEF(BOOL, IsDestinationReachableW,
+           (LPCWSTR lpszDestination, LPQOCINFO lpQOCInfo)) {
     static fpIsDestinationReachableA pIsDestinationReachableA = 0;
     if (!pIsDestinationReachableA) {
+      if (!g_hSensapi) {
+        g_hSensapi = ::LoadLibraryA("sensapi.dll");
         if (!g_hSensapi) {
-            g_hSensapi = ::LoadLibraryA("sensapi.dll");
-            if (!g_hSensapi) {
-                SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-                return FALSE;
-            }                
+          SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
+          return FALSE;
         }
-        pIsDestinationReachableA = (fpIsDestinationReachableA) 
-            ::GetProcAddress(g_hSensapi, "IsDestinationReachableA");
-        if (!pIsDestinationReachableA) {
-            SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-            return FALSE;
-        }
+      }
+      pIsDestinationReachableA = (fpIsDestinationReachableA)::GetProcAddress(
+          g_hSensapi, "IsDestinationReachableA");
+      if (!pIsDestinationReachableA) {
+        SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
+        return FALSE;
+      }
     }
 
     CMbcsBuffer mbcsDestination;
     if (!mbcsDestination.FromUnicode(lpszDestination))
-        return FALSE;
+      return FALSE;
 
     return pIsDestinationReachableA(mbcsDestination, lpQOCInfo);
-}
-}//EXTERN_C 
+  }
+} // EXTERN_C
 
-#endif//__MINGW64_VERSION_MAJOR
+#endif //__MINGW64_VERSION_MAJOR

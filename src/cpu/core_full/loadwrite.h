@@ -16,30 +16,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#define SaveIP() reg_eip=(uint32_t)(inst.cseip-SegBase(cs));
-#define LoadIP() inst.cseip=SegBase(cs)+reg_eip;
-#define GetIP()	(inst.cseip-SegBase(cs))
+#define SaveIP() reg_eip = (uint32_t)(inst.cseip - SegBase(cs));
+#define LoadIP() inst.cseip = SegBase(cs) + reg_eip;
+#define GetIP() (inst.cseip - SegBase(cs))
 
-#define RunException() {										\
-	CPU_Exception(cpu.exception.which,cpu.exception.error);		\
-	continue;													\
+#define RunException()                                                         \
+  {                                                                            \
+    CPU_Exception(cpu.exception.which, cpu.exception.error);                   \
+    continue;                                                                  \
+  }
+
+static INLINE uint8_t the_Fetchb(EAPoint &loc) {
+  uint8_t temp = LoadMb(loc);
+  loc += 1;
+  return temp;
 }
 
-static INLINE uint8_t the_Fetchb(EAPoint & loc) {
-	uint8_t temp=LoadMb(loc);
-	loc+=1;
-	return temp;
+static INLINE uint16_t the_Fetchw(EAPoint &loc) {
+  uint16_t temp = LoadMw(loc);
+  loc += 2;
+  return temp;
 }
-	
-static INLINE uint16_t the_Fetchw(EAPoint & loc) {
-	uint16_t temp=LoadMw(loc);
-	loc+=2;
-	return temp;
-}
-static INLINE uint32_t the_Fetchd(EAPoint & loc) {
-	uint32_t temp=LoadMd(loc);
-	loc+=4;
-	return temp;
+static INLINE uint32_t the_Fetchd(EAPoint &loc) {
+  uint32_t temp = LoadMd(loc);
+  loc += 4;
+  return temp;
 }
 
 #define Fetchb() the_Fetchb(inst.cseip)
@@ -54,4 +55,3 @@ static INLINE uint32_t the_Fetchd(EAPoint & loc) {
 #define Push_32 CPU_Push32
 #define Pop_16 CPU_Pop16
 #define Pop_32 CPU_Pop32
-

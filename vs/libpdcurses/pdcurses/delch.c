@@ -37,60 +37,56 @@ delch
 
 #include <string.h>
 
-int wdelch(WINDOW *win)
-{
-    int y, x, maxx;
-    chtype *temp1;
+int wdelch(WINDOW *win) {
+  int y, x, maxx;
+  chtype *temp1;
 
-    PDC_LOG(("wdelch() - called\n"));
+  PDC_LOG(("wdelch() - called\n"));
 
-    if (!win)
-        return ERR;
+  if (!win)
+    return ERR;
 
-    y = win->_cury;
-    x = win->_curx;
-    maxx = win->_maxx - 1;
-    temp1 = &win->_y[y][x];
+  y = win->_cury;
+  x = win->_curx;
+  maxx = win->_maxx - 1;
+  temp1 = &win->_y[y][x];
 
-    memmove(temp1, temp1 + 1, (maxx - x) * sizeof(chtype));
+  memmove(temp1, temp1 + 1, (maxx - x) * sizeof(chtype));
 
-    /* wrs (4/10/93) account for window background */
+  /* wrs (4/10/93) account for window background */
 
-    win->_y[y][maxx] = win->_bkgd;
+  win->_y[y][maxx] = win->_bkgd;
 
-    win->_lastch[y] = maxx;
+  win->_lastch[y] = maxx;
 
-    if ((win->_firstch[y] == _NO_CHANGE) || (win->_firstch[y] > x))
-        win->_firstch[y] = x;
+  if ((win->_firstch[y] == _NO_CHANGE) || (win->_firstch[y] > x))
+    win->_firstch[y] = x;
 
-    PDC_sync(win);
+  PDC_sync(win);
 
-    return OK;
+  return OK;
 }
 
-int delch(void)
-{
-    PDC_LOG(("delch() - called\n"));
+int delch(void) {
+  PDC_LOG(("delch() - called\n"));
 
-    return wdelch(stdscr);
+  return wdelch(stdscr);
 }
 
-int mvdelch(int y, int x)
-{
-    PDC_LOG(("mvdelch() - called\n"));
+int mvdelch(int y, int x) {
+  PDC_LOG(("mvdelch() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wdelch(stdscr);
+  return wdelch(stdscr);
 }
 
-int mvwdelch(WINDOW *win, int y, int x)
-{
-    PDC_LOG(("mvwdelch() - called\n"));
+int mvwdelch(WINDOW *win, int y, int x) {
+  PDC_LOG(("mvwdelch() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wdelch(win);
+  return wdelch(win);
 }

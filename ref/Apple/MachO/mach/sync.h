@@ -31,5 +31,5 @@
 ** different interface generator files, so include the two resulting
 ** headers here.
 */
-#include <mach/semaphore.h>
 #include <mach/lock_set.h>
+#include <mach/semaphore.h>

@@ -68,197 +68,180 @@ insstr
 
 #include <string.h>
 
-int winsnstr(WINDOW *win, const char *str, int n)
-{
+int winsnstr(WINDOW *win, const char *str, int n) {
 #ifdef PDC_WIDE
-    wchar_t wstr[513], *p;
-    int i;
+  wchar_t wstr[513], *p;
+  int i;
 #endif
-    int len;
+  int len;
 
-    PDC_LOG(("winsnstr() - called: string=\"%s\" n %d \n", str, n));
+  PDC_LOG(("winsnstr() - called: string=\"%s\" n %d \n", str, n));
 
-    if (!win || !str)
-        return ERR;
+  if (!win || !str)
+    return ERR;
 
-    len = (int)strlen(str);
+  len = (int)strlen(str);
 
-    if (n < 0 || n < len)
-        n = len;
+  if (n < 0 || n < len)
+    n = len;
 
 #ifdef PDC_WIDE
-    if (n > 512)
-        n = 512;
+  if (n > 512)
+    n = 512;
 
-    p = wstr;
-    i = 0;
+  p = wstr;
+  i = 0;
 
-    while (str[i] && i < n)
-    {
-        int retval = PDC_mbtowc(p, str + i, n - i);
+  while (str[i] && i < n) {
+    int retval = PDC_mbtowc(p, str + i, n - i);
 
-        if (retval <= 0)
-            break;
-        p++;
-        i += retval;
-    }
+    if (retval <= 0)
+      break;
+    p++;
+    i += retval;
+  }
 
-    while (p > wstr)
-        if (winsch(win, *--p) == ERR)
+  while (p > wstr)
+    if (winsch(win, *--p) == ERR)
 #else
-    while (n)
-        if (winsch(win, (unsigned char)(str[--n])) == ERR)
+  while (n)
+    if (winsch(win, (unsigned char)(str[--n])) == ERR)
 #endif
-            return ERR;
+      return ERR;
 
-    return OK;
+  return OK;
 }
 
-int insstr(const char *str)
-{
-    PDC_LOG(("insstr() - called: string=\"%s\"\n", str));
+int insstr(const char *str) {
+  PDC_LOG(("insstr() - called: string=\"%s\"\n", str));
 
-    return winsnstr(stdscr, str, -1);
+  return winsnstr(stdscr, str, -1);
 }
 
-int winsstr(WINDOW *win, const char *str)
-{
-    PDC_LOG(("winsstr() - called: string=\"%s\"\n", str));
+int winsstr(WINDOW *win, const char *str) {
+  PDC_LOG(("winsstr() - called: string=\"%s\"\n", str));
 
-    return winsnstr(win, str, -1);
+  return winsnstr(win, str, -1);
 }
 
-int mvinsstr(int y, int x, const char *str)
-{
-    PDC_LOG(("mvinsstr() - called: y %d x %d string=\"%s\"\n", y, x, str));
+int mvinsstr(int y, int x, const char *str) {
+  PDC_LOG(("mvinsstr() - called: y %d x %d string=\"%s\"\n", y, x, str));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return winsnstr(stdscr, str, -1);
+  return winsnstr(stdscr, str, -1);
 }
 
-int mvwinsstr(WINDOW *win, int y, int x, const char *str)
-{
-    PDC_LOG(("mvwinsstr() - called: string=\"%s\"\n", str));
+int mvwinsstr(WINDOW *win, int y, int x, const char *str) {
+  PDC_LOG(("mvwinsstr() - called: string=\"%s\"\n", str));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return winsnstr(win, str, -1);
+  return winsnstr(win, str, -1);
 }
 
-int insnstr(const char *str, int n)
-{
-    PDC_LOG(("insnstr() - called: string=\"%s\" n %d \n", str, n));
+int insnstr(const char *str, int n) {
+  PDC_LOG(("insnstr() - called: string=\"%s\" n %d \n", str, n));
 
-    return winsnstr(stdscr, str, n);
+  return winsnstr(stdscr, str, n);
 }
 
-int mvinsnstr(int y, int x, const char *str, int n)
-{
-    PDC_LOG(("mvinsnstr() - called: y %d x %d string=\"%s\" n %d \n",
-             y, x, str, n));
+int mvinsnstr(int y, int x, const char *str, int n) {
+  PDC_LOG(
+      ("mvinsnstr() - called: y %d x %d string=\"%s\" n %d \n", y, x, str, n));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return winsnstr(stdscr, str, n);
+  return winsnstr(stdscr, str, n);
 }
 
-int mvwinsnstr(WINDOW *win, int y, int x, const char *str, int n)
-{
-    PDC_LOG(("mvwinsnstr() - called: y %d x %d string=\"%s\" n %d \n",
-             y, x, str, n));
+int mvwinsnstr(WINDOW *win, int y, int x, const char *str, int n) {
+  PDC_LOG(
+      ("mvwinsnstr() - called: y %d x %d string=\"%s\" n %d \n", y, x, str, n));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return winsnstr(win, str, n);
+  return winsnstr(win, str, n);
 }
 
 #ifdef PDC_WIDE
-int wins_nwstr(WINDOW *win, const wchar_t *wstr, int n)
-{
-    const wchar_t *p;
-    int len;
+int wins_nwstr(WINDOW *win, const wchar_t *wstr, int n) {
+  const wchar_t *p;
+  int len;
 
-    PDC_LOG(("wins_nwstr() - called\n"));
+  PDC_LOG(("wins_nwstr() - called\n"));
 
-    if (!win || !wstr)
-        return ERR;
+  if (!win || !wstr)
+    return ERR;
 
-    for (len = 0, p = wstr; *p; p++)
-        len++;
+  for (len = 0, p = wstr; *p; p++)
+    len++;
 
-    if (n < 0 || n < len)
-        n = len;
+  if (n < 0 || n < len)
+    n = len;
 
-    while (n)
-        if (winsch(win, wstr[--n]) == ERR)
-            return ERR;
+  while (n)
+    if (winsch(win, wstr[--n]) == ERR)
+      return ERR;
 
-    return OK;
+  return OK;
 }
 
-int ins_wstr(const wchar_t *wstr)
-{
-    PDC_LOG(("ins_wstr() - called\n"));
+int ins_wstr(const wchar_t *wstr) {
+  PDC_LOG(("ins_wstr() - called\n"));
 
-    return wins_nwstr(stdscr, wstr, -1);
+  return wins_nwstr(stdscr, wstr, -1);
 }
 
-int wins_wstr(WINDOW *win, const wchar_t *wstr)
-{
-    PDC_LOG(("wins_wstr() - called\n"));
+int wins_wstr(WINDOW *win, const wchar_t *wstr) {
+  PDC_LOG(("wins_wstr() - called\n"));
 
-    return wins_nwstr(win, wstr, -1);
+  return wins_nwstr(win, wstr, -1);
 }
 
-int mvins_wstr(int y, int x, const wchar_t *wstr)
-{
-    PDC_LOG(("mvins_wstr() - called\n"));
+int mvins_wstr(int y, int x, const wchar_t *wstr) {
+  PDC_LOG(("mvins_wstr() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wins_nwstr(stdscr, wstr, -1);
+  return wins_nwstr(stdscr, wstr, -1);
 }
 
-int mvwins_wstr(WINDOW *win, int y, int x, const wchar_t *wstr)
-{
-    PDC_LOG(("mvwinsstr() - called\n"));
+int mvwins_wstr(WINDOW *win, int y, int x, const wchar_t *wstr) {
+  PDC_LOG(("mvwinsstr() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wins_nwstr(win, wstr, -1);
+  return wins_nwstr(win, wstr, -1);
 }
 
-int ins_nwstr(const wchar_t *wstr, int n)
-{
-    PDC_LOG(("ins_nwstr() - called\n"));
+int ins_nwstr(const wchar_t *wstr, int n) {
+  PDC_LOG(("ins_nwstr() - called\n"));
 
-    return wins_nwstr(stdscr, wstr, n);
+  return wins_nwstr(stdscr, wstr, n);
 }
 
-int mvins_nwstr(int y, int x, const wchar_t *wstr, int n)
-{
-    PDC_LOG(("mvinsnstr() - called\n"));
+int mvins_nwstr(int y, int x, const wchar_t *wstr, int n) {
+  PDC_LOG(("mvinsnstr() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wins_nwstr(stdscr, wstr, n);
+  return wins_nwstr(stdscr, wstr, n);
 }
 
-int mvwins_nwstr(WINDOW *win, int y, int x, const wchar_t *wstr, int n)
-{
-    PDC_LOG(("mvwinsnstr() - called\n"));
+int mvwins_nwstr(WINDOW *win, int y, int x, const wchar_t *wstr, int n) {
+  PDC_LOG(("mvwinsnstr() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wins_nwstr(win, wstr, n);
+  return wins_nwstr(win, wstr, n);
 }
 #endif

@@ -19,10 +19,10 @@
 
 #pragma once
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 #include "../RetroWave.h"
 
@@ -31,12 +31,13 @@ extern "C" {
 #endif
 
 typedef struct {
-	void *hspi;
-	void *cs_gpiox;
-	uint16_t cs_gpio_pin;
+  void *hspi;
+  void *cs_gpiox;
+  uint16_t cs_gpio_pin;
 } RetroWavePlatform_STM32_HAL_SPI;
 
-extern int retrowave_init_stm32_hal_spi(RetroWaveContext *ctx, void *hspi, void *cs_gpiox, uint16_t cs_gpio_pin);
+extern int retrowave_init_stm32_hal_spi(RetroWaveContext *ctx, void *hspi,
+                                        void *cs_gpiox, uint16_t cs_gpio_pin);
 extern void retrowave_deinit_stm32_hal_spi(RetroWaveContext *ctx);
 
 #ifdef __cplusplus

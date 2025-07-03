@@ -33,7 +33,7 @@
 #include "../SDL_sysvideo.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
 #define ATARIBIOS_MAXKEYS 128
 
@@ -47,6 +47,6 @@ extern void SDL_Atari_InitInternalKeymap(_THIS);
 /* Atari to Unicode charset translation table */
 extern Uint16 SDL_AtariToUnicodeTable[256];
 SDL_keysym *SDL_Atari_TranslateKey(int scancode, SDL_keysym *keysym,
-	SDL_bool pressed);
+                                   SDL_bool pressed);
 
 #endif /* _SDL_ATARI_EVENTS_H_ */

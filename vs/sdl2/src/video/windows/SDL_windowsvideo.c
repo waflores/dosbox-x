@@ -22,20 +22,20 @@
 
 #ifdef SDL_VIDEO_DRIVER_WINDOWS
 
-#include "SDL_main.h"
-#include "SDL_video.h"
+#include "../../SDL_hints_c.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
 #include "SDL_hints.h"
+#include "SDL_main.h"
 #include "SDL_mouse.h"
 #include "SDL_system.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
-#include "../../SDL_hints_c.h"
+#include "SDL_video.h"
 
-#include "SDL_windowsvideo.h"
 #include "SDL_windowsframebuffer.h"
-#include "SDL_windowsshape.h"
-#include "SDL_windowsvulkan.h"
 #include "SDL_windowsmessagebox.h"
+#include "SDL_windowsshape.h"
+#include "SDL_windowsvideo.h"
+#include "SDL_windowsvulkan.h"
 
 /* #define HIGHDPI_DEBUG */
 
@@ -267,11 +267,11 @@ static SDL_VideoDevice *WIN_CreateDevice(void)
 
 VideoBootStrap WINDOWS_bootstrap = {
     "windows", "SDL Windows video driver", WIN_CreateDevice,
-    #if !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
+#if !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
     WIN_ShowMessageBox
-    #else
+#else
     NULL
-    #endif
+#endif
 };
 
 static BOOL WIN_DeclareDPIAwareUnaware(_THIS)

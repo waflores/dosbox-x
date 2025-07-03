@@ -17,8 +17,8 @@
 /* This allows testing SDL_CreateSoftwareRenderer with the window surface API. Undefine it to use the accelerated renderer instead. */
 #define USE_SOFTWARE_RENDERER
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -150,4 +150,3 @@ int main(int argc, char *argv[])
     SDL_Quit();
     return 0;
 }
-

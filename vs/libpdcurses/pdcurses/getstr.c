@@ -69,406 +69,364 @@ getstr
 
 #define MAXLINE 255
 
-int wgetnstr(WINDOW *win, char *str, int n)
-{
+int wgetnstr(WINDOW *win, char *str, int n) {
 #ifdef PDC_WIDE
-    wchar_t wstr[MAXLINE + 1];
+  wchar_t wstr[MAXLINE + 1];
 
-    if (n < 0 || n > MAXLINE)
-        n = MAXLINE;
+  if (n < 0 || n > MAXLINE)
+    n = MAXLINE;
 
-    if (wgetn_wstr(win, (wint_t *)wstr, n) == ERR)
-        return ERR;
+  if (wgetn_wstr(win, (wint_t *)wstr, n) == ERR)
+    return ERR;
 
-    return PDC_wcstombs(str, wstr, n);
+  return PDC_wcstombs(str, wstr, n);
 #else
-    int ch, i, num, x, chars;
-    char *p;
-    bool stop, oldecho, oldcbreak, oldnodelay;
+  int ch, i, num, x, chars;
+  char *p;
+  bool stop, oldecho, oldcbreak, oldnodelay;
 
-    PDC_LOG(("wgetnstr() - called\n"));
+  PDC_LOG(("wgetnstr() - called\n"));
 
-    if (!win || !str)
-        return ERR;
+  if (!win || !str)
+    return ERR;
 
-    chars = 0;
-    p = str;
-    stop = FALSE;
+  chars = 0;
+  p = str;
+  stop = FALSE;
 
-    x = win->_curx;
+  x = win->_curx;
 
-    oldcbreak = SP->cbreak; /* remember states */
-    oldecho = SP->echo;
-    oldnodelay = win->_nodelay;
+  oldcbreak = SP->cbreak; /* remember states */
+  oldecho = SP->echo;
+  oldnodelay = win->_nodelay;
 
-    SP->echo = FALSE;       /* we do echo ourselves */
-    cbreak();               /* ensure each key is returned immediately */
-    win->_nodelay = FALSE;  /* don't return -1 */
+  SP->echo = FALSE;      /* we do echo ourselves */
+  cbreak();              /* ensure each key is returned immediately */
+  win->_nodelay = FALSE; /* don't return -1 */
 
-    wrefresh(win);
+  wrefresh(win);
 
-    while (!stop)
-    {
-        ch = wgetch(win);
+  while (!stop) {
+    ch = wgetch(win);
 
-        switch (ch)
-        {
+    switch (ch) {
 
-        case '\t':
-            ch = ' ';
-            num = TABSIZE - (win->_curx - x) % TABSIZE;
-            for (i = 0; i < num; i++)
-            {
-                if (chars < n)
-                {
-                    if (oldecho)
-                        waddch(win, ch);
-                    *p++ = ch;
-                    ++chars;
-                }
-                else
-                    beep();
-            }
-            break;
+    case '\t':
+      ch = ' ';
+      num = TABSIZE - (win->_curx - x) % TABSIZE;
+      for (i = 0; i < num; i++) {
+        if (chars < n) {
+          if (oldecho)
+            waddch(win, ch);
+          *p++ = ch;
+          ++chars;
+        } else
+          beep();
+      }
+      break;
 
-        case _ECHAR:        /* CTRL-H -- Delete character */
-            if (p > str)
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
-                ch = (unsigned char)(*--p);
-                if ((ch < ' ') && (oldecho))
-                    waddstr(win, "\b \b");
-                chars--;
-            }
-            break;
+    case _ECHAR: /* CTRL-H -- Delete character */
+      if (p > str) {
+        if (oldecho)
+          waddstr(win, "\b \b");
+        ch = (unsigned char)(*--p);
+        if ((ch < ' ') && (oldecho))
+          waddstr(win, "\b \b");
+        chars--;
+      }
+      break;
 
-        case _DLCHAR:       /* CTRL-U -- Delete line */
-            while (p > str)
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
-                ch = (unsigned char)(*--p);
-                if ((ch < ' ') && (oldecho))
-                    waddstr(win, "\b \b");
-            }
-            chars = 0;
-            break;
+    case _DLCHAR: /* CTRL-U -- Delete line */
+      while (p > str) {
+        if (oldecho)
+          waddstr(win, "\b \b");
+        ch = (unsigned char)(*--p);
+        if ((ch < ' ') && (oldecho))
+          waddstr(win, "\b \b");
+      }
+      chars = 0;
+      break;
 
-        case _DWCHAR:       /* CTRL-W -- Delete word */
+    case _DWCHAR: /* CTRL-W -- Delete word */
 
-            while ((p > str) && (*(p - 1) == ' '))
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
+      while ((p > str) && (*(p - 1) == ' ')) {
+        if (oldecho)
+          waddstr(win, "\b \b");
 
-                --p;        /* remove space */
-                chars--;
-            }
-            while ((p > str) && (*(p - 1) != ' '))
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
+        --p; /* remove space */
+        chars--;
+      }
+      while ((p > str) && (*(p - 1) != ' ')) {
+        if (oldecho)
+          waddstr(win, "\b \b");
 
-                ch = (unsigned char)(*--p);
-                if ((ch < ' ') && (oldecho))
-                    waddstr(win, "\b \b");
-                chars--;
-            }
-            break;
+        ch = (unsigned char)(*--p);
+        if ((ch < ' ') && (oldecho))
+          waddstr(win, "\b \b");
+        chars--;
+      }
+      break;
 
-        case '\n':
-        case '\r':
-            stop = TRUE;
-            if (oldecho)
-                waddch(win, '\n');
-            break;
+    case '\n':
+    case '\r':
+      stop = TRUE;
+      if (oldecho)
+        waddch(win, '\n');
+      break;
 
-        default:
-            if (chars < n)
-            {
-                if (!SP->key_code && ch < 0x100)
-                {
-                    *p++ = ch;
-                    if (oldecho)
-                        waddch(win, ch);
-                    chars++;
-                }
-            }
-            else
-                beep();
-
-            break;
-
+    default:
+      if (chars < n) {
+        if (!SP->key_code && ch < 0x100) {
+          *p++ = ch;
+          if (oldecho)
+            waddch(win, ch);
+          chars++;
         }
+      } else
+        beep();
 
-        wrefresh(win);
+      break;
     }
 
-    *p = '\0';
+    wrefresh(win);
+  }
 
-    SP->echo = oldecho;     /* restore old settings */
-    SP->cbreak = oldcbreak;
-    win->_nodelay = oldnodelay;
+  *p = '\0';
 
-    return OK;
+  SP->echo = oldecho; /* restore old settings */
+  SP->cbreak = oldcbreak;
+  win->_nodelay = oldnodelay;
+
+  return OK;
 #endif
 }
 
-int getstr(char *str)
-{
-    PDC_LOG(("getstr() - called\n"));
+int getstr(char *str) {
+  PDC_LOG(("getstr() - called\n"));
 
-    return wgetnstr(stdscr, str, MAXLINE);
+  return wgetnstr(stdscr, str, MAXLINE);
 }
 
-int wgetstr(WINDOW *win, char *str)
-{
-    PDC_LOG(("wgetstr() - called\n"));
+int wgetstr(WINDOW *win, char *str) {
+  PDC_LOG(("wgetstr() - called\n"));
 
-    return wgetnstr(win, str, MAXLINE);
+  return wgetnstr(win, str, MAXLINE);
 }
 
-int mvgetstr(int y, int x, char *str)
-{
-    PDC_LOG(("mvgetstr() - called\n"));
+int mvgetstr(int y, int x, char *str) {
+  PDC_LOG(("mvgetstr() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wgetnstr(stdscr, str, MAXLINE);
+  return wgetnstr(stdscr, str, MAXLINE);
 }
 
-int mvwgetstr(WINDOW *win, int y, int x, char *str)
-{
-    PDC_LOG(("mvwgetstr() - called\n"));
+int mvwgetstr(WINDOW *win, int y, int x, char *str) {
+  PDC_LOG(("mvwgetstr() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wgetnstr(win, str, MAXLINE);
+  return wgetnstr(win, str, MAXLINE);
 }
 
-int getnstr(char *str, int n)
-{
-    PDC_LOG(("getnstr() - called\n"));
+int getnstr(char *str, int n) {
+  PDC_LOG(("getnstr() - called\n"));
 
-    return wgetnstr(stdscr, str, n);
+  return wgetnstr(stdscr, str, n);
 }
 
-int mvgetnstr(int y, int x, char *str, int n)
-{
-    PDC_LOG(("mvgetnstr() - called\n"));
+int mvgetnstr(int y, int x, char *str, int n) {
+  PDC_LOG(("mvgetnstr() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wgetnstr(stdscr, str, n);
+  return wgetnstr(stdscr, str, n);
 }
 
-int mvwgetnstr(WINDOW *win, int y, int x, char *str, int n)
-{
-    PDC_LOG(("mvwgetnstr() - called\n"));
+int mvwgetnstr(WINDOW *win, int y, int x, char *str, int n) {
+  PDC_LOG(("mvwgetnstr() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wgetnstr(win, str, n);
+  return wgetnstr(win, str, n);
 }
 
 #ifdef PDC_WIDE
-int wgetn_wstr(WINDOW *win, wint_t *wstr, int n)
-{
-    int ch, i, num, x, chars;
-    wint_t *p;
-    bool stop, oldecho, oldcbreak, oldnodelay;
+int wgetn_wstr(WINDOW *win, wint_t *wstr, int n) {
+  int ch, i, num, x, chars;
+  wint_t *p;
+  bool stop, oldecho, oldcbreak, oldnodelay;
 
-    PDC_LOG(("wgetn_wstr() - called\n"));
+  PDC_LOG(("wgetn_wstr() - called\n"));
 
-    if (!win || !wstr)
-        return ERR;
+  if (!win || !wstr)
+    return ERR;
 
-    chars = 0;
-    p = wstr;
-    stop = FALSE;
+  chars = 0;
+  p = wstr;
+  stop = FALSE;
 
-    x = win->_curx;
+  x = win->_curx;
 
-    oldcbreak = SP->cbreak; /* remember states */
-    oldecho = SP->echo;
-    oldnodelay = win->_nodelay;
+  oldcbreak = SP->cbreak; /* remember states */
+  oldecho = SP->echo;
+  oldnodelay = win->_nodelay;
 
-    SP->echo = FALSE;       /* we do echo ourselves */
-    cbreak();               /* ensure each key is returned immediately */
-    win->_nodelay = FALSE;  /* don't return -1 */
+  SP->echo = FALSE;      /* we do echo ourselves */
+  cbreak();              /* ensure each key is returned immediately */
+  win->_nodelay = FALSE; /* don't return -1 */
 
-    wrefresh(win);
+  wrefresh(win);
 
-    while (!stop)
-    {
-        ch = wgetch(win);
+  while (!stop) {
+    ch = wgetch(win);
 
-        switch (ch)
-        {
+    switch (ch) {
 
-        case '\t':
-            ch = ' ';
-            num = TABSIZE - (win->_curx - x) % TABSIZE;
-            for (i = 0; i < num; i++)
-            {
-                if (chars < n)
-                {
-                    if (oldecho)
-                        waddch(win, ch);
-                    *p++ = ch;
-                    ++chars;
-                }
-                else
-                    beep();
-            }
-            break;
+    case '\t':
+      ch = ' ';
+      num = TABSIZE - (win->_curx - x) % TABSIZE;
+      for (i = 0; i < num; i++) {
+        if (chars < n) {
+          if (oldecho)
+            waddch(win, ch);
+          *p++ = ch;
+          ++chars;
+        } else
+          beep();
+      }
+      break;
 
-        case _ECHAR:        /* CTRL-H -- Delete character */
-            if (p > wstr)
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
-                ch = *--p;
-                if ((ch < ' ') && (oldecho))
-                    waddstr(win, "\b \b");
-                chars--;
-            }
-            break;
+    case _ECHAR: /* CTRL-H -- Delete character */
+      if (p > wstr) {
+        if (oldecho)
+          waddstr(win, "\b \b");
+        ch = *--p;
+        if ((ch < ' ') && (oldecho))
+          waddstr(win, "\b \b");
+        chars--;
+      }
+      break;
 
-        case _DLCHAR:       /* CTRL-U -- Delete line */
-            while (p > wstr)
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
-                ch = *--p;
-                if ((ch < ' ') && (oldecho))
-                    waddstr(win, "\b \b");
-            }
-            chars = 0;
-            break;
+    case _DLCHAR: /* CTRL-U -- Delete line */
+      while (p > wstr) {
+        if (oldecho)
+          waddstr(win, "\b \b");
+        ch = *--p;
+        if ((ch < ' ') && (oldecho))
+          waddstr(win, "\b \b");
+      }
+      chars = 0;
+      break;
 
-        case _DWCHAR:       /* CTRL-W -- Delete word */
+    case _DWCHAR: /* CTRL-W -- Delete word */
 
-            while ((p > wstr) && (*(p - 1) == ' '))
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
+      while ((p > wstr) && (*(p - 1) == ' ')) {
+        if (oldecho)
+          waddstr(win, "\b \b");
 
-                --p;        /* remove space */
-                chars--;
-            }
-            while ((p > wstr) && (*(p - 1) != ' '))
-            {
-                if (oldecho)
-                    waddstr(win, "\b \b");
+        --p; /* remove space */
+        chars--;
+      }
+      while ((p > wstr) && (*(p - 1) != ' ')) {
+        if (oldecho)
+          waddstr(win, "\b \b");
 
-                ch = *--p;
-                if ((ch < ' ') && (oldecho))
-                    waddstr(win, "\b \b");
-                chars--;
-            }
-            break;
+        ch = *--p;
+        if ((ch < ' ') && (oldecho))
+          waddstr(win, "\b \b");
+        chars--;
+      }
+      break;
 
-        case '\n':
-        case '\r':
-            stop = TRUE;
-            if (oldecho)
-                waddch(win, '\n');
-            break;
+    case '\n':
+    case '\r':
+      stop = TRUE;
+      if (oldecho)
+        waddch(win, '\n');
+      break;
 
-        default:
-            if (chars < n)
-            {
-                if (!SP->key_code)
-                {
-                    *p++ = ch;
-                    if (oldecho)
-                        waddch(win, ch);
-                    chars++;
-                }
-            }
-            else
-                beep();
-
-            break;
-
+    default:
+      if (chars < n) {
+        if (!SP->key_code) {
+          *p++ = ch;
+          if (oldecho)
+            waddch(win, ch);
+          chars++;
         }
+      } else
+        beep();
 
-        wrefresh(win);
+      break;
     }
 
-    *p = '\0';
+    wrefresh(win);
+  }
 
-    SP->echo = oldecho;     /* restore old settings */
-    SP->cbreak = oldcbreak;
-    win->_nodelay = oldnodelay;
+  *p = '\0';
 
-    return OK;
+  SP->echo = oldecho; /* restore old settings */
+  SP->cbreak = oldcbreak;
+  win->_nodelay = oldnodelay;
+
+  return OK;
 }
 
-int get_wstr(wint_t *wstr)
-{
-    PDC_LOG(("get_wstr() - called\n"));
+int get_wstr(wint_t *wstr) {
+  PDC_LOG(("get_wstr() - called\n"));
 
-    return wgetn_wstr(stdscr, wstr, MAXLINE);
+  return wgetn_wstr(stdscr, wstr, MAXLINE);
 }
 
-int wget_wstr(WINDOW *win, wint_t *wstr)
-{
-    PDC_LOG(("wget_wstr() - called\n"));
+int wget_wstr(WINDOW *win, wint_t *wstr) {
+  PDC_LOG(("wget_wstr() - called\n"));
 
-    return wgetn_wstr(win, wstr, MAXLINE);
+  return wgetn_wstr(win, wstr, MAXLINE);
 }
 
-int mvget_wstr(int y, int x, wint_t *wstr)
-{
-    PDC_LOG(("mvget_wstr() - called\n"));
+int mvget_wstr(int y, int x, wint_t *wstr) {
+  PDC_LOG(("mvget_wstr() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wgetn_wstr(stdscr, wstr, MAXLINE);
+  return wgetn_wstr(stdscr, wstr, MAXLINE);
 }
 
-int mvwget_wstr(WINDOW *win, int y, int x, wint_t *wstr)
-{
-    PDC_LOG(("mvwget_wstr() - called\n"));
+int mvwget_wstr(WINDOW *win, int y, int x, wint_t *wstr) {
+  PDC_LOG(("mvwget_wstr() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wgetn_wstr(win, wstr, MAXLINE);
+  return wgetn_wstr(win, wstr, MAXLINE);
 }
 
-int getn_wstr(wint_t *wstr, int n)
-{
-    PDC_LOG(("getn_wstr() - called\n"));
+int getn_wstr(wint_t *wstr, int n) {
+  PDC_LOG(("getn_wstr() - called\n"));
 
-    return wgetn_wstr(stdscr, wstr, n);
+  return wgetn_wstr(stdscr, wstr, n);
 }
 
-int mvgetn_wstr(int y, int x, wint_t *wstr, int n)
-{
-    PDC_LOG(("mvgetn_wstr() - called\n"));
+int mvgetn_wstr(int y, int x, wint_t *wstr, int n) {
+  PDC_LOG(("mvgetn_wstr() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wgetn_wstr(stdscr, wstr, n);
+  return wgetn_wstr(stdscr, wstr, n);
 }
 
-int mvwgetn_wstr(WINDOW *win, int y, int x, wint_t *wstr, int n)
-{
-    PDC_LOG(("mvwgetn_wstr() - called\n"));
+int mvwgetn_wstr(WINDOW *win, int y, int x, wint_t *wstr, int n) {
+  PDC_LOG(("mvwgetn_wstr() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wgetn_wstr(win, wstr, n);
+  return wgetn_wstr(win, wstr, n);
 }
 #endif

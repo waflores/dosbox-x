@@ -10,11 +10,11 @@
 #include "../gamelink/gamelink.h"
 
 // output API
-//void OUTPUT_GAMELINK_Initialize();
+// void OUTPUT_GAMELINK_Initialize();
 void OUTPUT_GAMELINK_Select();
 Bitu OUTPUT_GAMELINK_GetBestMode(Bitu flags);
 Bitu OUTPUT_GAMELINK_SetSize();
-bool OUTPUT_GAMELINK_StartUpdate(uint8_t* &pixels, Bitu &pitch);
+bool OUTPUT_GAMELINK_StartUpdate(uint8_t *&pixels, Bitu &pitch);
 void OUTPUT_GAMELINK_EndUpdate(const uint16_t *changedLines);
 void OUTPUT_GAMELINK_Shutdown();
 

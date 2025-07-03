@@ -28,8 +28,8 @@
 #ifndef SDL_keycode_h_
 #define SDL_keycode_h_
 
-#include "SDL_stdinc.h"
 #include "SDL_scancode.h"
+#include "SDL_stdinc.h"
 
 /**
  * The SDL virtual key representation.
@@ -44,8 +44,8 @@
  */
 typedef Sint32 SDL_Keycode;
 
-#define SDLK_SCANCODE_MASK (1<<30)
-#define SDL_SCANCODE_TO_KEYCODE(X)  (X | SDLK_SCANCODE_MASK)
+#define SDLK_SCANCODE_MASK         (1 << 30)
+#define SDL_SCANCODE_TO_KEYCODE(X) (X | SDLK_SCANCODE_MASK)
 
 typedef enum SDL_KeyCode
 {

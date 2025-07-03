@@ -5,14 +5,16 @@
 #define ZIP7_INC_COMPILER_H
 
 #if defined(__clang__)
-# define Z7_CLANG_VERSION  (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
+#define Z7_CLANG_VERSION                                                       \
+  (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 #endif
 #if defined(__clang__) && defined(__apple_build_version__)
-# define Z7_APPLE_CLANG_VERSION   Z7_CLANG_VERSION
+#define Z7_APPLE_CLANG_VERSION Z7_CLANG_VERSION
 #elif defined(__clang__)
-# define Z7_LLVM_CLANG_VERSION    Z7_CLANG_VERSION
+#define Z7_LLVM_CLANG_VERSION Z7_CLANG_VERSION
 #elif defined(__GNUC__)
-# define Z7_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#define Z7_GCC_VERSION                                                         \
+  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #endif
 
 #ifdef _MSC_VER
@@ -48,8 +50,8 @@
 // padding size of '' with 4 bytes to alignment boundary
 #pragma GCC diagnostic ignored "-Wpadded"
 
-#if defined(Z7_LLVM_CLANG_VERSION) && (__clang_major__ == 13) \
-  && defined(__FreeBSD__)
+#if defined(Z7_LLVM_CLANG_VERSION) && (__clang_major__ == 13) &&               \
+    defined(__FreeBSD__)
 // freebsd:
 #pragma GCC diagnostic ignored "-Wexcess-padding"
 #endif
@@ -66,15 +68,15 @@
 #endif
 
 #if __clang_major__ == 13
-  // for <arm_neon.h>
-  #pragma GCC diagnostic ignored "-Wreserved-identifier"
+// for <arm_neon.h>
+#pragma GCC diagnostic ignored "-Wreserved-identifier"
 #endif
 
 #endif // __clang__
 
 #if defined(_WIN32) && defined(__clang__) && __clang_major__ >= 16
 // #pragma GCC diagnostic ignored "-Wcast-function-type-strict"
-#define Z7_DIAGNOSTIC_IGNORE_CAST_FUNCTION \
+#define Z7_DIAGNOSTIC_IGNORE_CAST_FUNCTION                                     \
   _Pragma("GCC diagnostic ignored \"-Wcast-function-type-strict\"")
 #else
 #define Z7_DIAGNOSTIC_IGNORE_CAST_FUNCTION
@@ -82,10 +84,11 @@
 
 typedef void (*Z7_void_Function)(void);
 #if defined(__clang__) || defined(__GNUC__)
-#define Z7_CAST_FUNC_C  (Z7_void_Function)
+#define Z7_CAST_FUNC_C (Z7_void_Function)
 #elif defined(_MSC_VER) && _MSC_VER > 1920
-#define Z7_CAST_FUNC_C  (void *)
-// #pragma warning(disable : 4191) // 'type cast': unsafe conversion from 'FARPROC' to 'void (__cdecl *)()'
+#define Z7_CAST_FUNC_C (void *)
+// #pragma warning(disable : 4191) // 'type cast': unsafe conversion from
+// 'FARPROC' to 'void (__cdecl *)()'
 #else
 #define Z7_CAST_FUNC_C
 #endif
@@ -95,20 +98,23 @@ typedef void (*Z7_void_Function)(void);
 #endif
 */
 #ifdef __GNUC__
-#if defined(Z7_GCC_VERSION) && (Z7_GCC_VERSION >= 40000) && (Z7_GCC_VERSION < 70000)
+#if defined(Z7_GCC_VERSION) && (Z7_GCC_VERSION >= 40000) &&                    \
+    (Z7_GCC_VERSION < 70000)
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 #endif
 
-
 #ifdef _MSC_VER
 
-  #ifdef UNDER_CE
-    #define RPC_NO_WINDOWS_H
-    /* #pragma warning(disable : 4115) // '_RPC_ASYNC_STATE' : named type definition in parentheses */
-    #pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
-    #pragma warning(disable : 4214) // nonstandard extension used : bit field types other than int
-  #endif
+#ifdef UNDER_CE
+#define RPC_NO_WINDOWS_H
+/* #pragma warning(disable : 4115) // '_RPC_ASYNC_STATE' : named type definition
+ * in parentheses */
+#pragma warning(                                                               \
+    disable : 4201) // nonstandard extension used : nameless struct/union
+#pragma warning(disable : 4214) // nonstandard extension used : bit field types
+                                // other than int
+#endif
 
 #if defined(_MSC_VER) && _MSC_VER >= 1800
 #pragma warning(disable : 4464) // relative include path contains '..'
@@ -122,7 +128,7 @@ typedef void (*Z7_void_Function)(void);
 // winnt.h: 'Int64ShllMod32'
 #pragma warning(disable : 4514) // unreferenced inline function has been removed
 #endif
-    
+
 #if _MSC_VER < 1300
 // #pragma warning(disable : 4702) // unreachable code
 // Bra.c : -O1:
@@ -140,7 +146,8 @@ typedef void (*Z7_void_Function)(void);
 #if _MSC_VER > 1200
 // -Wall warnings
 
-#pragma warning(disable : 4711) // function selected for automatic inline expansion
+#pragma warning(                                                               \
+    disable : 4711) // function selected for automatic inline expansion
 #pragma warning(disable : 4820) // '2' bytes padding added after data member
 
 #if _MSC_VER >= 1400 && _MSC_VER < 1920
@@ -156,74 +163,71 @@ typedef void (*Z7_void_Function)(void);
 #endif
 
 #if _MSC_VER >= 1914
-// Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
+// Compiler will insert Spectre mitigation for memory load if /Qspectre switch
+// specified
 #pragma warning(disable : 5045)
 #endif
 
 #endif // _MSC_VER > 1200
 #endif // _MSC_VER
 
-
 #if defined(__clang__) && (__clang_major__ >= 4)
-  #define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE \
-    _Pragma("clang loop unroll(disable)") \
-    _Pragma("clang loop vectorize(disable)")
-  #define Z7_ATTRIB_NO_VECTORIZE
-#elif defined(__GNUC__) && (__GNUC__ >= 5) \
-    && (!defined(Z7_MCST_LCC_VERSION) || (Z7_MCST_LCC_VERSION >= 12610))
-  #define Z7_ATTRIB_NO_VECTORIZE __attribute__((optimize("no-tree-vectorize")))
-  // __attribute__((optimize("no-unroll-loops")));
-  #define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE
+#define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE                            \
+  _Pragma("clang loop unroll(disable)") _Pragma("clang loop "                  \
+                                                "vectorize(disable)")
+#define Z7_ATTRIB_NO_VECTORIZE
+#elif defined(__GNUC__) && (__GNUC__ >= 5) &&                                  \
+    (!defined(Z7_MCST_LCC_VERSION) || (Z7_MCST_LCC_VERSION >= 12610))
+#define Z7_ATTRIB_NO_VECTORIZE __attribute__((optimize("no-tree-vectorize")))
+// __attribute__((optimize("no-unroll-loops")));
+#define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE
 #elif defined(_MSC_VER) && (_MSC_VER >= 1920)
-  #define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE \
-    _Pragma("loop( no_vector )")
-  #define Z7_ATTRIB_NO_VECTORIZE
+#define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE _Pragma("loop( no_vector )")
+#define Z7_ATTRIB_NO_VECTORIZE
 #else
-  #define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE
-  #define Z7_ATTRIB_NO_VECTORIZE
+#define Z7_PRAGMA_OPT_DISABLE_LOOP_UNROLL_VECTORIZE
+#define Z7_ATTRIB_NO_VECTORIZE
 #endif
 
-#if defined(MY_CPU_X86_OR_AMD64) && ( \
-       defined(__clang__) && (__clang_major__ >= 4) \
-    || defined(__GNUC__) && (__GNUC__ >= 5))
-  #define Z7_ATTRIB_NO_SSE  __attribute__((__target__("no-sse")))
+#if defined(MY_CPU_X86_OR_AMD64) &&                                            \
+    (defined(__clang__) && (__clang_major__ >= 4) ||                           \
+     defined(__GNUC__) && (__GNUC__ >= 5))
+#define Z7_ATTRIB_NO_SSE __attribute__((__target__("no-sse")))
 #else
-  #define Z7_ATTRIB_NO_SSE
+#define Z7_ATTRIB_NO_SSE
 #endif
 
-#define Z7_ATTRIB_NO_VECTOR \
-  Z7_ATTRIB_NO_VECTORIZE \
+#define Z7_ATTRIB_NO_VECTOR                                                    \
+  Z7_ATTRIB_NO_VECTORIZE                                                       \
   Z7_ATTRIB_NO_SSE
 
-
-#if defined(__clang__) && (__clang_major__ >= 8) \
-  || defined(__GNUC__) && (__GNUC__ >= 1000) \
-  /* || defined(_MSC_VER) && (_MSC_VER >= 1920) */
-  // GCC is not good for __builtin_expect()
-  #define Z7_LIKELY(x)   (__builtin_expect((x), 1))
-  #define Z7_UNLIKELY(x) (__builtin_expect((x), 0))
-  // #define Z7_unlikely [[unlikely]]
-  // #define Z7_likely [[likely]]
+#if defined(__clang__) && (__clang_major__ >= 8) ||                            \
+    defined(__GNUC__) && (__GNUC__ >= 1000)
+/* || defined(_MSC_VER) && (_MSC_VER >= 1920) */
+// GCC is not good for __builtin_expect()
+#define Z7_LIKELY(x) (__builtin_expect((x), 1))
+#define Z7_UNLIKELY(x) (__builtin_expect((x), 0))
+// #define Z7_unlikely [[unlikely]]
+// #define Z7_likely [[likely]]
 #else
-  #define Z7_LIKELY(x)   (x)
-  #define Z7_UNLIKELY(x) (x)
-  // #define Z7_likely
+#define Z7_LIKELY(x) (x)
+#define Z7_UNLIKELY(x) (x)
+// #define Z7_likely
 #endif
-
 
 #if (defined(Z7_CLANG_VERSION) && (Z7_CLANG_VERSION >= 30600))
 
 #if (Z7_CLANG_VERSION < 130000)
-#define Z7_DIAGNOSTIC_IGNORE_BEGIN_RESERVED_MACRO_IDENTIFIER \
-  _Pragma("GCC diagnostic push") \
-  _Pragma("GCC diagnostic ignored \"-Wreserved-id-macro\"")
+#define Z7_DIAGNOSTIC_IGNORE_BEGIN_RESERVED_MACRO_IDENTIFIER                   \
+  _Pragma("GCC diagnostic push")                                               \
+      _Pragma("GCC diagnostic ignored \"-Wreserved-id-macro\"")
 #else
-#define Z7_DIAGNOSTIC_IGNORE_BEGIN_RESERVED_MACRO_IDENTIFIER \
-  _Pragma("GCC diagnostic push") \
-  _Pragma("GCC diagnostic ignored \"-Wreserved-macro-identifier\"")
+#define Z7_DIAGNOSTIC_IGNORE_BEGIN_RESERVED_MACRO_IDENTIFIER                   \
+  _Pragma("GCC diagnostic push")                                               \
+      _Pragma("GCC diagnostic ignored \"-Wreserved-macro-identifier\"")
 #endif
 
-#define Z7_DIAGNOSTIC_IGNORE_END_RESERVED_MACRO_IDENTIFIER \
+#define Z7_DIAGNOSTIC_IGNORE_END_RESERVED_MACRO_IDENTIFIER                     \
   _Pragma("GCC diagnostic pop")
 #else
 #define Z7_DIAGNOSTIC_IGNORE_BEGIN_RESERVED_MACRO_IDENTIFIER

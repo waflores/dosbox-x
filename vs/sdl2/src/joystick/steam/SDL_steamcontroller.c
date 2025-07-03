@@ -20,8 +20,8 @@
 */
 #include "../../SDL_internal.h"
 
-#include "../SDL_sysjoystick.h"
 #include "../SDL_joystick_c.h"
+#include "../SDL_sysjoystick.h"
 #include "SDL_steamcontroller.h"
 
 void SDL_InitSteamControllers(SteamControllerConnectedCallback_t connectedCallback,

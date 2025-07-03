@@ -32,8 +32,8 @@
 #include "SDL_windowswindow.h"
 
 #include "SDL_loadso.h"
-#include "SDL_windowsvulkan.h"
 #include "SDL_syswm.h"
+#include "SDL_windowsvulkan.h"
 
 int WIN_Vulkan_LoadLibrary(_THIS, const char *path)
 {

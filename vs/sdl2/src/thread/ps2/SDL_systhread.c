@@ -27,10 +27,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SDL_error.h"
-#include "SDL_thread.h"
 #include "../SDL_systhread.h"
 #include "../SDL_thread_c.h"
+#include "SDL_error.h"
+#include "SDL_thread.h"
 #include <kernel.h>
 
 static void FinishThread(SDL_Thread *thread)

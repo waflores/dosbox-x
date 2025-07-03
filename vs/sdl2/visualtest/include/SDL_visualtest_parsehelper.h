@@ -23,7 +23,7 @@ extern "C" {
  *         of the array is NULL. The first element of the array is NULL and should
  *         be set to the path of the executable by the caller.
  */
-char** SDLVisualTest_ParseArgsToArgv(char* args);
+char **SDLVisualTest_ParseArgsToArgv(char *args);
 
 /**
  * Takes a string and breaks it into tokens by splitting on whitespace.
@@ -34,7 +34,7 @@ char** SDLVisualTest_ParseArgsToArgv(char* args);
  * \return NULL on failure; an array of strings with the tokens on success. The
  *         last element of the array is NULL.
  */
-char** SDLVisualTest_Tokenize(char* str, int max_token_len);
+char **SDLVisualTest_Tokenize(char *str, int max_token_len);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

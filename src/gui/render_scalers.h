@@ -19,45 +19,48 @@
 #ifndef _RENDER_SCALERS_H
 #define _RENDER_SCALERS_H
 
-//#include "render.h"
+// #include "render.h"
 #include "video.h"
-#if RENDER_USE_ADVANCED_SCALERS>0
-#define SCALER_MAXWIDTH		1920
-#define SCALER_MAXHEIGHT	1440
+#if RENDER_USE_ADVANCED_SCALERS > 0
+#define SCALER_MAXWIDTH 1920
+#define SCALER_MAXHEIGHT 1440
 #else
 // reduced to save some memory
-#define SCALER_MAXWIDTH		800 
-#define SCALER_MAXHEIGHT	600
+#define SCALER_MAXWIDTH 800
+#define SCALER_MAXHEIGHT 600
 #endif
 
-#if RENDER_USE_ADVANCED_SCALERS>1
-#define SCALER_COMPLEXWIDTH		800
-#define SCALER_COMPLEXHEIGHT	600
+#if RENDER_USE_ADVANCED_SCALERS > 1
+#define SCALER_COMPLEXWIDTH 800
+#define SCALER_COMPLEXHEIGHT 600
 #endif
 
-#define SCALER_BLOCKSIZE	16
+#define SCALER_BLOCKSIZE 16
 
 typedef enum {
-	scalerMode8, scalerMode15, scalerMode16, scalerMode32
+  scalerMode8,
+  scalerMode15,
+  scalerMode16,
+  scalerMode32
 } scalerMode_t;
 
 typedef enum scalerOperation {
-	scalerOpNormal,
-#if RENDER_USE_ADVANCED_SCALERS>2
-	scalerOpAdvMame,
-	scalerOpAdvInterp,
-	scalerOpHQ,
-	scalerOpSaI,
-	scalerOpSuperSaI,
-	scalerOpSuperEagle,
+  scalerOpNormal,
+#if RENDER_USE_ADVANCED_SCALERS > 2
+  scalerOpAdvMame,
+  scalerOpAdvInterp,
+  scalerOpHQ,
+  scalerOpSaI,
+  scalerOpSuperSaI,
+  scalerOpSuperEagle,
 #endif
-#if RENDER_USE_ADVANCED_SCALERS>0
-	scalerOpTV,
-	scalerOpRGB,
-	scalerOpScan,
-	scalerOpGray,
+#if RENDER_USE_ADVANCED_SCALERS > 0
+  scalerOpTV,
+  scalerOpRGB,
+  scalerOpScan,
+  scalerOpGray,
 #endif
-	scalerLast
+  scalerLast
 } scalerOperation_t;
 
 typedef void (*ScalerLineHandler_t)(const void *src);
@@ -67,46 +70,47 @@ extern uint8_t Scaler_Aspect[];
 extern uint8_t diff_table[];
 extern Bitu Scaler_ChangedLineIndex;
 extern uint16_t Scaler_ChangedLines[];
-#if RENDER_USE_ADVANCED_SCALERS>1
-/* Not entirely happy about those +2's since they make a non power of 2, with muls instead of shift */
-typedef uint8_t scalerChangeCache_t [SCALER_COMPLEXHEIGHT][SCALER_COMPLEXWIDTH / SCALER_BLOCKSIZE] ;
+#if RENDER_USE_ADVANCED_SCALERS > 1
+/* Not entirely happy about those +2's since they make a non power of 2, with
+ * muls instead of shift */
+typedef uint8_t scalerChangeCache_t[SCALER_COMPLEXHEIGHT]
+                                   [SCALER_COMPLEXWIDTH / SCALER_BLOCKSIZE];
 typedef union {
-	uint32_t b32	[SCALER_COMPLEXHEIGHT] [SCALER_COMPLEXWIDTH];
-	uint16_t b16	[SCALER_COMPLEXHEIGHT] [SCALER_COMPLEXWIDTH];
-	uint8_t b8	[SCALER_COMPLEXHEIGHT] [SCALER_COMPLEXWIDTH];
+  uint32_t b32[SCALER_COMPLEXHEIGHT][SCALER_COMPLEXWIDTH];
+  uint16_t b16[SCALER_COMPLEXHEIGHT][SCALER_COMPLEXWIDTH];
+  uint8_t b8[SCALER_COMPLEXHEIGHT][SCALER_COMPLEXWIDTH];
 } scalerFrameCache_t;
 #endif
 typedef union {
-	uint32_t b32	[SCALER_MAXHEIGHT] [SCALER_MAXWIDTH];
-	uint16_t b16	[SCALER_MAXHEIGHT] [SCALER_MAXWIDTH];
-	uint8_t b8	[SCALER_MAXHEIGHT] [SCALER_MAXWIDTH];
+  uint32_t b32[SCALER_MAXHEIGHT][SCALER_MAXWIDTH];
+  uint16_t b16[SCALER_MAXHEIGHT][SCALER_MAXWIDTH];
+  uint8_t b8[SCALER_MAXHEIGHT][SCALER_MAXWIDTH];
 } scalerSourceCache_t;
 extern scalerSourceCache_t scalerSourceCache;
-#if RENDER_USE_ADVANCED_SCALERS>1
+#if RENDER_USE_ADVANCED_SCALERS > 1
 extern scalerChangeCache_t scalerChangeCache;
 #endif
 typedef ScalerLineHandler_t ScalerLineBlock_t[5][4];
 
 typedef struct {
-	const char *name;
-	Bitu gfxFlags;
-	Bitu xscale,yscale;
-	ScalerComplexHandler_t Linear[4];
-	ScalerComplexHandler_t Random[4];
+  const char *name;
+  Bitu gfxFlags;
+  Bitu xscale, yscale;
+  ScalerComplexHandler_t Linear[4];
+  ScalerComplexHandler_t Random[4];
 } ScalerComplexBlock_t;
 
 typedef struct {
-	const char *name;
-	Bitu gfxFlags;
-	Bitu xscale,yscale;
-	ScalerLineBlock_t	Linear;
-	ScalerLineBlock_t	Random;
+  const char *name;
+  Bitu gfxFlags;
+  Bitu xscale, yscale;
+  ScalerLineBlock_t Linear;
+  ScalerLineBlock_t Random;
 } ScalerSimpleBlock_t;
 
-
-#define SCALE_LEFT	0x1
-#define SCALE_RIGHT	0x2
-#define SCALE_FULL	0x4
+#define SCALE_LEFT 0x1
+#define SCALE_RIGHT 0x2
+#define SCALE_FULL 0x4
 
 /* Simple scalers */
 extern ScalerSimpleBlock_t ScaleNormal1x;
@@ -118,7 +122,7 @@ extern ScalerSimpleBlock_t ScaleNormal4x;
 extern ScalerSimpleBlock_t ScaleNormal5x;
 extern ScalerSimpleBlock_t ScaleNormal2xDw;
 extern ScalerSimpleBlock_t ScaleNormal2xDh;
-#if RENDER_USE_ADVANCED_SCALERS>0
+#if RENDER_USE_ADVANCED_SCALERS > 0
 extern ScalerSimpleBlock_t ScaleTV2x;
 extern ScalerSimpleBlock_t ScaleTVDh;
 extern ScalerSimpleBlock_t ScaleTV3x;
@@ -133,7 +137,7 @@ extern ScalerSimpleBlock_t ScaleGrayDh;
 extern ScalerSimpleBlock_t ScaleGray2x;
 #endif
 /* Complex scalers */
-#if RENDER_USE_ADVANCED_SCALERS>2
+#if RENDER_USE_ADVANCED_SCALERS > 2
 extern ScalerComplexBlock_t ScaleHQ2x;
 extern ScalerComplexBlock_t ScaleHQ3x;
 extern ScalerComplexBlock_t Scale2xSaI;
@@ -144,7 +148,7 @@ extern ScalerComplexBlock_t ScaleAdvMame3x;
 extern ScalerComplexBlock_t ScaleAdvInterp2x;
 extern ScalerComplexBlock_t ScaleAdvInterp3x;
 #endif
-#if RENDER_USE_ADVANCED_SCALERS>1
+#if RENDER_USE_ADVANCED_SCALERS > 1
 extern ScalerLineBlock_t ScalerCache;
 #endif
 #endif

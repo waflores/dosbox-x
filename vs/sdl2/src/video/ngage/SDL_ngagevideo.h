@@ -26,11 +26,11 @@
 
 #include "../SDL_sysvideo.h"
 
+#include "bitdraw.h" // CFbsDrawDevice
+#include <bitdev.h>
 #include <e32std.h>
 #include <e32svr.h>
-#include <bitdev.h>
 #include <w32std.h>
-#include "bitdraw.h" // CFbsDrawDevice
 
 #define _THIS SDL_VideoDevice *_this
 

@@ -23,26 +23,26 @@
 
 #ifdef SDL_VIDEO_DRIVER_WAYLAND
 
-#include <sys/mman.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <sys/mman.h>
 
 #include "../SDL_sysvideo.h"
 
-#include "SDL_mouse.h"
 #include "../../events/SDL_mouse_c.h"
-#include "SDL_waylandvideo.h"
 #include "../SDL_pixels_c.h"
+#include "SDL_mouse.h"
 #include "SDL_waylandevents_c.h"
+#include "SDL_waylandvideo.h"
 
-#include "wayland-cursor.h"
 #include "SDL_waylandmouse.h"
 #include "SDL_waylandshmbuffer.h"
+#include "wayland-cursor.h"
 
 #include "cursor-shape-v1-client-protocol.h"
 
-#include "SDL_hints.h"
 #include "../../SDL_hints_c.h"
+#include "SDL_hints.h"
 
 static int Wayland_SetRelativeMouseMode(SDL_bool enabled);
 
@@ -156,23 +156,35 @@ static SDL_bool wayland_dbus_read_cursor_theme(char **theme)
 
 #endif
 
-
 static const char *GetLegacyCursorName(SDL_SystemCursor system_cursor)
 {
     switch (system_cursor) {
-        case SDL_SYSTEM_CURSOR_ARROW: return "left_ptr";
-        case SDL_SYSTEM_CURSOR_IBEAM: return "xterm";
-        case SDL_SYSTEM_CURSOR_WAIT: return "watch";
-        case SDL_SYSTEM_CURSOR_CROSSHAIR: return "tcross";
-        case SDL_SYSTEM_CURSOR_WAITARROW: return "watch";
-        case SDL_SYSTEM_CURSOR_SIZENWSE: return "top_left_corner";
-        case SDL_SYSTEM_CURSOR_SIZENESW: return "top_right_corner";
-        case SDL_SYSTEM_CURSOR_SIZEWE: return "sb_h_double_arrow";
-        case SDL_SYSTEM_CURSOR_SIZENS: return "sb_v_double_arrow";
-        case SDL_SYSTEM_CURSOR_SIZEALL: return "fleur";
-        case SDL_SYSTEM_CURSOR_NO: return "pirate";
-        case SDL_SYSTEM_CURSOR_HAND: return "hand2";
-        case SDL_NUM_SYSTEM_CURSORS: break;  /* so the compiler might notice if an enum value is missing here. */
+    case SDL_SYSTEM_CURSOR_ARROW:
+        return "left_ptr";
+    case SDL_SYSTEM_CURSOR_IBEAM:
+        return "xterm";
+    case SDL_SYSTEM_CURSOR_WAIT:
+        return "watch";
+    case SDL_SYSTEM_CURSOR_CROSSHAIR:
+        return "tcross";
+    case SDL_SYSTEM_CURSOR_WAITARROW:
+        return "watch";
+    case SDL_SYSTEM_CURSOR_SIZENWSE:
+        return "top_left_corner";
+    case SDL_SYSTEM_CURSOR_SIZENESW:
+        return "top_right_corner";
+    case SDL_SYSTEM_CURSOR_SIZEWE:
+        return "sb_h_double_arrow";
+    case SDL_SYSTEM_CURSOR_SIZENS:
+        return "sb_v_double_arrow";
+    case SDL_SYSTEM_CURSOR_SIZEALL:
+        return "fleur";
+    case SDL_SYSTEM_CURSOR_NO:
+        return "pirate";
+    case SDL_SYSTEM_CURSOR_HAND:
+        return "hand2";
+    case SDL_NUM_SYSTEM_CURSORS:
+        break; /* so the compiler might notice if an enum value is missing here. */
     }
 
     SDL_assert(0);
@@ -214,7 +226,7 @@ static SDL_bool wayland_get_system_cursor(SDL_VideoData *vdata, Wayland_CursorDa
     /* First, find the appropriate theme based on the current scale... */
     focus = SDL_GetMouse()->focus;
     if (focus) {
-        SDL_WindowData *focusdata = (SDL_WindowData*)focus->driverdata;
+        SDL_WindowData *focusdata = (SDL_WindowData *)focus->driverdata;
 
         /* Cursors use integer scaling. */
         *scale = SDL_ceilf(focusdata->scale_factor);

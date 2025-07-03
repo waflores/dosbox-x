@@ -26,18 +26,18 @@
 /* System dependent filesystem routines                                */
 
 #include <errno.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <psp2/io/stat.h>
-#include <sys/types.h>
-#include <limits.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <psp2/io/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "SDL_error.h"
-#include "SDL_stdinc.h"
 #include "SDL_filesystem.h"
 #include "SDL_rwops.h"
+#include "SDL_stdinc.h"
 
 char *SDL_GetBasePath(void)
 {

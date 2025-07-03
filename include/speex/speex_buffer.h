@@ -62,7 +62,3 @@ int speex_buffer_resize(SpeexBuffer *st, int len);
 #endif
 
 #endif
-
-
-
-

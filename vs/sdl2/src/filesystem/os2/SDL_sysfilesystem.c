@@ -35,14 +35,13 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
-
 char *SDL_GetBasePath(void)
 {
-    PTIB    tib;
-    PPIB    pib;
-    ULONG   ulRC = DosGetInfoBlocks(&tib, &pib);
-    PCHAR   pcEnd;
-    CHAR    acBuf[CCHMAXPATH];
+    PTIB tib;
+    PPIB pib;
+    ULONG ulRC = DosGetInfoBlocks(&tib, &pib);
+    PCHAR pcEnd;
+    CHAR acBuf[CCHMAXPATH];
 
     if (ulRC != NO_ERROR) {
         SDL_SetError("Can't get process information block (E%lu)", ulRC);
@@ -72,10 +71,10 @@ char *SDL_GetBasePath(void)
 
 char *SDL_GetPrefPath(const char *org, const char *app)
 {
-    PSZ     pszPath;
-    CHAR    acBuf[CCHMAXPATH];
-    int     lPosApp, lPosOrg;
-    PSZ     pszApp, pszOrg;
+    PSZ pszPath;
+    CHAR acBuf[CCHMAXPATH];
+    int lPosApp, lPosOrg;
+    PSZ pszApp, pszOrg;
 
     if (!app) {
         SDL_InvalidParamError("app");

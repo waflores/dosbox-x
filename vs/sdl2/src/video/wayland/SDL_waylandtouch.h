@@ -27,9 +27,9 @@
 #ifdef SDL_VIDEO_DRIVER_WAYLAND_QT_TOUCH
 
 #include "SDL_waylandvideo.h"
-#include <stdint.h>
-#include <stddef.h>
 #include "wayland-util.h"
+#include <stddef.h>
+#include <stdint.h>
 
 void Wayland_touch_create(SDL_VideoData *data, uint32_t id);
 void Wayland_touch_destroy(SDL_VideoData *data);

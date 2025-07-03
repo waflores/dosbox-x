@@ -24,19 +24,19 @@
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "SDL_log.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
+#include "../../SDL_hints_c.h"
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_windowevents_c.h"
-#include "../../SDL_hints_c.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_log.h"
 
-#include "SDL_windowsvideo.h"
-#include "SDL_windowswindow.h"
-#include "SDL_windowsshape.h"
 #include "SDL_hints.h"
 #include "SDL_timer.h"
+#include "SDL_windowsshape.h"
+#include "SDL_windowsvideo.h"
+#include "SDL_windowswindow.h"
 
 /* Dropfile support */
 #include <shellapi.h>
@@ -307,7 +307,7 @@ static int SetupWindowData(_THIS, SDL_Window *window, HWND hwnd, HWND parent, SD
     data->hwnd = hwnd;
     data->parent = parent;
 #if defined(__XBOXONE__) || defined(__XBOXSERIES__)
-    data->hdc = (HDC) data->hwnd;
+    data->hdc = (HDC)data->hwnd;
 #else
     data->hdc = GetDC(hwnd);
 #endif
@@ -764,8 +764,8 @@ int WIN_GetWindowBordersSize(_THIS, SDL_Window *window, int *top, int *left, int
     /* Now that both the inner and outer rects use the same coordinate system we can substract them to get the border size.
      * Keep in mind that the top/left coordinates of rcWindow are negative because the border lies slightly before {0,0},
      * so switch them around because SDL2 wants them in positive. */
-    *top    = rcClient.top    - rcWindow.top;
-    *left   = rcClient.left   - rcWindow.left;
+    *top = rcClient.top - rcWindow.top;
+    *left = rcClient.left - rcWindow.left;
     *bottom = rcWindow.bottom - rcClient.bottom;
     *right = rcWindow.right - rcClient.right;
 
@@ -1002,10 +1002,10 @@ void WIN_SetWindowFullscreen(_THIS, SDL_Window *window, SDL_VideoDisplay *displa
 }
 
 #if !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
-int WIN_SetWindowGammaRamp(_THIS, SDL_Window * window, const Uint16 * ramp)
+int WIN_SetWindowGammaRamp(_THIS, SDL_Window *window, const Uint16 *ramp)
 {
     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
-    SDL_DisplayData *data = (SDL_DisplayData *) display->driverdata;
+    SDL_DisplayData *data = (SDL_DisplayData *)display->driverdata;
     HDC hdc;
     BOOL succeeded = FALSE;
 
@@ -1020,7 +1020,7 @@ int WIN_SetWindowGammaRamp(_THIS, SDL_Window * window, const Uint16 * ramp)
     return succeeded ? 0 : -1;
 }
 
-void WIN_UpdateWindowICCProfile(SDL_Window * window, SDL_bool send_event)
+void WIN_UpdateWindowICCProfile(SDL_Window *window, SDL_bool send_event)
 {
     SDL_WindowData *data = (SDL_WindowData *)window->driverdata;
     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
@@ -1068,10 +1068,10 @@ void *WIN_GetWindowICCProfile(_THIS, SDL_Window *window, size_t *size)
     return iccProfileData;
 }
 
-int WIN_GetWindowGammaRamp(_THIS, SDL_Window * window, Uint16 * ramp)
+int WIN_GetWindowGammaRamp(_THIS, SDL_Window *window, Uint16 *ramp)
 {
     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
-    SDL_DisplayData *data = (SDL_DisplayData *) display->driverdata;
+    SDL_DisplayData *data = (SDL_DisplayData *)display->driverdata;
     HDC hdc;
     BOOL succeeded = FALSE;
 
@@ -1167,9 +1167,9 @@ void WIN_DestroyWindow(_THIS, SDL_Window *window)
     CleanupWindowData(_this, window);
 }
 
-SDL_bool WIN_GetWindowWMInfo(_THIS, SDL_Window * window, SDL_SysWMinfo * info)
+SDL_bool WIN_GetWindowWMInfo(_THIS, SDL_Window *window, SDL_SysWMinfo *info)
 {
-    const SDL_WindowData *data = (const SDL_WindowData *) window->driverdata;
+    const SDL_WindowData *data = (const SDL_WindowData *)window->driverdata;
     if (info->version.major <= SDL_MAJOR_VERSION) {
         int versionnum = SDL_VERSIONNUM(info->version.major, info->version.minor, info->version.patch);
 

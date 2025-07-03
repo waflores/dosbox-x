@@ -14,16 +14,17 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
 */
 #include "SDL_config.h"
 
-/* 
-    Obscuring code: maximum number of windows above ours (inclusive) 
-    
+/*
+    Obscuring code: maximum number of windows above ours (inclusive)
+
     Note: this doesn't work too well in practice and should be
     phased out when we add OpenGL 2D acceleration. It was never
     enabled in the first place, so this shouldn't be a problem ;-)
@@ -31,54 +32,53 @@
 #define kMaxWindows 256
 
 /* Some of the Core Graphics Server API for obscuring code */
-#define kCGSWindowLevelTop          2147483632
+#define kCGSWindowLevelTop 2147483632
 #define kCGSWindowLevelDockIconDrag 500
-#define kCGSWindowLevelDockMenu     101
-#define kCGSWindowLevelMenuIgnore    21
-#define kCGSWindowLevelMenu          20
-#define kCGSWindowLevelDockLabel     12
-#define kCGSWindowLevelDockIcon      11
-#define kCGSWindowLevelDock          10
-#define kCGSWindowLevelUtility        3
-#define kCGSWindowLevelNormal         0
+#define kCGSWindowLevelDockMenu 101
+#define kCGSWindowLevelMenuIgnore 21
+#define kCGSWindowLevelMenu 20
+#define kCGSWindowLevelDockLabel 12
+#define kCGSWindowLevelDockIcon 11
+#define kCGSWindowLevelDock 10
+#define kCGSWindowLevelUtility 3
+#define kCGSWindowLevelNormal 0
 
-/* 
+/*
     For completeness; We never use these window levels, they are always below us
     #define kCGSWindowLevelMBarShadow -20
     #define kCGSWindowLevelDesktopPicture -2147483647
     #define kCGSWindowLevelDesktop        -2147483648
 */
 
-typedef CGError       CGSError;
-typedef long          CGSWindowCount;
-typedef void *        CGSConnectionID;
-typedef int           CGSWindowID;
-typedef CGSWindowID*  CGSWindowIDList;
+typedef CGError CGSError;
+typedef long CGSWindowCount;
+typedef void *CGSConnectionID;
+typedef int CGSWindowID;
+typedef CGSWindowID *CGSWindowIDList;
 typedef CGWindowLevel CGSWindowLevel;
-typedef NSRect        CGSRect;
+typedef NSRect CGSRect;
 
-extern CGSConnectionID _CGSDefaultConnection ();
+extern CGSConnectionID _CGSDefaultConnection();
 
-extern CGSError CGSGetOnScreenWindowList (CGSConnectionID cid,
-                                          CGSConnectionID owner,
-                                          CGSWindowCount listCapacity,
-                                          CGSWindowIDList list,
-                                          CGSWindowCount *listCount);
+extern CGSError CGSGetOnScreenWindowList(CGSConnectionID cid,
+                                         CGSConnectionID owner,
+                                         CGSWindowCount listCapacity,
+                                         CGSWindowIDList list,
+                                         CGSWindowCount *listCount);
 
-extern CGSError CGSGetScreenRectForWindow (CGSConnectionID cid,
-                                           CGSWindowID wid,
-                                           CGSRect *rect);
+extern CGSError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid,
+                                          CGSRect *rect);
 
-extern CGWindowLevel CGSGetWindowLevel (CGSConnectionID cid,
-                                        CGSWindowID wid,
-                                        CGSWindowLevel *level);
+extern CGWindowLevel CGSGetWindowLevel(CGSConnectionID cid, CGSWindowID wid,
+                                       CGSWindowLevel *level);
 
-extern CGSError CGSDisplayHWFill (CGDirectDisplayID id, unsigned int x, unsigned int y,
-                                  unsigned int w, unsigned int h, unsigned int color);
+extern CGSError CGSDisplayHWFill(CGDirectDisplayID id, unsigned int x,
+                                 unsigned int y, unsigned int w, unsigned int h,
+                                 unsigned int color);
 
-extern CGSError CGSDisplayCanHWFill (CGDirectDisplayID id);
+extern CGSError CGSDisplayCanHWFill(CGDirectDisplayID id);
 
-extern CGSError CGSGetMouseEnabledFlags (CGSConnectionID cid, CGSWindowID wid, int *flags);
+extern CGSError CGSGetMouseEnabledFlags(CGSConnectionID cid, CGSWindowID wid,
+                                        int *flags);
 
-int CGSDisplayHWSync (CGDirectDisplayID id);
-
+int CGSDisplayHWSync(CGDirectDisplayID id);

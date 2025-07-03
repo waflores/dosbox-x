@@ -73,27 +73,27 @@
 /*
  *	Types of machine-dependent attributes
  */
-typedef unsigned int    vm_machine_attribute_t;
+typedef unsigned int vm_machine_attribute_t;
 
-#define MATTR_CACHE             1       /* cachability */
-#define MATTR_MIGRATE           2       /* migrability */
-#define MATTR_REPLICATE         4       /* replicability */
+#define MATTR_CACHE 1     /* cachability */
+#define MATTR_MIGRATE 2   /* migrability */
+#define MATTR_REPLICATE 4 /* replicability */
 
 /*
  *	Values for the above, e.g. operations on attribute
  */
-typedef int             vm_machine_attribute_val_t;
+typedef int vm_machine_attribute_val_t;
 
-#define MATTR_VAL_OFF           0       /* (generic) turn attribute off */
-#define MATTR_VAL_ON            1       /* (generic) turn attribute on */
-#define MATTR_VAL_GET           2       /* (generic) return current value */
+#define MATTR_VAL_OFF 0 /* (generic) turn attribute off */
+#define MATTR_VAL_ON 1  /* (generic) turn attribute on */
+#define MATTR_VAL_GET 2 /* (generic) return current value */
 
-#define MATTR_VAL_CACHE_FLUSH   6       /* flush from all caches */
-#define MATTR_VAL_DCACHE_FLUSH  7       /* flush from data caches */
-#define MATTR_VAL_ICACHE_FLUSH  8       /* flush from instruction caches */
-#define MATTR_VAL_CACHE_SYNC    9       /* sync I+D caches */
-#define MATTR_VAL_CACHE_SYNC    9       /* sync I+D caches */
+#define MATTR_VAL_CACHE_FLUSH 6  /* flush from all caches */
+#define MATTR_VAL_DCACHE_FLUSH 7 /* flush from data caches */
+#define MATTR_VAL_ICACHE_FLUSH 8 /* flush from instruction caches */
+#define MATTR_VAL_CACHE_SYNC 9   /* sync I+D caches */
+#define MATTR_VAL_CACHE_SYNC 9   /* sync I+D caches */
 
-#define MATTR_VAL_GET_INFO      10      /* get page info (stats) */
+#define MATTR_VAL_GET_INFO 10 /* get page info (stats) */
 
-#endif  /* _MACH_VM_ATTRIBUTES_H_ */
+#endif /* _MACH_VM_ATTRIBUTES_H_ */

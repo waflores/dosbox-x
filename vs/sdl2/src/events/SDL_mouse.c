@@ -22,12 +22,12 @@
 
 /* General mouse handling code for SDL */
 
-#include "SDL_hints.h"
-#include "SDL_timer.h"
-#include "SDL_events.h"
-#include "SDL_events_c.h"
 #include "../SDL_hints_c.h"
 #include "../video/SDL_sysvideo.h"
+#include "SDL_events.h"
+#include "SDL_events_c.h"
+#include "SDL_hints.h"
+#include "SDL_timer.h"
 #if defined(__WIN32__) || defined(__GDK__)
 #include "../core/windows/SDL_windows.h" // For GetDoubleClickTime()
 #endif
@@ -1277,7 +1277,7 @@ int SDL_CaptureMouse(SDL_bool enabled)
 }
 
 SDL_Cursor *SDL_CreateCursor(const Uint8 *data, const Uint8 *mask,
-                 int w, int h, int hot_x, int hot_y)
+                             int w, int h, int hot_x, int hot_y)
 {
     SDL_Surface *surface;
     SDL_Cursor *cursor;

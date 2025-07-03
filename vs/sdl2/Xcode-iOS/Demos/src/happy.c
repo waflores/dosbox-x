@@ -7,23 +7,22 @@
 #include "SDL.h"
 #include "common.h"
 
-#define NUM_HAPPY_FACES 100     /* number of faces to draw */
-#define HAPPY_FACE_SIZE 32      /* width and height of happyface */
+#define NUM_HAPPY_FACES 100 /* number of faces to draw */
+#define HAPPY_FACE_SIZE 32  /* width and height of happyface */
 
-static SDL_Texture *texture = 0;    /* reference to texture holding happyface */
+static SDL_Texture *texture = 0; /* reference to texture holding happyface */
 
 static struct
 {
-    float x, y;                 /* position of happyface */
-    float xvel, yvel;           /* velocity of happyface */
+    float x, y;       /* position of happyface */
+    float xvel, yvel; /* velocity of happyface */
 } faces[NUM_HAPPY_FACES];
 
 /*
     Sets initial positions and velocities of happyfaces
     units of velocity are pixels per millesecond
 */
-void
-initializeHappyFaces(SDL_Renderer *renderer)
+void initializeHappyFaces(SDL_Renderer *renderer)
 {
     int i;
     int w;
@@ -38,8 +37,7 @@ initializeHappyFaces(SDL_Renderer *renderer)
     }
 }
 
-void
-render(SDL_Renderer *renderer, double deltaTime)
+void render(SDL_Renderer *renderer, double deltaTime)
 {
     int i;
     SDL_Rect srcRect;
@@ -96,14 +94,12 @@ render(SDL_Renderer *renderer, double deltaTime)
     }
     /* update screen */
     SDL_RenderPresent(renderer);
-
 }
 
 /*
     loads the happyface graphic into a texture
 */
-void
-initializeTexture(SDL_Renderer *renderer)
+void initializeTexture(SDL_Renderer *renderer)
 {
     SDL_Surface *bmp_surface;
     /* load the bmp */
@@ -126,8 +122,7 @@ initializeTexture(SDL_Renderer *renderer)
     SDL_FreeSurface(bmp_surface);
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -153,7 +148,6 @@ main(int argc, char *argv[])
     initializeTexture(renderer);
     initializeHappyFaces(renderer);
 
-
     /* main loop */
     done = 0;
     while (!done) {
@@ -176,5 +170,4 @@ main(int argc, char *argv[])
     SDL_Quit();
 
     return 0;
-
 }

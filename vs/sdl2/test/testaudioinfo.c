@@ -9,9 +9,9 @@
   including commercial applications, and to alter it and redistribute it
   freely.
 */
-#include <stdio.h>
 #include "SDL.h"
 #include "SDL_test.h"
+#include <stdio.h>
 
 static void
 print_devices(int iscapture)

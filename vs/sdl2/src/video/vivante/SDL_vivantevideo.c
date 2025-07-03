@@ -23,20 +23,20 @@
 #ifdef SDL_VIDEO_DRIVER_VIVANTE
 
 /* SDL internals */
-#include "../SDL_sysvideo.h"
-#include "SDL_version.h"
-#include "SDL_syswm.h"
-#include "SDL_loadso.h"
-#include "SDL_events.h"
 #include "../../events/SDL_events_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_events.h"
+#include "SDL_loadso.h"
+#include "SDL_syswm.h"
+#include "SDL_version.h"
 
 #ifdef SDL_INPUT_LINUXEV
 #include "../../core/linux/SDL_evdev.h"
 #endif
 
-#include "SDL_vivantevideo.h"
-#include "SDL_vivanteplatform.h"
 #include "SDL_vivanteopengles.h"
+#include "SDL_vivanteplatform.h"
+#include "SDL_vivantevideo.h"
 #include "SDL_vivantevulkan.h"
 
 static void VIVANTE_Destroy(SDL_VideoDevice *device)

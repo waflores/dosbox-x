@@ -57,7 +57,6 @@ extern "C" {
  */
 int SDLTest_CompareSurfaces(SDL_Surface *surface, SDL_Surface *referenceSurface, int allowable_error);
 
-
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
 }

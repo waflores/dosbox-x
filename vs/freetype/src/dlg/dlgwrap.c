@@ -15,18 +15,15 @@
  *
  */
 
-
 #include <ft2build.h>
 #include FT_CONFIG_OPTIONS_H
-
 
 #ifdef FT_DEBUG_LOGGING
 #define DLG_STATIC
 #include "dlg.c"
 #else
-  /* ANSI C doesn't like empty source files */
-  typedef int  dlg_dummy_;
+/* ANSI C doesn't like empty source files */
+typedef int dlg_dummy_;
 #endif
-
 
 /* END */

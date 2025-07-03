@@ -17,40 +17,36 @@
  * however use <stdio.h> and it assumes that /proc/cpuinfo is never localized.
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "png.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef MAXLINE
-#  define MAXLINE 1024
+#define MAXLINE 1024
 #endif
 
-static int
-png_have_vsx(png_structp png_ptr)
-{
-   FILE *f;
+static int png_have_vsx(png_structp png_ptr) {
+  FILE *f;
 
-   const char *string = "altivec supported";
-   char input[MAXLINE];
-   char *token = NULL;
+  const char *string = "altivec supported";
+  char input[MAXLINE];
+  char *token = NULL;
 
-   PNG_UNUSED(png_ptr)
+  PNG_UNUSED(png_ptr)
 
-   f = fopen("/proc/cpuinfo", "r");
-   if (f != NULL)
-   {
-      memset(input,0,MAXLINE);
-      while(fgets(input,MAXLINE,f) != NULL)
-      {
-         token = strstr(input,string);
-         if(token != NULL)
-            return 1;
-      }
-   }
+  f = fopen("/proc/cpuinfo", "r");
+  if (f != NULL) {
+    memset(input, 0, MAXLINE);
+    while (fgets(input, MAXLINE, f) != NULL) {
+      token = strstr(input, string);
+      if (token != NULL)
+        return 1;
+    }
+  }
 #ifdef PNG_WARNINGS_SUPPORTED
-   else
-      png_warning(png_ptr, "/proc/cpuinfo open failed");
+  else
+    png_warning(png_ptr, "/proc/cpuinfo open failed");
 #endif
-   return 0;
+  return 0;
 }

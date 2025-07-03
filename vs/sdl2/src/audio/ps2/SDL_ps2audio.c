@@ -22,14 +22,14 @@
 
 /* Output audio to nowhere... */
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_ps2audio.h"
+#include "SDL_timer.h"
 
+#include <audsrv.h>
 #include <kernel.h>
 #include <malloc.h>
-#include <audsrv.h>
 #include <ps2_audio_driver.h>
 
 /* The tag name used by PS2 audio */

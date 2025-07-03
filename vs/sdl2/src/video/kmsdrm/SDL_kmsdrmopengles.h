@@ -25,13 +25,13 @@
 
 #ifdef SDL_VIDEO_DRIVER_KMSDRM
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 /* OpenGLES functions */
-#define KMSDRM_GLES_GetAttribute SDL_EGL_GetAttribute
-#define KMSDRM_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define KMSDRM_GLES_DeleteContext SDL_EGL_DeleteContext
+#define KMSDRM_GLES_GetAttribute    SDL_EGL_GetAttribute
+#define KMSDRM_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define KMSDRM_GLES_DeleteContext   SDL_EGL_DeleteContext
 #define KMSDRM_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 
 extern void KMSDRM_GLES_DefaultProfileConfig(_THIS, int *mask, int *major, int *minor);

@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -22,15 +23,16 @@
 #include "SDL_config.h"
 
 /*
-	m68k assembly mix routines
+        m68k assembly mix routines
 
-	Patrice Mandin
+        Patrice Mandin
 */
 
 #if (defined(__m68k__) && !defined(__mcoldfire__)) && defined(__GNUC__)
-void SDL_MixAudio_m68k_U8(char* dst,char* src, long len, long volume, char* mix8);
-void SDL_MixAudio_m68k_S8(char* dst,char* src, long len, long volume);
+void SDL_MixAudio_m68k_U8(char *dst, char *src, long len, long volume,
+                          char *mix8);
+void SDL_MixAudio_m68k_S8(char *dst, char *src, long len, long volume);
 
-void SDL_MixAudio_m68k_S16MSB(short* dst,short* src, long len, long volume);
-void SDL_MixAudio_m68k_S16LSB(short* dst,short* src, long len, long volume);
+void SDL_MixAudio_m68k_S16MSB(short *dst, short *src, long len, long volume);
+void SDL_MixAudio_m68k_S16LSB(short *dst, short *src, long len, long volume);
 #endif

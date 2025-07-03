@@ -38,32 +38,30 @@ extern "C" {
 extern WINE_UNICODE_API const WCHAR wine_casemap_lower[];
 extern WINE_UNICODE_API const WCHAR wine_casemap_upper[];
 
-WINE_UNICODE_INLINE WCHAR tolowerW( WCHAR ch )
-{
-    return ch + wine_casemap_lower[wine_casemap_lower[ch >> 8] + (ch & 0xff)];
+WINE_UNICODE_INLINE WCHAR tolowerW(WCHAR ch) {
+  return ch + wine_casemap_lower[wine_casemap_lower[ch >> 8] + (ch & 0xff)];
 }
 
-WINE_UNICODE_INLINE WCHAR toupperW( WCHAR ch )
-{
-    return ch + wine_casemap_upper[wine_casemap_upper[ch >> 8] + (ch & 0xff)];
+WINE_UNICODE_INLINE WCHAR toupperW(WCHAR ch) {
+  return ch + wine_casemap_upper[wine_casemap_upper[ch >> 8] + (ch & 0xff)];
 }
 
-WINE_UNICODE_INLINE WCHAR *strlwrW( WCHAR *str )
-{
-    WCHAR *ret = str;
-    while ((*str = tolowerW(*str))) str++;
-    return ret;
+WINE_UNICODE_INLINE WCHAR *strlwrW(WCHAR *str) {
+  WCHAR *ret = str;
+  while ((*str = tolowerW(*str)))
+    str++;
+  return ret;
 }
 
-WINE_UNICODE_INLINE WCHAR *struprW( WCHAR *str )
-{
-    WCHAR *ret = str;
-    while ((*str = toupperW(*str))) str++;
-    return ret;
+WINE_UNICODE_INLINE WCHAR *struprW(WCHAR *str) {
+  WCHAR *ret = str;
+  while ((*str = toupperW(*str)))
+    str++;
+  return ret;
 }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* __WINE_WINE_UNICODE_H */
+#endif /* __WINE_WINE_UNICODE_H */

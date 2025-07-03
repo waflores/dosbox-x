@@ -21,12 +21,12 @@
 
 #include "../../SDL_internal.h"
 #include "SDL_events.h"
-#include <sys/time.h>
 #include <dev/wscons/wsconsio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <stdlib.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #include "../../events/SDL_mouse_c.h"
 

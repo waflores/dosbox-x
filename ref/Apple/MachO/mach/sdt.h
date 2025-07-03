@@ -29,4 +29,4 @@
 
 #include <mach/machine/sdt.h>
 
-#endif  /* _MACH_SDT_H */
+#endif /* _MACH_SDT_H */

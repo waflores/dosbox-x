@@ -30,38 +30,27 @@ const float FLOAT_2PI = 6.2831853f;
 const float FLOAT_LN_2 = 0.6931472f;
 const float FLOAT_LN_10 = 2.3025851f;
 
-static inline float POWF(float x, float y) {
-	return pow(x, y);
-}
+static inline float POWF(float x, float y) { return pow(x, y); }
 
-static inline float EXPF(float x) {
-	return exp(x);
-}
+static inline float EXPF(float x) { return exp(x); }
 
 static inline float EXP2F(float x) {
 #ifdef __APPLE__
-	// on OSX exp2f() is 1.59 times faster than "exp() and the multiplication with FLOAT_LN_2"
-	return exp2f(x);
+  // on OSX exp2f() is 1.59 times faster than "exp() and the multiplication with
+  // FLOAT_LN_2"
+  return exp2f(x);
 #else
-	return exp(FLOAT_LN_2 * x);
+  return exp(FLOAT_LN_2 * x);
 #endif
 }
 
-static inline float EXP10F(float x) {
-	return exp(FLOAT_LN_10 * x);
-}
+static inline float EXP10F(float x) { return exp(FLOAT_LN_10 * x); }
 
-static inline float LOGF(float x) {
-	return log(x);
-}
+static inline float LOGF(float x) { return log(x); }
 
-static inline float LOG2F(float x) {
-	return log(x) / FLOAT_LN_2;
-}
+static inline float LOG2F(float x) { return log(x) / FLOAT_LN_2; }
 
-static inline float LOG10F(float x) {
-	return log10(x);
-}
+static inline float LOG10F(float x) { return log10(x); }
 
 } // namespace MT32Emu
 

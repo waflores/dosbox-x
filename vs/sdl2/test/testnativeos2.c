@@ -14,7 +14,7 @@
 
 #ifdef TEST_NATIVE_OS2
 
-#define WIN_CLIENT_CLASS    "SDL Test"
+#define WIN_CLIENT_CLASS "SDL Test"
 
 static void *CreateWindowNative(int w, int h);
 static void DestroyWindowNative(void *window);
@@ -27,10 +27,10 @@ NativeWindowFactory OS2WindowFactory = {
 
 static void *CreateWindowNative(int w, int h)
 {
-    HWND    hwnd, hwndFrame;
-    ULONG   ulFrameFlags = FCF_TASKLIST | FCF_DLGBORDER | FCF_TITLEBAR |
-                           FCF_SYSMENU  | FCF_SHELLPOSITION |
-                           FCF_SIZEBORDER | FCF_MINBUTTON | FCF_MAXBUTTON;
+    HWND hwnd, hwndFrame;
+    ULONG ulFrameFlags = FCF_TASKLIST | FCF_DLGBORDER | FCF_TITLEBAR |
+                         FCF_SYSMENU | FCF_SHELLPOSITION |
+                         FCF_SIZEBORDER | FCF_MINBUTTON | FCF_MAXBUTTON;
 
     WinRegisterClass(0, WIN_CLIENT_CLASS, WinDefWindowProc,
                      CS_SIZEREDRAW | CS_MOVENOTIFY,
@@ -45,13 +45,13 @@ static void *CreateWindowNative(int w, int h)
     WinSetWindowPos(hwndFrame, HWND_TOP, 0, 0, w, h,
                     SWP_ZORDER | SWP_ACTIVATE | SWP_SIZE | SWP_SHOW);
 
-    return (void *)hwndFrame;   /* We may return client or frame window
-                                   handle for SDL_CreateWindowFrom(). */
+    return (void *)hwndFrame; /* We may return client or frame window
+                                 handle for SDL_CreateWindowFrom(). */
 }
 
 static void DestroyWindowNative(void *window)
 {
-    WinDestroyWindow((HWND) window);
+    WinDestroyWindow((HWND)window);
 }
 
 #endif /* TEST_NATIVE_OS2 */

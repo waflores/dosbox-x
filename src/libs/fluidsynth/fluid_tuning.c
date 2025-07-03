@@ -21,14 +21,12 @@
 #define FLUIDINC
 #include "config.h"
 #if !C_FLUIDSYNTH && defined(WIN32) && !defined(C_HX_DOS)
+#include "fluid_sys.h"
 #include "fluid_tuning.h"
 #include "fluidsynth_priv.h"
-#include "fluid_sys.h"
 
-
-fluid_tuning_t* new_fluid_tuning(const char* name, int bank, int prog)
-{
-  fluid_tuning_t* tuning;
+fluid_tuning_t *new_fluid_tuning(const char *name, int bank, int prog) {
+  fluid_tuning_t *tuning;
   int i;
 
   tuning = FLUID_NEW(fluid_tuning_t);
@@ -50,37 +48,33 @@ fluid_tuning_t* new_fluid_tuning(const char* name, int bank, int prog)
     tuning->pitch[i] = i * 100.0;
   }
 
-  tuning->refcount = 1;         /* Start with a refcount of 1 */
+  tuning->refcount = 1; /* Start with a refcount of 1 */
 
   return tuning;
 }
 
 /* Duplicate a tuning */
-fluid_tuning_t *
-fluid_tuning_duplicate (fluid_tuning_t *tuning)
-{
+fluid_tuning_t *fluid_tuning_duplicate(fluid_tuning_t *tuning) {
   fluid_tuning_t *new_tuning;
   int i;
 
-  new_tuning = FLUID_NEW (fluid_tuning_t);
+  new_tuning = FLUID_NEW(fluid_tuning_t);
 
   if (!new_tuning) {
-    FLUID_LOG (FLUID_PANIC, "Out of memory");
+    FLUID_LOG(FLUID_PANIC, "Out of memory");
     return NULL;
   }
 
-  if (tuning->name)
-  {
-    new_tuning->name = FLUID_STRDUP (tuning->name);
+  if (tuning->name) {
+    new_tuning->name = FLUID_STRDUP(tuning->name);
 
-    if (!new_tuning->name)
-    {
-      FLUID_FREE (new_tuning);
-      FLUID_LOG (FLUID_PANIC, "Out of memory");
+    if (!new_tuning->name) {
+      FLUID_FREE(new_tuning);
+      FLUID_LOG(FLUID_PANIC, "Out of memory");
       return NULL;
     }
-  }
-  else new_tuning->name = NULL;
+  } else
+    new_tuning->name = NULL;
 
   new_tuning->bank = tuning->bank;
   new_tuning->prog = tuning->prog;
@@ -88,49 +82,43 @@ fluid_tuning_duplicate (fluid_tuning_t *tuning)
   for (i = 0; i < 128; i++)
     new_tuning->pitch[i] = tuning->pitch[i];
 
-  new_tuning->refcount = 1;     /* Start with a refcount of 1 */
+  new_tuning->refcount = 1; /* Start with a refcount of 1 */
 
   return new_tuning;
 }
 
-void
-delete_fluid_tuning (fluid_tuning_t *tuning)
-{
-  if (tuning->name) FLUID_FREE (tuning->name);
-  FLUID_FREE (tuning);
+void delete_fluid_tuning(fluid_tuning_t *tuning) {
+  if (tuning->name)
+    FLUID_FREE(tuning->name);
+  FLUID_FREE(tuning);
 }
 
 /* Add a reference to a tuning object */
-void
-fluid_tuning_ref (fluid_tuning_t *tuning)
-{
-  fluid_return_if_fail (tuning != NULL);
+void fluid_tuning_ref(fluid_tuning_t *tuning) {
+  fluid_return_if_fail(tuning != NULL);
 
-  fluid_atomic_int_inc (&tuning->refcount);
+  fluid_atomic_int_inc(&tuning->refcount);
 }
 
-/* Unref a tuning object, when it reaches 0 it is deleted, returns TRUE if deleted */
-int
-fluid_tuning_unref (fluid_tuning_t *tuning, int count)
-{
-  fluid_return_val_if_fail (tuning != NULL, FALSE);
+/* Unref a tuning object, when it reaches 0 it is deleted, returns TRUE if
+ * deleted */
+int fluid_tuning_unref(fluid_tuning_t *tuning, int count) {
+  fluid_return_val_if_fail(tuning != NULL, FALSE);
 
   /* Add and compare are separate, but that is OK, since refcount will only
    * reach 0 when there are no references and therefore no possibility of
    * another thread adding a reference in between */
-  fluid_atomic_int_add (&tuning->refcount, -count);
+  fluid_atomic_int_add(&tuning->refcount, -count);
 
   /* Delete when refcount reaches 0 */
-  if (!fluid_atomic_int_get (&tuning->refcount))
-  {
-    delete_fluid_tuning (tuning);
+  if (!fluid_atomic_int_get(&tuning->refcount)) {
+    delete_fluid_tuning(tuning);
     return TRUE;
-  }
-  else return FALSE;
+  } else
+    return FALSE;
 }
 
-void fluid_tuning_set_name(fluid_tuning_t* tuning, char* name)
-{
+void fluid_tuning_set_name(fluid_tuning_t *tuning, char *name) {
   if (tuning->name != NULL) {
     FLUID_FREE(tuning->name);
     tuning->name = NULL;
@@ -140,18 +128,14 @@ void fluid_tuning_set_name(fluid_tuning_t* tuning, char* name)
   }
 }
 
-char* fluid_tuning_get_name(fluid_tuning_t* tuning)
-{
-  return tuning->name;
-}
+char *fluid_tuning_get_name(fluid_tuning_t *tuning) { return tuning->name; }
 
-void fluid_tuning_set_key(fluid_tuning_t* tuning, int key, double pitch)
-{
+void fluid_tuning_set_key(fluid_tuning_t *tuning, int key, double pitch) {
   tuning->pitch[key] = pitch;
 }
 
-void fluid_tuning_set_octave(fluid_tuning_t* tuning, const double* pitch_deriv)
-{
+void fluid_tuning_set_octave(fluid_tuning_t *tuning,
+                             const double *pitch_deriv) {
   int i;
 
   for (i = 0; i < 128; i++) {
@@ -159,8 +143,7 @@ void fluid_tuning_set_octave(fluid_tuning_t* tuning, const double* pitch_deriv)
   }
 }
 
-void fluid_tuning_set_all(fluid_tuning_t* tuning, const double* pitch)
-{
+void fluid_tuning_set_all(fluid_tuning_t *tuning, const double *pitch) {
   int i;
 
   for (i = 0; i < 128; i++) {
@@ -168,8 +151,7 @@ void fluid_tuning_set_all(fluid_tuning_t* tuning, const double* pitch)
   }
 }
 
-void fluid_tuning_set_pitch(fluid_tuning_t* tuning, int key, double pitch)
-{
+void fluid_tuning_set_pitch(fluid_tuning_t *tuning, int key, double pitch) {
   if ((key >= 0) && (key < 128)) {
     tuning->pitch[key] = pitch;
   }

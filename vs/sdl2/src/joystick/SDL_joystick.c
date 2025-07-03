@@ -22,13 +22,13 @@
 
 /* This is the joystick API for Simple DirectMedia Layer */
 
+#include "../SDL_hints_c.h"
 #include "SDL.h"
 #include "SDL_atomic.h"
 #include "SDL_events.h"
-#include "SDL_sysjoystick.h"
 #include "SDL_hints.h"
-#include "../SDL_hints_c.h"
 #include "SDL_steam_virtual_gamepad.h"
+#include "SDL_sysjoystick.h"
 
 #ifndef SDL_EVENTS_DISABLED
 #include "../events/SDL_events_c.h"
@@ -114,7 +114,7 @@ static SDL_JoystickDriver *SDL_joystick_drivers[] = {
 #ifndef SDL_THREAD_SAFETY_ANALYSIS
 static
 #endif
-SDL_mutex *SDL_joystick_lock = NULL; /* This needs to support recursive locks */
+    SDL_mutex *SDL_joystick_lock = NULL; /* This needs to support recursive locks */
 static SDL_atomic_t SDL_joystick_lock_pending;
 static int SDL_joysticks_locked;
 static SDL_bool SDL_joysticks_initialized;
@@ -421,11 +421,11 @@ static SDL_vidpid_list zero_centered_devices = {
     SDL_FALSE
 };
 
-#define CHECK_JOYSTICK_MAGIC(joystick, retval)             \
+#define CHECK_JOYSTICK_MAGIC(joystick, retval)                 \
     if (!joystick || joystick->magic != &SDL_joystick_magic) { \
-        SDL_InvalidParamError("joystick");                 \
-        SDL_UnlockJoysticks();                             \
-        return retval;                                     \
+        SDL_InvalidParamError("joystick");                     \
+        SDL_UnlockJoysticks();                                 \
+        return retval;                                         \
     }
 
 SDL_bool SDL_JoysticksInitialized(void)

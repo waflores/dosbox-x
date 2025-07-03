@@ -13,8 +13,8 @@
    If you build without SDL_ttf, you can use the GNU Unifont hex file instead.
    Download at http://unifoundry.com/unifont.html */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "SDL.h"
@@ -64,7 +64,7 @@ struct UnifontGlyph
 {
     Uint8 width;
     Uint8 data[32];
-} * unifontGlyph;
+} *unifontGlyph;
 static SDL_Texture **unifontTexture;
 static Uint8 unifontTextureLoaded[UNIFONT_NUM_TEXTURES] = { 0 };
 
@@ -770,6 +770,5 @@ int main(int argc, char *argv[])
     SDLTest_CommonQuit(state);
     return 0;
 }
-
 
 /* vi: set ts=4 sw=4 expandtab: */

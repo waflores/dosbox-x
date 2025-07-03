@@ -87,10 +87,10 @@
  *   beginning of an opaque line.
  */
 
-#include "SDL_video.h"
-#include "SDL_sysvideo.h"
-#include "SDL_blit.h"
 #include "SDL_RLEaccel_c.h"
+#include "SDL_blit.h"
+#include "SDL_sysvideo.h"
+#include "SDL_video.h"
 
 #define PIXEL_COPY(to, from, len, bpp) \
     SDL_memcpy(to, from, (size_t)(len) * (bpp))
@@ -1003,10 +1003,10 @@ static int uncopy_32(Uint32 *dst, void *src, int n,
     return n * 4;
 }
 
-#define ISOPAQUE(pixel, fmt) ((((pixel)&fmt->Amask) >> fmt->Ashift) == 255)
+#define ISOPAQUE(pixel, fmt) ((((pixel) & fmt->Amask) >> fmt->Ashift) == 255)
 
 #define ISTRANSL(pixel, fmt) \
-    ((unsigned)((((pixel)&fmt->Amask) >> fmt->Ashift) - 1U) < 254U)
+    ((unsigned)((((pixel) & fmt->Amask) >> fmt->Ashift) - 1U) < 254U)
 
 /* convert surface to be quickly alpha-blittable onto dest, if possible */
 static int RLEAlphaSurface(SDL_Surface *surface)

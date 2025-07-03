@@ -24,7 +24,7 @@
 /*
  *	GEM SDL video driver implementation
  *	Window manager functions
- * 
+ *
  *	Patrice Mandin
  */
 

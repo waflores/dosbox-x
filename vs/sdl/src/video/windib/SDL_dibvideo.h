@@ -27,33 +27,32 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-
 /* Private display data */
 struct DibInfo {
-	HBITMAP screen_bmp;
-    HPALETTE screen_pal;
-    LOGPALETTE *screen_logpal;
-    BOOL grab_palette;
+  HBITMAP screen_bmp;
+  HPALETTE screen_pal;
+  LOGPALETTE *screen_logpal;
+  BOOL grab_palette;
 
-#define NUM_MODELISTS	4		/* 8, 16, 24, and 32 bits-per-pixel */
-    int SDL_nummodes[NUM_MODELISTS];
-    SDL_Rect **SDL_modelist[NUM_MODELISTS];
-        
+#define NUM_MODELISTS 4 /* 8, 16, 24, and 32 bits-per-pixel */
+  int SDL_nummodes[NUM_MODELISTS];
+  SDL_Rect **SDL_modelist[NUM_MODELISTS];
+
 #ifdef _WIN32_WCE
-	int supportRotation; /* for Pocket PC devices */
-	DWORD origRotation; /* for Pocket PC devices */
+  int supportRotation; /* for Pocket PC devices */
+  DWORD origRotation;  /* for Pocket PC devices */
 #endif
 
-    /* Screensaver settings */
-    int allow_screensaver;
+  /* Screensaver settings */
+  int allow_screensaver;
 };
 /* Old variable names */
-#define screen_bmp		(this->hidden->dibInfo->screen_bmp)
-#define screen_pal		(this->hidden->dibInfo->screen_pal)
-#define screen_logpal		(this->hidden->dibInfo->screen_logpal)
-#define grab_palette		(this->hidden->dibInfo->grab_palette)
-#define SDL_nummodes		(this->hidden->dibInfo->SDL_nummodes)
-#define SDL_modelist		(this->hidden->dibInfo->SDL_modelist)
-#define allow_screensaver	(this->hidden->dibInfo->allow_screensaver)
+#define screen_bmp (this->hidden->dibInfo->screen_bmp)
+#define screen_pal (this->hidden->dibInfo->screen_pal)
+#define screen_logpal (this->hidden->dibInfo->screen_logpal)
+#define grab_palette (this->hidden->dibInfo->grab_palette)
+#define SDL_nummodes (this->hidden->dibInfo->SDL_nummodes)
+#define SDL_modelist (this->hidden->dibInfo->SDL_modelist)
+#define allow_screensaver (this->hidden->dibInfo->allow_screensaver)
 
 #endif /* _SDL_dibvideo_h */

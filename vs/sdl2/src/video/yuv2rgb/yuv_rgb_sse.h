@@ -241,7 +241,6 @@ void yuvnv12_abgr_sseu(
     uint8_t *rgb, uint32_t rgb_stride,
     YCbCrType yuv_type);
 
-
 // rgb to yuv, standard c implementation
 void rgb24_yuv420_std(
     uint32_t width, uint32_t height,

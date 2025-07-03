@@ -52,82 +52,74 @@ clipboard
 
 static char *pdc_DOS_clipboard = NULL;
 
-int PDC_getclipboard(char **contents, long *length)
-{
-    int len;
+int PDC_getclipboard(char **contents, long *length) {
+  int len;
 
-    PDC_LOG(("PDC_getclipboard() - called\n"));
+  PDC_LOG(("PDC_getclipboard() - called\n"));
 
+  if (!pdc_DOS_clipboard)
+    return PDC_CLIP_EMPTY;
+
+  len = strlen(pdc_DOS_clipboard);
+  *contents = malloc(len + 1);
+  if (!*contents)
+    return PDC_CLIP_MEMORY_ERROR;
+
+  strcpy(*contents, pdc_DOS_clipboard);
+  *length = len;
+
+  return PDC_CLIP_SUCCESS;
+}
+
+int PDC_setclipboard(const char *contents, long length) {
+  PDC_LOG(("PDC_setclipboard() - called\n"));
+
+  if (pdc_DOS_clipboard) {
+    free(pdc_DOS_clipboard);
+    pdc_DOS_clipboard = NULL;
+  }
+
+  if (contents) {
+    pdc_DOS_clipboard = malloc(length + 1);
     if (!pdc_DOS_clipboard)
-        return PDC_CLIP_EMPTY;
+      return PDC_CLIP_MEMORY_ERROR;
 
-    len = strlen(pdc_DOS_clipboard);
-    *contents = malloc(len + 1);
-    if (!*contents)
-        return PDC_CLIP_MEMORY_ERROR;
+    strcpy(pdc_DOS_clipboard, contents);
+  }
 
-    strcpy(*contents, pdc_DOS_clipboard);
-    *length = len;
-
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_setclipboard(const char *contents, long length)
-{
-    PDC_LOG(("PDC_setclipboard() - called\n"));
+int PDC_freeclipboard(char *contents) {
+  PDC_LOG(("PDC_freeclipboard() - called\n"));
 
-    if (pdc_DOS_clipboard)
-    {
-        free(pdc_DOS_clipboard);
-        pdc_DOS_clipboard = NULL;
-    }
+  /* should we also free empty the system clipboard? probably not */
 
-    if (contents)
-    {
-        pdc_DOS_clipboard = malloc(length + 1);
-        if (!pdc_DOS_clipboard)
-            return PDC_CLIP_MEMORY_ERROR;
+  if (contents) {
+    /* NOTE: We free the memory, but we can not set caller's pointer
+       to NULL, so if caller calls again then will try to access
+       free'd memory.  We 1st overwrite memory with a string so if
+       caller tries to use free memory they won't get what they
+       expect & hopefully notice. */
 
-        strcpy(pdc_DOS_clipboard, contents);
-    }
+    /* memset(contents, 0xFD, strlen(contents)); */
 
-    return PDC_CLIP_SUCCESS;
+    if (strlen(contents) >= strlen("PDCURSES"))
+      strcpy(contents, "PDCURSES");
+
+    free(contents);
+  }
+
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_freeclipboard(char *contents)
-{
-    PDC_LOG(("PDC_freeclipboard() - called\n"));
+int PDC_clearclipboard(void) {
+  PDC_LOG(("PDC_clearclipboard() - called\n"));
 
-    /* should we also free empty the system clipboard? probably not */
+  if (pdc_DOS_clipboard) {
+    free(pdc_DOS_clipboard);
+    pdc_DOS_clipboard = NULL;
+  }
 
-    if (contents)
-    {
-        /* NOTE: We free the memory, but we can not set caller's pointer
-           to NULL, so if caller calls again then will try to access
-           free'd memory.  We 1st overwrite memory with a string so if
-           caller tries to use free memory they won't get what they
-           expect & hopefully notice. */
-
-        /* memset(contents, 0xFD, strlen(contents)); */
-
-        if (strlen(contents) >= strlen("PDCURSES"))
-            strcpy(contents, "PDCURSES");
-
-        free(contents);
-    }
-
-    return PDC_CLIP_SUCCESS;
-}
-
-int PDC_clearclipboard(void)
-{
-    PDC_LOG(("PDC_clearclipboard() - called\n"));
-
-    if (pdc_DOS_clipboard)
-    {
-        free(pdc_DOS_clipboard);
-        pdc_DOS_clipboard = NULL;
-    }
-
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }

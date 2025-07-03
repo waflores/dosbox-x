@@ -20,7 +20,8 @@
 
 #define FLUIDINC
 #include "config.h"
-#if !C_FLUIDSYNTH && defined(WIN32) && !defined(C_HX_DOS) && !defined(_WIN32_WINDOWS)
+#if !C_FLUIDSYNTH && defined(WIN32) && !defined(C_HX_DOS) &&                   \
+    !defined(_WIN32_WINDOWS)
 #include "fluid_sys.h"
 
 #if defined(WIN32)
@@ -28,30 +29,29 @@
 #endif
 
 #if WITH_READLINE
-#include <readline/readline.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 #endif
 
 #ifdef DBUS_SUPPORT
 #include "fluid_rtkit.h"
 #endif
 
-/* WIN32 HACK - Flag used to differentiate between a file descriptor and a socket.
- * Should work, so long as no SOCKET or file descriptor ends up with this bit set. - JG */
-#define WIN32_SOCKET_FLAG       0x40000000
+/* WIN32 HACK - Flag used to differentiate between a file descriptor and a
+ * socket. Should work, so long as no SOCKET or file descriptor ends up with
+ * this bit set. - JG */
+#define WIN32_SOCKET_FLAG 0x40000000
 
 /* SCHED_FIFO priority for high priority timer threads */
-#define FLUID_SYS_TIMER_HIGH_PRIO_LEVEL         10
+#define FLUID_SYS_TIMER_HIGH_PRIO_LEVEL 10
 
-typedef struct
-{
+typedef struct {
   fluid_thread_func_t func;
   void *data;
   int prio_level;
 } fluid_thread_info_t;
 
-struct _fluid_timer_t
-{
+struct _fluid_timer_t {
   long msec;
   fluid_timer_callback_t callback;
   void *data;
@@ -60,8 +60,7 @@ struct _fluid_timer_t
   int auto_destroy;
 };
 
-struct _fluid_server_socket_t
-{
+struct _fluid_server_socket_t {
   fluid_socket_t socket;
   fluid_thread_t *thread;
   int cont;
@@ -69,24 +68,17 @@ struct _fluid_server_socket_t
   void *data;
 };
 
+static int fluid_istream_gets(fluid_istream_t in, char *buf, int len);
 
-static int fluid_istream_gets(fluid_istream_t in, char* buf, int len);
-
-
-static char fluid_errbuf[512];  /* buffer for error message */
+static char fluid_errbuf[512]; /* buffer for error message */
 
 static fluid_log_function_t fluid_log_function[LAST_LOG_LEVEL];
-static void* fluid_log_user_data[LAST_LOG_LEVEL];
+static void *fluid_log_user_data[LAST_LOG_LEVEL];
 static int fluid_log_initialized = 0;
 
-static char* fluid_libname = "fluidsynth";
+static char *fluid_libname = "fluidsynth";
 
-
-void fluid_sys_config()
-{
-  fluid_log_config();
-}
-
+void fluid_sys_config() { fluid_log_config(); }
 
 unsigned int fluid_debug_flags = 0;
 
@@ -94,15 +86,14 @@ unsigned int fluid_debug_flags = 0;
 /*
  * fluid_debug
  */
-int fluid_debug(int level, char * fmt, ...)
-{
+int fluid_debug(int level, char *fmt, ...) {
   if (fluid_debug_flags & level) {
     fluid_log_function_t fun;
     va_list args;
 
-    va_start (args, fmt);
-    vsnprintf(fluid_errbuf, sizeof (fluid_errbuf), fmt, args);
-    va_end (args);
+    va_start(args, fmt);
+    vsnprintf(fluid_errbuf, sizeof(fluid_errbuf), fmt, args);
+    va_end(args);
 
     fun = fluid_log_function[FLUID_DBG];
     if (fun != NULL) {
@@ -120,9 +111,8 @@ int fluid_debug(int level, char * fmt, ...)
  * @param data User supplied data pointer to pass to log function
  * @return The previously installed function.
  */
-fluid_log_function_t
-fluid_set_log_function(int level, fluid_log_function_t fun, void* data)
-{
+fluid_log_function_t fluid_set_log_function(int level, fluid_log_function_t fun,
+                                            void *data) {
   fluid_log_function_t old = NULL;
 
   if ((level >= 0) && (level < LAST_LOG_LEVEL)) {
@@ -139,10 +129,8 @@ fluid_set_log_function(int level, fluid_log_function_t fun, void* data)
  * @param message Log message
  * @param data User supplied data (not used)
  */
-void
-fluid_default_log_function(int level, char* message, void* data)
-{
-  FILE* out;
+void fluid_default_log_function(int level, char *message, void *data) {
+  FILE *out;
 
 #if defined(WIN32)
   out = stdout;
@@ -182,9 +170,7 @@ fluid_default_log_function(int level, char* message, void* data)
 /*
  * fluid_init_log
  */
-void
-fluid_log_config(void)
-{
+void fluid_log_config(void) {
   if (fluid_log_initialized == 0) {
 
     fluid_log_initialized = 1;
@@ -218,15 +204,13 @@ fluid_log_config(void)
  * @param ... Arguments for printf 'fmt' message string
  * @return Always returns #FLUID_FAILED
  */
-int
-fluid_log(int level, const char* fmt, ...)
-{
+int fluid_log(int level, const char *fmt, ...) {
   fluid_log_function_t fun = NULL;
 
   va_list args;
-  va_start (args, fmt);
-  vsnprintf(fluid_errbuf, sizeof (fluid_errbuf), fmt, args);
-  va_end (args);
+  va_start(args, fmt);
+  vsnprintf(fluid_errbuf, sizeof(fluid_errbuf), fmt, args);
+  va_end(args);
 
   if ((level >= 0) && (level < LAST_LOG_LEVEL)) {
     fun = fluid_log_function[level];
@@ -240,8 +224,8 @@ fluid_log(int level, const char* fmt, ...)
 /**
  * An improved strtok, still trashes the input string, but is portable and
  * thread safe.  Also skips token chars at beginning of token string and never
- * returns an empty token (will return NULL if source ends in token chars though).
- * NOTE: NOT part of public API
+ * returns an empty token (will return NULL if source ends in token chars
+ * though). NOTE: NOT part of public API
  * @internal
  * @param str Pointer to a string pointer of source to tokenize.  Pointer gets
  *   updated on each invocation to point to beginning of next token.  Note that
@@ -250,54 +234,51 @@ fluid_log(int level, const char* fmt, ...)
  * @param delim String of delimiter chars.
  * @return Pointer to the next token or NULL if no more tokens.
  */
-char *fluid_strtok (char **str, char *delim)
-{
+char *fluid_strtok(char **str, char *delim) {
   char *s, *d, *token;
   char c;
 
-  if (str == NULL || delim == NULL || !*delim)
-  {
+  if (str == NULL || delim == NULL || !*delim) {
     FLUID_LOG(FLUID_ERR, "Null pointer");
     return NULL;
   }
 
   s = *str;
-  if (!s) return NULL;	/* str points to a NULL pointer? (tokenize already ended) */
+  if (!s)
+    return NULL; /* str points to a NULL pointer? (tokenize already ended) */
 
   /* skip delimiter chars at beginning of token */
-  do
-  {
+  do {
     c = *s;
-    if (!c)	/* end of source string? */
+    if (!c) /* end of source string? */
     {
       *str = NULL;
       return NULL;
     }
 
-    for (d = delim; *d; d++)	/* is source char a token char? */
+    for (d = delim; *d; d++) /* is source char a token char? */
     {
-      if (c == *d)	/* token char match? */
+      if (c == *d) /* token char match? */
       {
-	s++;		/* advance to next source char */
-	break;
+        s++; /* advance to next source char */
+        break;
       }
     }
-  } while (*d);		/* while token char match */
+  } while (*d); /* while token char match */
 
-  token = s;		/* start of token found */
+  token = s; /* start of token found */
 
   /* search for next token char or end of source string */
-  for (s = s+1; *s; s++)
-  {
+  for (s = s + 1; *s; s++) {
     c = *s;
 
-    for (d = delim; *d; d++)	/* is source char a token char? */
+    for (d = delim; *d; d++) /* is source char a token char? */
     {
-      if (c == *d)	/* token char match? */
+      if (c == *d) /* token char match? */
       {
-	*s = '\0';	/* overwrite token char with zero byte to terminate token */
-	*str = s+1;	/* update str to point to beginning of next token */
-	return token;
+        *s = '\0'; /* overwrite token char with zero byte to terminate token */
+        *str = s + 1; /* update str to point to beginning of next token */
+        return token;
       }
     }
   }
@@ -310,11 +291,7 @@ char *fluid_strtok (char **str, char *delim)
 /*
  * fluid_error
  */
-char*
-fluid_error()
-{
-  return fluid_errbuf;
-}
+char *fluid_error() { return fluid_errbuf; }
 
 /**
  * Check if a file is a MIDI file.
@@ -324,16 +301,14 @@ fluid_error()
  * The current implementation only checks for the "MThd" header in the file.
  * It is useful only to distinguish between SoundFont and MIDI files.
  */
-int
-fluid_is_midifile(const char *filename)
-{
-  FILE* fp = fopen(filename, "rb");
+int fluid_is_midifile(const char *filename) {
+  FILE *fp = fopen(filename, "rb");
   char id[4];
 
   if (fp == NULL) {
     return 0;
   }
-  if (fread((void*) id, 1, 4, fp) != 4) {
+  if (fread((void *)id, 1, 4, fp) != 4) {
     fclose(fp);
     return 0;
   }
@@ -350,25 +325,22 @@ fluid_is_midifile(const char *filename)
  * The current implementation only checks for the "RIFF" header in the file.
  * It is useful only to distinguish between SoundFont and MIDI files.
  */
-int
-fluid_is_soundfont(const char *filename)
-{
-  FILE* fp = fopen(filename, "rb");
+int fluid_is_soundfont(const char *filename) {
+  FILE *fp = fopen(filename, "rb");
   char riff_id[4], sfbk_id[4];
 
   if (fp == NULL) {
     return 0;
   }
-  if ((fread((void*)riff_id, 1, sizeof(riff_id), fp) != sizeof(riff_id)) ||
-	  (fseek(fp, 4, SEEK_CUR) != 0) ||
-	  (fread((void*)sfbk_id, 1, sizeof(sfbk_id), fp) != sizeof(sfbk_id)))
-  {
-	  goto error_rec;
+  if ((fread((void *)riff_id, 1, sizeof(riff_id), fp) != sizeof(riff_id)) ||
+      (fseek(fp, 4, SEEK_CUR) != 0) ||
+      (fread((void *)sfbk_id, 1, sizeof(sfbk_id), fp) != sizeof(sfbk_id))) {
+    goto error_rec;
   }
   fclose(fp);
 
   return (FLUID_STRNCMP(riff_id, "RIFF", sizeof(riff_id)) == 0) &&
-	  (FLUID_STRNCMP(sfbk_id, "sfbk", sizeof(sfbk_id)) == 0);
+         (FLUID_STRNCMP(sfbk_id, "sfbk", sizeof(sfbk_id)) == 0);
 
 error_rec:
   fclose(fp);
@@ -385,8 +357,7 @@ unsigned int fluid_curtime(void);
  * Get time in microseconds to be used in relative timing operations.
  * @return Unix time in microseconds.
  */
-double
-fluid_utime (void);
+double fluid_utime(void);
 
 #if HAVE_WINDOWS_H
 
@@ -411,8 +382,7 @@ unsigned int fluid_curtime(void) { return fluid_utime() * 1000; }
 
 typedef mach_timespec_t timespec_type;
 
-FLUID_INLINE void get_timespec(timespec_type* tm)
-{
+FLUID_INLINE void get_timespec(timespec_type *tm) {
   clock_serv_t cclock;
   host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
   clock_get_time(cclock, tm);
@@ -423,8 +393,7 @@ FLUID_INLINE void get_timespec(timespec_type* tm)
 
 typedef struct timespec timespec_type;
 
-FLUID_INLINE void get_timespec(timespec_type* tm)
-{
+FLUID_INLINE void get_timespec(timespec_type *tm) {
   clock_gettime(CLOCK_MONOTONIC, tm);
 }
 
@@ -432,8 +401,7 @@ FLUID_INLINE void get_timespec(timespec_type* tm)
 
 #define USEC(tm) ((tm).tv_nsec / 1000)
 
-unsigned int fluid_curtime(void)
-{
+unsigned int fluid_curtime(void) {
   static long initial_seconds = 0;
   timespec_type timeval;
 
@@ -444,11 +412,11 @@ unsigned int fluid_curtime(void)
 
   get_timespec(&timeval);
 
-  return (unsigned int)((timeval.tv_sec - initial_seconds) * 1000.0 + USEC(timeval) / 1000.0);
+  return (unsigned int)((timeval.tv_sec - initial_seconds) * 1000.0 +
+                        USEC(timeval) / 1000.0);
 }
 
-double fluid_utime(void)
-{
+double fluid_utime(void) {
   timespec_type timeval;
 
   get_timespec(&timeval);
@@ -458,44 +426,35 @@ double fluid_utime(void)
 
 #endif /* HAVE_WINDOWS_H */
 
+#if defined(WIN32) /* Windoze specific stuff */
 
-#if defined(WIN32)      /* Windoze specific stuff */
-
-void
-fluid_thread_self_set_prio (int prio_level)
-{
+void fluid_thread_self_set_prio(int prio_level) {
   if (prio_level > 0)
-    SetThreadPriority (GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 }
 
+#elif defined(__OS2__) /* OS/2 specific stuff */
 
-#elif defined(__OS2__)  /* OS/2 specific stuff */
-
-void
-fluid_thread_self_set_prio (int prio_level)
-{
+void fluid_thread_self_set_prio(int prio_level) {
   if (prio_level > 0)
-    DosSetPriority (PRTYS_THREAD, PRTYC_REGULAR, PRTYD_MAXIMUM, 0);
+    DosSetPriority(PRTYS_THREAD, PRTYC_REGULAR, PRTYD_MAXIMUM, 0);
 }
 
-#else   /* POSIX stuff..  Nice POSIX..  Good POSIX. */
+#else /* POSIX stuff..  Nice POSIX..  Good POSIX. */
 
-void
-fluid_thread_self_set_prio (int prio_level)
-{
+void fluid_thread_self_set_prio(int prio_level) {
   struct sched_param priority;
 
-  if (prio_level > 0)
-  {
+  if (prio_level > 0) {
 
     memset(&priority, 0, sizeof(priority));
     priority.sched_priority = prio_level;
 
-    if (pthread_setschedparam (pthread_self (), SCHED_FIFO, &priority) == 0) {
+    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) == 0) {
       return;
     }
 #ifdef DBUS_SUPPORT
-/* Try to gain high priority via rtkit */
+    /* Try to gain high priority via rtkit */
 
     if (fluid_rtkit_make_realtime(0, prio_level) == 0) {
       return;
@@ -521,44 +480,43 @@ fluid_thread_self_set_prio (int prio_level)
  */
 
 /* Exception flags */
-#define _FPU_STATUS_IE    0x001  /* Invalid Operation */
-#define _FPU_STATUS_DE    0x002  /* Denormalized Operand */
-#define _FPU_STATUS_ZE    0x004  /* Zero Divide */
-#define _FPU_STATUS_OE    0x008  /* Overflow */
-#define _FPU_STATUS_UE    0x010  /* Underflow */
-#define _FPU_STATUS_PE    0x020  /* Precision */
-#define _FPU_STATUS_SF    0x040  /* Stack Fault */
-#define _FPU_STATUS_ES    0x080  /* Error Summary Status */
+#define _FPU_STATUS_IE 0x001 /* Invalid Operation */
+#define _FPU_STATUS_DE 0x002 /* Denormalized Operand */
+#define _FPU_STATUS_ZE 0x004 /* Zero Divide */
+#define _FPU_STATUS_OE 0x008 /* Overflow */
+#define _FPU_STATUS_UE 0x010 /* Underflow */
+#define _FPU_STATUS_PE 0x020 /* Precision */
+#define _FPU_STATUS_SF 0x040 /* Stack Fault */
+#define _FPU_STATUS_ES 0x080 /* Error Summary Status */
 
 /* Macros for accessing the FPU status word.  */
 
 /* get the FPU status */
-#define _FPU_GET_SW(sw) __asm__ ("fnstsw %0" : "=m" (*&sw))
+#define _FPU_GET_SW(sw) __asm__("fnstsw %0" : "=m"(*&sw))
 
 /* clear the FPU status */
-#define _FPU_CLR_SW() __asm__ ("fnclex" : : )
+#define _FPU_CLR_SW() __asm__("fnclex" : :)
 
 /* Purpose:
  * Checks, if the floating point unit has produced an exception, print a message
  * if so and clear the exception.
  */
-unsigned int fluid_check_fpe_i386(char* explanation)
-{
+unsigned int fluid_check_fpe_i386(char *explanation) {
   unsigned int s;
 
   _FPU_GET_SW(s);
   _FPU_CLR_SW();
 
-  s &= _FPU_STATUS_IE | _FPU_STATUS_DE | _FPU_STATUS_ZE | _FPU_STATUS_OE | _FPU_STATUS_UE;
+  s &= _FPU_STATUS_IE | _FPU_STATUS_DE | _FPU_STATUS_ZE | _FPU_STATUS_OE |
+       _FPU_STATUS_UE;
 
-  if (s)
-  {
-      FLUID_LOG(FLUID_WARN, "FPE exception (before or in %s): %s%s%s%s%s", explanation,
-	       (s & _FPU_STATUS_IE) ? "Invalid operation " : "",
-	       (s & _FPU_STATUS_DE) ? "Denormal number " : "",
-	       (s & _FPU_STATUS_ZE) ? "Zero divide " : "",
-	       (s & _FPU_STATUS_OE) ? "Overflow " : "",
-	       (s & _FPU_STATUS_UE) ? "Underflow " : "");
+  if (s) {
+    FLUID_LOG(FLUID_WARN, "FPE exception (before or in %s): %s%s%s%s%s",
+              explanation, (s & _FPU_STATUS_IE) ? "Invalid operation " : "",
+              (s & _FPU_STATUS_DE) ? "Denormal number " : "",
+              (s & _FPU_STATUS_ZE) ? "Zero divide " : "",
+              (s & _FPU_STATUS_OE) ? "Overflow " : "",
+              (s & _FPU_STATUS_UE) ? "Underflow " : "");
   }
 
   return s;
@@ -567,16 +525,11 @@ unsigned int fluid_check_fpe_i386(char* explanation)
 /* Purpose:
  * Clear floating point exception.
  */
-void fluid_clear_fpe_i386 (void)
-{
-  _FPU_CLR_SW();
-}
+void fluid_clear_fpe_i386(void) { _FPU_CLR_SW(); }
 
-#endif	// ifdef FPE_CHECK
+#endif // ifdef FPE_CHECK
 
-
-#endif	// #else    (its POSIX)
-
+#endif // #else    (its POSIX)
 
 /***************************************************************
  *
@@ -586,23 +539,27 @@ void fluid_clear_fpe_i386 (void)
 
 #if WITH_PROFILING
 
-fluid_profile_data_t fluid_profile_data[] =
-{
-  { FLUID_PROF_WRITE,            "fluid_synth_write_*             ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_ONE_BLOCK,        "fluid_synth_one_block           ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_ONE_BLOCK_CLEAR,  "fluid_synth_one_block:clear     ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_ONE_BLOCK_VOICE,  "fluid_synth_one_block:one voice ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_ONE_BLOCK_VOICES, "fluid_synth_one_block:all voices", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_ONE_BLOCK_REVERB, "fluid_synth_one_block:reverb    ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_ONE_BLOCK_CHORUS, "fluid_synth_one_block:chorus    ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_VOICE_NOTE,       "fluid_voice:note                ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_VOICE_RELEASE,    "fluid_voice:release             ", 1e10, 0.0, 0.0, 0},
-  { FLUID_PROF_LAST, "last", 1e100, 0.0, 0.0, 0}
-};
+fluid_profile_data_t fluid_profile_data[] = {
+    {FLUID_PROF_WRITE, "fluid_synth_write_*             ", 1e10, 0.0, 0.0, 0},
+    {FLUID_PROF_ONE_BLOCK, "fluid_synth_one_block           ", 1e10, 0.0, 0.0,
+     0},
+    {FLUID_PROF_ONE_BLOCK_CLEAR, "fluid_synth_one_block:clear     ", 1e10, 0.0,
+     0.0, 0},
+    {FLUID_PROF_ONE_BLOCK_VOICE, "fluid_synth_one_block:one voice ", 1e10, 0.0,
+     0.0, 0},
+    {FLUID_PROF_ONE_BLOCK_VOICES, "fluid_synth_one_block:all voices", 1e10, 0.0,
+     0.0, 0},
+    {FLUID_PROF_ONE_BLOCK_REVERB, "fluid_synth_one_block:reverb    ", 1e10, 0.0,
+     0.0, 0},
+    {FLUID_PROF_ONE_BLOCK_CHORUS, "fluid_synth_one_block:chorus    ", 1e10, 0.0,
+     0.0, 0},
+    {FLUID_PROF_VOICE_NOTE, "fluid_voice:note                ", 1e10, 0.0, 0.0,
+     0},
+    {FLUID_PROF_VOICE_RELEASE, "fluid_voice:release             ", 1e10, 0.0,
+     0.0, 0},
+    {FLUID_PROF_LAST, "last", 1e100, 0.0, 0.0, 0}};
 
-
-void fluid_profiling_print(void)
-{
+void fluid_profiling_print(void) {
   int i;
 
   printf("fluid_profiling_print\n");
@@ -612,20 +569,17 @@ void fluid_profiling_print(void)
   for (i = 0; i < FLUID_PROF_LAST; i++) {
     if (fluid_profile_data[i].count > 0) {
       FLUID_LOG(FLUID_INFO, "%s: %.3f/%.3f/%.3f",
-	       fluid_profile_data[i].description,
-	       fluid_profile_data[i].min,
-	       fluid_profile_data[i].total / fluid_profile_data[i].count,
-	       fluid_profile_data[i].max);
+                fluid_profile_data[i].description, fluid_profile_data[i].min,
+                fluid_profile_data[i].total / fluid_profile_data[i].count,
+                fluid_profile_data[i].max);
     } else {
-      FLUID_LOG(FLUID_DBG, "%s: no profiling available", fluid_profile_data[i].description);
+      FLUID_LOG(FLUID_DBG, "%s: no profiling available",
+                fluid_profile_data[i].description);
     }
   }
 }
 
-
 #endif /* WITH_PROFILING */
-
-
 
 /***************************************************************
  *
@@ -635,16 +589,15 @@ void fluid_profiling_print(void)
 
 static
 #if HAVE_WINDOWS_H
-DWORD __stdcall
+    DWORD __stdcall
 #else
-void*
+    void *
 #endif
-fluid_thread_func (void* data)
-{
+    fluid_thread_func(void *data) {
   fluid_thread_info_t *info = (fluid_thread_info_t *)data;
 
-  info->func (info->data);
-  FLUID_FREE (info);
+  info->func(info->data);
+  FLUID_FREE(info);
 
 #if HAVE_WINDOWS_H
   return 0;
@@ -657,24 +610,24 @@ fluid_thread_func (void* data)
  * Create a new thread.
  * @param func Function to execute in new thread context
  * @param data User defined data to pass to func
- * @param prio_level Priority level.  If greater than 0 then high priority scheduling will
- *   be used, with the given priority level (used by pthreads only).  0 uses normal scheduling.
- * @param detach If TRUE, 'join' does not work and the thread destroys itself when finished.
+ * @param prio_level Priority level.  If greater than 0 then high priority
+ * scheduling will be used, with the given priority level (used by pthreads
+ * only).  0 uses normal scheduling.
+ * @param detach If TRUE, 'join' does not work and the thread destroys itself
+ * when finished.
  * @return New thread pointer or NULL on error
  */
-fluid_thread_t *
-new_fluid_thread (const char *name, fluid_thread_func_t func, void *data, int prio_level, int detach)
-{
+fluid_thread_t *new_fluid_thread(const char *name, fluid_thread_func_t func,
+                                 void *data, int prio_level, int detach) {
   fluid_thread_t *thread;
   fluid_thread_info_t *info;
   int err;
 
-  fluid_return_val_if_fail (func != NULL, NULL);
+  fluid_return_val_if_fail(func != NULL, NULL);
 
-  info = FLUID_NEW (fluid_thread_info_t);
+  info = FLUID_NEW(fluid_thread_info_t);
 
-  if (!info)
-  {
+  if (!info) {
     FLUID_LOG(FLUID_ERR, "Out of memory");
     return NULL;
   }
@@ -690,9 +643,9 @@ new_fluid_thread (const char *name, fluid_thread_func_t func, void *data, int pr
     return NULL;
   }
 
-  *thread = CreateThread(NULL, 0, fluid_thread_func, info, CREATE_SUSPENDED, NULL);
-  if (*thread == NULL)
-  {
+  *thread =
+      CreateThread(NULL, 0, fluid_thread_func, info, CREATE_SUSPENDED, NULL);
+  if (*thread == NULL) {
     FLUID_LOG(FLUID_ERR, "Failed to create thread");
     return NULL;
   }
@@ -719,41 +672,37 @@ new_fluid_thread (const char *name, fluid_thread_func_t func, void *data, int pr
   pthread_attr_t attr;
   struct sched_param sched_param;
 
-  err = pthread_attr_init (&attr);
-  if (err)
-  {
-    FLUID_LOG(FLUID_ERR, "Failed to initialize pthread attributes: %s", strerror(err));
+  err = pthread_attr_init(&attr);
+  if (err) {
+    FLUID_LOG(FLUID_ERR, "Failed to initialize pthread attributes: %s",
+              strerror(err));
     return NULL;
   }
 
-  err = pthread_attr_setschedpolicy (&attr, SCHED_FIFO);
+  err = pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
 
-  pthread_attr_getschedparam (&attr, &sched_param);
+  pthread_attr_getschedparam(&attr, &sched_param);
   sched_param.sched_priority = prio_level > 0 ? 1 : 0;
 
-  if (!err)
-  {
-    err = pthread_attr_setschedparam (&attr, &sched_param);
+  if (!err) {
+    err = pthread_attr_setschedparam(&attr, &sched_param);
   }
 
-  if (err)
-  {
+  if (err) {
     FLUID_LOG(FLUID_ERR, "Failed to set pthread attributes: %s", strerror(err));
     return NULL;
   }
 
-  thread = FLUID_NEW (fluid_thread_t);
+  thread = FLUID_NEW(fluid_thread_t);
 
-  err = pthread_create (thread, &attr, fluid_thread_func, info);
-  if (err)
-  {
+  err = pthread_create(thread, &attr, fluid_thread_func, info);
+  if (err) {
     FLUID_LOG(FLUID_ERR, "Failed to create the thread: %s", strerror(err));
     return NULL;
   }
 
-  if (detach)
-  {
-    err = pthread_detach (*thread);
+  if (detach) {
+    err = pthread_detach(*thread);
     if (err) {
       FLUID_LOG(FLUID_ERR, "Failed to detach the thread: %s", strerror(err));
       return NULL;
@@ -769,13 +718,11 @@ new_fluid_thread (const char *name, fluid_thread_func_t func, void *data, int pr
  * Frees data associated with a thread (does not actually stop thread).
  * @param thread Thread to free
  */
-void
-delete_fluid_thread(fluid_thread_t* thread)
-{
+void delete_fluid_thread(fluid_thread_t *thread) {
 #if HAVE_WINDOWS_H
   WaitForSingleObject(*thread, INFINITE);
 #else
-  pthread_join (*thread, NULL);
+  pthread_join(*thread, NULL);
 #endif
 
   free(thread);
@@ -786,37 +733,27 @@ delete_fluid_thread(fluid_thread_t* thread)
  * @param thread Thread to join
  * @return FLUID_OK
  */
-int
-fluid_thread_join(fluid_thread_t* thread)
-{
+int fluid_thread_join(fluid_thread_t *thread) {
 #if HAVE_WINDOWS_H
 
-  if (WaitForSingleObject (*thread, INFINITE) == WAIT_FAILED)
-  {
+  if (WaitForSingleObject(*thread, INFINITE) == WAIT_FAILED) {
     return FLUID_FAILED;
-  }
-  else
-  {
+  } else {
     return FLUID_OK;
   }
 
 #else
 
-  if (pthread_join (*thread, NULL))
-  {
+  if (pthread_join(*thread, NULL)) {
     return FLUID_FAILED;
-  }
-  else {
+  } else {
     return FLUID_OK;
   }
 
 #endif
 }
 
-
-void
-fluid_timer_run (void *data)
-{
+void fluid_timer_run(void *data) {
   fluid_timer_t *timer;
   int count = 0;
   int cont;
@@ -826,104 +763,96 @@ fluid_timer_run (void *data)
   timer = (fluid_timer_t *)data;
 
   /* keep track of the start time for absolute positioning */
-  start = fluid_curtime ();
+  start = fluid_curtime();
 
-  while (timer->cont)
-  {
+  while (timer->cont) {
     cont = (*timer->callback)(timer->data, fluid_curtime() - start);
 
     count++;
-    if (!cont) break;
+    if (!cont)
+      break;
 
     /* to avoid incremental time errors, calculate the delay between
        two callbacks bringing in the "absolute" time (count *
        timer->msec) */
     delay = (count * timer->msec) - (fluid_curtime() - start);
-    if (delay > 0) fluid_sleep (delay);
+    if (delay > 0)
+      fluid_sleep(delay);
   }
 
-  FLUID_LOG (FLUID_DBG, "Timer thread finished");
+  FLUID_LOG(FLUID_DBG, "Timer thread finished");
 
   if (timer->auto_destroy)
-    FLUID_FREE (timer);
+    FLUID_FREE(timer);
 
   return;
 }
 
-fluid_timer_t*
-new_fluid_timer (int msec, fluid_timer_callback_t callback, void* data,
-                 int new_thread, int auto_destroy, int high_priority)
-{
+fluid_timer_t *new_fluid_timer(int msec, fluid_timer_callback_t callback,
+                               void *data, int new_thread, int auto_destroy,
+                               int high_priority) {
   fluid_timer_t *timer;
 
-  timer = FLUID_NEW (fluid_timer_t);
+  timer = FLUID_NEW(fluid_timer_t);
 
-  if (timer == NULL)
-  {
-    FLUID_LOG (FLUID_ERR, "Out of memory");
+  if (timer == NULL) {
+    FLUID_LOG(FLUID_ERR, "Out of memory");
     return NULL;
   }
 
   timer->msec = msec;
   timer->callback = callback;
   timer->data = data;
-  timer->cont = TRUE ;
+  timer->cont = TRUE;
   timer->thread = NULL;
   timer->auto_destroy = auto_destroy;
 
-  if (new_thread)
-  {
-    timer->thread = new_fluid_thread ("timer", fluid_timer_run, timer, high_priority
-                                      ? FLUID_SYS_TIMER_HIGH_PRIO_LEVEL : 0, FALSE);
-    if (!timer->thread)
-    {
-      FLUID_FREE (timer);
+  if (new_thread) {
+    timer->thread = new_fluid_thread(
+        "timer", fluid_timer_run, timer,
+        high_priority ? FLUID_SYS_TIMER_HIGH_PRIO_LEVEL : 0, FALSE);
+    if (!timer->thread) {
+      FLUID_FREE(timer);
       return NULL;
     }
-  }
-  else
-  {
-	  fluid_timer_run(timer);  /* Run directly, instead of as a separate thread */
-	  if (auto_destroy)
-	  {
-		  /* do NOT return freed memory */
-		  return NULL;
-	  }
+  } else {
+    fluid_timer_run(timer); /* Run directly, instead of as a separate thread */
+    if (auto_destroy) {
+      /* do NOT return freed memory */
+      return NULL;
+    }
   }
   return timer;
 }
 
-int
-delete_fluid_timer (fluid_timer_t *timer)
-{
+int delete_fluid_timer(fluid_timer_t *timer) {
   int auto_destroy = timer->auto_destroy;
 
   timer->cont = 0;
-  fluid_timer_join (timer);
+  fluid_timer_join(timer);
 
-  /* Shouldn't access timer now if auto_destroy enabled, since it has been destroyed */
+  /* Shouldn't access timer now if auto_destroy enabled, since it has been
+   * destroyed */
 
-  if (!auto_destroy) FLUID_FREE (timer);
+  if (!auto_destroy)
+    FLUID_FREE(timer);
 
   return FLUID_OK;
 }
 
-int
-fluid_timer_join (fluid_timer_t *timer)
-{
+int fluid_timer_join(fluid_timer_t *timer) {
   int auto_destroy;
 
-  if (timer->thread)
-  {
+  if (timer->thread) {
     auto_destroy = timer->auto_destroy;
-    fluid_thread_join (timer->thread);
+    fluid_thread_join(timer->thread);
 
-    if (!auto_destroy) timer->thread = NULL;
+    if (!auto_destroy)
+      timer->thread = NULL;
   }
 
   return FLUID_OK;
 }
-
 
 /***************************************************************
  *
@@ -935,36 +864,25 @@ fluid_timer_join (fluid_timer_t *timer)
  * Get standard in stream handle.
  * @return Standard in stream.
  */
-fluid_istream_t
-fluid_get_stdin (void)
-{
-  return STDIN_FILENO;
-}
+fluid_istream_t fluid_get_stdin(void) { return STDIN_FILENO; }
 
 /**
  * Get standard output stream handle.
  * @return Standard out stream.
  */
-fluid_ostream_t
-fluid_get_stdout (void)
-{
-  return STDOUT_FILENO;
-}
+fluid_ostream_t fluid_get_stdout(void) { return STDOUT_FILENO; }
 
 /**
  * Read a line from an input stream.
  * @return 0 if end-of-stream, -1 if error, non zero otherwise
  */
-int
-fluid_istream_readline (fluid_istream_t in, fluid_ostream_t out, char* prompt,
-                        char* buf, int len)
-{
+int fluid_istream_readline(fluid_istream_t in, fluid_ostream_t out,
+                           char *prompt, char *buf, int len) {
 #if WITH_READLINE
-  if (in == fluid_get_stdin ())
-  {
+  if (in == fluid_get_stdin()) {
     char *line;
 
-    line = readline (prompt);
+    line = readline(prompt);
 
     if (line == NULL)
       return -1;
@@ -974,12 +892,11 @@ fluid_istream_readline (fluid_istream_t in, fluid_ostream_t out, char* prompt,
 
     free(line);
     return 1;
-  }
-  else
+  } else
 #endif
   {
-    fluid_ostream_printf (out, "%s", prompt);
-    return fluid_istream_gets (in, buf, len);
+    fluid_ostream_printf(out, "%s", prompt);
+    return fluid_istream_gets(in, buf, len);
   }
 }
 
@@ -990,47 +907,44 @@ fluid_istream_readline (fluid_istream_t in, fluid_ostream_t out, char* prompt,
  * @param len Maximum length to store to buf
  * @return 1 if a line was read, 0 on end of stream, -1 on error
  */
-static int
-fluid_istream_gets (fluid_istream_t in, char* buf, int len)
-{
+static int fluid_istream_gets(fluid_istream_t in, char *buf, int len) {
   char c;
   int n;
 
   buf[len - 1] = 0;
 
-  while (--len > 0)
-  {
+  while (--len > 0) {
 #ifndef WIN32
     n = read(in, &c, 1);
-    if (n == -1) return -1;
+    if (n == -1)
+      return -1;
 #else
-    /* Handle read differently depending on if its a socket or file descriptor */
-    if (!(in & WIN32_SOCKET_FLAG))
-    {
+    /* Handle read differently depending on if its a socket or file descriptor
+     */
+    if (!(in & WIN32_SOCKET_FLAG)) {
       n = read(in, &c, 1);
-      if (n == -1) return -1;
-    }
-    else
-    {
+      if (n == -1)
+        return -1;
+    } else {
       n = recv(in & ~WIN32_SOCKET_FLAG, &c, 1, 0);
-      if (n == SOCKET_ERROR) return -1;
+      if (n == SOCKET_ERROR)
+        return -1;
     }
 #endif
 
-    if (n == 0)
-    {
+    if (n == 0) {
       *buf++ = 0;
       return 0;
     }
 
-    if ((c == '\n'))
-    {
+    if ((c == '\n')) {
       *buf++ = 0;
       return 1;
     }
 
     /* Store all characters excluding CR */
-    if (c != '\r') *buf++ = c;
+    if (c != '\r')
+      *buf++ = c;
   }
 
   return -1;
@@ -1043,24 +957,20 @@ fluid_istream_gets (fluid_istream_t in, char* buf, int len)
  * @param ... Arguments for the printf format string
  * @return Number of bytes written or -1 on error
  */
-int
-fluid_ostream_printf (fluid_ostream_t out, char* format, ...)
-{
+int fluid_ostream_printf(fluid_ostream_t out, char *format, ...) {
   char buf[4096];
   va_list args;
   int len;
 
-  va_start (args, format);
-  len = vsnprintf (buf, 4095, format, args);
-  va_end (args);
+  va_start(args, format);
+  len = vsnprintf(buf, 4095, format, args);
+  va_end(args);
 
-  if (len == 0)
-  {
+  if (len == 0) {
     return 0;
   }
 
-  if (len < 0)
-  {
+  if (len < 0) {
     printf("fluid_ostream_printf: buffer overflow");
     return -1;
   }
@@ -1068,52 +978,42 @@ fluid_ostream_printf (fluid_ostream_t out, char* format, ...)
   buf[4095] = 0;
 
 #ifndef WIN32
-  return write (out, buf, strlen (buf));
+  return write(out, buf, strlen(buf));
 #else
   {
     int retval;
 
-    /* Handle write differently depending on if its a socket or file descriptor */
+    /* Handle write differently depending on if its a socket or file descriptor
+     */
     if (!(out & WIN32_SOCKET_FLAG))
-      return write(out, buf, (unsigned int)strlen (buf));
+      return write(out, buf, (unsigned int)strlen(buf));
 
     /* Socket */
-    retval = send (out & ~WIN32_SOCKET_FLAG, buf, (int)strlen (buf), 0);
+    retval = send(out & ~WIN32_SOCKET_FLAG, buf, (int)strlen(buf), 0);
 
     return retval != SOCKET_ERROR ? retval : -1;
   }
 #endif
 }
 
-int fluid_server_socket_join(fluid_server_socket_t *server_socket)
-{
-  return fluid_thread_join (server_socket->thread);
+int fluid_server_socket_join(fluid_server_socket_t *server_socket) {
+  return fluid_thread_join(server_socket->thread);
 }
 
-
-#ifndef WIN32           // Not win32?
+#ifndef WIN32 // Not win32?
 
 #define SOCKET_ERROR -1
 
-fluid_istream_t fluid_socket_get_istream (fluid_socket_t sock)
-{
-  return sock;
-}
+fluid_istream_t fluid_socket_get_istream(fluid_socket_t sock) { return sock; }
 
-fluid_ostream_t fluid_socket_get_ostream (fluid_socket_t sock)
-{
-  return sock;
-}
+fluid_ostream_t fluid_socket_get_ostream(fluid_socket_t sock) { return sock; }
 
-void fluid_socket_close(fluid_socket_t sock)
-{
+void fluid_socket_close(fluid_socket_t sock) {
   if (sock != INVALID_SOCKET)
-    close (sock);
+    close(sock);
 }
 
-static void
-fluid_server_socket_run (void *data)
-{
+static void fluid_server_socket_run(void *data) {
   fluid_server_socket_t *server_socket = (fluid_server_socket_t *)data;
   fluid_socket_t client_socket;
 #ifdef IPV6
@@ -1123,22 +1023,21 @@ fluid_server_socket_run (void *data)
   struct sockaddr_in addr;
   char straddr[INET_ADDRSTRLEN];
 #endif
-  socklen_t addrlen = sizeof (addr);
+  socklen_t addrlen = sizeof(addr);
   int retval;
   FLUID_MEMSET((char *)&addr, 0, sizeof(addr));
 
-  FLUID_LOG (FLUID_DBG, "Server listening for connections");
+  FLUID_LOG(FLUID_DBG, "Server listening for connections");
 
-  while (server_socket->cont)
-  {
-    client_socket = accept (server_socket->socket, (struct sockaddr *)&addr, &addrlen);
+  while (server_socket->cont) {
+    client_socket =
+        accept(server_socket->socket, (struct sockaddr *)&addr, &addrlen);
 
-    FLUID_LOG (FLUID_DBG, "New client connection");
+    FLUID_LOG(FLUID_DBG, "New client connection");
 
-    if (client_socket == INVALID_SOCKET)
-    {
+    if (client_socket == INVALID_SOCKET) {
       if (server_socket->cont)
-	FLUID_LOG(FLUID_ERR, "Failed to accept connection");
+        FLUID_LOG(FLUID_ERR, "Failed to accept connection");
 
       server_socket->cont = 0;
       return;
@@ -1148,21 +1047,19 @@ fluid_server_socket_run (void *data)
 #else
       inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
 #endif
-      retval = server_socket->func (server_socket->data, client_socket,
-                                    straddr);
+      retval = server_socket->func(server_socket->data, client_socket, straddr);
 
       if (retval != 0)
-	fluid_socket_close(client_socket);
+        fluid_socket_close(client_socket);
     }
   }
 
   FLUID_LOG(FLUID_DBG, "Server closing");
 }
 
-fluid_server_socket_t*
-new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
-{
-  fluid_server_socket_t* server_socket;
+fluid_server_socket_t *
+new_fluid_server_socket(int port, fluid_server_func_t func, void *data) {
+  fluid_server_socket_t *server_socket;
 #ifdef IPV6
   struct sockaddr_in6 addr;
 #else
@@ -1170,7 +1067,7 @@ new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
 #endif
   fluid_socket_t sock;
 
-  fluid_return_val_if_fail (func != NULL, NULL);
+  fluid_return_val_if_fail(func != NULL, NULL);
 #ifdef IPV6
   sock = socket(AF_INET6, SOCK_STREAM, 0);
   if (sock == INVALID_SOCKET) {
@@ -1195,7 +1092,8 @@ new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sin_port = htons(port);
 #endif
-  if (bind(sock, (const struct sockaddr *) &addr, sizeof(addr)) == SOCKET_ERROR) {
+  if (bind(sock, (const struct sockaddr *)&addr, sizeof(addr)) ==
+      SOCKET_ERROR) {
     FLUID_LOG(FLUID_ERR, "Failed to bind server socket");
     fluid_socket_close(sock);
     return NULL;
@@ -1219,8 +1117,8 @@ new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
   server_socket->data = data;
   server_socket->cont = 1;
 
-  server_socket->thread = new_fluid_thread("server", fluid_server_socket_run, server_socket,
-                                           0, FALSE);
+  server_socket->thread = new_fluid_thread("server", fluid_server_socket_run,
+                                           server_socket, 0, FALSE);
   if (server_socket->thread == NULL) {
     FLUID_FREE(server_socket);
     fluid_socket_close(sock);
@@ -1230,46 +1128,39 @@ new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
   return server_socket;
 }
 
-int delete_fluid_server_socket(fluid_server_socket_t* server_socket)
-{
+int delete_fluid_server_socket(fluid_server_socket_t *server_socket) {
   server_socket->cont = 0;
   if (server_socket->socket != INVALID_SOCKET) {
     fluid_socket_close(server_socket->socket);
   }
   if (server_socket->thread) {
-	  fluid_thread_join(server_socket->thread);
-	  delete_fluid_thread(server_socket->thread);
+    fluid_thread_join(server_socket->thread);
+    delete_fluid_thread(server_socket->thread);
   }
   FLUID_FREE(server_socket);
   return FLUID_OK;
 }
 
-
-#else           // Win32 is "special"
-
+#else // Win32 is "special"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-fluid_istream_t fluid_socket_get_istream (fluid_socket_t sock)
-{
+fluid_istream_t fluid_socket_get_istream(fluid_socket_t sock) {
   return sock | WIN32_SOCKET_FLAG;
 }
 
-fluid_ostream_t fluid_socket_get_ostream (fluid_socket_t sock)
-{
+fluid_ostream_t fluid_socket_get_ostream(fluid_socket_t sock) {
   return sock | WIN32_SOCKET_FLAG;
 }
 
-void fluid_socket_close (fluid_socket_t sock)
-{
+void fluid_socket_close(fluid_socket_t sock) {
   if (sock != INVALID_SOCKET)
-    closesocket (sock);
+    closesocket(sock);
 }
 
-static void fluid_server_socket_run (void *data)
-{
+static void fluid_server_socket_run(void *data) {
   fluid_server_socket_t *server_socket = (fluid_server_socket_t *)data;
   fluid_socket_t client_socket;
 #ifdef IPV6
@@ -1279,48 +1170,44 @@ static void fluid_server_socket_run (void *data)
   struct sockaddr_in addr;
   char straddr[INET_ADDRSTRLEN];
 #endif
-  socklen_t addrlen = sizeof (addr);
+  socklen_t addrlen = sizeof(addr);
   int r;
   FLUID_MEMSET((char *)&addr, 0, sizeof(addr));
 
   FLUID_LOG(FLUID_DBG, "Server listening for connections");
 
-  while (server_socket->cont)
-  {
-    client_socket = accept (server_socket->socket, (struct sockaddr *)&addr, &addrlen);
+  while (server_socket->cont) {
+    client_socket =
+        accept(server_socket->socket, (struct sockaddr *)&addr, &addrlen);
 
-    FLUID_LOG (FLUID_DBG, "New client connection");
+    FLUID_LOG(FLUID_DBG, "New client connection");
 
-    if (client_socket == INVALID_SOCKET)
-    {
+    if (client_socket == INVALID_SOCKET) {
       if (server_socket->cont)
-	FLUID_LOG (FLUID_ERR, "Failed to accept connection: %ld", WSAGetLastError ());
+        FLUID_LOG(FLUID_ERR, "Failed to accept connection: %ld",
+                  WSAGetLastError());
 
       server_socket->cont = 0;
       return;
-    }
-    else
-    {
+    } else {
 #if defined(IPV6) && !defined(__MINGW32__)
       inet_ntop(AF_INET6, &addr.sin6_addr, straddr, sizeof(straddr));
 #else
       strcpy(straddr, inet_ntoa(addr.sin_addr));
-      //inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
+      // inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
 #endif
-      r = server_socket->func (server_socket->data, client_socket,
-                               straddr);
+      r = server_socket->func(server_socket->data, client_socket, straddr);
       if (r != 0)
-	fluid_socket_close (client_socket);
+        fluid_socket_close(client_socket);
     }
   }
 
-  FLUID_LOG (FLUID_DBG, "Server closing");
+  FLUID_LOG(FLUID_DBG, "Server closing");
 }
 
-fluid_server_socket_t*
-new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
-{
-  fluid_server_socket_t* server_socket;
+fluid_server_socket_t *
+new_fluid_server_socket(int port, fluid_server_func_t func, void *data) {
+  fluid_server_socket_t *server_socket;
 #ifdef IPV6
   struct sockaddr_in6 addr;
 #else
@@ -1331,67 +1218,66 @@ new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
   WSADATA wsaData;
   int retval;
 
-  fluid_return_val_if_fail (func != NULL, NULL);
+  fluid_return_val_if_fail(func != NULL, NULL);
 
   // Win32 requires initialization of winsock
-  retval = WSAStartup (MAKEWORD (2,2), &wsaData);
+  retval = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-  if (retval != 0)
-  {
-    FLUID_LOG(FLUID_ERR, "Server socket creation error: WSAStartup failed: %d", retval);
+  if (retval != 0) {
+    FLUID_LOG(FLUID_ERR, "Server socket creation error: WSAStartup failed: %d",
+              retval);
     return NULL;
   }
 #ifdef IPV6
-  sock = socket (AF_INET6, SOCK_STREAM, 0);
-  if (sock == INVALID_SOCKET)
-  {
-    FLUID_LOG (FLUID_ERR, "Failed to create server socket: %ld", WSAGetLastError ());
-    WSACleanup ();
+  sock = socket(AF_INET6, SOCK_STREAM, 0);
+  if (sock == INVALID_SOCKET) {
+    FLUID_LOG(FLUID_ERR, "Failed to create server socket: %ld",
+              WSAGetLastError());
+    WSACleanup();
     return NULL;
   }
   addr.sin6_family = AF_INET6;
-  addr.sin6_port = htons (port);
+  addr.sin6_port = htons(port);
   addr.sin6_addr = in6addr_any;
 #else
 
-  sock = socket (AF_INET, SOCK_STREAM, 0);
+  sock = socket(AF_INET, SOCK_STREAM, 0);
 
-  if (sock == INVALID_SOCKET)
-  {
-    FLUID_LOG (FLUID_ERR, "Failed to create server socket: %ld", WSAGetLastError ());
-    WSACleanup ();
+  if (sock == INVALID_SOCKET) {
+    FLUID_LOG(FLUID_ERR, "Failed to create server socket: %ld",
+              WSAGetLastError());
+    WSACleanup();
     return NULL;
   }
 
   addr.sin_family = AF_INET;
-  addr.sin_port = htons (port);
-  addr.sin_addr.s_addr = htonl (INADDR_ANY);
+  addr.sin_port = htons(port);
+  addr.sin_addr.s_addr = htonl(INADDR_ANY);
 #endif
-  retval = bind (sock, (struct sockaddr *)&addr, sizeof (addr));
+  retval = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
 
-  if (retval == SOCKET_ERROR)
-  {
-    FLUID_LOG (FLUID_ERR, "Failed to bind server socket: %ld", WSAGetLastError ());
-    fluid_socket_close (sock);
-    WSACleanup ();
+  if (retval == SOCKET_ERROR) {
+    FLUID_LOG(FLUID_ERR, "Failed to bind server socket: %ld",
+              WSAGetLastError());
+    fluid_socket_close(sock);
+    WSACleanup();
     return NULL;
   }
 
-  if (listen (sock, SOMAXCONN) == SOCKET_ERROR)
-  {
-    FLUID_LOG (FLUID_ERR, "Failed to listen on server socket: %ld", WSAGetLastError ());
-    fluid_socket_close (sock);
-    WSACleanup ();
+  if (listen(sock, SOMAXCONN) == SOCKET_ERROR) {
+    FLUID_LOG(FLUID_ERR, "Failed to listen on server socket: %ld",
+              WSAGetLastError());
+    fluid_socket_close(sock);
+    WSACleanup();
     return NULL;
   }
 
-  server_socket = FLUID_NEW (fluid_server_socket_t);
+  server_socket = FLUID_NEW(fluid_server_socket_t);
 
-  if (server_socket == NULL)
-  {
-    FLUID_LOG (FLUID_ERR, "Out of memory");
-    fluid_socket_close (sock);
-    WSACleanup ();
+  if (server_socket == NULL) {
+    FLUID_LOG(FLUID_ERR, "Out of memory");
+    fluid_socket_close(sock);
+    WSACleanup();
     return NULL;
   }
 
@@ -1400,32 +1286,30 @@ new_fluid_server_socket(int port, fluid_server_func_t func, void* data)
   server_socket->data = data;
   server_socket->cont = 1;
 
-  server_socket->thread = new_fluid_thread("server", fluid_server_socket_run, server_socket,
-                                           0, FALSE);
-  if (server_socket->thread == NULL)
-  {
-    FLUID_FREE (server_socket);
-    fluid_socket_close (sock);
-    WSACleanup ();
+  server_socket->thread = new_fluid_thread("server", fluid_server_socket_run,
+                                           server_socket, 0, FALSE);
+  if (server_socket->thread == NULL) {
+    FLUID_FREE(server_socket);
+    fluid_socket_close(sock);
+    WSACleanup();
     return NULL;
   }
 
   return server_socket;
 }
 
-int delete_fluid_server_socket(fluid_server_socket_t *server_socket)
-{
+int delete_fluid_server_socket(fluid_server_socket_t *server_socket) {
   server_socket->cont = 0;
 
   if (server_socket->socket != INVALID_SOCKET)
-    fluid_socket_close (server_socket->socket);
+    fluid_socket_close(server_socket->socket);
 
   if (server_socket->thread)
-    delete_fluid_thread (server_socket->thread);
+    delete_fluid_thread(server_socket->thread);
 
-  FLUID_FREE (server_socket);
+  FLUID_FREE(server_socket);
 
-  WSACleanup ();        // Should be called the same number of times as WSAStartup
+  WSACleanup(); // Should be called the same number of times as WSAStartup
 
   return FLUID_OK;
 }

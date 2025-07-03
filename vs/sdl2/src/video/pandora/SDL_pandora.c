@@ -23,13 +23,13 @@
 #ifdef SDL_VIDEO_DRIVER_PANDORA
 
 /* SDL internals */
-#include "../SDL_sysvideo.h"
-#include "SDL_version.h"
-#include "SDL_syswm.h"
-#include "SDL_loadso.h"
-#include "SDL_events.h"
-#include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_keyboard_c.h"
+#include "../../events/SDL_mouse_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_events.h"
+#include "SDL_loadso.h"
+#include "SDL_syswm.h"
+#include "SDL_version.h"
 
 /* PND declarations */
 #include "SDL_pandora.h"
@@ -41,7 +41,7 @@
 static NativeWindowType hNativeWnd = 0; /* A handle to the window we will create. */
 #endif
 
-static void PND_destroy(SDL_VideoDevice * device)
+static void PND_destroy(SDL_VideoDevice *device)
 {
     if (device->driverdata) {
         SDL_free(device->driverdata);
@@ -56,14 +56,14 @@ static SDL_VideoDevice *PND_create(void)
     SDL_VideoData *phdata;
 
     /* Initialize SDL_VideoDevice structure */
-    device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
+    device = (SDL_VideoDevice *)SDL_calloc(1, sizeof(SDL_VideoDevice));
     if (!device) {
         SDL_OutOfMemory();
         return NULL;
     }
 
     /* Initialize internal Pandora specific data */
-    phdata = (SDL_VideoData *) SDL_calloc(1, sizeof(SDL_VideoData));
+    phdata = (SDL_VideoData *)SDL_calloc(1, sizeof(SDL_VideoData));
     if (!phdata) {
         SDL_OutOfMemory();
         SDL_free(device);
@@ -73,7 +73,6 @@ static SDL_VideoDevice *PND_create(void)
     device->driverdata = phdata;
 
     phdata->egl_initialized = SDL_TRUE;
-
 
     /* Setup amount of available displays */
     device->num_displays = 0;
@@ -162,27 +161,25 @@ int PND_videoinit(_THIS)
 
 void PND_videoquit(_THIS)
 {
-
 }
 
-void PND_getdisplaymodes(_THIS, SDL_VideoDisplay * display)
+void PND_getdisplaymodes(_THIS, SDL_VideoDisplay *display)
 {
-
 }
 
-int PND_setdisplaymode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
+int PND_setdisplaymode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
     return 0;
 }
 
-int PND_createwindow(_THIS, SDL_Window * window)
+int PND_createwindow(_THIS, SDL_Window *window)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
 
     SDL_WindowData *wdata;
 
     /* Allocate window internal data */
-    wdata = (SDL_WindowData *) SDL_calloc(1, sizeof(SDL_WindowData));
+    wdata = (SDL_WindowData *)SDL_calloc(1, sizeof(SDL_WindowData));
     if (!wdata) {
         return SDL_OutOfMemory();
     }
@@ -200,7 +197,7 @@ int PND_createwindow(_THIS, SDL_Window * window)
 
         /* Create connection to OpenGL ES */
         if (phdata->egl_display == EGL_NO_DISPLAY) {
-            phdata->egl_display = eglGetDisplay((NativeDisplayType) 0);
+            phdata->egl_display = eglGetDisplay((NativeDisplayType)0);
             if (phdata->egl_display == EGL_NO_DISPLAY) {
                 return SDL_SetError("PND: Can't get connection to OpenGL ES");
             }
@@ -218,44 +215,44 @@ int PND_createwindow(_THIS, SDL_Window * window)
     return 0;
 }
 
-int PND_createwindowfrom(_THIS, SDL_Window * window, const void *data)
+int PND_createwindowfrom(_THIS, SDL_Window *window, const void *data)
 {
     return -1;
 }
 
-void PND_setwindowtitle(_THIS, SDL_Window * window)
+void PND_setwindowtitle(_THIS, SDL_Window *window)
 {
 }
-void PND_setwindowicon(_THIS, SDL_Window * window, SDL_Surface * icon)
+void PND_setwindowicon(_THIS, SDL_Window *window, SDL_Surface *icon)
 {
 }
-void PND_setwindowposition(_THIS, SDL_Window * window)
+void PND_setwindowposition(_THIS, SDL_Window *window)
 {
 }
-void PND_setwindowsize(_THIS, SDL_Window * window)
+void PND_setwindowsize(_THIS, SDL_Window *window)
 {
 }
-void PND_showwindow(_THIS, SDL_Window * window)
+void PND_showwindow(_THIS, SDL_Window *window)
 {
 }
-void PND_hidewindow(_THIS, SDL_Window * window)
+void PND_hidewindow(_THIS, SDL_Window *window)
 {
 }
-void PND_raisewindow(_THIS, SDL_Window * window)
+void PND_raisewindow(_THIS, SDL_Window *window)
 {
 }
-void PND_maximizewindow(_THIS, SDL_Window * window)
+void PND_maximizewindow(_THIS, SDL_Window *window)
 {
 }
-void PND_minimizewindow(_THIS, SDL_Window * window)
+void PND_minimizewindow(_THIS, SDL_Window *window)
 {
 }
-void PND_restorewindow(_THIS, SDL_Window * window)
+void PND_restorewindow(_THIS, SDL_Window *window)
 {
 }
-void PND_destroywindow(_THIS, SDL_Window * window)
+void PND_destroywindow(_THIS, SDL_Window *window)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
     eglTerminate(phdata->egl_display);
 }
 
@@ -296,7 +293,7 @@ int PND_gl_loadlibrary(_THIS, const char *path)
         /* Already linked with GF library which provides egl* subset of  */
         /* functions, use Common profile of OpenGL ES library by default */
 #ifdef WIZ_GLES_LITE
-    path = "/lib/libopengles_lite.so";
+        path = "/lib/libopengles_lite.so";
 #else
         path = "/usr/lib/libGLES_CM.so";
 #endif
@@ -343,7 +340,7 @@ void *PND_gl_getprocaddres(_THIS, const char *proc)
 
 void PND_gl_unloadlibrary(_THIS)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
 
     if (phdata->egl_initialized == SDL_TRUE) {
         /* Unload OpenGL ES library */
@@ -356,10 +353,10 @@ void PND_gl_unloadlibrary(_THIS)
     }
 }
 
-SDL_GLContext PND_gl_createcontext(_THIS, SDL_Window * window)
+SDL_GLContext PND_gl_createcontext(_THIS, SDL_Window *window)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
-    SDL_WindowData *wdata = (SDL_WindowData *) window->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
+    SDL_WindowData *wdata = (SDL_WindowData *)window->driverdata;
     EGLBoolean status;
     EGLint configs;
     uint32_t attr_pos;
@@ -492,8 +489,7 @@ SDL_GLContext PND_gl_createcontext(_THIS, SDL_Window * window)
                                     wdata->gles_configs, 1, &configs);
 
                 if (status != EGL_TRUE) {
-                    SDL_SetError
-                        ("PND: Can't find closest configuration for OpenGL ES");
+                    SDL_SetError("PND: Can't find closest configuration for OpenGL ES");
                     return NULL;
                 }
                 if (configs != 0) {
@@ -574,28 +570,26 @@ SDL_GLContext PND_gl_createcontext(_THIS, SDL_Window * window)
 
 #ifdef WIZ_GLES_LITE
     if (!hNativeWnd) {
-        hNativeWnd = (NativeWindowType)SDL_malloc(16*1024);
+        hNativeWnd = (NativeWindowType)SDL_malloc(16 * 1024);
         if (!hNativeWnd) {
             printf("Error: Wiz framebuffer allocatation failed\n");
         } else {
             printf("SDL: Wiz framebuffer allocated: %X\n", hNativeWnd);
         }
-    }
-    else {
+    } else {
         printf("SDL: Wiz framebuffer already allocated: %X\n", hNativeWnd);
     }
 
     wdata->gles_surface =
-    eglCreateWindowSurface(phdata->egl_display,
-                   wdata->gles_configs[wdata->gles_config],
-                   hNativeWnd, NULL );
+        eglCreateWindowSurface(phdata->egl_display,
+                               wdata->gles_configs[wdata->gles_config],
+                               hNativeWnd, NULL);
 #else
     wdata->gles_surface =
         eglCreateWindowSurface(phdata->egl_display,
                                wdata->gles_configs[wdata->gles_config],
-                               (NativeWindowType) 0, NULL);
+                               (NativeWindowType)0, NULL);
 #endif
-
 
     if (wdata->gles_surface == 0) {
         SDL_SetError("Error : eglCreateWindowSurface failed;");
@@ -660,9 +654,9 @@ SDL_GLContext PND_gl_createcontext(_THIS, SDL_Window * window)
     return wdata->gles_context;
 }
 
-int PND_gl_makecurrent(_THIS, SDL_Window * window, SDL_GLContext context)
+int PND_gl_makecurrent(_THIS, SDL_Window *window, SDL_GLContext context)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
     SDL_WindowData *wdata;
     EGLBoolean status;
 
@@ -679,18 +673,15 @@ int PND_gl_makecurrent(_THIS, SDL_Window * window, SDL_GLContext context)
             return SDL_SetError("PND: Can't set OpenGL ES context");
         }
     } else {
-        wdata = (SDL_WindowData *) window->driverdata;
+        wdata = (SDL_WindowData *)window->driverdata;
         if (wdata->gles_surface == EGL_NO_SURFACE) {
-            return SDL_SetError
-                ("PND: OpenGL ES surface is not initialized for this window");
+            return SDL_SetError("PND: OpenGL ES surface is not initialized for this window");
         }
         if (wdata->gles_context == EGL_NO_CONTEXT) {
-            return SDL_SetError
-                ("PND: OpenGL ES context is not initialized for this window");
+            return SDL_SetError("PND: OpenGL ES context is not initialized for this window");
         }
         if (wdata->gles_context != context) {
-            return SDL_SetError
-                ("PND: OpenGL ES context is not belong to this window");
+            return SDL_SetError("PND: OpenGL ES context is not belong to this window");
         }
         status =
             eglMakeCurrent(phdata->egl_display, wdata->gles_surface,
@@ -705,7 +696,7 @@ int PND_gl_makecurrent(_THIS, SDL_Window * window, SDL_GLContext context)
 
 int PND_gl_setswapinterval(_THIS, int interval)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
     EGLBoolean status;
 
     if (phdata->egl_initialized != SDL_TRUE) {
@@ -729,13 +720,13 @@ int PND_gl_setswapinterval(_THIS, int interval)
 
 int PND_gl_getswapinterval(_THIS)
 {
-    return ((SDL_VideoData *) _this->driverdata)->swapinterval;
+    return ((SDL_VideoData *)_this->driverdata)->swapinterval;
 }
 
-int PND_gl_swapwindow(_THIS, SDL_Window * window)
+int PND_gl_swapwindow(_THIS, SDL_Window *window)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
-    SDL_WindowData *wdata = (SDL_WindowData *) window->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
+    SDL_WindowData *wdata = (SDL_WindowData *)window->driverdata;
 
     if (phdata->egl_initialized != SDL_TRUE) {
         return SDL_SetError("PND: GLES initialization failed, no OpenGL ES support");
@@ -753,7 +744,7 @@ int PND_gl_swapwindow(_THIS, SDL_Window * window)
 
 void PND_gl_deletecontext(_THIS, SDL_GLContext context)
 {
-    SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *phdata = (SDL_VideoData *)_this->driverdata;
     EGLBoolean status;
 
     if (phdata->egl_initialized != SDL_TRUE) {
@@ -775,9 +766,9 @@ void PND_gl_deletecontext(_THIS, SDL_GLContext context)
 
 #ifdef WIZ_GLES_LITE
     if (hNativeWnd != 0) {
-      SDL_free(hNativeWnd);
-      hNativeWnd = 0;
-      printf("SDL: Wiz framebuffer released\n");
+        SDL_free(hNativeWnd);
+        hNativeWnd = 0;
+        printf("SDL: Wiz framebuffer released\n");
     }
 #endif
 

@@ -38,13 +38,13 @@ gcc -o genfilter build-scripts/gen_audio_resampler_filter.c -lm && ./genfilter >
    hardware.
 */
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
-#define RESAMPLER_ZERO_CROSSINGS 5
-#define RESAMPLER_BITS_PER_SAMPLE 16
-#define RESAMPLER_SAMPLES_PER_ZERO_CROSSING  (1 << ((RESAMPLER_BITS_PER_SAMPLE / 2) + 1))
-#define RESAMPLER_FILTER_SIZE ((RESAMPLER_SAMPLES_PER_ZERO_CROSSING * RESAMPLER_ZERO_CROSSINGS) + 1)
+#define RESAMPLER_ZERO_CROSSINGS            5
+#define RESAMPLER_BITS_PER_SAMPLE           16
+#define RESAMPLER_SAMPLES_PER_ZERO_CROSSING (1 << ((RESAMPLER_BITS_PER_SAMPLE / 2) + 1))
+#define RESAMPLER_FILTER_SIZE               ((RESAMPLER_SAMPLES_PER_ZERO_CROSSING * RESAMPLER_ZERO_CROSSINGS) + 1)
 
 /* This is a "modified" bessel function, so you can't use POSIX j0() */
 static double
@@ -62,7 +62,7 @@ bessel(const double x)
         }
         i0 += diff;
         i++;
-        f *= (double) i;
+        f *= (double)i;
     }
 
     return i0;
@@ -80,17 +80,16 @@ kaiser_and_sinc(float *table, float *diffs, const int tablelen, const double bet
     table[0] = 1.0f;
     for (i = 1; i < tablelen; i++) {
         const double kaiser = bessel(beta * sqrt(1.0 - pow(((i - lenm1) / 2.0) / lenm1div2, 2.0))) / bessel_beta;
-        table[tablelen - i] = (float) kaiser;
+        table[tablelen - i] = (float)kaiser;
     }
 
     for (i = 1; i < tablelen; i++) {
-        const float x = (((float) i) / ((float) RESAMPLER_SAMPLES_PER_ZERO_CROSSING)) * ((float) M_PI);
+        const float x = (((float)i) / ((float)RESAMPLER_SAMPLES_PER_ZERO_CROSSING)) * ((float)M_PI);
         table[i] *= sinf(x) / x;
         diffs[i - 1] = table[i] - table[i - 1];
     }
     diffs[lenm1] = 0.0f;
 }
-
 
 static float ResamplerFilter[RESAMPLER_FILTER_SIZE];
 static float ResamplerFilterDifference[RESAMPLER_FILTER_SIZE];
@@ -138,20 +137,20 @@ int main(void)
         "#define RESAMPLER_BITS_PER_SAMPLE %d\n"
         "#define RESAMPLER_SAMPLES_PER_ZERO_CROSSING (1 << ((RESAMPLER_BITS_PER_SAMPLE / 2) + 1))\n"
         "#define RESAMPLER_FILTER_SIZE ((RESAMPLER_SAMPLES_PER_ZERO_CROSSING * RESAMPLER_ZERO_CROSSINGS) + 1)\n"
-        "\n", RESAMPLER_ZERO_CROSSINGS, RESAMPLER_BITS_PER_SAMPLE
-    );
+        "\n",
+        RESAMPLER_ZERO_CROSSINGS, RESAMPLER_BITS_PER_SAMPLE);
 
     printf("static const float ResamplerFilter[RESAMPLER_FILTER_SIZE] = {\n");
     printf("    %.9ff", ResamplerFilter[0]);
-    for (i = 0; i < RESAMPLER_FILTER_SIZE-1; i++) {
-        printf("%s%.9ff", ((i % 5) == 4) ? ",\n    " : ", ", ResamplerFilter[i+1]);
+    for (i = 0; i < RESAMPLER_FILTER_SIZE - 1; i++) {
+        printf("%s%.9ff", ((i % 5) == 4) ? ",\n    " : ", ", ResamplerFilter[i + 1]);
     }
     printf("\n};\n\n");
 
     printf("static const float ResamplerFilterDifference[RESAMPLER_FILTER_SIZE] = {\n");
     printf("    %.9ff", ResamplerFilterDifference[0]);
-    for (i = 0; i < RESAMPLER_FILTER_SIZE-1; i++) {
-        printf("%s%.9ff", ((i % 5) == 4) ? ",\n    " : ", ", ResamplerFilterDifference[i+1]);
+    for (i = 0; i < RESAMPLER_FILTER_SIZE - 1; i++) {
+        printf("%s%.9ff", ((i % 5) == 4) ? ",\n    " : ", ", ResamplerFilterDifference[i + 1]);
     }
     printf("\n};\n\n");
     printf("/* vi: set ts=4 sw=4 expandtab: */\n\n");
@@ -160,4 +159,3 @@ int main(void)
 }
 
 /* vi: set ts=4 sw=4 expandtab: */
-

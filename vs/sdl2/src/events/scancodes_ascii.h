@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_scancode.h"
 #include "SDL_keycode.h"
+#include "SDL_scancode.h"
 
 /*
     This file is used to convert between characters passed in from an ASCII

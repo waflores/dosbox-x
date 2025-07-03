@@ -26,7 +26,7 @@
 
 #include "SDL_pgvideo.h"
 
-/* Variables and functions exported by SDL_sysevents.c to other parts 
+/* Variables and functions exported by SDL_sysevents.c to other parts
    of the native video subsystem (SDL_sysvideo.c)
 */
 extern void PG_PumpEvents(_THIS);
@@ -34,4 +34,3 @@ extern void PG_InitEvents(_THIS);
 extern void PG_InitOSKeymap(_THIS);
 
 /* end of SDL_pgevents_c.h ... */
-

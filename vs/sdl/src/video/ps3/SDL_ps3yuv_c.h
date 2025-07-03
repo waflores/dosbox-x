@@ -34,11 +34,12 @@
 
 #include "SDL_video.h"
 
-extern SDL_Overlay *PS3_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, SDL_Surface *display);
-extern int PS3_DisplayYUVOverlay(_THIS, SDL_Overlay *overlay, SDL_Rect *src, SDL_Rect *dst);
+extern SDL_Overlay *PS3_CreateYUVOverlay(_THIS, int width, int height,
+                                         Uint32 format, SDL_Surface *display);
+extern int PS3_DisplayYUVOverlay(_THIS, SDL_Overlay *overlay, SDL_Rect *src,
+                                 SDL_Rect *dst);
 extern int PS3_LockYUVOverlay(_THIS, SDL_Overlay *overlay);
 extern void PS3_UnlockYUVOverlay(_THIS, SDL_Overlay *overlay);
 extern void PS3_FreeYUVOverlay(_THIS, SDL_Overlay *overlay);
 
 #endif /* _SDL_ps3yuv_h */
-

@@ -843,7 +843,7 @@ static void SDLTest_PrintModStateFlag(char *text, size_t maxlen, SDL_Keymod flag
         SDL_snprintfcat(text, maxlen, "SCROLL");
         break;
     default:
-        SDL_snprintfcat(text, maxlen, "0x%8.8x", (unsigned int) flag);
+        SDL_snprintfcat(text, maxlen, "0x%8.8x", (unsigned int)flag);
         break;
     }
 }
@@ -1629,13 +1629,14 @@ static void SDLTest_PrintEvent(SDL_Event *event)
         }
         break;
     case SDL_KEYDOWN:
-    case SDL_KEYUP: {
+    case SDL_KEYUP:
+    {
         char modstr[64];
         if (event->key.keysym.mod) {
             modstr[0] = '\0';
-            SDLTest_PrintModState(modstr, sizeof (modstr), event->key.keysym.mod);
+            SDLTest_PrintModState(modstr, sizeof(modstr), event->key.keysym.mod);
         } else {
-            SDL_strlcpy(modstr, "NONE", sizeof (modstr));
+            SDL_strlcpy(modstr, "NONE", sizeof(modstr));
         }
         SDL_Log("SDL EVENT: Keyboard: key %s in window %" SDL_PRIu32 ": scancode 0x%08X = %s, keycode 0x%08" SDL_PRIX32 " = %s, mods = %s",
                 (event->type == SDL_KEYDOWN) ? "pressed" : "released",

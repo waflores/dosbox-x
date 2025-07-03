@@ -10,11 +10,11 @@ EXTERN_C_BEGIN
 
 /*
   MyFree(NULL)        : is allowed, as free(NULL)
-  MyAlloc(0)          : returns NULL : but malloc(0)        is allowed to return NULL or non_NULL
-  MyRealloc(NULL, 0)  : returns NULL : but realloc(NULL, 0) is allowed to return NULL or non_NULL
-MyRealloc() is similar to realloc() for the following cases:
-  MyRealloc(non_NULL, 0)         : returns NULL and always calls MyFree(ptr)
-  MyRealloc(NULL, non_ZERO)      : returns NULL, if allocation failed
+  MyAlloc(0)          : returns NULL : but malloc(0)        is allowed to return
+NULL or non_NULL MyRealloc(NULL, 0)  : returns NULL : but realloc(NULL, 0) is
+allowed to return NULL or non_NULL MyRealloc() is similar to realloc() for the
+following cases: MyRealloc(non_NULL, 0)         : returns NULL and always calls
+MyFree(ptr) MyRealloc(NULL, non_ZERO)      : returns NULL, if allocation failed
   MyRealloc(non_NULL, non_ZERO)  : returns NULL, if reallocation failed
 */
 
@@ -23,7 +23,7 @@ void MyFree(void *address);
 void *MyRealloc(void *address, size_t size);
 
 void *z7_AlignedAlloc(size_t size);
-void  z7_AlignedFree(void *p);
+void z7_AlignedFree(void *p);
 
 #ifdef _WIN32
 
@@ -40,10 +40,10 @@ void BigFree(void *address);
 
 #else
 
-#define MidAlloc(size)    z7_AlignedAlloc(size)
-#define MidFree(address)  z7_AlignedFree(address)
-#define BigAlloc(size)    z7_AlignedAlloc(size)
-#define BigFree(address)  z7_AlignedFree(address)
+#define MidAlloc(size) z7_AlignedAlloc(size)
+#define MidFree(address) z7_AlignedFree(address)
+#define BigAlloc(size) z7_AlignedAlloc(size)
+#define BigFree(address) z7_AlignedFree(address)
 
 #endif
 
@@ -59,17 +59,15 @@ extern const ISzAlloc g_MidAlloc;
 
 extern const ISzAlloc g_AlignedAlloc;
 
-
-typedef struct
-{
+typedef struct {
   ISzAlloc vt;
   ISzAllocPtr baseAlloc;
   unsigned numAlignBits; /* ((1 << numAlignBits) >= sizeof(void *)) */
-  size_t offset;         /* (offset == (k * sizeof(void *)) && offset < (1 << numAlignBits) */
+  size_t offset;         /* (offset == (k * sizeof(void *)) && offset < (1 <<
+                            numAlignBits) */
 } CAlignOffsetAlloc;
 
 void AlignOffsetAlloc_CreateVTable(CAlignOffsetAlloc *p);
-
 
 EXTERN_C_END
 

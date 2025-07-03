@@ -20,8 +20,8 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_vulkan_internal.h"
 #include "SDL_error.h"
+#include "SDL_vulkan_internal.h"
 
 #ifdef SDL_VIDEO_VULKAN
 

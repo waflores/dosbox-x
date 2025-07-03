@@ -51,23 +51,25 @@ extern "C" {
  * @param out Output buffers, one for each channel
  * @return Should return 0 on success, non-zero if an error occured.
  */
-typedef int (*fluid_audio_func_t)(void* data, int len,
-				 int nin, float** in,
-				 int nout, float** out);
+typedef int (*fluid_audio_func_t)(void *data, int len, int nin, float **in,
+                                  int nout, float **out);
 
-FLUIDSYNTH_API fluid_audio_driver_t* new_fluid_audio_driver(fluid_settings_t* settings,
-							 fluid_synth_t* synth);
+FLUIDSYNTH_API fluid_audio_driver_t *
+new_fluid_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth);
 
-FLUIDSYNTH_API fluid_audio_driver_t* new_fluid_audio_driver2(fluid_settings_t* settings,
-							  fluid_audio_func_t func,
-							  void* data);
+FLUIDSYNTH_API fluid_audio_driver_t *
+new_fluid_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func,
+                        void *data);
 
-FLUIDSYNTH_API void delete_fluid_audio_driver(fluid_audio_driver_t* driver);
+FLUIDSYNTH_API void delete_fluid_audio_driver(fluid_audio_driver_t *driver);
 
-FLUIDSYNTH_API fluid_file_renderer_t *new_fluid_file_renderer(fluid_synth_t* synth);
-FLUIDSYNTH_API int fluid_file_renderer_process_block(fluid_file_renderer_t* dev);
-FLUIDSYNTH_API void delete_fluid_file_renderer(fluid_file_renderer_t* dev);
-FLUIDSYNTH_API int fluid_file_set_encoding_quality(fluid_file_renderer_t* dev, double q);
+FLUIDSYNTH_API fluid_file_renderer_t *
+new_fluid_file_renderer(fluid_synth_t *synth);
+FLUIDSYNTH_API int
+fluid_file_renderer_process_block(fluid_file_renderer_t *dev);
+FLUIDSYNTH_API void delete_fluid_file_renderer(fluid_file_renderer_t *dev);
+FLUIDSYNTH_API int fluid_file_set_encoding_quality(fluid_file_renderer_t *dev,
+                                                   double q);
 
 #ifdef __cplusplus
 }

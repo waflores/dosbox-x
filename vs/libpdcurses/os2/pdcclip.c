@@ -46,128 +46,118 @@ clipboard
 
 **man-end****************************************************************/
 
-int PDC_getclipboard(char **contents, long *length)
-{
-    HMQ hmq;
-    HAB hab;
-    PTIB ptib;
-    PPIB ppib;
-    ULONG ulRet;
-    long len;
-    int rc;
+int PDC_getclipboard(char **contents, long *length) {
+  HMQ hmq;
+  HAB hab;
+  PTIB ptib;
+  PPIB ppib;
+  ULONG ulRet;
+  long len;
+  int rc;
 
-    PDC_LOG(("PDC_getclipboard() - called\n"));
+  PDC_LOG(("PDC_getclipboard() - called\n"));
 
-    DosGetInfoBlocks(&ptib, &ppib);
-    ppib->pib_ultype = 3;
-    hab = WinInitialize(0);
-    hmq = WinCreateMsgQueue(hab, 0);
+  DosGetInfoBlocks(&ptib, &ppib);
+  ppib->pib_ultype = 3;
+  hab = WinInitialize(0);
+  hmq = WinCreateMsgQueue(hab, 0);
 
-    if (!WinOpenClipbrd(hab))
-    {
-        WinDestroyMsgQueue(hmq);
-        WinTerminate(hab);
-        return PDC_CLIP_ACCESS_ERROR;
-    }
-
-    rc = PDC_CLIP_EMPTY;
-
-    ulRet = WinQueryClipbrdData(hab, CF_TEXT);
-
-    if (ulRet)
-    {
-        len = strlen((char *)ulRet);
-        *contents = malloc(len + 1);
-
-        if (!*contents)
-            rc = PDC_CLIP_MEMORY_ERROR;
-        else
-        {
-            strcpy((char *)*contents, (char *)ulRet);
-            *length = len;
-            rc = PDC_CLIP_SUCCESS;
-        }
-    }
-
-    WinCloseClipbrd(hab);
+  if (!WinOpenClipbrd(hab)) {
     WinDestroyMsgQueue(hmq);
     WinTerminate(hab);
+    return PDC_CLIP_ACCESS_ERROR;
+  }
 
-    return rc;
+  rc = PDC_CLIP_EMPTY;
+
+  ulRet = WinQueryClipbrdData(hab, CF_TEXT);
+
+  if (ulRet) {
+    len = strlen((char *)ulRet);
+    *contents = malloc(len + 1);
+
+    if (!*contents)
+      rc = PDC_CLIP_MEMORY_ERROR;
+    else {
+      strcpy((char *)*contents, (char *)ulRet);
+      *length = len;
+      rc = PDC_CLIP_SUCCESS;
+    }
+  }
+
+  WinCloseClipbrd(hab);
+  WinDestroyMsgQueue(hmq);
+  WinTerminate(hab);
+
+  return rc;
 }
 
-int PDC_setclipboard(const char *contents, long length)
-{
-    HAB hab;
-    PTIB ptib;
-    PPIB ppib;
-    ULONG ulRC;
-    PSZ szTextOut = NULL;
-    int rc;
+int PDC_setclipboard(const char *contents, long length) {
+  HAB hab;
+  PTIB ptib;
+  PPIB ppib;
+  ULONG ulRC;
+  PSZ szTextOut = NULL;
+  int rc;
 
-    PDC_LOG(("PDC_setclipboard() - called\n"));
+  PDC_LOG(("PDC_setclipboard() - called\n"));
 
-    DosGetInfoBlocks(&ptib, &ppib);
-    ppib->pib_ultype = 3;
-    hab = WinInitialize(0);
+  DosGetInfoBlocks(&ptib, &ppib);
+  ppib->pib_ultype = 3;
+  hab = WinInitialize(0);
 
-    if (!WinOpenClipbrd(hab))
-    {
-        WinTerminate(hab);
-        return PDC_CLIP_ACCESS_ERROR;
-    }
-
-    rc = PDC_CLIP_MEMORY_ERROR;
-
-    ulRC = DosAllocSharedMem((PVOID)&szTextOut, NULL, length + 1,
-                             PAG_WRITE | PAG_COMMIT | OBJ_GIVEABLE);
-
-    if (ulRC == 0)
-    {
-        strcpy(szTextOut, contents);
-        WinEmptyClipbrd(hab);
-
-        if (WinSetClipbrdData(hab, (ULONG)szTextOut, CF_TEXT, CFI_POINTER))
-            rc = PDC_CLIP_SUCCESS;
-        else
-        {
-            DosFreeMem(szTextOut);
-            rc = PDC_CLIP_ACCESS_ERROR;
-        }
-    }
-
-    WinCloseClipbrd(hab);
+  if (!WinOpenClipbrd(hab)) {
     WinTerminate(hab);
+    return PDC_CLIP_ACCESS_ERROR;
+  }
 
-    return rc;
-}
+  rc = PDC_CLIP_MEMORY_ERROR;
 
-int PDC_freeclipboard(char *contents)
-{
-    PDC_LOG(("PDC_freeclipboard() - called\n"));
+  ulRC = DosAllocSharedMem((PVOID)&szTextOut, NULL, length + 1,
+                           PAG_WRITE | PAG_COMMIT | OBJ_GIVEABLE);
 
-    if (contents)
-        free(contents);
-
-    return PDC_CLIP_SUCCESS;
-}
-
-int PDC_clearclipboard(void)
-{
-    HAB hab;
-    PTIB ptib;
-    PPIB ppib;
-
-    PDC_LOG(("PDC_clearclipboard() - called\n"));
-
-    DosGetInfoBlocks(&ptib, &ppib);
-    ppib->pib_ultype = 3;
-    hab = WinInitialize(0);
-
+  if (ulRC == 0) {
+    strcpy(szTextOut, contents);
     WinEmptyClipbrd(hab);
 
-    WinCloseClipbrd(hab);
-    WinTerminate(hab);
+    if (WinSetClipbrdData(hab, (ULONG)szTextOut, CF_TEXT, CFI_POINTER))
+      rc = PDC_CLIP_SUCCESS;
+    else {
+      DosFreeMem(szTextOut);
+      rc = PDC_CLIP_ACCESS_ERROR;
+    }
+  }
 
-    return PDC_CLIP_SUCCESS;
+  WinCloseClipbrd(hab);
+  WinTerminate(hab);
+
+  return rc;
+}
+
+int PDC_freeclipboard(char *contents) {
+  PDC_LOG(("PDC_freeclipboard() - called\n"));
+
+  if (contents)
+    free(contents);
+
+  return PDC_CLIP_SUCCESS;
+}
+
+int PDC_clearclipboard(void) {
+  HAB hab;
+  PTIB ptib;
+  PPIB ppib;
+
+  PDC_LOG(("PDC_clearclipboard() - called\n"));
+
+  DosGetInfoBlocks(&ptib, &ppib);
+  ppib->pib_ultype = 3;
+  hab = WinInitialize(0);
+
+  WinEmptyClipbrd(hab);
+
+  WinCloseClipbrd(hab);
+  WinTerminate(hab);
+
+  return PDC_CLIP_SUCCESS;
 }

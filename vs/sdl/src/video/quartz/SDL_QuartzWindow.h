@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -26,18 +27,20 @@ typedef unsigned int NSUInteger;
 #endif
 
 /* Subclass of NSWindow to fix genie effect and support resize events  */
-@interface SDL_QuartzWindow : NSWindow
-{
-	BOOL watchForMouseUp;
+@interface SDL_QuartzWindow : NSWindow {
+  BOOL watchForMouseUp;
 }
 
 - (void)miniaturize:(id)sender;
 - (void)display;
 - (void)setFrame:(NSRect)frameRect display:(BOOL)flag;
-- (void)appDidHide:(NSNotification*)note;
-- (void)appWillUnhide:(NSNotification*)note;
-- (void)appDidUnhide:(NSNotification*)note;
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingType defer:(BOOL)flag;
+- (void)appDidHide:(NSNotification *)note;
+- (void)appWillUnhide:(NSNotification *)note;
+- (void)appDidUnhide:(NSNotification *)note;
+- (id)initWithContentRect:(NSRect)contentRect
+                styleMask:(NSUInteger)styleMask
+                  backing:(NSBackingStoreType)backingType
+                    defer:(BOOL)flag;
 @end
 
 /* Delegate for our NSWindow to send SDLQuit() on close */

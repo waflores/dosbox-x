@@ -26,8 +26,8 @@
 #include <SDL.h>
 
 #include "../SDL_sysvideo.h"
-#include "SDL_ngagevideo.h"
 #include "SDL_ngageframebuffer_c.h"
+#include "SDL_ngagevideo.h"
 
 #define NGAGE_SURFACE "NGAGE_FrameBuffer"
 
@@ -179,8 +179,8 @@ void SDL_NGAGE_DestroyWindowFramebuffer(_THIS, SDL_Window *window)
 /*****************************************************************************/
 
 #include <e32svr.h>
-#include <hal_data.h>
 #include <hal.h>
+#include <hal_data.h>
 
 EXPORT_C void NGAGE_Runtime::GetScreenInfo(TScreenInfoV01 &screenInfo2)
 {

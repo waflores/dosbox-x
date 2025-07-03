@@ -45,10 +45,10 @@
 #ifndef SDL_joystick_h_
 #define SDL_joystick_h_
 
-#include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_guid.h"
 #include "SDL_mutex.h"
+#include "SDL_stdinc.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -112,10 +112,10 @@ typedef enum
 typedef enum
 {
     SDL_JOYSTICK_POWER_UNKNOWN = -1,
-    SDL_JOYSTICK_POWER_EMPTY,   /* <= 5% */
-    SDL_JOYSTICK_POWER_LOW,     /* <= 20% */
-    SDL_JOYSTICK_POWER_MEDIUM,  /* <= 70% */
-    SDL_JOYSTICK_POWER_FULL,    /* <= 100% */
+    SDL_JOYSTICK_POWER_EMPTY,  /* <= 5% */
+    SDL_JOYSTICK_POWER_LOW,    /* <= 20% */
+    SDL_JOYSTICK_POWER_MEDIUM, /* <= 70% */
+    SDL_JOYSTICK_POWER_FULL,   /* <= 100% */
     SDL_JOYSTICK_POWER_WIRED,
     SDL_JOYSTICK_POWER_MAX
 } SDL_JoystickPowerLevel;
@@ -124,7 +124,6 @@ typedef enum
    See src/joystick/uikit/SDL_sysjoystick.m for notes on why this is needed
  */
 #define SDL_IPHONE_MAX_GFORCE 5.0
-
 
 /* Function prototypes */
 
@@ -146,7 +145,6 @@ typedef enum
  * \since This function is available since SDL 2.0.7.
  */
 extern DECLSPEC void SDLCALL SDL_LockJoysticks(void) SDL_ACQUIRE(SDL_joystick_lock);
-
 
 /**
  * Unlocking for multi-threaded access to the joystick API
@@ -391,20 +389,20 @@ typedef struct SDL_VirtualJoystickDesc
                              e.g. (1 << SDL_CONTROLLER_AXIS_LEFTX) */
     const char *name;   /**< the name of the joystick */
 
-    void *userdata;     /**< User data pointer passed to callbacks */
-    void (SDLCALL *Update)(void *userdata); /**< Called when the joystick state should be updated */
-    void (SDLCALL *SetPlayerIndex)(void *userdata, int player_index); /**< Called when the player index is set */
-    int (SDLCALL *Rumble)(void *userdata, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble); /**< Implements SDL_JoystickRumble() */
-    int (SDLCALL *RumbleTriggers)(void *userdata, Uint16 left_rumble, Uint16 right_rumble); /**< Implements SDL_JoystickRumbleTriggers() */
-    int (SDLCALL *SetLED)(void *userdata, Uint8 red, Uint8 green, Uint8 blue); /**< Implements SDL_JoystickSetLED() */
-    int (SDLCALL *SendEffect)(void *userdata, const void *data, int size); /**< Implements SDL_JoystickSendEffect() */
+    void *userdata;                                                                                  /**< User data pointer passed to callbacks */
+    void(SDLCALL *Update)(void *userdata);                                                           /**< Called when the joystick state should be updated */
+    void(SDLCALL *SetPlayerIndex)(void *userdata, int player_index);                                 /**< Called when the player index is set */
+    int(SDLCALL *Rumble)(void *userdata, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble); /**< Implements SDL_JoystickRumble() */
+    int(SDLCALL *RumbleTriggers)(void *userdata, Uint16 left_rumble, Uint16 right_rumble);           /**< Implements SDL_JoystickRumbleTriggers() */
+    int(SDLCALL *SetLED)(void *userdata, Uint8 red, Uint8 green, Uint8 blue);                        /**< Implements SDL_JoystickSetLED() */
+    int(SDLCALL *SendEffect)(void *userdata, const void *data, int size);                            /**< Implements SDL_JoystickSendEffect() */
 
 } SDL_VirtualJoystickDesc;
 
 /**
  * The current version of the SDL_VirtualJoystickDesc structure
  */
-#define SDL_VIRTUAL_JOYSTICK_DESC_VERSION   1
+#define SDL_VIRTUAL_JOYSTICK_DESC_VERSION 1
 
 /**
  * Attach a new virtual joystick with extended properties.
@@ -622,7 +620,7 @@ extern DECLSPEC Uint16 SDLCALL SDL_JoystickGetFirmwareVersion(SDL_Joystick *joys
  *
  * \since This function is available since SDL 2.0.14.
  */
-extern DECLSPEC const char * SDLCALL SDL_JoystickGetSerial(SDL_Joystick *joystick);
+extern DECLSPEC const char *SDLCALL SDL_JoystickGetSerial(SDL_Joystick *joystick);
 
 /**
  * Get the type of an opened joystick.
@@ -821,8 +819,8 @@ extern DECLSPEC void SDLCALL SDL_JoystickUpdate(void);
 extern DECLSPEC int SDLCALL SDL_JoystickEventState(int state);
 
 /* Limits for joystick axes... */
-#define SDL_JOYSTICK_AXIS_MAX   32767
-#define SDL_JOYSTICK_AXIS_MIN   -32768
+#define SDL_JOYSTICK_AXIS_MAX 32767
+#define SDL_JOYSTICK_AXIS_MIN -32768
 
 /**
  * Get the current state of an axis control on a joystick.
@@ -864,21 +862,21 @@ extern DECLSPEC Sint16 SDLCALL SDL_JoystickGetAxis(SDL_Joystick *joystick,
  * \since This function is available since SDL 2.0.6.
  */
 extern DECLSPEC SDL_bool SDLCALL SDL_JoystickGetAxisInitialState(SDL_Joystick *joystick,
-                                                   int axis, Sint16 *state);
+                                                                 int axis, Sint16 *state);
 
 /**
  *  \name Hat positions
  */
 /* @{ */
-#define SDL_HAT_CENTERED    0x00
-#define SDL_HAT_UP          0x01
-#define SDL_HAT_RIGHT       0x02
-#define SDL_HAT_DOWN        0x04
-#define SDL_HAT_LEFT        0x08
-#define SDL_HAT_RIGHTUP     (SDL_HAT_RIGHT|SDL_HAT_UP)
-#define SDL_HAT_RIGHTDOWN   (SDL_HAT_RIGHT|SDL_HAT_DOWN)
-#define SDL_HAT_LEFTUP      (SDL_HAT_LEFT|SDL_HAT_UP)
-#define SDL_HAT_LEFTDOWN    (SDL_HAT_LEFT|SDL_HAT_DOWN)
+#define SDL_HAT_CENTERED  0x00
+#define SDL_HAT_UP        0x01
+#define SDL_HAT_RIGHT     0x02
+#define SDL_HAT_DOWN      0x04
+#define SDL_HAT_LEFT      0x08
+#define SDL_HAT_RIGHTUP   (SDL_HAT_RIGHT | SDL_HAT_UP)
+#define SDL_HAT_RIGHTDOWN (SDL_HAT_RIGHT | SDL_HAT_DOWN)
+#define SDL_HAT_LEFTUP    (SDL_HAT_LEFT | SDL_HAT_UP)
+#define SDL_HAT_LEFTDOWN  (SDL_HAT_LEFT | SDL_HAT_DOWN)
 /* @} */
 
 /**

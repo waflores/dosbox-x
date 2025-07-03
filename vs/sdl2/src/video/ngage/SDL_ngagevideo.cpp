@@ -31,19 +31,19 @@
 extern "C" {
 #endif
 
-#include "SDL_video.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_video.h"
 
 #ifdef __cplusplus
 }
 #endif
 
-#include "SDL_ngagevideo.h"
-#include "SDL_ngagewindow.h"
 #include "SDL_ngageevents_c.h"
 #include "SDL_ngageframebuffer_c.h"
+#include "SDL_ngagevideo.h"
+#include "SDL_ngagewindow.h"
 
 #define NGAGEVID_DRIVER_NAME "ngage"
 

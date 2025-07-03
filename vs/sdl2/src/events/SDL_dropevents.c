@@ -22,9 +22,9 @@
 
 /* Drag and drop event handling code for SDL */
 
+#include "SDL_dropevents_c.h"
 #include "SDL_events.h"
 #include "SDL_events_c.h"
-#include "SDL_dropevents_c.h"
 
 #include "../video/SDL_sysvideo.h" /* for SDL_Window internals. */
 

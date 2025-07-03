@@ -24,8 +24,10 @@
 
 // 0: Standard debug output is not stamped with the rendered sample count
 // 1: Standard debug output is stamped with the rendered sample count
-// NOTE: The "samplestamp" corresponds to the end of the last completed rendering run.
-//       This is important to bear in mind for debug output that occurs during a run.
+// NOTE: The "samplestamp" corresponds to the end of the last completed
+// rendering run.
+//       This is important to bear in mind for debug output that occurs during a
+//       run.
 #ifndef MT32EMU_DEBUG_SAMPLESTAMPS
 #define MT32EMU_DEBUG_SAMPLESTAMPS 0
 #endif
@@ -94,17 +96,18 @@ typedef Bit32s IntSampleEx;
 typedef float FloatSample;
 
 enum PolyState {
-	POLY_Playing,
-	POLY_Held, // This marks keys that have been released on the keyboard, but are being held by the pedal
-	POLY_Releasing,
-	POLY_Inactive
+  POLY_Playing,
+  POLY_Held, // This marks keys that have been released on the keyboard, but are
+             // being held by the pedal
+  POLY_Releasing,
+  POLY_Inactive
 };
 
 enum ReverbMode {
-	REVERB_MODE_ROOM,
-	REVERB_MODE_HALL,
-	REVERB_MODE_PLATE,
-	REVERB_MODE_TAP_DELAY
+  REVERB_MODE_ROOM,
+  REVERB_MODE_HALL,
+  REVERB_MODE_PLATE,
+  REVERB_MODE_TAP_DELAY
 };
 
 } // namespace MT32Emu

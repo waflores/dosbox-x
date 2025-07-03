@@ -76,189 +76,179 @@ pad
 static int save_pminrow, save_pmincol;
 static int save_sminrow, save_smincol, save_smaxrow, save_smaxcol;
 
-WINDOW *newpad(int nlines, int ncols)
-{
-    WINDOW *win;
+WINDOW *newpad(int nlines, int ncols) {
+  WINDOW *win;
 
-    PDC_LOG(("newpad() - called: lines=%d cols=%d\n", nlines, ncols));
+  PDC_LOG(("newpad() - called: lines=%d cols=%d\n", nlines, ncols));
 
-    win = PDC_makenew(nlines, ncols, 0, 0);
-    if (win)
-        win = PDC_makelines(win);
+  win = PDC_makenew(nlines, ncols, 0, 0);
+  if (win)
+    win = PDC_makelines(win);
 
-    if (!win)
-        return (WINDOW *)NULL;
+  if (!win)
+    return (WINDOW *)NULL;
 
-    werase(win);
+  werase(win);
 
-    win->_flags = _PAD;
+  win->_flags = _PAD;
 
-    /* save default values in case pechochar() is the first call to
-       prefresh(). */
+  /* save default values in case pechochar() is the first call to
+     prefresh(). */
 
-    save_pminrow = 0;
-    save_pmincol = 0;
-    save_sminrow = 0;
-    save_smincol = 0;
-    save_smaxrow = min(LINES, nlines) - 1;
-    save_smaxcol = min(COLS, ncols) - 1;
+  save_pminrow = 0;
+  save_pmincol = 0;
+  save_sminrow = 0;
+  save_smincol = 0;
+  save_smaxrow = min(LINES, nlines) - 1;
+  save_smaxcol = min(COLS, ncols) - 1;
 
-    return win;
+  return win;
 }
 
-WINDOW *subpad(WINDOW *orig, int nlines, int ncols, int begy, int begx)
-{
-    WINDOW *win;
-    int i;
+WINDOW *subpad(WINDOW *orig, int nlines, int ncols, int begy, int begx) {
+  WINDOW *win;
+  int i;
 
-    PDC_LOG(("subpad() - called: lines=%d cols=%d begy=%d begx=%d\n",
-             nlines, ncols, begy, begx));
+  PDC_LOG(("subpad() - called: lines=%d cols=%d begy=%d begx=%d\n", nlines,
+           ncols, begy, begx));
 
-    if (!orig || !(orig->_flags & _PAD))
-        return (WINDOW *)NULL;
+  if (!orig || !(orig->_flags & _PAD))
+    return (WINDOW *)NULL;
 
-    /* make sure window fits inside the original one */
+  /* make sure window fits inside the original one */
 
-    if (begy < 0 || begx < 0 ||
-        (begy + nlines) > orig->_maxy ||
-        (begx + ncols)  > orig->_maxx)
-        return (WINDOW *)NULL;
+  if (begy < 0 || begx < 0 || (begy + nlines) > orig->_maxy ||
+      (begx + ncols) > orig->_maxx)
+    return (WINDOW *)NULL;
 
-    if (!nlines)
-        nlines = orig->_maxy - begy;
+  if (!nlines)
+    nlines = orig->_maxy - begy;
 
-    if (!ncols)
-        ncols = orig->_maxx - begx;
+  if (!ncols)
+    ncols = orig->_maxx - begx;
 
-    win = PDC_makenew(nlines, ncols, begy, begx);
-    if (!win)
-        return (WINDOW *)NULL;
+  win = PDC_makenew(nlines, ncols, begy, begx);
+  if (!win)
+    return (WINDOW *)NULL;
 
-    /* initialize window variables */
+  /* initialize window variables */
 
-    win->_attrs = orig->_attrs;
-    win->_leaveit = orig->_leaveit;
-    win->_scroll = orig->_scroll;
-    win->_nodelay = orig->_nodelay;
-    win->_use_keypad = orig->_use_keypad;
-    win->_parent = orig;
+  win->_attrs = orig->_attrs;
+  win->_leaveit = orig->_leaveit;
+  win->_scroll = orig->_scroll;
+  win->_nodelay = orig->_nodelay;
+  win->_use_keypad = orig->_use_keypad;
+  win->_parent = orig;
 
-    for (i = 0; i < nlines; i++)
-        win->_y[i] = orig->_y[begy + i] + begx;
+  for (i = 0; i < nlines; i++)
+    win->_y[i] = orig->_y[begy + i] + begx;
 
-    win->_flags = _SUBPAD;
+  win->_flags = _SUBPAD;
 
-    /* save default values in case pechochar() is the first call
-       to prefresh(). */
+  /* save default values in case pechochar() is the first call
+     to prefresh(). */
 
-    save_pminrow = 0;
-    save_pmincol = 0;
-    save_sminrow = 0;
-    save_smincol = 0;
-    save_smaxrow = min(LINES, nlines) - 1;
-    save_smaxcol = min(COLS, ncols) - 1;
+  save_pminrow = 0;
+  save_pmincol = 0;
+  save_sminrow = 0;
+  save_smincol = 0;
+  save_smaxrow = min(LINES, nlines) - 1;
+  save_smaxcol = min(COLS, ncols) - 1;
 
-    return win;
+  return win;
 }
 
-int prefresh(WINDOW *win, int py, int px, int sy1, int sx1, int sy2, int sx2)
-{
-    PDC_LOG(("prefresh() - called\n"));
+int prefresh(WINDOW *win, int py, int px, int sy1, int sx1, int sy2, int sx2) {
+  PDC_LOG(("prefresh() - called\n"));
 
-    if (pnoutrefresh(win, py, px, sy1, sx1, sy2, sx2) == ERR)
-        return ERR;
+  if (pnoutrefresh(win, py, px, sy1, sx1, sy2, sx2) == ERR)
+    return ERR;
 
-    doupdate();
-    return OK;
+  doupdate();
+  return OK;
 }
 
-int pnoutrefresh(WINDOW *w, int py, int px, int sy1, int sx1, int sy2, int sx2)
-{
-    int num_cols;
-    int sline = sy1;
-    int pline = py;
+int pnoutrefresh(WINDOW *w, int py, int px, int sy1, int sx1, int sy2,
+                 int sx2) {
+  int num_cols;
+  int sline = sy1;
+  int pline = py;
 
-    PDC_LOG(("pnoutrefresh() - called\n"));
+  PDC_LOG(("pnoutrefresh() - called\n"));
 
-    if (!w || !(w->_flags & (_PAD|_SUBPAD)) || (sy2 >= LINES) || (sx2 >= COLS))
-        return ERR;
+  if (!w || !(w->_flags & (_PAD | _SUBPAD)) || (sy2 >= LINES) || (sx2 >= COLS))
+    return ERR;
 
-    if (py < 0)
-        py = 0;
-    if (px < 0)
-        px = 0;
-    if (sy1 < 0)
-        sy1 = 0;
-    if (sx1 < 0)
-        sx1 = 0;
+  if (py < 0)
+    py = 0;
+  if (px < 0)
+    px = 0;
+  if (sy1 < 0)
+    sy1 = 0;
+  if (sx1 < 0)
+    sx1 = 0;
 
-    if (sy2 < sy1 || sx2 < sx1)
-        return ERR;
+  if (sy2 < sy1 || sx2 < sx1)
+    return ERR;
 
-    num_cols = min((sx2 - sx1 + 1), (w->_maxx - px));
+  num_cols = min((sx2 - sx1 + 1), (w->_maxx - px));
 
-    while (sline <= sy2)
-    {
-        if (pline < w->_maxy)
-        {
-            memcpy(curscr->_y[sline] + sx1, w->_y[pline] + px,
-                   num_cols * sizeof(chtype));
+  while (sline <= sy2) {
+    if (pline < w->_maxy) {
+      memcpy(curscr->_y[sline] + sx1, w->_y[pline] + px,
+             num_cols * sizeof(chtype));
 
-            if ((curscr->_firstch[sline] == _NO_CHANGE)
-                || (curscr->_firstch[sline] > sx1))
-                curscr->_firstch[sline] = sx1;
+      if ((curscr->_firstch[sline] == _NO_CHANGE) ||
+          (curscr->_firstch[sline] > sx1))
+        curscr->_firstch[sline] = sx1;
 
-            if (sx2 > curscr->_lastch[sline])
-                curscr->_lastch[sline] = sx2;
+      if (sx2 > curscr->_lastch[sline])
+        curscr->_lastch[sline] = sx2;
 
-            w->_firstch[pline] = _NO_CHANGE; /* updated now */
-            w->_lastch[pline] = _NO_CHANGE;  /* updated now */
-        }
-
-        sline++;
-        pline++;
+      w->_firstch[pline] = _NO_CHANGE; /* updated now */
+      w->_lastch[pline] = _NO_CHANGE;  /* updated now */
     }
 
-    if (w->_clear)
-    {
-        w->_clear = FALSE;
-        curscr->_clear = TRUE;
-    }
+    sline++;
+    pline++;
+  }
 
-    /* position the cursor to the pad's current position if possible --
-       is the pad current position going to end up displayed? if not,
-       then don't move the cursor; if so, move it to the correct place */
+  if (w->_clear) {
+    w->_clear = FALSE;
+    curscr->_clear = TRUE;
+  }
 
-    if (!w->_leaveit && w->_cury >= py && w->_curx >= px &&
-         w->_cury <= py + (sy2 - sy1) && w->_curx <= px + (sx2 - sx1))
-    {
-        curscr->_cury = (w->_cury - py) + sy1;
-        curscr->_curx = (w->_curx - px) + sx1;
-    }
+  /* position the cursor to the pad's current position if possible --
+     is the pad current position going to end up displayed? if not,
+     then don't move the cursor; if so, move it to the correct place */
 
-    return OK;
+  if (!w->_leaveit && w->_cury >= py && w->_curx >= px &&
+      w->_cury <= py + (sy2 - sy1) && w->_curx <= px + (sx2 - sx1)) {
+    curscr->_cury = (w->_cury - py) + sy1;
+    curscr->_curx = (w->_curx - px) + sx1;
+  }
+
+  return OK;
 }
 
-int pechochar(WINDOW *pad, chtype ch)
-{
-    PDC_LOG(("pechochar() - called\n"));
+int pechochar(WINDOW *pad, chtype ch) {
+  PDC_LOG(("pechochar() - called\n"));
 
-    if (waddch(pad, ch) == ERR)
-        return ERR;
+  if (waddch(pad, ch) == ERR)
+    return ERR;
 
-    return prefresh(pad, save_pminrow, save_pmincol, save_sminrow,
-                    save_smincol, save_smaxrow, save_smaxcol);
+  return prefresh(pad, save_pminrow, save_pmincol, save_sminrow, save_smincol,
+                  save_smaxrow, save_smaxcol);
 }
 
 #ifdef PDC_WIDE
-int pecho_wchar(WINDOW *pad, const cchar_t *wch)
-{
-    PDC_LOG(("pecho_wchar() - called\n"));
+int pecho_wchar(WINDOW *pad, const cchar_t *wch) {
+  PDC_LOG(("pecho_wchar() - called\n"));
 
-    if (!wch || (waddch(pad, *wch) == ERR))
-        return ERR;
+  if (!wch || (waddch(pad, *wch) == ERR))
+    return ERR;
 
-    return prefresh(pad, save_pminrow, save_pmincol, save_sminrow,
-                    save_smincol, save_smaxrow, save_smaxcol);
+  return prefresh(pad, save_pminrow, save_pmincol, save_sminrow, save_smincol,
+                  save_smaxrow, save_smaxcol);
 }
 #endif

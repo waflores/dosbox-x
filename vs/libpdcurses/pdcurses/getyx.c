@@ -72,74 +72,62 @@ getyx
 
 **man-end****************************************************************/
 
-int getbegy(WINDOW *win)
-{
-    PDC_LOG(("getbegy() - called\n"));
+int getbegy(WINDOW *win) {
+  PDC_LOG(("getbegy() - called\n"));
 
-    return win ? win->_begy : ERR;
+  return win ? win->_begy : ERR;
 }
 
-int getbegx(WINDOW *win)
-{
-    PDC_LOG(("getbegx() - called\n"));
+int getbegx(WINDOW *win) {
+  PDC_LOG(("getbegx() - called\n"));
 
-    return win ? win->_begx : ERR;
+  return win ? win->_begx : ERR;
 }
 
-int getcury(WINDOW *win)
-{
-    PDC_LOG(("getcury() - called\n"));
+int getcury(WINDOW *win) {
+  PDC_LOG(("getcury() - called\n"));
 
-    return win ? win->_cury : ERR;
+  return win ? win->_cury : ERR;
 }
 
-int getcurx(WINDOW *win)
-{
-    PDC_LOG(("getcurx() - called\n"));
+int getcurx(WINDOW *win) {
+  PDC_LOG(("getcurx() - called\n"));
 
-    return win ? win->_curx : ERR;
+  return win ? win->_curx : ERR;
 }
 
-int getpary(WINDOW *win)
-{
-    PDC_LOG(("getpary() - called\n"));
+int getpary(WINDOW *win) {
+  PDC_LOG(("getpary() - called\n"));
 
-    return win ? win->_pary : ERR;
+  return win ? win->_pary : ERR;
 }
 
-int getparx(WINDOW *win)
-{
-    PDC_LOG(("getparx() - called\n"));
+int getparx(WINDOW *win) {
+  PDC_LOG(("getparx() - called\n"));
 
-    return win ? win->_parx : ERR;
+  return win ? win->_parx : ERR;
 }
 
-int getmaxy(WINDOW *win)
-{
-    PDC_LOG(("getmaxy() - called\n"));
+int getmaxy(WINDOW *win) {
+  PDC_LOG(("getmaxy() - called\n"));
 
-    return win ? win->_maxy : ERR;
+  return win ? win->_maxy : ERR;
 }
 
-int getmaxx(WINDOW *win)
-{
-    PDC_LOG(("getmaxx() - called\n"));
+int getmaxx(WINDOW *win) {
+  PDC_LOG(("getmaxx() - called\n"));
 
-    return win ? win->_maxx : ERR;
+  return win ? win->_maxx : ERR;
 }
 
-int setsyx(int y, int x)
-{
-    PDC_LOG(("setsyx() - called\n"));
+int setsyx(int y, int x) {
+  PDC_LOG(("setsyx() - called\n"));
 
-    if (y == -1 && x == -1)
-    {
-        curscr->_leaveit = TRUE;
-        return OK;
-    }
-    else
-    {
-        curscr->_leaveit = FALSE;
-        return wmove(curscr, y, x);
-    }
+  if (y == -1 && x == -1) {
+    curscr->_leaveit = TRUE;
+    return OK;
+  } else {
+    curscr->_leaveit = FALSE;
+    return wmove(curscr, y, x);
+  }
 }

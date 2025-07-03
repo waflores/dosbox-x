@@ -20,20 +20,20 @@
 */
 
 #include "../../SDL_internal.h"
-#include <dev/wscons/wsksymvar.h>
-#include <dev/wscons/wsksymdef.h>
-#include "SDL_scancode.h"
 #include "SDL_events.h"
 #include "SDL_keyboard.h"
-#include "SDL_wscons.h"
 #include "SDL_log.h"
-#include <sys/time.h>
+#include "SDL_scancode.h"
+#include "SDL_wscons.h"
 #include <dev/wscons/wsconsio.h>
 #include <dev/wscons/wsdisplay_usl_io.h>
-#include <termios.h>
+#include <dev/wscons/wsksymdef.h>
+#include <dev/wscons/wsksymvar.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/param.h>
+#include <sys/time.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include "../../events/SDL_events_c.h"

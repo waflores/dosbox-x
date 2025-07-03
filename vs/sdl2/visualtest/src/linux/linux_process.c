@@ -1,66 +1,57 @@
 /* See LICENSE.txt for the full license governing this code. */
 /**
  *  \file linux_process.c
- * 
+ *
  *  Source file for the process API on linux.
  */
-
 
 #include <SDL.h>
 #include <SDL_test.h>
 
-#include "SDL_visualtest_process.h"
 #include "SDL_visualtest_harness_argparser.h"
 #include "SDL_visualtest_parsehelper.h"
+#include "SDL_visualtest_process.h"
 
 #if defined(__LINUX__)
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <errno.h>
 
 static void
-LogLastError(const char* str)
+LogLastError(const char *str)
 {
-    const char* error = strerror(errno);
-    if(!str || !error)
+    const char *error = strerror(errno);
+    if (!str || !error)
         return;
     SDLTest_LogError("%s: %s", str, error);
 }
 
-int
-SDL_LaunchProcess(char* file, char* args, SDL_ProcessInfo* pinfo)
+int SDL_LaunchProcess(char *file, char *args, SDL_ProcessInfo *pinfo)
 {
     pid_t pid;
-    char** argv;
+    char **argv;
 
-    if(!file)
-    {
+    if (!file) {
         SDLTest_LogError("file argument cannot be NULL");
         return 0;
     }
-    if(!pinfo)
-    {
+    if (!pinfo) {
         SDLTest_LogError("pinfo cannot be NULL");
         return 0;
     }
     pid = fork();
-    if(pid == -1)
-    {
+    if (pid == -1) {
         LogLastError("fork() failed");
         return 0;
-    }
-    else if(pid == 0)
-    {
+    } else if (pid == 0) {
         /* parse the arguments string */
         argv = SDLVisualTest_ParseArgsToArgv(args);
         argv[0] = file;
         execv(file, argv);
         LogLastError("execv() failed");
         return 0;
-    }
-    else
-    {
+    } else {
         pinfo->pid = pid;
         return 1;
     }
@@ -69,57 +60,45 @@ SDL_LaunchProcess(char* file, char* args, SDL_ProcessInfo* pinfo)
     return 0;
 }
 
-int
-SDL_GetProcessExitStatus(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps)
+int SDL_GetProcessExitStatus(SDL_ProcessInfo *pinfo, SDL_ProcessExitStatus *ps)
 {
     int success, status;
-    if(!pinfo)
-    {
+    if (!pinfo) {
         SDLTest_LogError("pinfo argument cannot be NULL");
         return 0;
     }
-    if(!ps)
-    {
+    if (!ps) {
         SDLTest_LogError("ps argument cannot be NULL");
         return 0;
     }
     success = waitpid(pinfo->pid, &status, WNOHANG);
-    if(success == -1)
-    {
+    if (success == -1) {
         LogLastError("waitpid() failed");
         return 0;
-    }
-    else if(success == 0)
-    {
+    } else if (success == 0) {
         ps->exit_status = -1;
         ps->exit_success = 1;
-    }
-    else
-    {
+    } else {
         ps->exit_success = WIFEXITED(status);
         ps->exit_status = WEXITSTATUS(status);
     }
     return 1;
 }
 
-int
-SDL_IsProcessRunning(SDL_ProcessInfo* pinfo)
+int SDL_IsProcessRunning(SDL_ProcessInfo *pinfo)
 {
     int success;
 
-    if(!pinfo)
-    {
+    if (!pinfo) {
         SDLTest_LogError("pinfo cannot be NULL");
         return -1;
     }
 
     success = kill(pinfo->pid, 0);
-    if(success == -1)
-    {
-        if(errno == ESRCH) /* process is not running */
+    if (success == -1) {
+        if (errno == ESRCH) /* process is not running */
             return 0;
-        else
-        {
+        else {
             LogLastError("kill() failed");
             return -1;
         }
@@ -127,32 +106,27 @@ SDL_IsProcessRunning(SDL_ProcessInfo* pinfo)
     return 1;
 }
 
-int
-SDL_QuitProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps)
+int SDL_QuitProcess(SDL_ProcessInfo *pinfo, SDL_ProcessExitStatus *ps)
 {
     int success, status;
 
-    if(!pinfo)
-    {
+    if (!pinfo) {
         SDLTest_LogError("pinfo argument cannot be NULL");
         return 0;
     }
-    if(!ps)
-    {
+    if (!ps) {
         SDLTest_LogError("ps argument cannot be NULL");
         return 0;
     }
 
     success = kill(pinfo->pid, SIGQUIT);
-    if(success == -1)
-    {
+    if (success == -1) {
         LogLastError("kill() failed");
         return 0;
     }
 
     success = waitpid(pinfo->pid, &status, 0);
-    if(success == -1)
-    {
+    if (success == -1) {
         LogLastError("waitpid() failed");
         return 0;
     }
@@ -162,31 +136,26 @@ SDL_QuitProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps)
     return 1;
 }
 
-int
-SDL_KillProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps)
+int SDL_KillProcess(SDL_ProcessInfo *pinfo, SDL_ProcessExitStatus *ps)
 {
     int success, status;
 
-    if(!pinfo)
-    {
+    if (!pinfo) {
         SDLTest_LogError("pinfo argument cannot be NULL");
         return 0;
     }
-    if(!ps)
-    {
+    if (!ps) {
         SDLTest_LogError("ps argument cannot be NULL");
         return 0;
     }
 
     success = kill(pinfo->pid, SIGKILL);
-    if(success == -1)
-    {
+    if (success == -1) {
         LogLastError("kill() failed");
         return 0;
     }
     success = waitpid(pinfo->pid, &status, 0);
-    if(success == -1)
-    {
+    if (success == -1) {
         LogLastError("waitpid() failed");
         return 0;
     }
@@ -198,8 +167,7 @@ SDL_KillProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps)
 
 /* each window of the process will have a screenshot taken. The file name will be
    prefix-i.png for the i'th window. */
-int
-SDLVisualTest_ScreenshotProcess(SDL_ProcessInfo* pinfo, char* prefix)
+int SDLVisualTest_ScreenshotProcess(SDL_ProcessInfo *pinfo, char *prefix)
 {
     SDLTest_LogError("Screenshot process not implemented");
     return 0;

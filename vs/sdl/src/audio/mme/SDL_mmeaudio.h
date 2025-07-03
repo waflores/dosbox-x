@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -29,23 +30,23 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 #define NUM_BUFFERS 2
 
 struct SharedMem {
-    HWAVEOUT sound;
-    WAVEHDR wHdr[NUM_BUFFERS];
-    PCMWAVEFORMAT wFmt;
+  HWAVEOUT sound;
+  WAVEHDR wHdr[NUM_BUFFERS];
+  PCMWAVEFORMAT wFmt;
 };
 
 struct SDL_PrivateAudioData {
-    Uint8 *mixbuf;          /* The raw allocated mixing buffer */
-    struct SharedMem *shm;
-    int next_buffer;
+  Uint8 *mixbuf; /* The raw allocated mixing buffer */
+  struct SharedMem *shm;
+  int next_buffer;
 };
 
-#define shm			(this->hidden->shm)
-#define mixbuf			(this->hidden->mixbuf)
-#define next_buffer		(this->hidden->next_buffer)
+#define shm (this->hidden->shm)
+#define mixbuf (this->hidden->mixbuf)
+#define next_buffer (this->hidden->next_buffer)
 /* Old variable names */
 #endif /* _SDL_lowaudio_h */

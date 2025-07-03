@@ -25,14 +25,15 @@
 #include "../../SDL_internal.h"
 #include "../SDL_sysvideo.h"
 
-#include <bcm_host.h>
-#include "GLES/gl.h"
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
+#include "GLES/gl.h"
+#include <bcm_host.h>
 
 /* This must match the definition of EGL_DISPMANX_WINDOW_T in EGL/eglplatform.h,
    and is defined here to allow compiling with standard headers. */
-typedef struct {
+typedef struct
+{
     DISPMANX_ELEMENT_HANDLE_T element;
     int width;
     int height;
@@ -89,7 +90,7 @@ void RPI_RestoreWindow(_THIS, SDL_Window *window);
 void RPI_DestroyWindow(_THIS, SDL_Window *window);
 
 /* Window manager function */
-SDL_bool RPI_GetWindowWMInfo(_THIS, SDL_Window * window,
+SDL_bool RPI_GetWindowWMInfo(_THIS, SDL_Window *window,
                              struct SDL_SysWMinfo *info);
 
 /* OpenGL/OpenGL ES functions */

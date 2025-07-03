@@ -22,14 +22,14 @@
 
 #if defined(SDL_VIDEO_DRIVER_WAYLAND) && defined(SDL_VIDEO_OPENGL_EGL)
 
-#include "SDL_timer.h"
 #include "../../core/unix/SDL_poll.h"
-#include "../SDL_sysvideo.h"
 #include "../../events/SDL_windowevents_c.h"
-#include "SDL_waylandvideo.h"
-#include "SDL_waylandopengles.h"
-#include "SDL_waylandwindow.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_timer.h"
 #include "SDL_waylandevents_c.h"
+#include "SDL_waylandopengles.h"
+#include "SDL_waylandvideo.h"
+#include "SDL_waylandwindow.h"
 
 #include "xdg-shell-client-protocol.h"
 
@@ -40,7 +40,7 @@ int Wayland_GLES_LoadLibrary(_THIS, const char *path)
     int ret;
     SDL_VideoData *data = (SDL_VideoData *)_this->driverdata;
 
-    ret = SDL_EGL_LoadLibrary(_this, path, (NativeDisplayType) data->display, 0);
+    ret = SDL_EGL_LoadLibrary(_this, path, (NativeDisplayType)data->display, 0);
 
     Wayland_PumpEvents(_this);
     WAYLAND_wl_display_flush(data->display);

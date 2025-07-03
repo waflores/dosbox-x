@@ -13,4 +13,3 @@ void amd98_bind(void);
 #ifdef __cplusplus
 }
 #endif
-

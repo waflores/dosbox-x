@@ -59,18 +59,18 @@ typedef struct _esfm_slot_internal esfm_slot_internal;
 typedef struct _esfm_channel esfm_channel;
 typedef struct _esfm_chip esfm_chip;
 
-
-void ESFM_init (esfm_chip *chip);
-void ESFM_write_reg (esfm_chip *chip, uint16_t address, uint8_t data);
-void ESFM_write_reg_buffered (esfm_chip *chip, uint16_t address, uint8_t data);
-void ESFM_write_reg_buffered_fast (esfm_chip *chip, uint16_t address, uint8_t data);
-void ESFM_write_port (esfm_chip *chip, uint8_t offset, uint8_t data);
-uint8_t ESFM_readback_reg (esfm_chip *chip, uint16_t address);
-uint8_t ESFM_read_port (esfm_chip *chip, uint8_t offset);
+void ESFM_init(esfm_chip *chip);
+void ESFM_write_reg(esfm_chip *chip, uint16_t address, uint8_t data);
+void ESFM_write_reg_buffered(esfm_chip *chip, uint16_t address, uint8_t data);
+void ESFM_write_reg_buffered_fast(esfm_chip *chip, uint16_t address,
+                                  uint8_t data);
+void ESFM_write_port(esfm_chip *chip, uint8_t offset, uint8_t data);
+uint8_t ESFM_readback_reg(esfm_chip *chip, uint16_t address);
+uint8_t ESFM_read_port(esfm_chip *chip, uint8_t offset);
 void ESFM_generate(esfm_chip *chip, int16_t *buf);
-void ESFM_generate_stream(esfm_chip *chip, int16_t *sndptr, uint32_t num_samples);
+void ESFM_generate_stream(esfm_chip *chip, int16_t *sndptr,
+                          uint32_t num_samples);
 int16_t ESFM_get_channel_output_native(esfm_chip *chip, int channel_idx);
-
 
 // These are fake types just for syntax sugar.
 // Beware of their underlying types when reading/writing to them.
@@ -96,192 +96,182 @@ typedef int16_t int14;
 typedef int16_t int16;
 typedef int32_t int32;
 
-enum eg_states
-{
-	EG_ATTACK,
-	EG_DECAY,
-	EG_SUSTAIN,
-	EG_RELEASE
-};
+enum eg_states { EG_ATTACK, EG_DECAY, EG_SUSTAIN, EG_RELEASE };
 
-
-typedef struct _esfm_write_buf
-{
-	uint64_t timestamp;
-	uint16_t address;
-	uint8_t data;
-	flag valid;
+typedef struct _esfm_write_buf {
+  uint64_t timestamp;
+  uint16_t address;
+  uint8_t data;
+  flag valid;
 
 } esfm_write_buf;
 
-typedef struct _emu_slot_channel_mapping
-{
-	int channel_idx;
-	int slot_idx;
+typedef struct _emu_slot_channel_mapping {
+  int channel_idx;
+  int slot_idx;
 
 } emu_slot_channel_mapping;
 
-typedef struct _esfm_slot_internal
-{
-	uint9 eg_position;
-	uint9 eg_ksl_offset;
-	uint10 eg_output;
+typedef struct _esfm_slot_internal {
+  uint9 eg_position;
+  uint9 eg_ksl_offset;
+  uint10 eg_output;
 
-	uint4 keyscale;
+  uint4 keyscale;
 
-	int13 output;
-	int13 emu_output_enable;
-	int13 emu_mod_enable;
-	int13 feedback_buf;
-	int13 *mod_input;
+  int13 output;
+  int13 emu_output_enable;
+  int13 emu_mod_enable;
+  int13 feedback_buf;
+  int13 *mod_input;
 
-	uint19 phase_acc;
-	uint10 phase_out;
-	flag phase_reset;
-	flag *key_on;
-	flag key_on_gate;
+  uint19 phase_acc;
+  uint10 phase_out;
+  flag phase_reset;
+  flag *key_on;
+  flag key_on_gate;
 
-	uint2 eg_state;
-	flag eg_delay_run;
-	flag eg_delay_transitioned_10;
-	flag eg_delay_transitioned_10_gate;
-	flag eg_delay_transitioned_01;
-	flag eg_delay_transitioned_01_gate;
-	uint16 eg_delay_counter;
-	uint16 eg_delay_counter_compare;
+  uint2 eg_state;
+  flag eg_delay_run;
+  flag eg_delay_transitioned_10;
+  flag eg_delay_transitioned_10_gate;
+  flag eg_delay_transitioned_01;
+  flag eg_delay_transitioned_01_gate;
+  uint16 eg_delay_counter;
+  uint16 eg_delay_counter_compare;
 
 } esfm_slot_internal;
 
-struct _esfm_slot
-{
-	// Metadata
-	esfm_channel *channel;
-	esfm_chip *chip;
-	uint2 slot_idx;
+struct _esfm_slot {
+  // Metadata
+  esfm_channel *channel;
+  esfm_chip *chip;
+  uint2 slot_idx;
 
-	// Register data
-	int13 out_enable[2];
-	uint10 f_num;
-	uint3 block;
-	uint3 output_level;
-	// a.k.a. feedback level in emu mode
-	uint3 mod_in_level;
+  // Register data
+  int13 out_enable[2];
+  uint10 f_num;
+  uint3 block;
+  uint3 output_level;
+  // a.k.a. feedback level in emu mode
+  uint3 mod_in_level;
 
-	uint6 t_level;
-	uint4 mult;
-	uint3 waveform;
-	// Only for 4th slot
-	uint2 rhy_noise;
+  uint6 t_level;
+  uint4 mult;
+  uint3 waveform;
+  // Only for 4th slot
+  uint2 rhy_noise;
 
-	uint4 attack_rate;
-	uint4 decay_rate;
-	uint4 sustain_lvl;
-	uint4 release_rate;
+  uint4 attack_rate;
+  uint4 decay_rate;
+  uint4 sustain_lvl;
+  uint4 release_rate;
 
-	flag tremolo_en;
-	flag tremolo_deep;
-	flag vibrato_en;
-	flag vibrato_deep;
-	flag emu_connection_typ;
-	flag env_sustaining;
-	flag ksr;
-	uint2 ksl;
-	uint3 env_delay;
-	// overlaps with env_delay bit 0
-	// TODO: check if emu mode only uses this, or if it actually overwrites the channel field used by native mode
-	flag emu_key_on;
+  flag tremolo_en;
+  flag tremolo_deep;
+  flag vibrato_en;
+  flag vibrato_deep;
+  flag emu_connection_typ;
+  flag env_sustaining;
+  flag ksr;
+  uint2 ksl;
+  uint3 env_delay;
+  // overlaps with env_delay bit 0
+  // TODO: check if emu mode only uses this, or if it actually overwrites the
+  // channel field used by native mode
+  flag emu_key_on;
 
-	// Internal state
-	esfm_slot_internal in;
+  // Internal state
+  esfm_slot_internal in;
 };
 
-struct _esfm_channel
-{
-	esfm_chip *chip;
-	esfm_slot slots[4];
-	uint5 channel_idx;
-	int16 output[2];
-	flag key_on;
-	flag emu_mode_4op_enable;
-	// Only for 17th and 18th channels
-	flag key_on_2;
-	flag emu_mode_4op_enable_2;
+struct _esfm_channel {
+  esfm_chip *chip;
+  esfm_slot slots[4];
+  uint5 channel_idx;
+  int16 output[2];
+  flag key_on;
+  flag emu_mode_4op_enable;
+  // Only for 17th and 18th channels
+  flag key_on_2;
+  flag emu_mode_4op_enable_2;
 };
 
 #define ESFM_WRITEBUF_SIZE 1024
 #define ESFM_WRITEBUF_DELAY 2
 
-struct _esfm_chip
-{
-	esfm_channel channels[18];
-	int32 output_accm[2];
-	uint16 addr_latch;
+struct _esfm_chip {
+  esfm_channel channels[18];
+  int32 output_accm[2];
+  uint16 addr_latch;
 
-	flag emu_wavesel_enable;
-	flag emu_newmode;
-	flag native_mode;
+  flag emu_wavesel_enable;
+  flag emu_newmode;
+  flag native_mode;
 
-	flag keyscale_mode;
+  flag keyscale_mode;
 
-	// Global state
-	uint36 eg_timer;
-	uint10 global_timer;
-	uint8 eg_clocks;
-	flag eg_tick;
-	flag eg_timer_overflow;
-	uint8 tremolo;
-	uint8 tremolo_pos;
-	uint8 vibrato_pos;
-	uint23 lfsr;
+  // Global state
+  uint36 eg_timer;
+  uint10 global_timer;
+  uint8 eg_clocks;
+  flag eg_tick;
+  flag eg_timer_overflow;
+  uint8 tremolo;
+  uint8 tremolo_pos;
+  uint8 vibrato_pos;
+  uint23 lfsr;
 
-	flag rm_hh_bit2;
-	flag rm_hh_bit3;
-	flag rm_hh_bit7;
-	flag rm_hh_bit8;
-	flag rm_tc_bit3;
-	flag rm_tc_bit5;
+  flag rm_hh_bit2;
+  flag rm_hh_bit3;
+  flag rm_hh_bit7;
+  flag rm_hh_bit8;
+  flag rm_tc_bit3;
+  flag rm_tc_bit5;
 
-	// 0xbd register in emulation mode, exposed in 0x4bd in native mode
-	// ("bass drum" register)
-	uint8 emu_rhy_mode_flags;
+  // 0xbd register in emulation mode, exposed in 0x4bd in native mode
+  // ("bass drum" register)
+  uint8 emu_rhy_mode_flags;
 
-	flag emu_vibrato_deep;
-	flag emu_tremolo_deep;
+  flag emu_vibrato_deep;
+  flag emu_tremolo_deep;
 
-	double timer_accumulator[2];
-	uint8 timer_reload[2];
-	uint8 timer_counter[2];
-	flag timer_enable[2];
-	flag timer_mask[2];
-	flag timer_overflow[2];
-	flag irq_bit;
+  double timer_accumulator[2];
+  uint8 timer_reload[2];
+  uint8 timer_counter[2];
+  flag timer_enable[2];
+  flag timer_mask[2];
+  flag timer_overflow[2];
+  flag irq_bit;
 
-	// -- Test bits (NOT IMPLEMENTED) --
-	// Halts the envelope generators from advancing. Written on bit 0, read back from bit 5.
-	flag test_bit_w0_r5_eg_halt;
-	/*
-	 * Activates some sort of waveform test mode that amplifies the output volume greatly
-	 * and continuously shifts the waveform table downwards, possibly also outputting the
-	 * waveform's derivative? (it's so weird!)
-	 */
-	flag test_bit_1_distort;
-	// Seems to do nothing.
-	flag test_bit_2;
-	// Seems to do nothing.
-	flag test_bit_3;
-	// Appears to attenuate the output by about 3 dB.
-	flag test_bit_4_attenuate;
-	// Written on bit 5, read back from bit 0. Seems to do nothing.
-	flag test_bit_w5_r0;
-	// Resets all phase generators and holds them in the reset state while this bit is set.
-	flag test_bit_6_phase_stop_reset;
-	// Seems to do nothing.
-	flag test_bit_7;
+  // -- Test bits (NOT IMPLEMENTED) --
+  // Halts the envelope generators from advancing. Written on bit 0, read back
+  // from bit 5.
+  flag test_bit_w0_r5_eg_halt;
+  /*
+   * Activates some sort of waveform test mode that amplifies the output volume
+   * greatly and continuously shifts the waveform table downwards, possibly also
+   * outputting the waveform's derivative? (it's so weird!)
+   */
+  flag test_bit_1_distort;
+  // Seems to do nothing.
+  flag test_bit_2;
+  // Seems to do nothing.
+  flag test_bit_3;
+  // Appears to attenuate the output by about 3 dB.
+  flag test_bit_4_attenuate;
+  // Written on bit 5, read back from bit 0. Seems to do nothing.
+  flag test_bit_w5_r0;
+  // Resets all phase generators and holds them in the reset state while this
+  // bit is set.
+  flag test_bit_6_phase_stop_reset;
+  // Seems to do nothing.
+  flag test_bit_7;
 
-	esfm_write_buf write_buf[ESFM_WRITEBUF_SIZE];
-	size_t write_buf_start;
-	size_t write_buf_end;
-	uint64_t write_buf_timestamp;
+  esfm_write_buf write_buf[ESFM_WRITEBUF_SIZE];
+  size_t write_buf_start;
+  size_t write_buf_end;
+  uint64_t write_buf_timestamp;
 };
 
 #ifdef __cplusplus

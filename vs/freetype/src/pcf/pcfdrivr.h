@@ -24,21 +24,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
 #ifndef PCFDRIVR_H_
 #define PCFDRIVR_H_
 
 #include <freetype/internal/ftdrv.h>
 
-
 FT_BEGIN_HEADER
 
-  FT_EXPORT_VAR( const FT_Driver_ClassRec )  pcf_driver_class;
+FT_EXPORT_VAR( const FT_Driver_ClassRec ) pcf_driver_class;
 
 FT_END_HEADER
 
-
 #endif /* PCFDRIVR_H_ */
-
 
 /* END */

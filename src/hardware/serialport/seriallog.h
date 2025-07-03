@@ -16,7 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef INCLUDEGUARD_SERIALLOG_H
 #define INCLUDEGUARD_SERIALLOG_H
 
@@ -24,26 +23,26 @@
 
 #include "serialport.h"
 
-//#define CHECKIT_TESTPLUG
+// #define CHECKIT_TESTPLUG
 
 class CSerialLog : public CSerial {
 public:
-	CSerialLog(Bitu id, CommandLine* cmd);
-	virtual ~CSerialLog();
+  CSerialLog(Bitu id, CommandLine *cmd);
+  virtual ~CSerialLog();
 
-	void setRTSDTR(bool rts, bool dtr) override;
-	void setRTS(bool val) override;
-	void setDTR(bool val) override;
+  void setRTSDTR(bool rts, bool dtr) override;
+  void setRTS(bool val) override;
+  void setDTR(bool val) override;
 
-	void updatePortConfig(uint16_t, uint8_t lcr) override;
-	void updateMSR() override;
-	void transmitByte(uint8_t val, bool first) override;
-	void setBreak(bool value) override;
-	void handleUpperEvent(uint16_t type) override;
+  void updatePortConfig(uint16_t, uint8_t lcr) override;
+  void updateMSR() override;
+  void transmitByte(uint8_t val, bool first) override;
+  void setBreak(bool value) override;
+  void handleUpperEvent(uint16_t type) override;
 
-	void log_emit();
+  void log_emit();
 
-	std::string log_line;
+  std::string log_line;
 };
 
 #endif // INCLUDEGUARD

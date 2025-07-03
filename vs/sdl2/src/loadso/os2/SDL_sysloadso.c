@@ -25,8 +25,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* System dependent library loading routines                           */
 
-#include "SDL_loadso.h"
 #include "../../core/os2/SDL_os2.h"
+#include "SDL_loadso.h"
 
 #define INCL_DOSMODULEMGR
 #define INCL_DOSERRORS
@@ -34,10 +34,10 @@
 
 void *SDL_LoadObject(const char *sofile)
 {
-    ULONG   ulRC;
+    ULONG ulRC;
     HMODULE hModule;
-    CHAR    acError[256];
-    PSZ     pszModName;
+    CHAR acError[256];
+    PSZ pszModName;
 
     if (!sofile) {
         SDL_InvalidParamError("sofile");
@@ -66,8 +66,8 @@ void *SDL_LoadObject(const char *sofile)
 
 void *SDL_LoadFunction(void *handle, const char *name)
 {
-    ULONG   ulRC;
-    PFN     pFN;
+    ULONG ulRC;
+    PFN pFN;
 
     ulRC = DosQueryProcAddr((HMODULE)handle, 0, name, &pFN);
     if (ulRC != NO_ERROR) {

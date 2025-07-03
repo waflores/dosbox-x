@@ -53,80 +53,72 @@ clipboard
 
 static char *pdc_SDL_clipboard = NULL;
 
-int PDC_getclipboard(char **contents, long *length)
-{
-    int len;
+int PDC_getclipboard(char **contents, long *length) {
+  int len;
 
-    PDC_LOG(("PDC_getclipboard() - called\n"));
+  PDC_LOG(("PDC_getclipboard() - called\n"));
 
-    if (!pdc_SDL_clipboard)
-        return PDC_CLIP_EMPTY;
+  if (!pdc_SDL_clipboard)
+    return PDC_CLIP_EMPTY;
 
-    len = strlen(pdc_SDL_clipboard);
-    if ((*contents = malloc(len + 1)) == NULL)
-        return PDC_CLIP_MEMORY_ERROR;
+  len = strlen(pdc_SDL_clipboard);
+  if ((*contents = malloc(len + 1)) == NULL)
+    return PDC_CLIP_MEMORY_ERROR;
 
-    strcpy(*contents, pdc_SDL_clipboard);
-    *length = len;
+  strcpy(*contents, pdc_SDL_clipboard);
+  *length = len;
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_setclipboard(const char *contents, long length)
-{
-    PDC_LOG(("PDC_setclipboard() - called\n"));
+int PDC_setclipboard(const char *contents, long length) {
+  PDC_LOG(("PDC_setclipboard() - called\n"));
 
-    if (pdc_SDL_clipboard)
-    {
-        free(pdc_SDL_clipboard);
-        pdc_SDL_clipboard = NULL;
-    }
+  if (pdc_SDL_clipboard) {
+    free(pdc_SDL_clipboard);
+    pdc_SDL_clipboard = NULL;
+  }
 
-    if (contents)
-    {
-        if ((pdc_SDL_clipboard = malloc(length + 1)) == NULL)
-            return PDC_CLIP_MEMORY_ERROR;
+  if (contents) {
+    if ((pdc_SDL_clipboard = malloc(length + 1)) == NULL)
+      return PDC_CLIP_MEMORY_ERROR;
 
-        strcpy(pdc_SDL_clipboard, contents);
-    }
+    strcpy(pdc_SDL_clipboard, contents);
+  }
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_freeclipboard(char *contents)
-{
-    PDC_LOG(("PDC_freeclipboard() - called\n"));
+int PDC_freeclipboard(char *contents) {
+  PDC_LOG(("PDC_freeclipboard() - called\n"));
 
-    /* should we also free empty the system clipboard? probably not */
+  /* should we also free empty the system clipboard? probably not */
 
-    if (contents)
-    {
-        /* NOTE: We free the memory, but we can not set caller's pointer
-           to NULL, so if caller calls again then will try to access
-           free'd memory.  We 1st overwrite memory with a string so if
-           caller tries to use free memory they won't get what they
-           expect & hopefully notice. */
+  if (contents) {
+    /* NOTE: We free the memory, but we can not set caller's pointer
+       to NULL, so if caller calls again then will try to access
+       free'd memory.  We 1st overwrite memory with a string so if
+       caller tries to use free memory they won't get what they
+       expect & hopefully notice. */
 
-        /* memset(contents, 0xFD, strlen(contents)); */
+    /* memset(contents, 0xFD, strlen(contents)); */
 
-        if (strlen(contents) >= strlen("PDCURSES"))
-            strcpy(contents, "PDCURSES");
+    if (strlen(contents) >= strlen("PDCURSES"))
+      strcpy(contents, "PDCURSES");
 
-        free(contents);
-    }
+    free(contents);
+  }
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_clearclipboard(void)
-{
-    PDC_LOG(("PDC_clearclipboard() - called\n"));
+int PDC_clearclipboard(void) {
+  PDC_LOG(("PDC_clearclipboard() - called\n"));
 
-    if (pdc_SDL_clipboard)
-    {
-        free(pdc_SDL_clipboard);
-        pdc_SDL_clipboard = NULL;
-    }
+  if (pdc_SDL_clipboard) {
+    free(pdc_SDL_clipboard);
+    pdc_SDL_clipboard = NULL;
+  }
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }

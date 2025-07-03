@@ -33,29 +33,29 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <windows.h>
 #include <stdlib.h>
+#include <windows.h>
 
 #include "SystemVersion.h"
 
 #ifdef _DEBUG
-# define BUILD_TYPE     "Debug"
-# define DEBUG_DEFAULT  2
+#define BUILD_TYPE "Debug"
+#define DEBUG_DEFAULT 2
 #else
-# define BUILD_TYPE     "Release"
-# define DEBUG_DEFAULT  0
+#define BUILD_TYPE "Release"
+#define DEBUG_DEFAULT 0
 #endif
 
 // ----------------------------------------------------------------------------
 // Globals
 
-HINSTANCE   g_hInstanceDLL          = NULL;
-int         g_nPlatform             = MZ_NOT_INITIALIZED;
-int         g_nPlatformServicePack  = 0;
-HMODULE     g_hOleacc               = NULL;
-HMODULE     g_hSensapi              = NULL;
-HMODULE     g_hImm32                = NULL;
-int         g_nDebug                = DEBUG_DEFAULT;
+HINSTANCE g_hInstanceDLL = NULL;
+int g_nPlatform = MZ_NOT_INITIALIZED;
+int g_nPlatformServicePack = 0;
+HMODULE g_hOleacc = NULL;
+HMODULE g_hSensapi = NULL;
+HMODULE g_hImm32 = NULL;
+int g_nDebug = DEBUG_DEFAULT;
 
 // ----------------------------------------------------------------------------
 // Local Functions
@@ -63,78 +63,71 @@ int         g_nDebug                = DEBUG_DEFAULT;
 static BOOL InitializeSystemVersion();
 
 // ----------------------------------------------------------------------------
-// DLL 
+// DLL
 #if !defined(STATIC_OPENCOW)
-BOOL APIENTRY 
-DllMain(
-    HINSTANCE   hInstanceDLL, 
-    DWORD       dwReason, 
-    LPVOID      /*lpReserved*/ 
-    )
-{
-    if (dwReason == DLL_PROCESS_ATTACH)
-    {
-        g_hInstanceDLL = hInstanceDLL;
-        ::DisableThreadLibraryCalls(hInstanceDLL);
+BOOL APIENTRY DllMain(HINSTANCE hInstanceDLL, DWORD dwReason,
+                      LPVOID /*lpReserved*/
+) {
+  if (dwReason == DLL_PROCESS_ATTACH) {
+    g_hInstanceDLL = hInstanceDLL;
+    ::DisableThreadLibraryCalls(hInstanceDLL);
 
-        if (!InitializeSystemVersion())
-            return FALSE;
+    if (!InitializeSystemVersion())
+      return FALSE;
 
-        // determine the debug level that we are running at. 
-        // Level 0 = no notification messages (default for release build)
-        // Level 1 = load and unload
-        // Level 2 = 1 + GetProcAddress of opencow implemented functions
-        char szValue[16];
-        DWORD dwLen = ::GetEnvironmentVariableA("OPENCOW_DEBUG", 
-            szValue, sizeof(szValue));
-        if (dwLen == 1) {
-            if (*szValue >= '0' && *szValue <= '2')
-                g_nDebug = *szValue - '0';
-        }
-
-        // if we are running at any debug level then we output a message
-        // when the library is loaded
-        if (g_nDebug >= 1) {
-            int nResult = ::MessageBoxA(NULL, 
-                "Opencow " BUILD_TYPE " DLL has been loaded. "
-                "Press cancel to disable all notifications.", "opencow", 
-                MB_OKCANCEL | MB_SETFOREGROUND);
-            if (nResult == IDCANCEL)
-                g_nDebug = 0;
-        }
-
-        return TRUE;
+    // determine the debug level that we are running at.
+    // Level 0 = no notification messages (default for release build)
+    // Level 1 = load and unload
+    // Level 2 = 1 + GetProcAddress of opencow implemented functions
+    char szValue[16];
+    DWORD dwLen =
+        ::GetEnvironmentVariableA("OPENCOW_DEBUG", szValue, sizeof(szValue));
+    if (dwLen == 1) {
+      if (*szValue >= '0' && *szValue <= '2')
+        g_nDebug = *szValue - '0';
     }
 
-    if (dwReason == DLL_PROCESS_DETACH)
-    {
-        if (g_hOleacc) {
-            FreeLibrary(g_hOleacc);
-            g_hOleacc = NULL;
-        }
-
-        if (g_hSensapi) {
-            FreeLibrary(g_hSensapi);
-            g_hSensapi = NULL;
-        }
-
-        if (g_hImm32) {
-            FreeLibrary(g_hImm32);
-            g_hImm32 = NULL;
-        }
-
-        // if we are running at any debug level then we output a message
-        // when the library is unloaded
-        if (g_nDebug >= 1) {
-            ::MessageBoxA(NULL, 
-                "Opencow " BUILD_TYPE " DLL has been unloaded.", "opencow", 
-                MB_OK | MB_SETFOREGROUND);
-        }
-
-        return TRUE;
+    // if we are running at any debug level then we output a message
+    // when the library is loaded
+    if (g_nDebug >= 1) {
+      int nResult = ::MessageBoxA(NULL,
+                                  "Opencow " BUILD_TYPE " DLL has been loaded. "
+                                  "Press cancel to disable all notifications.",
+                                  "opencow", MB_OKCANCEL | MB_SETFOREGROUND);
+      if (nResult == IDCANCEL)
+        g_nDebug = 0;
     }
 
     return TRUE;
+  }
+
+  if (dwReason == DLL_PROCESS_DETACH) {
+    if (g_hOleacc) {
+      FreeLibrary(g_hOleacc);
+      g_hOleacc = NULL;
+    }
+
+    if (g_hSensapi) {
+      FreeLibrary(g_hSensapi);
+      g_hSensapi = NULL;
+    }
+
+    if (g_hImm32) {
+      FreeLibrary(g_hImm32);
+      g_hImm32 = NULL;
+    }
+
+    // if we are running at any debug level then we output a message
+    // when the library is unloaded
+    if (g_nDebug >= 1) {
+      ::MessageBoxA(NULL, "Opencow " BUILD_TYPE " DLL has been unloaded.",
+                    "opencow", MB_OK | MB_SETFOREGROUND);
+    }
+
+    return TRUE;
+  }
+
+  return TRUE;
 }
 #else
 static BOOL g_bPlatformInited = InitializeSystemVersion();
@@ -142,79 +135,67 @@ static BOOL g_bPlatformInited = InitializeSystemVersion();
 // ----------------------------------------------------------------------------
 // API
 
-static int 
-GetServicePack(
-    const char * aVersion)
-{
-    static const char szServicePack[] = "Service Pack ";
-    static int ServicePackNumberOffset = sizeof(szServicePack) - 1;
-    if (strncmp(aVersion, szServicePack, ServicePackNumberOffset))
-        return 0;
-    return aVersion[ServicePackNumberOffset] - '0';
+static int GetServicePack(const char *aVersion) {
+  static const char szServicePack[] = "Service Pack ";
+  static int ServicePackNumberOffset = sizeof(szServicePack) - 1;
+  if (strncmp(aVersion, szServicePack, ServicePackNumberOffset))
+    return 0;
+  return aVersion[ServicePackNumberOffset] - '0';
 }
 
-static BOOL 
-InitializeSystemVersion()
-{
-    OSVERSIONINFOA osvi;
-    ZeroMemory(&osvi, sizeof(osvi));
-    osvi.dwOSVersionInfoSize = sizeof(osvi);
-    if (!GetVersionExA(&osvi))
-        return FALSE;
+static BOOL InitializeSystemVersion() {
+  OSVERSIONINFOA osvi;
+  ZeroMemory(&osvi, sizeof(osvi));
+  osvi.dwOSVersionInfoSize = sizeof(osvi);
+  if (!GetVersionExA(&osvi))
+    return FALSE;
 
-    switch (osvi.dwMajorVersion)
-    {
-    case 3:
-        g_nPlatform = MZ_PLATFORM_NT35;
+  switch (osvi.dwMajorVersion) {
+  case 3:
+    g_nPlatform = MZ_PLATFORM_NT35;
+    g_nPlatformServicePack = GetServicePack(osvi.szCSDVersion);
+    break;
+
+  case 4:
+    switch (osvi.dwMinorVersion) {
+    case 0:
+      if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT) {
+        g_nPlatform = MZ_PLATFORM_NT4;
         g_nPlatformServicePack = GetServicePack(osvi.szCSDVersion);
-        break;
+      } else {
+        g_nPlatform = MZ_PLATFORM_95;
+        if (osvi.szCSDVersion[0] == 'C')
+          g_nPlatformServicePack = 2; // OSR2
+      }
+      break;
 
-    case 4:
-        switch (osvi.dwMinorVersion)
-        {
-        case 0:
-            if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT)
-            {
-                g_nPlatform = MZ_PLATFORM_NT4;
-                g_nPlatformServicePack = GetServicePack(osvi.szCSDVersion);
-            }
-            else
-            {
-                g_nPlatform = MZ_PLATFORM_95;
-                if (osvi.szCSDVersion[0] == 'C')
-                    g_nPlatformServicePack = 2; // OSR2
-            }
-            break;
+    case 10:
+      g_nPlatform = MZ_PLATFORM_98;
+      if (osvi.szCSDVersion[0] == 'A')
+        g_nPlatformServicePack = 2; // 98SE
+      break;
 
-        case 10:
-            g_nPlatform = MZ_PLATFORM_98;
-            if (osvi.szCSDVersion[0] == 'A')
-                g_nPlatformServicePack = 2; // 98SE
-            break;
-
-        case 90:
-            g_nPlatform = MZ_PLATFORM_ME;
-        }
-        break;
-
-    case 5:
-        switch (osvi.dwMinorVersion)
-        {
-        case 0:
-            g_nPlatform = MZ_PLATFORM_2K;
-            break;
-
-        case 1:
-            g_nPlatform = MZ_PLATFORM_XP;
-            break;
-
-        case 2:
-            g_nPlatform = MZ_PLATFORM_2K3;
-            break;
-        }
-        g_nPlatformServicePack = GetServicePack(osvi.szCSDVersion);
+    case 90:
+      g_nPlatform = MZ_PLATFORM_ME;
     }
+    break;
 
-    return TRUE; 
+  case 5:
+    switch (osvi.dwMinorVersion) {
+    case 0:
+      g_nPlatform = MZ_PLATFORM_2K;
+      break;
+
+    case 1:
+      g_nPlatform = MZ_PLATFORM_XP;
+      break;
+
+    case 2:
+      g_nPlatform = MZ_PLATFORM_2K3;
+      break;
+    }
+    g_nPlatformServicePack = GetServicePack(osvi.szCSDVersion);
+  }
+
+  return TRUE;
 }
-

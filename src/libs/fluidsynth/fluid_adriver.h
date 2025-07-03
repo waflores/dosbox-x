@@ -23,17 +23,14 @@
 
 #include "fluidsynth_priv.h"
 
-void fluid_audio_driver_settings(fluid_settings_t* settings);
-
+void fluid_audio_driver_settings(fluid_settings_t *settings);
 
 /*
  * fluid_audio_driver_t
  */
 
-struct _fluid_audio_driver_t
-{
-  char* name;
+struct _fluid_audio_driver_t {
+  char *name;
 };
 
-
-#endif  /* _FLUID_AUDRIVER_H */
+#endif /* _FLUID_AUDRIVER_H */

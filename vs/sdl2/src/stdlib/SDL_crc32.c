@@ -22,7 +22,6 @@
 
 #include "SDL_stdinc.h"
 
-
 /* Public domain CRC implementation adapted from:
    http://home.thep.lu.se/~bjorn/crc/crc32_simple.c
 

@@ -39,14 +39,14 @@
 #define _MACH_VM_REGION_H_
 
 #include <mach/boolean.h>
-#include <mach/vm_prot.h>
-#include <mach/vm_inherit.h>
-#include <mach/vm_behavior.h>
-#include <mach/vm_types.h>
-#include <mach/message.h>
 #include <mach/machine/vm_param.h>
 #include <mach/machine/vm_types.h>
 #include <mach/memory_object_types.h>
+#include <mach/message.h>
+#include <mach/vm_behavior.h>
+#include <mach/vm_inherit.h>
+#include <mach/vm_prot.h>
+#include <mach/vm_types.h>
 
 #include <sys/cdefs.h>
 
@@ -63,37 +63,38 @@ typedef uint32_t vm32_object_id_t;
  *	vm_region_info_t	memory region attributes
  */
 
-#define VM_REGION_INFO_MAX      (1024)
-typedef int     *vm_region_info_t;
-typedef int     *vm_region_info_64_t;
-typedef int     *vm_region_recurse_info_t;
-typedef int     *vm_region_recurse_info_64_t;
-typedef int      vm_region_flavor_t;
-typedef int      vm_region_info_data_t[VM_REGION_INFO_MAX];
+#define VM_REGION_INFO_MAX (1024)
+typedef int *vm_region_info_t;
+typedef int *vm_region_info_64_t;
+typedef int *vm_region_recurse_info_t;
+typedef int *vm_region_recurse_info_64_t;
+typedef int vm_region_flavor_t;
+typedef int vm_region_info_data_t[VM_REGION_INFO_MAX];
 
-#define VM_REGION_BASIC_INFO_64         9
+#define VM_REGION_BASIC_INFO_64 9
 struct vm_region_basic_info_64 {
-	vm_prot_t               protection;
-	vm_prot_t               max_protection;
-	vm_inherit_t            inheritance;
-	boolean_t               shared;
-	boolean_t               reserved;
-	memory_object_offset_t  offset;
-	vm_behavior_t           behavior;
-	unsigned short          user_wired_count;
+  vm_prot_t protection;
+  vm_prot_t max_protection;
+  vm_inherit_t inheritance;
+  boolean_t shared;
+  boolean_t reserved;
+  memory_object_offset_t offset;
+  vm_behavior_t behavior;
+  unsigned short user_wired_count;
 };
-typedef struct vm_region_basic_info_64          *vm_region_basic_info_64_t;
-typedef struct vm_region_basic_info_64           vm_region_basic_info_data_64_t;
+typedef struct vm_region_basic_info_64 *vm_region_basic_info_64_t;
+typedef struct vm_region_basic_info_64 vm_region_basic_info_data_64_t;
 
-#define VM_REGION_BASIC_INFO_COUNT_64   ((mach_msg_type_number_t) \
-	(sizeof(vm_region_basic_info_data_64_t)/sizeof(int)))
+#define VM_REGION_BASIC_INFO_COUNT_64                                          \
+  ((mach_msg_type_number_t)(sizeof(vm_region_basic_info_data_64_t) /           \
+                            sizeof(int)))
 
 /*
  * Passing VM_REGION_BASIC_INFO to vm_region_64
  * automatically converts it to a VM_REGION_BASIC_INFO_64.
  * Please use that explicitly instead.
  */
-#define VM_REGION_BASIC_INFO            10
+#define VM_REGION_BASIC_INFO 10
 
 /*
  * This is the legacy basic info structure.  It is
@@ -101,30 +102,30 @@ typedef struct vm_region_basic_info_64           vm_region_basic_info_data_64_t;
  * offset back - too small for many larger objects (e.g. files).
  */
 struct vm_region_basic_info {
-	vm_prot_t               protection;
-	vm_prot_t               max_protection;
-	vm_inherit_t            inheritance;
-	boolean_t               shared;
-	boolean_t               reserved;
-	uint32_t                offset; /* too small for a real offset */
-	vm_behavior_t           behavior;
-	unsigned short          user_wired_count;
+  vm_prot_t protection;
+  vm_prot_t max_protection;
+  vm_inherit_t inheritance;
+  boolean_t shared;
+  boolean_t reserved;
+  uint32_t offset; /* too small for a real offset */
+  vm_behavior_t behavior;
+  unsigned short user_wired_count;
 };
 
-typedef struct vm_region_basic_info             *vm_region_basic_info_t;
-typedef struct vm_region_basic_info              vm_region_basic_info_data_t;
+typedef struct vm_region_basic_info *vm_region_basic_info_t;
+typedef struct vm_region_basic_info vm_region_basic_info_data_t;
 
-#define VM_REGION_BASIC_INFO_COUNT ((mach_msg_type_number_t) \
-	(sizeof(vm_region_basic_info_data_t)/sizeof(int)))
+#define VM_REGION_BASIC_INFO_COUNT                                             \
+  ((mach_msg_type_number_t)(sizeof(vm_region_basic_info_data_t) / sizeof(int)))
 
-#define SM_COW             1
-#define SM_PRIVATE         2
-#define SM_EMPTY           3
-#define SM_SHARED          4
-#define SM_TRUESHARED      5
+#define SM_COW 1
+#define SM_PRIVATE 2
+#define SM_EMPTY 3
+#define SM_SHARED 4
+#define SM_TRUESHARED 5
 #define SM_PRIVATE_ALIASED 6
-#define SM_SHARED_ALIASED  7
-#define SM_LARGE_PAGE      8
+#define SM_SHARED_ALIASED 7
+#define SM_LARGE_PAGE 8
 
 /*
  * For submap info,  the SM flags above are overlayed when a submap
@@ -134,50 +135,42 @@ typedef struct vm_region_basic_info              vm_region_basic_info_data_t;
  * back.
  */
 
-
-
-
 #define VM_REGION_EXTENDED_INFO 13
 struct vm_region_extended_info {
-	vm_prot_t               protection;
-	unsigned int            user_tag;
-	unsigned int            pages_resident;
-	unsigned int            pages_shared_now_private;
-	unsigned int            pages_swapped_out;
-	unsigned int            pages_dirtied;
-	unsigned int            ref_count;
-	unsigned short          shadow_depth;
-	unsigned char           external_pager;
-	unsigned char           share_mode;
-	unsigned int            pages_reusable;
+  vm_prot_t protection;
+  unsigned int user_tag;
+  unsigned int pages_resident;
+  unsigned int pages_shared_now_private;
+  unsigned int pages_swapped_out;
+  unsigned int pages_dirtied;
+  unsigned int ref_count;
+  unsigned short shadow_depth;
+  unsigned char external_pager;
+  unsigned char share_mode;
+  unsigned int pages_reusable;
 };
-typedef struct vm_region_extended_info          *vm_region_extended_info_t;
-typedef struct vm_region_extended_info           vm_region_extended_info_data_t;
-#define VM_REGION_EXTENDED_INFO_COUNT                   \
-	((mach_msg_type_number_t)                       \
-	 (sizeof (vm_region_extended_info_data_t) / sizeof (natural_t)))
+typedef struct vm_region_extended_info *vm_region_extended_info_t;
+typedef struct vm_region_extended_info vm_region_extended_info_data_t;
+#define VM_REGION_EXTENDED_INFO_COUNT                                          \
+  ((mach_msg_type_number_t)(sizeof(vm_region_extended_info_data_t) /           \
+                            sizeof(natural_t)))
 
-
-
-
-#define VM_REGION_TOP_INFO      12
+#define VM_REGION_TOP_INFO 12
 
 struct vm_region_top_info {
-	unsigned int            obj_id;
-	unsigned int            ref_count;
-	unsigned int            private_pages_resident;
-	unsigned int            shared_pages_resident;
-	unsigned char           share_mode;
+  unsigned int obj_id;
+  unsigned int ref_count;
+  unsigned int private_pages_resident;
+  unsigned int shared_pages_resident;
+  unsigned char share_mode;
 };
 
-typedef struct vm_region_top_info               *vm_region_top_info_t;
-typedef struct vm_region_top_info                vm_region_top_info_data_t;
+typedef struct vm_region_top_info *vm_region_top_info_t;
+typedef struct vm_region_top_info vm_region_top_info_data_t;
 
-#define VM_REGION_TOP_INFO_COUNT                                        \
-	((mach_msg_type_number_t)                                       \
-	 (sizeof(vm_region_top_info_data_t) / sizeof(natural_t)))
-
-
+#define VM_REGION_TOP_INFO_COUNT                                               \
+  ((mach_msg_type_number_t)(sizeof(vm_region_top_info_data_t) /                \
+                            sizeof(natural_t)))
 
 /*
  * vm_region_submap_info will return information on a submap or object.
@@ -200,150 +193,143 @@ typedef struct vm_region_top_info                vm_region_top_info_data_t;
  */
 
 struct vm_region_submap_info {
-	vm_prot_t               protection;     /* present access protection */
-	vm_prot_t               max_protection; /* max avail through vm_prot */
-	vm_inherit_t            inheritance;/* behavior of map/obj on fork */
-	uint32_t                offset;         /* offset into object/map */
-	unsigned int            user_tag;       /* user tag on map entry */
-	unsigned int            pages_resident; /* only valid for objects */
-	unsigned int            pages_shared_now_private; /* only for objects */
-	unsigned int            pages_swapped_out; /* only for objects */
-	unsigned int            pages_dirtied;   /* only for objects */
-	unsigned int            ref_count;       /* obj/map mappers, etc */
-	unsigned short          shadow_depth;   /* only for obj */
-	unsigned char           external_pager;  /* only for obj */
-	unsigned char           share_mode;     /* see enumeration */
-	boolean_t               is_submap;      /* submap vs obj */
-	vm_behavior_t           behavior;       /* access behavior hint */
-	vm32_object_id_t        object_id;      /* obj/map name, not a handle */
-	unsigned short          user_wired_count;
+  vm_prot_t protection;                  /* present access protection */
+  vm_prot_t max_protection;              /* max avail through vm_prot */
+  vm_inherit_t inheritance;              /* behavior of map/obj on fork */
+  uint32_t offset;                       /* offset into object/map */
+  unsigned int user_tag;                 /* user tag on map entry */
+  unsigned int pages_resident;           /* only valid for objects */
+  unsigned int pages_shared_now_private; /* only for objects */
+  unsigned int pages_swapped_out;        /* only for objects */
+  unsigned int pages_dirtied;            /* only for objects */
+  unsigned int ref_count;                /* obj/map mappers, etc */
+  unsigned short shadow_depth;           /* only for obj */
+  unsigned char external_pager;          /* only for obj */
+  unsigned char share_mode;              /* see enumeration */
+  boolean_t is_submap;                   /* submap vs obj */
+  vm_behavior_t behavior;                /* access behavior hint */
+  vm32_object_id_t object_id;            /* obj/map name, not a handle */
+  unsigned short user_wired_count;
 };
 
-typedef struct vm_region_submap_info            *vm_region_submap_info_t;
-typedef struct vm_region_submap_info             vm_region_submap_info_data_t;
+typedef struct vm_region_submap_info *vm_region_submap_info_t;
+typedef struct vm_region_submap_info vm_region_submap_info_data_t;
 
-#define VM_REGION_SUBMAP_INFO_COUNT                                     \
-	((mach_msg_type_number_t)                                       \
-	 (sizeof(vm_region_submap_info_data_t) / sizeof(natural_t)))
+#define VM_REGION_SUBMAP_INFO_COUNT                                            \
+  ((mach_msg_type_number_t)(sizeof(vm_region_submap_info_data_t) /             \
+                            sizeof(natural_t)))
 
 struct vm_region_submap_info_64 {
-	vm_prot_t               protection;     /* present access protection */
-	vm_prot_t               max_protection; /* max avail through vm_prot */
-	vm_inherit_t            inheritance;/* behavior of map/obj on fork */
-	memory_object_offset_t  offset;         /* offset into object/map */
-	unsigned int            user_tag;       /* user tag on map entry */
-	unsigned int            pages_resident; /* only valid for objects */
-	unsigned int            pages_shared_now_private; /* only for objects */
-	unsigned int            pages_swapped_out; /* only for objects */
-	unsigned int            pages_dirtied;   /* only for objects */
-	unsigned int            ref_count;       /* obj/map mappers, etc */
-	unsigned short          shadow_depth;   /* only for obj */
-	unsigned char           external_pager;  /* only for obj */
-	unsigned char           share_mode;     /* see enumeration */
-	boolean_t               is_submap;      /* submap vs obj */
-	vm_behavior_t           behavior;       /* access behavior hint */
-	vm32_object_id_t        object_id;      /* obj/map name, not a handle */
-	unsigned short          user_wired_count;
-	unsigned int            pages_reusable;
-	vm_object_id_t          object_id_full;
+  vm_prot_t protection;                  /* present access protection */
+  vm_prot_t max_protection;              /* max avail through vm_prot */
+  vm_inherit_t inheritance;              /* behavior of map/obj on fork */
+  memory_object_offset_t offset;         /* offset into object/map */
+  unsigned int user_tag;                 /* user tag on map entry */
+  unsigned int pages_resident;           /* only valid for objects */
+  unsigned int pages_shared_now_private; /* only for objects */
+  unsigned int pages_swapped_out;        /* only for objects */
+  unsigned int pages_dirtied;            /* only for objects */
+  unsigned int ref_count;                /* obj/map mappers, etc */
+  unsigned short shadow_depth;           /* only for obj */
+  unsigned char external_pager;          /* only for obj */
+  unsigned char share_mode;              /* see enumeration */
+  boolean_t is_submap;                   /* submap vs obj */
+  vm_behavior_t behavior;                /* access behavior hint */
+  vm32_object_id_t object_id;            /* obj/map name, not a handle */
+  unsigned short user_wired_count;
+  unsigned int pages_reusable;
+  vm_object_id_t object_id_full;
 };
 
-typedef struct vm_region_submap_info_64         *vm_region_submap_info_64_t;
-typedef struct vm_region_submap_info_64          vm_region_submap_info_data_64_t;
+typedef struct vm_region_submap_info_64 *vm_region_submap_info_64_t;
+typedef struct vm_region_submap_info_64 vm_region_submap_info_data_64_t;
 
-#define VM_REGION_SUBMAP_INFO_V2_SIZE   \
-	(sizeof (vm_region_submap_info_data_64_t))
-#define VM_REGION_SUBMAP_INFO_V1_SIZE   \
-	(VM_REGION_SUBMAP_INFO_V2_SIZE - \
-	 sizeof (vm_object_id_t) /* object_id_full */ )
-#define VM_REGION_SUBMAP_INFO_V0_SIZE   \
-	(VM_REGION_SUBMAP_INFO_V1_SIZE - \
-	 sizeof (unsigned int) /* pages_reusable */ )
+#define VM_REGION_SUBMAP_INFO_V2_SIZE (sizeof(vm_region_submap_info_data_64_t))
+#define VM_REGION_SUBMAP_INFO_V1_SIZE                                          \
+  (VM_REGION_SUBMAP_INFO_V2_SIZE - sizeof(vm_object_id_t) /* object_id_full    \
+                                                           */)
+#define VM_REGION_SUBMAP_INFO_V0_SIZE                                          \
+  (VM_REGION_SUBMAP_INFO_V1_SIZE - sizeof(unsigned int) /* pages_reusable */)
 
-#define VM_REGION_SUBMAP_INFO_V2_COUNT_64 \
-	((mach_msg_type_number_t) \
-	 (VM_REGION_SUBMAP_INFO_V2_SIZE / sizeof (natural_t)))
-#define VM_REGION_SUBMAP_INFO_V1_COUNT_64 \
-	((mach_msg_type_number_t) \
-	 (VM_REGION_SUBMAP_INFO_V1_SIZE / sizeof (natural_t)))
-#define VM_REGION_SUBMAP_INFO_V0_COUNT_64 \
-	((mach_msg_type_number_t) \
-	 (VM_REGION_SUBMAP_INFO_V0_SIZE / sizeof (natural_t)))
+#define VM_REGION_SUBMAP_INFO_V2_COUNT_64                                      \
+  ((mach_msg_type_number_t)(VM_REGION_SUBMAP_INFO_V2_SIZE / sizeof(natural_t)))
+#define VM_REGION_SUBMAP_INFO_V1_COUNT_64                                      \
+  ((mach_msg_type_number_t)(VM_REGION_SUBMAP_INFO_V1_SIZE / sizeof(natural_t)))
+#define VM_REGION_SUBMAP_INFO_V0_COUNT_64                                      \
+  ((mach_msg_type_number_t)(VM_REGION_SUBMAP_INFO_V0_SIZE / sizeof(natural_t)))
 
 /* set this to the latest version */
-#define VM_REGION_SUBMAP_INFO_COUNT_64          VM_REGION_SUBMAP_INFO_V2_COUNT_64
+#define VM_REGION_SUBMAP_INFO_COUNT_64 VM_REGION_SUBMAP_INFO_V2_COUNT_64
 
 struct vm_region_submap_short_info_64 {
-	vm_prot_t               protection;     /* present access protection */
-	vm_prot_t               max_protection; /* max avail through vm_prot */
-	vm_inherit_t            inheritance;/* behavior of map/obj on fork */
-	memory_object_offset_t  offset;         /* offset into object/map */
-	unsigned int            user_tag;       /* user tag on map entry */
-	unsigned int            ref_count;       /* obj/map mappers, etc */
-	unsigned short          shadow_depth;   /* only for obj */
-	unsigned char           external_pager;  /* only for obj */
-	unsigned char           share_mode;     /* see enumeration */
-	boolean_t               is_submap;      /* submap vs obj */
-	vm_behavior_t           behavior;       /* access behavior hint */
-	vm32_object_id_t        object_id;      /* obj/map name, not a handle */
-	unsigned short          user_wired_count;
+  vm_prot_t protection;          /* present access protection */
+  vm_prot_t max_protection;      /* max avail through vm_prot */
+  vm_inherit_t inheritance;      /* behavior of map/obj on fork */
+  memory_object_offset_t offset; /* offset into object/map */
+  unsigned int user_tag;         /* user tag on map entry */
+  unsigned int ref_count;        /* obj/map mappers, etc */
+  unsigned short shadow_depth;   /* only for obj */
+  unsigned char external_pager;  /* only for obj */
+  unsigned char share_mode;      /* see enumeration */
+  boolean_t is_submap;           /* submap vs obj */
+  vm_behavior_t behavior;        /* access behavior hint */
+  vm32_object_id_t object_id;    /* obj/map name, not a handle */
+  unsigned short user_wired_count;
 };
 
-typedef struct vm_region_submap_short_info_64   *vm_region_submap_short_info_64_t;
-typedef struct vm_region_submap_short_info_64    vm_region_submap_short_info_data_64_t;
+typedef struct vm_region_submap_short_info_64 *vm_region_submap_short_info_64_t;
+typedef struct vm_region_submap_short_info_64
+    vm_region_submap_short_info_data_64_t;
 
-#define VM_REGION_SUBMAP_SHORT_INFO_COUNT_64                            \
-	((mach_msg_type_number_t)                                       \
-	 (sizeof (vm_region_submap_short_info_data_64_t) / sizeof (natural_t)))
+#define VM_REGION_SUBMAP_SHORT_INFO_COUNT_64                                   \
+  ((mach_msg_type_number_t)(sizeof(vm_region_submap_short_info_data_64_t) /    \
+                            sizeof(natural_t)))
 
 struct mach_vm_read_entry {
-	mach_vm_address_t address;
-	mach_vm_size_t size;
+  mach_vm_address_t address;
+  mach_vm_size_t size;
 };
 
 struct vm_read_entry {
-	vm_address_t    address;
-	vm_size_t       size;
+  vm_address_t address;
+  vm_size_t size;
 };
 
 #ifdef VM32_SUPPORT
 struct vm32_read_entry {
-	vm32_address_t  address;
-	vm32_size_t     size;
+  vm32_address_t address;
+  vm32_size_t size;
 };
 #endif
 
+#define VM_MAP_ENTRY_MAX (256)
 
-#define VM_MAP_ENTRY_MAX  (256)
-
-typedef struct mach_vm_read_entry       mach_vm_read_entry_t[VM_MAP_ENTRY_MAX];
-typedef struct vm_read_entry            vm_read_entry_t[VM_MAP_ENTRY_MAX];
+typedef struct mach_vm_read_entry mach_vm_read_entry_t[VM_MAP_ENTRY_MAX];
+typedef struct vm_read_entry vm_read_entry_t[VM_MAP_ENTRY_MAX];
 #ifdef VM32_SUPPORT
-typedef struct vm32_read_entry          vm32_read_entry_t[VM_MAP_ENTRY_MAX];
+typedef struct vm32_read_entry vm32_read_entry_t[VM_MAP_ENTRY_MAX];
 #endif
 
 #pragma pack(pop)
-
 
 #define VM_PAGE_INFO_MAX
 typedef int *vm_page_info_t;
 typedef int vm_page_info_data_t[VM_PAGE_INFO_MAX];
 typedef int vm_page_info_flavor_t;
 
-#define VM_PAGE_INFO_BASIC              1
+#define VM_PAGE_INFO_BASIC 1
 struct vm_page_info_basic {
-	int                     disposition;
-	int                     ref_count;
-	vm_object_id_t          object_id;
-	memory_object_offset_t  offset;
-	int                     depth;
-	int                     __pad; /* pad to 64-bit boundary */
+  int disposition;
+  int ref_count;
+  vm_object_id_t object_id;
+  memory_object_offset_t offset;
+  int depth;
+  int __pad; /* pad to 64-bit boundary */
 };
-typedef struct vm_page_info_basic               *vm_page_info_basic_t;
-typedef struct vm_page_info_basic               vm_page_info_basic_data_t;
+typedef struct vm_page_info_basic *vm_page_info_basic_t;
+typedef struct vm_page_info_basic vm_page_info_basic_data_t;
 
-#define VM_PAGE_INFO_BASIC_COUNT        ((mach_msg_type_number_t) \
-	(sizeof(vm_page_info_basic_data_t)/sizeof(int)))
+#define VM_PAGE_INFO_BASIC_COUNT                                               \
+  ((mach_msg_type_number_t)(sizeof(vm_page_info_basic_data_t) / sizeof(int)))
 
-
-#endif  /*_MACH_VM_REGION_H_*/
+#endif /*_MACH_VM_REGION_H_*/

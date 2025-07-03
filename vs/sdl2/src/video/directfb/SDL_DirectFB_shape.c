@@ -22,16 +22,16 @@
 
 #ifdef SDL_VIDEO_DRIVER_DIRECTFB
 
-#include "SDL_DirectFB_video.h"
 #include "SDL_DirectFB_shape.h"
+#include "SDL_DirectFB_video.h"
 #include "SDL_DirectFB_window.h"
 
 #include "../SDL_shape_internals.h"
 
-SDL_WindowShaper *DirectFB_CreateShaper(SDL_Window* window)
+SDL_WindowShaper *DirectFB_CreateShaper(SDL_Window *window)
 {
-    SDL_WindowShaper* result = NULL;
-    SDL_ShapeData* data;
+    SDL_WindowShaper *result = NULL;
+    SDL_ShapeData *data;
     int resized_properly;
 
     result = SDL_malloc(sizeof(SDL_WindowShaper));
@@ -58,29 +58,28 @@ SDL_WindowShaper *DirectFB_CreateShaper(SDL_Window* window)
     return result;
 }
 
-int DirectFB_ResizeWindowShape(SDL_Window* window)
+int DirectFB_ResizeWindowShape(SDL_Window *window)
 {
-    SDL_ShapeData* data = window->shaper->driverdata;
+    SDL_ShapeData *data = window->shaper->driverdata;
     SDL_assert(data != NULL);
 
-    if (window->x != -1000)
-    {
+    if (window->x != -1000) {
         window->shaper->userx = window->x;
         window->shaper->usery = window->y;
     }
-    SDL_SetWindowPosition(window,-1000,-1000);
+    SDL_SetWindowPosition(window, -1000, -1000);
 
     return 0;
 }
 
-int DirectFB_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_WindowShapeMode *shape_mode)
+int DirectFB_SetWindowShape(SDL_WindowShaper *shaper, SDL_Surface *shape, SDL_WindowShapeMode *shape_mode)
 {
 
-    if(!shaper || !shape || !shaper->driverdata)
+    if (!shaper || !shape || !shaper->driverdata)
         return -1;
-    if(shape->format->Amask == 0 && SDL_SHAPEMODEALPHA(shape_mode->mode))
+    if (shape->format->Amask == 0 && SDL_SHAPEMODEALPHA(shape_mode->mode))
         return -2;
-    if(shape->w != shaper->window->w || shape->h != shaper->window->h)
+    if (shape->w != shaper->window->w || shape->h != shaper->window->h)
         return -3;
 
     {
@@ -88,8 +87,8 @@ int DirectFB_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_Wind
         SDL_DFB_DEVICEDATA(display->device);
         Uint32 *pixels;
         Sint32 pitch;
-        Uint32 h,w;
-        Uint8  *src, *bitmap;
+        Uint32 h, w;
+        Uint8 *src, *bitmap;
         DFBSurfaceDescription dsc;
 
         SDL_ShapeData *data = shaper->driverdata;
@@ -109,7 +108,7 @@ int DirectFB_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_Wind
 
         src = bitmap;
 
-        SDL_DFB_CHECK(data->surface->Lock(data->surface, DSLF_WRITE | DSLF_READ, (void **) &pixels, &pitch));
+        SDL_DFB_CHECK(data->surface->Lock(data->surface, DSLF_WRITE | DSLF_READ, (void **)&pixels, &pitch));
 
         h = shaper->window->h;
         while (h--) {
@@ -119,7 +118,6 @@ int DirectFB_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_Wind
                 else
                     pixels[w] = 0;
                 src++;
-
             }
             pixels += (pitch >> 2);
         }

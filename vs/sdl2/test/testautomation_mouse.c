@@ -2,8 +2,8 @@
  * Mouse test suite
  */
 
-#include <stdio.h>
 #include <limits.h>
+#include <stdio.h>
 
 #include "SDL.h"
 #include "SDL_test.h"
@@ -602,7 +602,7 @@ static const SDLTest_TestCaseReference mouseTest10 = {
 };
 
 /* Sequence of Mouse test cases */
-static const SDLTest_TestCaseReference *mouseTests[] =  {
+static const SDLTest_TestCaseReference *mouseTests[] = {
     &mouseTest1, &mouseTest2, &mouseTest3, &mouseTest4, &mouseTest5, &mouseTest6,
     &mouseTest7, &mouseTest8, &mouseTest9, &mouseTest10, NULL
 };

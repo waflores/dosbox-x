@@ -24,11 +24,11 @@
 
 /* Win32 thread management routines for SDL */
 
-#include "SDL_hints.h"
-#include "SDL_thread.h"
-#include "../SDL_thread_c.h"
 #include "../SDL_systhread.h"
+#include "../SDL_thread_c.h"
+#include "SDL_hints.h"
 #include "SDL_systhread_c.h"
+#include "SDL_thread.h"
 
 #ifndef STACK_SIZE_PARAM_IS_A_RESERVATION
 #define STACK_SIZE_PARAM_IS_A_RESERVATION 0x00010000
@@ -38,7 +38,7 @@
 /* We'll use the C library from this DLL */
 #include <process.h>
 typedef uintptr_t(__cdecl *pfnSDL_CurrentBeginThread)(void *, unsigned,
-                                                      unsigned(__stdcall *func)(void*),
+                                                      unsigned(__stdcall *func)(void *),
                                                       void *arg, unsigned,
                                                       unsigned *threadID);
 typedef void(__cdecl *pfnSDL_CurrentEndThread)(unsigned code);

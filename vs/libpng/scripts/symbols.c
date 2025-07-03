@@ -14,18 +14,17 @@
  * scripts/pnglibconf.dfa then this checks the .dfa file too.
  */
 
-#define PNG_EXPORTA(ordinal, type, name, args, attributes)\
-        PNG_DFN "@" name "@ @@" ordinal "@"
-#define PNG_REMOVED(ordinal, type, name, args, attributes)\
-        PNG_DFN "; @" name "@ @@" ordinal "@"
-#define PNG_EXPORT_LAST_ORDINAL(ordinal)\
-        PNG_DFN "; @@" ordinal "@"
+#define PNG_EXPORTA(ordinal, type, name, args, attributes)                     \
+  PNG_DFN "@" name "@ @@" ordinal "@"
+#define PNG_REMOVED(ordinal, type, name, args, attributes)                     \
+  PNG_DFN "; @" name "@ @@" ordinal "@"
+#define PNG_EXPORT_LAST_ORDINAL(ordinal) PNG_DFN "; @@" ordinal "@"
 
 /* Read the defaults, but use scripts/pnglibconf.h.prebuilt; the 'standard'
  * header file.
  */
-#include "pnglibconf.h.prebuilt"
 #include "../png.h"
+#include "pnglibconf.h.prebuilt"
 
 /* Some things are turned off by default.  Turn these things
  * on here (by hand) to get the APIs they expose and validate
@@ -37,7 +36,7 @@
  */
 #define PNG_BENIGN_ERRORS_SUPPORTED
 #define PNG_ERROR_NUMBERS_SUPPORTED
-#define PNG_READ_BIG_ENDIAN_SUPPORTED  /* should do nothing! */
+#define PNG_READ_BIG_ENDIAN_SUPPORTED /* should do nothing! */
 #define PNG_INCH_CONVERSIONS_SUPPORTED
 #define PNG_READ_16_TO_8_ACCURATE_SCALE_SUPPORTED
 #define PNG_SET_OPTION_SUPPORTED
@@ -49,8 +48,8 @@
  * actually changes the APIs revealed using a #if/#else/#endif
  * test in png.h, test these here.
  */
-#undef  PNG_FLOATING_POINT_SUPPORTED /* Exposes 'fixed' APIs */
-#undef  PNG_ERROR_TEXT_SUPPORTED     /* Exposes unsupported APIs */
+#undef PNG_FLOATING_POINT_SUPPORTED /* Exposes 'fixed' APIs */
+#undef PNG_ERROR_TEXT_SUPPORTED     /* Exposes unsupported APIs */
 
 #undef PNG_H
 #include "../png.h"

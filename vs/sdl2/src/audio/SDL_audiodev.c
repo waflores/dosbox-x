@@ -25,12 +25,12 @@
 #if defined(SDL_AUDIO_DRIVER_NETBSD) || defined(SDL_AUDIO_DRIVER_OSS) || defined(SDL_AUDIO_DRIVER_SUNAUDIO)
 
 #include <fcntl.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h> /* For close() */
 
-#include "SDL_stdinc.h"
 #include "SDL_audiodev_c.h"
+#include "SDL_stdinc.h"
 
 #ifndef _PATH_DEV_DSP
 #if defined(__NETBSD__) || defined(__OPENBSD__)

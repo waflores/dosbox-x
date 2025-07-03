@@ -22,9 +22,9 @@
 #ifndef SDL_os2util_h_
 #define SDL_os2util_h_
 
-#include "SDL_log.h"
-#include "../SDL_sysvideo.h"
 #include "../../core/os2/SDL_os2.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_log.h"
 
 #define INCL_WIN
 #define INCL_GPI
@@ -35,4 +35,3 @@ HPOINTER utilCreatePointer(SDL_Surface *surface, ULONG ulHotX, ULONG ulHotY);
 #endif /* SDL_os2util_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */
-

@@ -15,11 +15,12 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
-    
+
     Hsieh-Fu Tsai
     clare@setabox.com
 */
@@ -31,49 +32,45 @@
 
 // The implementation dependent data for the window manager cursor
 struct WMcursor {
-    int unused ;
-} ;
+  int unused;
+};
 
-WMcursor * NX_CreateWMCursor (_THIS,
-        Uint8 * data, Uint8 * mask, int w, int h, int hot_x, int hot_y)
-{
-    WMcursor * cursor ;
+WMcursor *NX_CreateWMCursor(_THIS, Uint8 *data, Uint8 *mask, int w, int h,
+                            int hot_x, int hot_y) {
+  WMcursor *cursor;
 
-    Dprintf ("enter NX_CreateWMCursor\n") ;
+  Dprintf("enter NX_CreateWMCursor\n");
 
-    cursor = (WMcursor *) SDL_malloc (sizeof (WMcursor)) ;
-    if (cursor == NULL) {
-        SDL_OutOfMemory () ;
-        return NULL ;
-    }
+  cursor = (WMcursor *)SDL_malloc(sizeof(WMcursor));
+  if (cursor == NULL) {
+    SDL_OutOfMemory();
+    return NULL;
+  }
 
-    Dprintf ("leave NX_CreateWMCursor\n") ;
-    return cursor ;
+  Dprintf("leave NX_CreateWMCursor\n");
+  return cursor;
 }
 
-void NX_FreeWMCursor (_THIS, WMcursor * cursor)
-{
-    Dprintf ("NX_FreeWMCursor\n") ;
-    SDL_free (cursor) ;
-    return ;
+void NX_FreeWMCursor(_THIS, WMcursor *cursor) {
+  Dprintf("NX_FreeWMCursor\n");
+  SDL_free(cursor);
+  return;
 }
 
-void NX_WarpWMCursor(_THIS, Uint16 x, Uint16 y)
-{
-    GR_WINDOW_INFO info ;
+void NX_WarpWMCursor(_THIS, Uint16 x, Uint16 y) {
+  GR_WINDOW_INFO info;
 
-    Dprintf ("enter NX_WarpWMCursor\n") ;
-    SDL_Lock_EventThread () ;
-    
-    GrGetWindowInfo (SDL_Window, & info) ;
-    GrMoveCursor (info.x + x, info.y + y) ;
+  Dprintf("enter NX_WarpWMCursor\n");
+  SDL_Lock_EventThread();
 
-    SDL_Unlock_EventThread () ;
-    Dprintf ("leave NX_WarpWMCursor\n") ;
+  GrGetWindowInfo(SDL_Window, &info);
+  GrMoveCursor(info.x + x, info.y + y);
+
+  SDL_Unlock_EventThread();
+  Dprintf("leave NX_WarpWMCursor\n");
 }
 
-int NX_ShowWMCursor (_THIS, WMcursor * cursor)
-{
-    Dprintf ("NX_ShowWMCursor\n") ;
-    return 1 ;
+int NX_ShowWMCursor(_THIS, WMcursor *cursor) {
+  Dprintf("NX_ShowWMCursor\n");
+  return 1;
 }

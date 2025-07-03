@@ -2,14 +2,13 @@
    Header definitions for the x86 routines for the HERMES library
    Copyright (c) 1998 Christian Nentwich (brn@eleet.mcb.at)
    This source code is licensed under the GNU LGPL
-  
+
    Please refer to the file COPYING.LIB contained in the distribution for
    licensing conditions
 */
 
 #ifndef __HERMES_HEAD_X86__
 #define __HERMES_HEAD_X86__
-
 
 #ifdef X86_ASSEMBLER
 
@@ -19,7 +18,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 void STACKCALL ConvertX86(HermesConverterInterface *);
 void STACKCALL ClearX86_32(HermesClearInterface *);
@@ -64,70 +62,63 @@ extern int ConvertX86p16_32RGB888_LUT_X86[512];
 extern int ConvertX86p16_32BGR888_LUT_X86[512];
 extern int ConvertX86p16_32RGBA888_LUT_X86[512];
 extern int ConvertX86p16_32BGRA888_LUT_X86[512];
-  
+
 #ifdef __cplusplus
 }
 #endif
 
-
-
-
 /* Now fix up the ELF underscore problem */
 
 #if (defined(__ELF__) && defined(__GNUC__)) || defined(__SUNPRO_C)
-  #ifdef __cplusplus
-  extern "C" {
-  #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-  extern int _Hermes_X86_CPU();
+extern int _Hermes_X86_CPU();
 
-  extern void _ConvertX86(HermesConverterInterface *);
+extern void _ConvertX86(HermesConverterInterface *);
 
-  extern void _ConvertX86p32_32BGR888();
-  extern void _ConvertX86p32_32RGBA888();
-  extern void _ConvertX86p32_32BGRA888();
-  extern void _ConvertX86p32_24RGB888();
-  extern void _ConvertX86p32_24BGR888();
-  extern void _ConvertX86p32_16RGB565();
-  extern void _ConvertX86p32_16BGR565();
-  extern void _ConvertX86p32_16RGB555();
-  extern void _ConvertX86p32_16BGR555();
-  extern void _ConvertX86p32_8RGB332();
+extern void _ConvertX86p32_32BGR888();
+extern void _ConvertX86p32_32RGBA888();
+extern void _ConvertX86p32_32BGRA888();
+extern void _ConvertX86p32_24RGB888();
+extern void _ConvertX86p32_24BGR888();
+extern void _ConvertX86p32_16RGB565();
+extern void _ConvertX86p32_16BGR565();
+extern void _ConvertX86p32_16RGB555();
+extern void _ConvertX86p32_16BGR555();
+extern void _ConvertX86p32_8RGB332();
 
-  extern void _ConvertX86p16_16BGR565();
-  extern void _ConvertX86p16_16RGB555();
-  extern void _ConvertX86p16_16BGR555();
-  extern void _ConvertX86p16_8RGB332();
+extern void _ConvertX86p16_16BGR565();
+extern void _ConvertX86p16_16RGB555();
+extern void _ConvertX86p16_16BGR555();
+extern void _ConvertX86p16_8RGB332();
 
+#define Hermes_X86_CPU _Hermes_X86_CPU
 
-  #define Hermes_X86_CPU _Hermes_X86_CPU
+#define ConvertX86 _ConvertX86
 
-  #define ConvertX86 _ConvertX86
+#define ConvertX86p32_32BGR888 _ConvertX86p32_32BGR888
+#define ConvertX86p32_32RGBA888 _ConvertX86p32_32RGBA888
+#define ConvertX86p32_32BGRA888 _ConvertX86p32_32BGRA888
+#define ConvertX86p32_24RGB888 _ConvertX86p32_24RGB888
+#define ConvertX86p32_24BGR888 _ConvertX86p32_24BGR888
+#define ConvertX86p32_16RGB565 _ConvertX86p32_16RGB565
+#define ConvertX86p32_16BGR565 _ConvertX86p32_16BGR565
+#define ConvertX86p32_16RGB555 _ConvertX86p32_16RGB555
+#define ConvertX86p32_16BGR555 _ConvertX86p32_16BGR555
+#define ConvertX86p32_8RGB332 _ConvertX86p32_8RGB332
 
-  #define ConvertX86p32_32BGR888 _ConvertX86p32_32BGR888
-  #define ConvertX86p32_32RGBA888 _ConvertX86p32_32RGBA888
-  #define ConvertX86p32_32BGRA888 _ConvertX86p32_32BGRA888
-  #define ConvertX86p32_24RGB888 _ConvertX86p32_24RGB888
-  #define ConvertX86p32_24BGR888 _ConvertX86p32_24BGR888
-  #define ConvertX86p32_16RGB565 _ConvertX86p32_16RGB565
-  #define ConvertX86p32_16BGR565 _ConvertX86p32_16BGR565
-  #define ConvertX86p32_16RGB555 _ConvertX86p32_16RGB555
-  #define ConvertX86p32_16BGR555 _ConvertX86p32_16BGR555
-  #define ConvertX86p32_8RGB332 _ConvertX86p32_8RGB332
+#define ConvertX86p16_16BGR565 _ConvertX86p16_16BGR565
+#define ConvertX86p16_16RGB555 _ConvertX86p16_16RGB555
+#define ConvertX86p16_16BGR555 _ConvertX86p16_16BGR555
+#define ConvertX86p16_8RGB332 _ConvertX86p16_8RGB332
 
-  #define ConvertX86p16_16BGR565 _ConvertX86p16_16BGR565
-  #define ConvertX86p16_16RGB555 _ConvertX86p16_16RGB555
-  #define ConvertX86p16_16BGR555 _ConvertX86p16_16BGR555
-  #define ConvertX86p16_8RGB332 _ConvertX86p16_8RGB332
-
-
-  #ifdef __cplusplus
-  }
-  #endif
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ELF & GNU */
-
-
 
 /* Make it run with WATCOM C */
 #ifdef __WATCOMC__
@@ -135,11 +126,11 @@ extern int ConvertX86p16_32BGRA888_LUT_X86[512];
 
 #pragma aux Hermes_X86_CPU "_*"
 
-#pragma aux ConvertX86 "_*" modify [EAX EBX ECX EDX ESI EDI]
-#pragma aux ClearX86_32 "_*" modify [EAX EBX ECX EDX ESI EDI]
-#pragma aux ClearX86_24 "_*" modify [EAX EBX ECX EDX ESI EDI]
-#pragma aux ClearX86_16 "_*" modify [EAX EBX ECX EDX ESI EDI]
-#pragma aux ClearX86_8 "_*" modify [EAX EBX ECX EDX ESI EDI]
+#pragma aux ConvertX86 "_*" modify[EAX EBX ECX EDX ESI EDI]
+#pragma aux ClearX86_32 "_*" modify[EAX EBX ECX EDX ESI EDI]
+#pragma aux ClearX86_24 "_*" modify[EAX EBX ECX EDX ESI EDI]
+#pragma aux ClearX86_16 "_*" modify[EAX EBX ECX EDX ESI EDI]
+#pragma aux ClearX86_8 "_*" modify[EAX EBX ECX EDX ESI EDI]
 
 #pragma aux ConvertX86p32_32BGR888 "_*"
 #pragma aux ConvertX86p32_32RGBA888 "_*"
@@ -179,8 +170,6 @@ extern int ConvertX86p16_32BGRA888_LUT_X86[512];
 
 #endif /* __WATCOMC__ */
 
-
 #endif /* X86_ASSEMBLER */
 
-
-#endif 
+#endif

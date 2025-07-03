@@ -22,19 +22,19 @@
 
 #ifdef SDL_JOYSTICK_HIDAPI
 
-#include "SDL_events.h"
-#include "SDL_timer.h"
-#include "SDL_joystick.h"
-#include "SDL_gamecontroller.h"
 #include "../SDL_sysjoystick.h"
+#include "SDL_events.h"
+#include "SDL_gamecontroller.h"
 #include "SDL_hidapijoystick_c.h"
+#include "SDL_joystick.h"
+#include "SDL_timer.h"
 
 #ifdef SDL_JOYSTICK_HIDAPI_STEAM
 
 /*****************************************************************************************************/
 
-#define bool SDL_bool
-#define true SDL_TRUE
+#define bool  SDL_bool
+#define true  SDL_TRUE
 #define false SDL_FALSE
 
 #include "steam/controller_constants.h"
@@ -153,7 +153,7 @@ typedef struct
 #define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
 
 #undef offsetof
-#define offsetof(s, m) (size_t) & (((s *)0)->m)
+#define offsetof(s, m) (size_t)&(((s *)0)->m)
 
 #ifdef DEBUG_STEAM_CONTROLLER
 #define DPRINTF(format, ...) printf(format, ##__VA_ARGS__)

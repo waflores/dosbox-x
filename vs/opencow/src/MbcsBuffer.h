@@ -36,60 +36,57 @@
 #ifndef INCLUDED_MbcsBuffer
 #define INCLUDED_MbcsBuffer
 
-#include <stdlib.h>
-#include <errno.h>
 #include "opencow.h"
+#include <errno.h>
+#include <stdlib.h>
 
-#define ARRAY_SIZE(x)   (sizeof(x)/sizeof((x)[0]))
-
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 // ----------------------------------------------------------------------------
 // UNICODE -> MBCS conversion and general buffer
 
-class CMbcsBuffer
-{
+class CMbcsBuffer {
 public:
-    CMbcsBuffer()
-        : mBuffer(mStackBuffer),
-          mBufferSize(sizeof(mStackBuffer)),
-          mLength(0)
-    {
-        mStackBuffer[0] = '\0';
-    }
+  CMbcsBuffer()
+      : mBuffer(mStackBuffer), mBufferSize(sizeof(mStackBuffer)), mLength(0) {
+    mStackBuffer[0] = '\0';
+  }
 
-    ~CMbcsBuffer()
-    {
-        if (IsBufferAllocated())
-            ::free(mBuffer);
-    }
+  ~CMbcsBuffer() {
+    if (IsBufferAllocated())
+      ::free(mBuffer);
+  }
 
-    bool SetCapacity(int aMinCapacity);
+  bool SetCapacity(int aMinCapacity);
 
-    // if the source string is NULL then we will return NULL, regardless of the setting
-    // for aMinCapacity. If you want a resizable buffer then use SetCapacity() instead.
-    bool FromUnicode(LPCWSTR aString = 0, int aStringLen = -1, int aMinCapacity = 0);
+  // if the source string is NULL then we will return NULL, regardless of the
+  // setting for aMinCapacity. If you want a resizable buffer then use
+  // SetCapacity() instead.
+  bool FromUnicode(LPCWSTR aString = 0, int aStringLen = -1,
+                   int aMinCapacity = 0);
 
-    void SetNull()
-    {
-        if (IsBufferAllocated())
-            ::free(mBuffer);
-        mBuffer     = 0;
-        mBufferSize = 0;
-        mLength     = 0;
-    }
+  void SetNull() {
+    if (IsBufferAllocated())
+      ::free(mBuffer);
+    mBuffer = 0;
+    mBufferSize = 0;
+    mLength = 0;
+  }
 
-    bool IsBufferAllocated() const { return (mBuffer && mBuffer != mStackBuffer); }
+  bool IsBufferAllocated() const {
+    return (mBuffer && mBuffer != mStackBuffer);
+  }
 
-    char * get()            { return mBuffer; }
-    operator LPSTR()        { return mBuffer; }
-    int BufferSize() const  { return mBufferSize; }
-    int Length() const      { return mLength; }
+  char *get() { return mBuffer; }
+  operator LPSTR() { return mBuffer; }
+  int BufferSize() const { return mBufferSize; }
+  int Length() const { return mLength; }
 
 private:
-    char    mStackBuffer[256];
-    char *  mBuffer;
-    int     mBufferSize;
-    int     mLength;
+  char mStackBuffer[256];
+  char *mBuffer;
+  int mBufferSize;
+  int mLength;
 };
 
 #endif // INCLUDED_MbcsBuffer

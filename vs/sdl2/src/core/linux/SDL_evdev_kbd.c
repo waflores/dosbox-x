@@ -27,13 +27,13 @@
 
 /* This logic is adapted from drivers/tty/vt/keyboard.c in the Linux kernel source */
 
-#include <unistd.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <linux/kd.h>
 #include <linux/keyboard.h>
-#include <linux/vt.h>
 #include <linux/tiocl.h> /* for TIOCL_GETSHIFTSTATE */
+#include <linux/vt.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include <signal.h>
 
@@ -301,7 +301,8 @@ static void kbd_register_emerg_cleanup(SDL_EVDEV_keyboard_state *kbd)
     }
 }
 
-enum {
+enum
+{
     VT_SIGNAL_NONE,
     VT_SIGNAL_RELEASE,
     VT_SIGNAL_ACQUIRE,
@@ -497,7 +498,7 @@ void SDL_EVDEV_kbd_set_muted(SDL_EVDEV_keyboard_state *state, SDL_bool muted)
     state->muted = muted;
 }
 
-void SDL_EVDEV_kbd_set_vt_switch_callbacks(SDL_EVDEV_keyboard_state *state, void (*release_callback)(void*), void *release_callback_data, void (*acquire_callback)(void*), void *acquire_callback_data)
+void SDL_EVDEV_kbd_set_vt_switch_callbacks(SDL_EVDEV_keyboard_state *state, void (*release_callback)(void *), void *release_callback_data, void (*acquire_callback)(void *), void *acquire_callback_data)
 {
     if (!state) {
         return;
@@ -980,7 +981,7 @@ void SDL_EVDEV_kbd_set_muted(SDL_EVDEV_keyboard_state *state, SDL_bool muted)
 {
 }
 
-void SDL_EVDEV_kbd_set_vt_switch_callbacks(SDL_EVDEV_keyboard_state *state, void (*release_callback)(void*), void *release_callback_data, void (*acquire_callback)(void*), void *acquire_callback_data)
+void SDL_EVDEV_kbd_set_vt_switch_callbacks(SDL_EVDEV_keyboard_state *state, void (*release_callback)(void *), void *release_callback_data, void (*acquire_callback)(void *), void *acquire_callback_data)
 {
 }
 

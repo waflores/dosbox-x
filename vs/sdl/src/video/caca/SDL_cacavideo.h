@@ -14,22 +14,23 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Hocevar
     sam@zoy.org
 */
 
 #ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: libsdl-1.2.11-libcaca.patch,v 1.1 2006/09/18 16:06:06 mr_bones_ Exp $";
+static char rcsid = "@(#) $Id: libsdl-1.2.11-libcaca.patch,v 1.1 2006/09/18 "
+                    "16:06:06 mr_bones_ Exp $";
 #endif
 
 #ifndef _SDL_cacavideo_h
 #define _SDL_cacavideo_h
 
-#include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 #include "SDL_mutex.h"
 
 #include <sys/time.h>
@@ -41,36 +42,35 @@ static char rcsid =
 #endif
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
 #define SDL_NUMMODES 6
 
 /* Private display data */
 struct SDL_PrivateVideoData {
-	SDL_Rect *SDL_modelist[SDL_NUMMODES+1];
-	SDL_mutex *mutex;
+  SDL_Rect *SDL_modelist[SDL_NUMMODES + 1];
+  SDL_mutex *mutex;
 
-	struct caca_bitmap *bitmap;
-	void *buffer;
-	int w, h;
+  struct caca_bitmap *bitmap;
+  void *buffer;
+  int w, h;
 
-	int lastkey;
-	struct timeval lasttime;
+  int lastkey;
+  struct timeval lasttime;
 };
 
 /* Old variable names */
-#define SDL_modelist		(this->hidden->SDL_modelist)
-#define Caca_palette		    (this->hidden->palette)
-#define Caca_bitmap		    (this->hidden->bitmap)
-#define Caca_buffer		    (this->hidden->buffer)
+#define SDL_modelist (this->hidden->SDL_modelist)
+#define Caca_palette (this->hidden->palette)
+#define Caca_bitmap (this->hidden->bitmap)
+#define Caca_buffer (this->hidden->buffer)
 
-#define Caca_w		    (this->hidden->w)
-#define Caca_h		    (this->hidden->h)
+#define Caca_w (this->hidden->w)
+#define Caca_h (this->hidden->h)
 
-#define Caca_lastkey		    (this->hidden->lastkey)
-#define Caca_lasttime		    (this->hidden->lasttime)
+#define Caca_lastkey (this->hidden->lastkey)
+#define Caca_lasttime (this->hidden->lasttime)
 
-#define Caca_mutex		    (this->hidden->mutex)
+#define Caca_mutex (this->hidden->mutex)
 
 #endif /* _SDL_cacavideo_h */
-

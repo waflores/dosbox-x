@@ -24,12 +24,12 @@
 #ifdef SDL_VIDEO_DRIVER_WAYLAND
 
 #include "SDL.h"
-#include <stdlib.h> /* fgets */
-#include <stdio.h> /* FILE, STDOUT_FILENO, fdopen, fclose */
-#include <unistd.h> /* pid_t, pipe, fork, close, dup2, execvp, _exit */
-#include <sys/wait.h> /* waitpid, WIFEXITED, WEXITSTATUS */
-#include <string.h>   /* strerr */
 #include <errno.h>
+#include <stdio.h>    /* FILE, STDOUT_FILENO, fdopen, fclose */
+#include <stdlib.h>   /* fgets */
+#include <string.h>   /* strerr */
+#include <sys/wait.h> /* waitpid, WIFEXITED, WEXITSTATUS */
+#include <unistd.h>   /* pid_t, pipe, fork, close, dup2, execvp, _exit */
 
 #include "SDL_waylandmessagebox.h"
 
@@ -37,12 +37,13 @@
 
 #define MAX_BUTTONS 8 /* Maximum number of buttons supported */
 
-static int run_zenity(const char **args, int fd_pipe[2]) {
+static int run_zenity(const char **args, int fd_pipe[2])
+{
     int status;
     pid_t pid1;
 
     pid1 = fork();
-    if (pid1 == 0) { /* child process */
+    if (pid1 == 0) {       /* child process */
         close(fd_pipe[0]); /* no reading from pipe */
         /* write stdout in pipe */
         if (dup2(fd_pipe[1], STDOUT_FILENO) == -1) {
@@ -56,7 +57,7 @@ static int run_zenity(const char **args, int fd_pipe[2]) {
         _exit(129);
     } else if (pid1 < 0) { /* fork() failed */
         return SDL_SetError("fork() failed: %s", strerror(errno));
-    } else { /* parent process */
+    } else {               /* parent process */
         close(fd_pipe[1]); /* no writing to the pipe */
         if (waitpid(pid1, &status, 0) != pid1) {
             return SDL_SetError("Waiting on zenity failed: %s", strerror(errno));
@@ -74,7 +75,8 @@ static int run_zenity(const char **args, int fd_pipe[2]) {
     }
 }
 
-static int get_zenity_version(int *major, int *minor) {
+static int get_zenity_version(int *major, int *minor)
+{
     int fd_pipe[2]; /* fd_pipe[0]: read end of pipe, fd_pipe[1]: write end of pipe */
     const char *argv[] = { "zenity", "--version", NULL };
 
@@ -100,14 +102,14 @@ static int get_zenity_version(int *major, int *minor) {
         /* we expect the version string is in the form of MAJOR.MINOR.MICRO
          * as described in meson.build. We'll ignore everything after that.
          */
-        tmp = (int) SDL_strtol(version_ptr, &end_ptr, 10);
+        tmp = (int)SDL_strtol(version_ptr, &end_ptr, 10);
         if (tmp == 0 && end_ptr == version_ptr) {
             return SDL_SetError("failed to get zenity major version number");
         }
         *major = tmp;
 
         version_ptr = end_ptr + 1; /* skip the dot */
-        tmp = (int) SDL_strtol(version_ptr, &end_ptr, 10);
+        tmp = (int)SDL_strtol(version_ptr, &end_ptr, 10);
         if (tmp == 0 && end_ptr == version_ptr) {
             return SDL_SetError("failed to get zenity minor version number");
         }
@@ -121,7 +123,8 @@ static int get_zenity_version(int *major, int *minor) {
     return -1; /* run_zenity should've called SDL_SetError() */
 }
 
-int Wayland_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid) {
+int Wayland_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
+{
     int fd_pipe[2]; /* fd_pipe[0]: read end of pipe, fd_pipe[1]: write end of pipe */
     int zenity_major = 0, zenity_minor = 0, output_len = 0;
     int argc = 5, i;

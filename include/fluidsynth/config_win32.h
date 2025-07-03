@@ -20,8 +20,8 @@
 /* MinGW32 special defines */
 #if defined(__MINGW32__)
 #include <stdint.h>
-//#define snprintf _snprintf
-//#define vsnprintf _vsnprintf
+// #define snprintf _snprintf
+// #define vsnprintf _vsnprintf
 #else
 #if _MSC_VER < 1900
 #define snprintf _snprintf
@@ -38,17 +38,15 @@ typedef int socklen_t;
 
 #define strcasecmp _stricmp
 
-
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 
-
 #define WITH_PROFILING 0
 
-//#pragma warning(disable : 4244)
-//#pragma warning(disable : 4101)
-//#pragma warning(disable : 4305)
+// #pragma warning(disable : 4244)
+// #pragma warning(disable : 4101)
+// #pragma warning(disable : 4305)
 #pragma warning(disable : 4996)
 
 #ifndef inline

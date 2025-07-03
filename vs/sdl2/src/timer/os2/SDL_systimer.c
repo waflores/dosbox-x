@@ -22,8 +22,8 @@
 
 #ifdef SDL_TIMER_OS2
 
-#include "SDL_timer.h"
 #include "../../core/os2/SDL_os2.h"
+#include "SDL_timer.h"
 
 #define INCL_DOSERRORS
 #define INCL_DOSMISC
@@ -37,15 +37,15 @@
 /* No need to switch priorities in SDL_Delay() for OS/2 versions > Warp3 fp 42, */
 /*#define _SWITCH_PRIORITY*/
 
-typedef unsigned long long  ULLONG;
+typedef unsigned long long ULLONG;
 
 static SDL_bool ticks_started = SDL_FALSE;
-static ULONG    ulTmrFreq = 0;
-static ULLONG   ullTmrStart = 0;
+static ULONG ulTmrFreq = 0;
+static ULLONG ullTmrStart = 0;
 
 void SDL_TicksInit(void)
 {
-    ULONG ulTmrStart;  /* for 32-bit fallback. */
+    ULONG ulTmrStart; /* for 32-bit fallback. */
     ULONG ulRC;
 
     if (ticks_started) {
@@ -66,7 +66,7 @@ void SDL_TicksInit(void)
 
     ulTmrFreq = 0; /* Error - use DosQuerySysInfo() for timer. */
     DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, &ulTmrStart, sizeof(ULONG));
-    ullTmrStart = (ULLONG) ulTmrStart;
+    ullTmrStart = (ULLONG)ulTmrStart;
 }
 
 void SDL_TicksQuit(void)
@@ -90,7 +90,7 @@ Uint64 SDL_GetTicks64(void)
         /* note that this counter rolls over to 0 every ~49 days. Fix your system so DosTmrQueryTime works if you need to avoid this. */
         ULONG ulTmrNow;
         DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, &ulTmrNow, sizeof(ULONG));
-        ui64Result = (((Uint64) ulTmrNow) - ullTmrStart);
+        ui64Result = (((Uint64)ulTmrNow) - ullTmrStart);
     }
 
     return ui64Result;
@@ -98,7 +98,7 @@ Uint64 SDL_GetTicks64(void)
 
 Uint64 SDL_GetPerformanceCounter(void)
 {
-    QWORD   qwTmrNow;
+    QWORD qwTmrNow;
 
     if (ulTmrFreq == 0 || (DosTmrQueryTime(&qwTmrNow) != NO_ERROR)) {
         return SDL_GetTicks64();
@@ -108,25 +108,25 @@ Uint64 SDL_GetPerformanceCounter(void)
 
 Uint64 SDL_GetPerformanceFrequency(void)
 {
-    return (ulTmrFreq == 0)? 1000 : (Uint64)ulTmrFreq;
+    return (ulTmrFreq == 0) ? 1000 : (Uint64)ulTmrFreq;
 }
 
 void SDL_Delay(Uint32 ms)
 {
-    HTIMER  hTimer = NULLHANDLE;
-    ULONG   ulRC;
+    HTIMER hTimer = NULLHANDLE;
+    ULONG ulRC;
 #ifdef _SWITCH_PRIORITY
-    PPIB    pib;
-    PTIB    tib;
-    BOOL    fSetPriority = ms < 50;
-    ULONG   ulSavePriority;
-    ULONG   ulNesting;
+    PPIB pib;
+    PTIB tib;
+    BOOL fSetPriority = ms < 50;
+    ULONG ulSavePriority;
+    ULONG ulNesting;
 #endif
-    HEV     hevTimer;
+    HEV hevTimer;
 
     if (ms == 0) {
-      DosSleep(0);
-      return;
+        DosSleep(0);
+        return;
     }
 
     ulRC = DosCreateEventSem(NULL, &hevTimer, DC_SEM_SHARED, FALSE);
@@ -143,7 +143,7 @@ void SDL_Delay(Uint32 ms)
         else {
             ulSavePriority = tib->tib_ptib2->tib2_ulpri;
             if (((ulSavePriority & 0xFF00) == 0x0300) || /* already have high pr. */
-                  (DosEnterMustComplete( &ulNesting) != NO_ERROR))
+                (DosEnterMustComplete(&ulNesting) != NO_ERROR))
                 fSetPriority = FALSE;
             else {
                 DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 0, 0);

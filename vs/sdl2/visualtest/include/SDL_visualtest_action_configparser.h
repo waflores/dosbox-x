@@ -50,32 +50,32 @@ typedef struct SDLVisualTest_Action
         /*! The path and arguments to the process to be launched */
         struct
         {
-            char* path;
-            char* args;
+            char *path;
+            char *args;
         } process;
     } extra;
 } SDLVisualTest_Action;
 
 /**
- * Struct for a node in the action queue. 
+ * Struct for a node in the action queue.
  */
 typedef struct SDLVisualTest_ActionNode
 {
     /*! The action in this node */
     SDLVisualTest_Action action;
     /*! Pointer to the next element in the queue */
-    struct SDLVisualTest_ActionNode* next;
+    struct SDLVisualTest_ActionNode *next;
 } SDLVisualTest_ActionNode;
 
 /**
- * Queue structure for actions loaded from the actions config file. 
+ * Queue structure for actions loaded from the actions config file.
  */
 typedef struct SDLVisualTest_ActionQueue
 {
     /*! Pointer to the front of the queue */
-    SDLVisualTest_ActionNode* front;
+    SDLVisualTest_ActionNode *front;
     /*! Pointer to the rear of the queue */
-    SDLVisualTest_ActionNode* rear;
+    SDLVisualTest_ActionNode *rear;
     /*! Number of nodes in the queue */
     int size;
 } SDLVisualTest_ActionQueue;
@@ -86,7 +86,7 @@ typedef struct SDLVisualTest_ActionQueue
  *
  * \return 1 on success, 0 on failure.
  */
-int SDLVisualTest_EnqueueAction(SDLVisualTest_ActionQueue* queue,
+int SDLVisualTest_EnqueueAction(SDLVisualTest_ActionQueue *queue,
                                 SDLVisualTest_Action action);
 
 /**
@@ -94,12 +94,12 @@ int SDLVisualTest_EnqueueAction(SDLVisualTest_ActionQueue* queue,
  *
  * \return 1 on success, 0 on failure.
  */
-int SDLVisualTest_DequeueAction(SDLVisualTest_ActionQueue* queue);
+int SDLVisualTest_DequeueAction(SDLVisualTest_ActionQueue *queue);
 
 /**
  * Initialize the action queue pointed to by \c queue.
  */
-void SDLVisualTest_InitActionQueue(SDLVisualTest_ActionQueue* queue);
+void SDLVisualTest_InitActionQueue(SDLVisualTest_ActionQueue *queue);
 
 /**
  * Get the action at the front of the action queue pointed to by \c queue.
@@ -107,19 +107,19 @@ void SDLVisualTest_InitActionQueue(SDLVisualTest_ActionQueue* queue);
  *
  * \return pointer to the action on success, NULL on failure.
  */
-SDLVisualTest_Action* SDLVisualTest_GetQueueFront(SDLVisualTest_ActionQueue* queue);
+SDLVisualTest_Action *SDLVisualTest_GetQueueFront(SDLVisualTest_ActionQueue *queue);
 
 /**
  * Check if the queue pointed to by \c queue is empty or not.
  *
  * \return 1 if the queue is empty, 0 otherwise.
  */
-int SDLVisualTest_IsActionQueueEmpty(SDLVisualTest_ActionQueue* queue);
+int SDLVisualTest_IsActionQueueEmpty(SDLVisualTest_ActionQueue *queue);
 
 /**
  * Dequeues all the elements in the queque pointed to by \c queue.
  */
-void SDLVisualTest_EmptyActionQueue(SDLVisualTest_ActionQueue* queue);
+void SDLVisualTest_EmptyActionQueue(SDLVisualTest_ActionQueue *queue);
 
 /**
  * Inserts an action \c action into the queue pointed to by \c queue such that
@@ -128,7 +128,7 @@ void SDLVisualTest_EmptyActionQueue(SDLVisualTest_ActionQueue* queue);
  *
  * \return 1 on success, 0 on failure.
  */
-int SDLVisualTest_InsertIntoActionQueue(SDLVisualTest_ActionQueue* queue,
+int SDLVisualTest_InsertIntoActionQueue(SDLVisualTest_ActionQueue *queue,
                                         SDLVisualTest_Action action);
 
 /**
@@ -137,7 +137,7 @@ int SDLVisualTest_InsertIntoActionQueue(SDLVisualTest_ActionQueue* queue,
  *
  * \return 1 on success, 0 on failure.
  */
-int SDLVisualTest_ParseActionConfig(const char* file, SDLVisualTest_ActionQueue* queue);
+int SDLVisualTest_ParseActionConfig(const char *file, SDLVisualTest_ActionQueue *queue);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

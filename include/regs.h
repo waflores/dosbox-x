@@ -21,54 +21,58 @@
 
 #include "mem.h"
 
-#define FLAG_CF		0x00000001U
-#define FLAG_PF		0x00000004U
-#define FLAG_AF		0x00000010U
-#define FLAG_ZF		0x00000040U
-#define FLAG_SF		0x00000080U
-#define FLAG_OF		0x00000800U
+#define FLAG_CF 0x00000001U
+#define FLAG_PF 0x00000004U
+#define FLAG_AF 0x00000010U
+#define FLAG_ZF 0x00000040U
+#define FLAG_SF 0x00000080U
+#define FLAG_OF 0x00000800U
 
-#define FLAG_TF		0x00000100U
-#define FLAG_IF		0x00000200U
-#define FLAG_DF		0x00000400U
+#define FLAG_TF 0x00000100U
+#define FLAG_IF 0x00000200U
+#define FLAG_DF 0x00000400U
 
-#define FLAG_IOPL	0x00003000U
-#define FLAG_NT		0x00004000U
-#define FLAG_RF		0x00010000U
-#define FLAG_VM		0x00020000U
-#define FLAG_AC		0x00040000U
-#define FLAG_ID		0x00200000U
+#define FLAG_IOPL 0x00003000U
+#define FLAG_NT 0x00004000U
+#define FLAG_RF 0x00010000U
+#define FLAG_VM 0x00020000U
+#define FLAG_AC 0x00040000U
+#define FLAG_ID 0x00200000U
 
-#define FMASK_TEST		(FLAG_CF | FLAG_PF | FLAG_AF | FLAG_ZF | FLAG_SF | FLAG_OF)
-#define FMASK_NORMAL	(FMASK_TEST | FLAG_DF | FLAG_TF | FLAG_IF )	
-#define FMASK_ALL		(FMASK_NORMAL | FLAG_IOPL | FLAG_NT)
+#define FMASK_TEST (FLAG_CF | FLAG_PF | FLAG_AF | FLAG_ZF | FLAG_SF | FLAG_OF)
+#define FMASK_NORMAL (FMASK_TEST | FLAG_DF | FLAG_TF | FLAG_IF)
+#define FMASK_ALL (FMASK_NORMAL | FLAG_IOPL | FLAG_NT)
 
-#define SETFLAGBIT(TYPE,TEST) if (TEST) reg_flags|=FLAG_ ## TYPE; else reg_flags&=~FLAG_ ## TYPE
+#define SETFLAGBIT(TYPE, TEST)                                                 \
+  if (TEST)                                                                    \
+    reg_flags |= FLAG_##TYPE;                                                  \
+  else                                                                         \
+    reg_flags &= ~FLAG_##TYPE
 
-#define GETFLAG(TYPE) (reg_flags & FLAG_ ## TYPE)
-#define GETFLAGBOOL(TYPE) ((reg_flags & FLAG_ ## TYPE) ? true : false )
+#define GETFLAG(TYPE) (reg_flags & FLAG_##TYPE)
+#define GETFLAGBOOL(TYPE) ((reg_flags & FLAG_##TYPE) ? true : false)
 
 #define GETFLAG_IOPL ((reg_flags & FLAG_IOPL) >> 12)
 
 struct Segment {
-	uint16_t val;
-	PhysPt phys;							/* The physical address start in emulated machine */
-	PhysPt limit;
+  uint16_t val;
+  PhysPt phys; /* The physical address start in emulated machine */
+  PhysPt limit;
 };
 
-enum SegNames { es=0,cs,ss,ds,fs,gs};
+enum SegNames { es = 0, cs, ss, ds, fs, gs };
 
 struct Segments {
-	Bitu val[8];
-	PhysPt phys[8];
-	PhysPt limit[8];
-	bool expanddown[8];
+  Bitu val[8];
+  PhysPt phys[8];
+  PhysPt limit[8];
+  bool expanddown[8];
 };
 
 union GenReg32 {
-	uint32_t dword[1];
-	uint16_t word[2];
-	uint8_t byte[4];
+  uint32_t dword[1];
+  uint16_t word[2];
+  uint8_t byte[4];
 };
 
 #ifdef WORDS_BIGENDIAN
@@ -88,48 +92,36 @@ union GenReg32 {
 #endif
 
 struct CPU_Regs {
-	GenReg32 regs[8],ip;
-	Bitu flags;
+  GenReg32 regs[8], ip;
+  Bitu flags;
 };
 
 extern Segments Segs;
 extern CPU_Regs cpu_regs;
 
-static INLINE PhysPt SegLimit(SegNames index) {
-	return Segs.limit[index];
-}
+static INLINE PhysPt SegLimit(SegNames index) { return Segs.limit[index]; }
 
-static INLINE PhysPt SegPhys(SegNames index) {
-	return Segs.phys[index];
-}
+static INLINE PhysPt SegPhys(SegNames index) { return Segs.phys[index]; }
 
 static INLINE uint16_t SegValue(SegNames index) {
-	return (uint16_t)Segs.val[index];
-}
-	
-static INLINE RealPt RealMakeSeg(SegNames index,uint16_t off) {
-	return RealMake(SegValue(index),off);	
+  return (uint16_t)Segs.val[index];
 }
 
-
-static INLINE void SegSet16(Bitu index,uint16_t val) {
-	Segs.val[index]=(Bitu)val;
-	Segs.phys[index]=(PhysPt)((unsigned int)val << 4U);
-	/* real mode does not update limit */
+static INLINE RealPt RealMakeSeg(SegNames index, uint16_t off) {
+  return RealMake(SegValue(index), off);
 }
 
-enum {
-	REGI_AX, REGI_CX, REGI_DX, REGI_BX,
-	REGI_SP, REGI_BP, REGI_SI, REGI_DI
-};
+static INLINE void SegSet16(Bitu index, uint16_t val) {
+  Segs.val[index] = (Bitu)val;
+  Segs.phys[index] = (PhysPt)((unsigned int)val << 4U);
+  /* real mode does not update limit */
+}
 
-enum {
-	REGI_AL, REGI_CL, REGI_DL, REGI_BL,
-	REGI_AH, REGI_CH, REGI_DH, REGI_BH
-};
+enum { REGI_AX, REGI_CX, REGI_DX, REGI_BX, REGI_SP, REGI_BP, REGI_SI, REGI_DI };
 
+enum { REGI_AL, REGI_CL, REGI_DL, REGI_BL, REGI_AH, REGI_CH, REGI_DH, REGI_BH };
 
-//macros to convert a 3-bit register index to the correct register
+// macros to convert a 3-bit register index to the correct register
 #define reg_8l(reg) (cpu_regs.regs[(reg)].byte[BL_INDEX])
 #define reg_8h(reg) (cpu_regs.regs[(reg)].byte[BH_INDEX])
 #define reg_8(reg) ((reg & 4) ? reg_8h((reg) & 3) : reg_8l((reg) & 3))

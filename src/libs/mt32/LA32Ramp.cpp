@@ -18,30 +18,45 @@
 /*
 Some notes on this class:
 
-This emulates the LA-32's implementation of "ramps". A ramp in this context is a smooth transition from one value to another, handled entirely within the LA-32.
+This emulates the LA-32's implementation of "ramps". A ramp in this context is a
+smooth transition from one value to another, handled entirely within the LA-32.
 The LA-32 provides this feature for amplitude and filter cutoff values.
 
-The 8095 starts ramps on the LA-32 by setting two values in memory-mapped registers:
+The 8095 starts ramps on the LA-32 by setting two values in memory-mapped
+registers:
 
-(1) The target value (between 0 and 255) for the ramp to end on. This is represented by the "target" argument to startRamp().
-(2) The speed at which that value should be approached. This is represented by the "increment" argument to startRamp().
+(1) The target value (between 0 and 255) for the ramp to end on. This is
+represented by the "target" argument to startRamp(). (2) The speed at which that
+value should be approached. This is represented by the "increment" argument to
+startRamp().
 
 Once the ramp target value has been hit, the LA-32 raises an interrupt.
 
-Note that the starting point of the ramp is whatever internal value the LA-32 had when the registers were set. This is usually the end point of a previously completed ramp.
+Note that the starting point of the ramp is whatever internal value the LA-32
+had when the registers were set. This is usually the end point of a previously
+completed ramp.
 
-Our handling of the "target" and "increment" values is based on sample analysis and a little guesswork.
-Here's what we're pretty confident about:
- - The most significant bit of "increment" indicates the direction that the LA32's current internal value ("current" in our emulation) should change in.
-   Set means downward, clear means upward.
- - The lower 7 bits of "increment" indicate how quickly "current" should be changed.
- - If "increment" is 0, no change to "current" is made and no interrupt is raised. [SEMI-CONFIRMED by sample analysis]
+Our handling of the "target" and "increment" values is based on sample analysis
+and a little guesswork. Here's what we're pretty confident about:
+ - The most significant bit of "increment" indicates the direction that the
+LA32's current internal value ("current" in our emulation) should change in. Set
+means downward, clear means upward.
+ - The lower 7 bits of "increment" indicate how quickly "current" should be
+changed.
+ - If "increment" is 0, no change to "current" is made and no interrupt is
+raised. [SEMI-CONFIRMED by sample analysis]
  - Otherwise, if the MSb is set:
-    - If "current" already corresponds to a value <= "target", "current" is set immediately to the equivalent of "target" and an interrupt is raised.
-    - Otherwise, "current" is gradually reduced (at a rate determined by the lower 7 bits of "increment"), and once it reaches the equivalent of "target" an interrupt is raised.
+    - If "current" already corresponds to a value <= "target", "current" is set
+immediately to the equivalent of "target" and an interrupt is raised.
+    - Otherwise, "current" is gradually reduced (at a rate determined by the
+lower 7 bits of "increment"), and once it reaches the equivalent of "target" an
+interrupt is raised.
  - Otherwise (the MSb is unset):
-    - If "current" already corresponds to a value >= "target", "current" is set immediately to the equivalent of "target" and an interrupt is raised.
-    - Otherwise, "current" is gradually increased (at a rate determined by the lower 7 bits of "increment"), and once it reaches the equivalent of "target" an interrupt is raised.
+    - If "current" already corresponds to a value >= "target", "current" is set
+immediately to the equivalent of "target" and an interrupt is raised.
+    - Otherwise, "current" is gradually increased (at a rate determined by the
+lower 7 bits of "increment"), and once it reaches the equivalent of "target" an
+interrupt is raised.
 
 We haven't fully explored:
  - Values when ramping between levels (though this is probably correct).
@@ -69,96 +84,95 @@ const unsigned int MAX_CURRENT = 0xFF << TARGET_SHIFTS;
 // scheme eventually.
 const int INTERRUPT_TIME = 7;
 
-LA32Ramp::LA32Ramp() :
-	current(0),
-	largeTarget(0),
-	largeIncrement(0),
-	interruptCountdown(0),
-	interruptRaised(false) {
-}
+LA32Ramp::LA32Ramp()
+    : current(0), largeTarget(0), largeIncrement(0), interruptCountdown(0),
+      interruptRaised(false) {}
 
 void LA32Ramp::startRamp(Bit8u target, Bit8u increment) {
-	// CONFIRMED: From sample analysis, this appears to be very accurate.
-	if (increment == 0) {
-		largeIncrement = 0;
-	} else {
-		// Three bits in the fractional part, no need to interpolate
-		// (unsigned int)(EXP2F(((increment & 0x7F) + 24) / 8.0f) + 0.125f)
-		Bit32u expArg = increment & 0x7F;
-		largeIncrement = 8191 - Tables::getInstance().exp9[~(expArg << 6) & 511];
-		largeIncrement <<= expArg >> 3;
-		largeIncrement += 64;
-		largeIncrement >>= 9;
-	}
-	descending = (increment & 0x80) != 0;
-	if (descending) {
-		// CONFIRMED: From sample analysis, descending increments are slightly faster
-		largeIncrement++;
-	}
+  // CONFIRMED: From sample analysis, this appears to be very accurate.
+  if (increment == 0) {
+    largeIncrement = 0;
+  } else {
+    // Three bits in the fractional part, no need to interpolate
+    // (unsigned int)(EXP2F(((increment & 0x7F) + 24) / 8.0f) + 0.125f)
+    Bit32u expArg = increment & 0x7F;
+    largeIncrement = 8191 - Tables::getInstance().exp9[~(expArg << 6) & 511];
+    largeIncrement <<= expArg >> 3;
+    largeIncrement += 64;
+    largeIncrement >>= 9;
+  }
+  descending = (increment & 0x80) != 0;
+  if (descending) {
+    // CONFIRMED: From sample analysis, descending increments are slightly
+    // faster
+    largeIncrement++;
+  }
 
-	largeTarget = target << TARGET_SHIFTS;
-	interruptCountdown = 0;
-	interruptRaised = false;
+  largeTarget = target << TARGET_SHIFTS;
+  interruptCountdown = 0;
+  interruptRaised = false;
 }
 
 Bit32u LA32Ramp::nextValue() {
-	if (interruptCountdown > 0) {
-		if (--interruptCountdown == 0) {
-			interruptRaised = true;
-		}
-	} else if (largeIncrement != 0) {
-		// CONFIRMED from sample analysis: When increment is 0, the LA32 does *not* change the current value at all (and of course doesn't fire an interrupt).
-		if (descending) {
-			// Lowering current value
-			if (largeIncrement > current) {
-				current = largeTarget;
-				interruptCountdown = INTERRUPT_TIME;
-			} else {
-				current -= largeIncrement;
-				if (current <= largeTarget) {
-					current = largeTarget;
-					interruptCountdown = INTERRUPT_TIME;
-				}
-			}
-		} else {
-			// Raising current value
-			if (MAX_CURRENT - current < largeIncrement) {
-				current = largeTarget;
-				interruptCountdown = INTERRUPT_TIME;
-			} else {
-				current += largeIncrement;
-				if (current >= largeTarget) {
-					current = largeTarget;
-					interruptCountdown = INTERRUPT_TIME;
-				}
-			}
-		}
-	}
-	return current;
+  if (interruptCountdown > 0) {
+    if (--interruptCountdown == 0) {
+      interruptRaised = true;
+    }
+  } else if (largeIncrement != 0) {
+    // CONFIRMED from sample analysis: When increment is 0, the LA32 does *not*
+    // change the current value at all (and of course doesn't fire an
+    // interrupt).
+    if (descending) {
+      // Lowering current value
+      if (largeIncrement > current) {
+        current = largeTarget;
+        interruptCountdown = INTERRUPT_TIME;
+      } else {
+        current -= largeIncrement;
+        if (current <= largeTarget) {
+          current = largeTarget;
+          interruptCountdown = INTERRUPT_TIME;
+        }
+      }
+    } else {
+      // Raising current value
+      if (MAX_CURRENT - current < largeIncrement) {
+        current = largeTarget;
+        interruptCountdown = INTERRUPT_TIME;
+      } else {
+        current += largeIncrement;
+        if (current >= largeTarget) {
+          current = largeTarget;
+          interruptCountdown = INTERRUPT_TIME;
+        }
+      }
+    }
+  }
+  return current;
 }
 
 bool LA32Ramp::checkInterrupt() {
-	bool wasRaised = interruptRaised;
-	interruptRaised = false;
-	return wasRaised;
+  bool wasRaised = interruptRaised;
+  interruptRaised = false;
+  return wasRaised;
 }
 
 void LA32Ramp::reset() {
-	current = 0;
-	largeTarget = 0;
-	largeIncrement = 0;
-	descending = false;
-	interruptCountdown = 0;
-	interruptRaised = false;
+  current = 0;
+  largeTarget = 0;
+  largeIncrement = 0;
+  descending = false;
+  interruptCountdown = 0;
+  interruptRaised = false;
 }
 
 // This is actually beyond the LA32 ramp interface.
-// Instead of polling the current value, MCU receives an interrupt when a ramp completes.
-// However, this is a simple way to work around the specific behaviour of TVA
-// when in sustain phase which one normally wants to avoid.
-// See TVA::recalcSustain() for details.
+// Instead of polling the current value, MCU receives an interrupt when a ramp
+// completes. However, this is a simple way to work around the specific
+// behaviour of TVA when in sustain phase which one normally wants to avoid. See
+// TVA::recalcSustain() for details.
 bool LA32Ramp::isBelowCurrent(Bit8u target) const {
-	return Bit32u(target << TARGET_SHIFTS) < current;
+  return Bit32u(target << TARGET_SHIFTS) < current;
 }
 
 } // namespace MT32Emu

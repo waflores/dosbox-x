@@ -20,35 +20,35 @@
 */
 #include "../../SDL_internal.h"
 
-#include "SDL_stdinc.h"
 #include "SDL_atomic.h"
 #include "SDL_hints.h"
 #include "SDL_main.h"
+#include "SDL_stdinc.h"
 #include "SDL_timer.h"
 #include "SDL_version.h"
 
 #ifdef __ANDROID__
 
-#include "SDL_system.h"
 #include "SDL_android.h"
+#include "SDL_system.h"
 
 #include "../../events/SDL_events_c.h"
+#include "../../haptic/android/SDL_syshaptic_c.h"
+#include "../../joystick/android/SDL_sysjoystick_c.h"
 #include "../../video/android/SDL_androidkeyboard.h"
 #include "../../video/android/SDL_androidmouse.h"
 #include "../../video/android/SDL_androidtouch.h"
 #include "../../video/android/SDL_androidvideo.h"
 #include "../../video/android/SDL_androidwindow.h"
-#include "../../joystick/android/SDL_sysjoystick_c.h"
-#include "../../haptic/android/SDL_syshaptic_c.h"
 
-#include <android/log.h>
-#include <android/configuration.h>
 #include <android/asset_manager_jni.h>
-#include <sys/system_properties.h>
+#include <android/configuration.h>
+#include <android/log.h>
+#include <dlfcn.h>
 #include <pthread.h>
+#include <sys/system_properties.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <dlfcn.h>
 
 #define SDL_JAVA_PREFIX                               org_libsdl_app
 #define CONCAT1(prefix, class, function)              CONCAT2(prefix, class, function)

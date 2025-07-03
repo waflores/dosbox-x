@@ -25,22 +25,22 @@
 
 #ifdef SDL_VIDEO_OPENGL_EGL
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 /* OpenGLES functions */
-#define Cocoa_GLES_GetAttribute SDL_EGL_GetAttribute
-#define Cocoa_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define Cocoa_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
+#define Cocoa_GLES_GetAttribute    SDL_EGL_GetAttribute
+#define Cocoa_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define Cocoa_GLES_UnloadLibrary   SDL_EGL_UnloadLibrary
 #define Cocoa_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 #define Cocoa_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
 
 extern int Cocoa_GLES_LoadLibrary(_THIS, const char *path);
-extern SDL_GLContext Cocoa_GLES_CreateContext(_THIS, SDL_Window * window);
-extern int Cocoa_GLES_SwapWindow(_THIS, SDL_Window * window);
-extern int Cocoa_GLES_MakeCurrent(_THIS, SDL_Window * window, SDL_GLContext context);
+extern SDL_GLContext Cocoa_GLES_CreateContext(_THIS, SDL_Window *window);
+extern int Cocoa_GLES_SwapWindow(_THIS, SDL_Window *window);
+extern int Cocoa_GLES_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context);
 extern void Cocoa_GLES_DeleteContext(_THIS, SDL_GLContext context);
-extern int Cocoa_GLES_SetupWindow(_THIS, SDL_Window * window);
+extern int Cocoa_GLES_SetupWindow(_THIS, SDL_Window *window);
 
 #endif /* SDL_VIDEO_OPENGL_EGL */
 

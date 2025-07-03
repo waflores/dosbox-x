@@ -32,19 +32,19 @@
 #include "SDL_evdev.h"
 #include "SDL_evdev_kbd.h"
 
+#include <fcntl.h>
+#include <linux/input.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/input.h>
 
+#include "../../core/linux/SDL_evdev_capabilities.h"
+#include "../../core/linux/SDL_udev.h"
+#include "../../events/SDL_events_c.h"
+#include "../../events/SDL_scancode_tables_c.h"
 #include "SDL.h"
 #include "SDL_endian.h"
 #include "SDL_scancode.h"
-#include "../../events/SDL_events_c.h"
-#include "../../events/SDL_scancode_tables_c.h"
-#include "../../core/linux/SDL_evdev_capabilities.h"
-#include "../../core/linux/SDL_udev.h"
 
 /* These are not defined in older Linux kernel headers */
 #ifndef SYN_DROPPED
@@ -283,8 +283,8 @@ static void SDL_EVDEV_udev_callback(SDL_UDEV_deviceevent udev_event, int udev_cl
 }
 #endif /* SDL_USE_LIBUDEV */
 
-void SDL_EVDEV_SetVTSwitchCallbacks(void (*release_callback)(void*), void *release_callback_data,
-                                    void (*acquire_callback)(void*), void *acquire_callback_data)
+void SDL_EVDEV_SetVTSwitchCallbacks(void (*release_callback)(void *), void *release_callback_data,
+                                    void (*acquire_callback)(void *), void *acquire_callback_data)
 {
     SDL_EVDEV_kbd_set_vt_switch_callbacks(_this->kbd,
                                           release_callback, release_callback_data,
@@ -493,8 +493,8 @@ void SDL_EVDEV_Poll(void)
                             SDL_DisplayMode mode;
                             SDL_GetCurrentDisplayMode(0, &mode);
                             SDL_SendMouseMotion(mouse->focus, (SDL_MouseID)item->fd, item->relative_mouse,
-                                (item->mouse_x - item->min_x) * mode.w / item->range_x,
-                                (item->mouse_y - item->min_y) * mode.h / item->range_y);
+                                                (item->mouse_x - item->min_x) * mode.w / item->range_x,
+                                                (item->mouse_y - item->min_y) * mode.h / item->range_y);
                         }
 
                         if (item->mouse_wheel != 0 || item->mouse_hwheel != 0) {

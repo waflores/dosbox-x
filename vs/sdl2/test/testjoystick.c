@@ -25,8 +25,8 @@
 #ifndef SDL_JOYSTICK_DISABLED
 
 #ifdef __IPHONEOS__
-#define SCREEN_WIDTH    320
-#define SCREEN_HEIGHT   480
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 480
 #else
 #define SCREEN_WIDTH  640
 #define SCREEN_HEIGHT 480
@@ -331,8 +331,7 @@ int main(int argc, char *argv[])
 
 #else
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL compiled without Joystick support.\n");
     return 1;

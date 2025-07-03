@@ -33,77 +33,67 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <windows.h>
 #include <stdlib.h>
+#include <windows.h>
 
 #include "MbcsBuffer.h"
 
 // ----------------------------------------------------------------------------
 // CMbcsBuffer
 
-bool
-CMbcsBuffer::SetCapacity(
-    int aMinCapacity
-    )
-{
-    if (aMinCapacity > mBufferSize)
-    {
-        if (mBuffer != mStackBuffer)
-            ::free(mBuffer);
+bool CMbcsBuffer::SetCapacity(int aMinCapacity) {
+  if (aMinCapacity > mBufferSize) {
+    if (mBuffer != mStackBuffer)
+      ::free(mBuffer);
 
-        mLength = 0;
-        mBufferSize = 0;
+    mLength = 0;
+    mBufferSize = 0;
 
-        mBuffer = (char *) ::malloc(aMinCapacity);
-        if (!mBuffer) {
-            SetLastError(ERROR_NOT_ENOUGH_MEMORY);
-            errno = ENOMEM;
-            return false;
-        }
-        *mBuffer = '\0';
-
-        mBufferSize = aMinCapacity;
+    mBuffer = (char *)::malloc(aMinCapacity);
+    if (!mBuffer) {
+      SetLastError(ERROR_NOT_ENOUGH_MEMORY);
+      errno = ENOMEM;
+      return false;
     }
+    *mBuffer = '\0';
 
-    return true;
+    mBufferSize = aMinCapacity;
+  }
+
+  return true;
 }
 
-bool
-CMbcsBuffer::FromUnicode(
-    LPCWSTR aString,
-    int     aStringLen,
-    int     aMinCapacity)
-{
-    if (!aString) {
-        SetNull();
-        return true;
-    }
-
-    if (aStringLen == -1)
-        aStringLen = wcslen(aString) + 1;
-
-    int aRequiredLen = ::WideCharToMultiByte(CP_ACP, 0,
-        aString, aStringLen, NULL, 0, NULL, NULL);
-    if (aRequiredLen < 1) {
-        SetLastError(ERROR_NOT_ENOUGH_MEMORY);
-        errno = ENOMEM;
-        return false;
-    }
-
-    if (aRequiredLen > aMinCapacity)
-        aMinCapacity = aRequiredLen;
-
-    mLength = aRequiredLen - 1; // don't include the null byte
-
-    if (!SetCapacity(aMinCapacity)) {
-        SetLastError(ERROR_NOT_ENOUGH_MEMORY);
-        errno = ENOMEM;
-        return false;
-    }
-
-    ::WideCharToMultiByte(CP_ACP, 0, aString, aStringLen,
-        mBuffer, mBufferSize, NULL, NULL);
-
+bool CMbcsBuffer::FromUnicode(LPCWSTR aString, int aStringLen,
+                              int aMinCapacity) {
+  if (!aString) {
+    SetNull();
     return true;
-}
+  }
 
+  if (aStringLen == -1)
+    aStringLen = wcslen(aString) + 1;
+
+  int aRequiredLen = ::WideCharToMultiByte(CP_ACP, 0, aString, aStringLen, NULL,
+                                           0, NULL, NULL);
+  if (aRequiredLen < 1) {
+    SetLastError(ERROR_NOT_ENOUGH_MEMORY);
+    errno = ENOMEM;
+    return false;
+  }
+
+  if (aRequiredLen > aMinCapacity)
+    aMinCapacity = aRequiredLen;
+
+  mLength = aRequiredLen - 1; // don't include the null byte
+
+  if (!SetCapacity(aMinCapacity)) {
+    SetLastError(ERROR_NOT_ENOUGH_MEMORY);
+    errno = ENOMEM;
+    return false;
+  }
+
+  ::WideCharToMultiByte(CP_ACP, 0, aString, aStringLen, mBuffer, mBufferSize,
+                        NULL, NULL);
+
+  return true;
+}

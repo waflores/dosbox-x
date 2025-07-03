@@ -1,7 +1,7 @@
 /*
  * WAD support routines for PhysicsFS.
  *
- * This driver handles DOOM engine archives ("wads"). 
+ * This driver handles DOOM engine archives ("wads").
  * This format (but not this driver) was designed by id Software for use
  *  with the DOOM engine.
  * The specs of the format are from the unofficial doom specs v1.666
@@ -28,7 +28,7 @@
  *    (c) an 8-byte ASCII string, the name of the lump, padded with zeros.
  *        For example, the "DEMO1" entry in hexadecimal would be
  *        (44 45 4D 4F 31 00 00 00)
- * 
+ *
  * Note that there is no way to tell if an opened WAD archive is a
  *  IWAD or PWAD with this archiver.
  * I couldn't think of a way to provide that information, without being too
@@ -47,77 +47,67 @@
 
 #if PHYSFS_SUPPORTS_WAD
 
-static int wadLoadEntries(PHYSFS_Io *io, const PHYSFS_uint32 count, void *arc)
-{
-    PHYSFS_uint32 i;
-    for (i = 0; i < count; i++)
-    {
-        PHYSFS_uint32 pos;
-        PHYSFS_uint32 size;
-        char name[9];
+static int wadLoadEntries(PHYSFS_Io *io, const PHYSFS_uint32 count, void *arc) {
+  PHYSFS_uint32 i;
+  for (i = 0; i < count; i++) {
+    PHYSFS_uint32 pos;
+    PHYSFS_uint32 size;
+    char name[9];
 
-        BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &pos, 4), 0);
-        BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &size, 4), 0);
-        BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, name, 8), 0);
+    BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &pos, 4), 0);
+    BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &size, 4), 0);
+    BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, name, 8), 0);
 
-        name[8] = '\0'; /* name might not be null-terminated in file. */
-        size = PHYSFS_swapULE32(size);
-        pos = PHYSFS_swapULE32(pos);
-        BAIL_IF_ERRPASS(!UNPK_addEntry(arc, name, 0, -1, -1, pos, size), 0);
-    } /* for */
+    name[8] = '\0'; /* name might not be null-terminated in file. */
+    size = PHYSFS_swapULE32(size);
+    pos = PHYSFS_swapULE32(pos);
+    BAIL_IF_ERRPASS(!UNPK_addEntry(arc, name, 0, -1, -1, pos, size), 0);
+  } /* for */
 
-    return 1;
+  return 1;
 } /* wadLoadEntries */
 
+static void *WAD_openArchive(PHYSFS_Io *io, const char *name, int forWriting,
+                             int *claimed) {
+  (void)name; // UNUSED
+  PHYSFS_uint8 buf[4];
+  PHYSFS_uint32 count;
+  PHYSFS_uint32 directoryOffset;
+  void *unpkarc;
 
-static void *WAD_openArchive(PHYSFS_Io *io, const char *name,
-                             int forWriting, int *claimed)
-{
-    (void)name;//UNUSED
-    PHYSFS_uint8 buf[4];
-    PHYSFS_uint32 count;
-    PHYSFS_uint32 directoryOffset;
-    void *unpkarc;
+  assert(io != NULL); /* shouldn't ever happen. */
 
-    assert(io != NULL);  /* shouldn't ever happen. */
+  BAIL_IF(forWriting, PHYSFS_ERR_READ_ONLY, NULL);
+  BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, buf, sizeof(buf)), NULL);
+  if ((memcmp(buf, "IWAD", 4) != 0) && (memcmp(buf, "PWAD", 4) != 0))
+    BAIL(PHYSFS_ERR_UNSUPPORTED, NULL);
 
-    BAIL_IF(forWriting, PHYSFS_ERR_READ_ONLY, NULL);
-    BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, buf, sizeof (buf)), NULL);
-    if ((memcmp(buf, "IWAD", 4) != 0) && (memcmp(buf, "PWAD", 4) != 0))
-        BAIL(PHYSFS_ERR_UNSUPPORTED, NULL);
+  *claimed = 1;
 
-    *claimed = 1;
+  BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &count, sizeof(count)), NULL);
+  count = PHYSFS_swapULE32(count);
 
-    BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &count, sizeof (count)), NULL);
-    count = PHYSFS_swapULE32(count);
+  BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &directoryOffset, 4), 0);
+  directoryOffset = PHYSFS_swapULE32(directoryOffset);
 
-    BAIL_IF_ERRPASS(!__PHYSFS_readAll(io, &directoryOffset, 4), 0);
-    directoryOffset = PHYSFS_swapULE32(directoryOffset);
+  BAIL_IF_ERRPASS(!io->seek(io, directoryOffset), 0);
 
-    BAIL_IF_ERRPASS(!io->seek(io, directoryOffset), 0);
+  unpkarc = UNPK_openArchive(io);
+  BAIL_IF_ERRPASS(!unpkarc, NULL);
 
-    unpkarc = UNPK_openArchive(io);
-    BAIL_IF_ERRPASS(!unpkarc, NULL);
+  if (!wadLoadEntries(io, count, unpkarc)) {
+    UNPK_abandonArchive(unpkarc);
+    return NULL;
+  } /* if */
 
-    if (!wadLoadEntries(io, count, unpkarc))
-    {
-        UNPK_abandonArchive(unpkarc);
-        return NULL;
-    } /* if */
-
-    return unpkarc;
+  return unpkarc;
 } /* WAD_openArchive */
 
-
-const PHYSFS_Archiver __PHYSFS_Archiver_WAD =
-{
+const PHYSFS_Archiver __PHYSFS_Archiver_WAD = {
     CURRENT_PHYSFS_ARCHIVER_API_VERSION,
     {
-        "WAD",
-        "DOOM engine format",
-        "Travis Wells <traviswells@mchsi.com>",
-        "http://www.3dmm2.com/doom/",
-        0,  /* supportsSymlinks */
+        "WAD", "DOOM engine format", "Travis Wells <traviswells@mchsi.com>",
+        "http://www.3dmm2.com/doom/", 0, /* supportsSymlinks */
     },
     WAD_openArchive,
     UNPK_enumerate,
@@ -127,10 +117,8 @@ const PHYSFS_Archiver __PHYSFS_Archiver_WAD =
     UNPK_remove,
     UNPK_mkdir,
     UNPK_stat,
-    UNPK_closeArchive
-};
+    UNPK_closeArchive};
 
-#endif  /* defined PHYSFS_SUPPORTS_WAD */
+#endif /* defined PHYSFS_SUPPORTS_WAD */
 
 /* end of physfs_archiver_wad.c ... */
-

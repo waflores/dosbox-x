@@ -33,27 +33,26 @@
 
 /* New fields for the scrollBox widget class record */
 typedef struct _ScrollBoxClass {
-    int empty;
+  int empty;
 } ScrollBoxClassPart;
 
 /* Full class record declaration */
 typedef struct _ScrollBoxClassRec {
-    CoreClassPart core_class;
-    CompositeClassPart composite_class;
-    ScrollBoxClassPart scrollBox_class;
+  CoreClassPart core_class;
+  CompositeClassPart composite_class;
+  ScrollBoxClassPart scrollBox_class;
 } ScrollBoxClassRec;
 
 extern ScrollBoxClassRec scrollBoxClassRec;
 
 /* New fields for the scrollBox widget record */
 typedef struct {
-    Dimension h_space, v_space;
-    Dimension preferred_width, preferred_height;
-    Dimension last_query_width, last_query_height;
-    Dimension increment_width, increment_height;
-    XtGeometryMask last_query_mode;
+  Dimension h_space, v_space;
+  Dimension preferred_width, preferred_height;
+  Dimension last_query_width, last_query_height;
+  Dimension increment_width, increment_height;
+  XtGeometryMask last_query_mode;
 } ScrollBoxPart;
-
 
 /************************************************************************
  *                                                                      *
@@ -62,9 +61,9 @@ typedef struct {
  ************************************************************************/
 
 typedef struct _ScrollBoxRec {
-    CorePart core;
-    CompositePart composite;
-    ScrollBoxPart scrollBox;
+  CorePart core;
+  CompositePart composite;
+  ScrollBoxPart scrollBox;
 } ScrollBoxRec;
 
 #endif /* _XORAscrollBoxP_h */

@@ -22,19 +22,19 @@
 
 #if SDL_VIDEO_RENDER_VITA_GXM
 
-#include "SDL_hints.h"
 #include "../SDL_sysrender.h"
+#include "SDL_hints.h"
 #include "SDL_log.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "SDL_render_vita_gxm_types.h"
-#include "SDL_render_vita_gxm_tools.h"
 #include "SDL_render_vita_gxm_memory.h"
+#include "SDL_render_vita_gxm_tools.h"
+#include "SDL_render_vita_gxm_types.h"
 
 #include <psp2/common_dialog.h>
 

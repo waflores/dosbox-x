@@ -43,63 +43,59 @@ debug
 FILE *pdc_dbfp = NULL;
 static bool want_fflush = FALSE;
 
-void PDC_debug(const char *fmt, ...)
-{
-    va_list args;
-    char hms[9];
-    time_t now;
+void PDC_debug(const char *fmt, ...) {
+  va_list args;
+  char hms[9];
+  time_t now;
 
-    if (!pdc_dbfp)
-        return;
+  if (!pdc_dbfp)
+    return;
 
-    time(&now);
-    strftime(hms, 9, "%H:%M:%S", localtime(&now));
-    fprintf(pdc_dbfp, "At: %8.8ld - %s ", (long) clock(), hms);
+  time(&now);
+  strftime(hms, 9, "%H:%M:%S", localtime(&now));
+  fprintf(pdc_dbfp, "At: %8.8ld - %s ", (long)clock(), hms);
 
-    va_start(args, fmt);
-    vfprintf(pdc_dbfp, fmt, args);
-    va_end(args);
+  va_start(args, fmt);
+  vfprintf(pdc_dbfp, fmt, args);
+  va_end(args);
 
-    /* If you are crashing and losing debugging information, enable this
-       by setting the environment variable PDC_TRACE_FLUSH. This may
-       impact performance. */
+  /* If you are crashing and losing debugging information, enable this
+     by setting the environment variable PDC_TRACE_FLUSH. This may
+     impact performance. */
 
-    if (want_fflush)
-        fflush(pdc_dbfp);
+  if (want_fflush)
+    fflush(pdc_dbfp);
 
-    /* If with PDC_TRACE_FLUSH enabled you are still losing logging in
-       crashes, you may need to add a platform-dependent mechanism to
-       flush the OS buffers as well (such as fsync() on POSIX) -- but
-       expect terrible performance. */
+  /* If with PDC_TRACE_FLUSH enabled you are still losing logging in
+     crashes, you may need to add a platform-dependent mechanism to
+     flush the OS buffers as well (such as fsync() on POSIX) -- but
+     expect terrible performance. */
 }
 
-void traceon(void)
-{
-    if (pdc_dbfp)
-        fclose(pdc_dbfp);
-
-    /* open debug log file append */
-    pdc_dbfp = fopen("trace", "a");
-    if (!pdc_dbfp)
-    {
-        fprintf(stderr, "PDC_debug(): Unable to open debug log file\n");
-        return;
-    }
-
-    if (getenv("PDC_TRACE_FLUSH"))
-        want_fflush = TRUE;
-
-    PDC_LOG(("traceon() - called\n"));
-}
-
-void traceoff(void)
-{
-    if (!pdc_dbfp)
-        return;
-
-    PDC_LOG(("traceoff() - called\n"));
-
+void traceon(void) {
+  if (pdc_dbfp)
     fclose(pdc_dbfp);
-    pdc_dbfp = NULL;
-    want_fflush = FALSE;
+
+  /* open debug log file append */
+  pdc_dbfp = fopen("trace", "a");
+  if (!pdc_dbfp) {
+    fprintf(stderr, "PDC_debug(): Unable to open debug log file\n");
+    return;
+  }
+
+  if (getenv("PDC_TRACE_FLUSH"))
+    want_fflush = TRUE;
+
+  PDC_LOG(("traceon() - called\n"));
+}
+
+void traceoff(void) {
+  if (!pdc_dbfp)
+    return;
+
+  PDC_LOG(("traceoff() - called\n"));
+
+  fclose(pdc_dbfp);
+  pdc_dbfp = NULL;
+  want_fflush = FALSE;
 }

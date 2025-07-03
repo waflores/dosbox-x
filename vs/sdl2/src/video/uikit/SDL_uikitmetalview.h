@@ -34,10 +34,9 @@
 
 #if defined(SDL_VIDEO_DRIVER_UIKIT) && (defined(SDL_VIDEO_VULKAN) || defined(SDL_VIDEO_METAL))
 
-#import <UIKit/UIKit.h>
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
-
+#import <UIKit/UIKit.h>
 
 @interface SDL_uikitmetalview : SDL_uikitview
 
@@ -46,10 +45,10 @@
 
 @end
 
-SDL_MetalView UIKit_Metal_CreateView(_THIS, SDL_Window * window);
+SDL_MetalView UIKit_Metal_CreateView(_THIS, SDL_Window *window);
 void UIKit_Metal_DestroyView(_THIS, SDL_MetalView view);
 void *UIKit_Metal_GetLayer(_THIS, SDL_MetalView view);
-void UIKit_Metal_GetDrawableSize(_THIS, SDL_Window * window, int * w, int * h);
+void UIKit_Metal_GetDrawableSize(_THIS, SDL_Window *window, int *w, int *h);
 
 #endif /* SDL_VIDEO_DRIVER_UIKIT && (SDL_VIDEO_VULKAN || SDL_VIDEO_METAL) */
 

@@ -12,8 +12,8 @@
 
 /* Print out all the scancodes we have, just to verify them */
 
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

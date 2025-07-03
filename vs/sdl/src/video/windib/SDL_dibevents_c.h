@@ -23,11 +23,11 @@
 
 #include "../wincommon/SDL_lowvideo.h"
 
-/* Variables and functions exported by SDL_dibevents.c to other parts 
+/* Variables and functions exported by SDL_dibevents.c to other parts
    of the native video subsystem (SDL_dibvideo.c)
 */
-extern LONG
- DIB_HandleMessage(_THIS, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern LONG DIB_HandleMessage(_THIS, HWND hwnd, UINT msg, WPARAM wParam,
+                              LPARAM lParam);
 extern int DIB_CreateWindow(_THIS);
 extern void DIB_DestroyWindow(_THIS);
 

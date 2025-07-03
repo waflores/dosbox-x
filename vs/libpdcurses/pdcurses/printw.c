@@ -41,86 +41,80 @@ printw
 
 #include <string.h>
 
-int vwprintw(WINDOW *win, const char *fmt, va_list varglist)
-{
-    char printbuf[513];
-    int len;
+int vwprintw(WINDOW *win, const char *fmt, va_list varglist) {
+  char printbuf[513];
+  int len;
 
-    PDC_LOG(("vwprintw() - called\n"));
+  PDC_LOG(("vwprintw() - called\n"));
 
 #ifdef HAVE_VSNPRINTF
-    len = vsnprintf(printbuf, 512, fmt, varglist);
+  len = vsnprintf(printbuf, 512, fmt, varglist);
 #else
-    len = vsprintf(printbuf, fmt, varglist);
+  len = vsprintf(printbuf, fmt, varglist);
 #endif
-    return (waddstr(win, printbuf) == ERR) ? ERR : len;
+  return (waddstr(win, printbuf) == ERR) ? ERR : len;
 }
 
-int printw(const char *fmt, ...)
-{
-    va_list args;
-    int retval;
+int printw(const char *fmt, ...) {
+  va_list args;
+  int retval;
 
-    PDC_LOG(("printw() - called\n"));
+  PDC_LOG(("printw() - called\n"));
 
-    va_start(args, fmt);
-    retval = vwprintw(stdscr, fmt, args);
-    va_end(args);
+  va_start(args, fmt);
+  retval = vwprintw(stdscr, fmt, args);
+  va_end(args);
 
-    return retval;
+  return retval;
 }
 
-int wprintw(WINDOW *win, const char *fmt, ...)
-{
-    va_list args;
-    int retval;
+int wprintw(WINDOW *win, const char *fmt, ...) {
+  va_list args;
+  int retval;
 
-    PDC_LOG(("wprintw() - called\n"));
+  PDC_LOG(("wprintw() - called\n"));
 
-    va_start(args, fmt);
-    retval = vwprintw(win, fmt, args);
-    va_end(args);
+  va_start(args, fmt);
+  retval = vwprintw(win, fmt, args);
+  va_end(args);
 
-    return retval;
+  return retval;
 }
 
-int mvprintw(int y, int x, const char *fmt, ...)
-{
-    va_list args;
-    int retval;
+int mvprintw(int y, int x, const char *fmt, ...) {
+  va_list args;
+  int retval;
 
-    PDC_LOG(("mvprintw() - called\n"));
+  PDC_LOG(("mvprintw() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    va_start(args, fmt);
-    retval = vwprintw(stdscr, fmt, args);
-    va_end(args);
+  va_start(args, fmt);
+  retval = vwprintw(stdscr, fmt, args);
+  va_end(args);
 
-    return retval;
+  return retval;
 }
 
-int mvwprintw(WINDOW *win, int y, int x, const char *fmt, ...)
-{
-    va_list args;
-    int retval;
+int mvwprintw(WINDOW *win, int y, int x, const char *fmt, ...) {
+  va_list args;
+  int retval;
 
-    PDC_LOG(("mvwprintw() - called\n"));
+  PDC_LOG(("mvwprintw() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    va_start(args, fmt);
-    retval = vwprintw(win, fmt, args);
-    va_end(args);
+  va_start(args, fmt);
+  retval = vwprintw(win, fmt, args);
+  va_end(args);
 
-    return retval;
+  return retval;
 }
 
-int vw_printw(WINDOW *win, const char *fmt, va_list varglist)
-{
-    PDC_LOG(("vw_printw() - called\n"));
+int vw_printw(WINDOW *win, const char *fmt, va_list varglist) {
+  PDC_LOG(("vw_printw() - called\n"));
 
-    return vwprintw(win, fmt, varglist);
+  return vwprintw(win, fmt, varglist);
 }

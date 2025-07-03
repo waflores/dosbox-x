@@ -16,33 +16,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef INCLUDEGUARD_SERIALDUMMY_H
 #define INCLUDEGUARD_SERIALDUMMY_H
 
 #include "serialport.h"
 
-//#define CHECKIT_TESTPLUG
+// #define CHECKIT_TESTPLUG
 
 class CSerialDummy : public CSerial {
 public:
-	CSerialDummy(Bitu id, CommandLine* cmd);
-	virtual ~CSerialDummy();
+  CSerialDummy(Bitu id, CommandLine *cmd);
+  virtual ~CSerialDummy();
 
-	void setRTSDTR(bool rts, bool dtr) override;
-	void setRTS(bool val) override;
-	void setDTR(bool val) override;
+  void setRTSDTR(bool rts, bool dtr) override;
+  void setRTS(bool val) override;
+  void setDTR(bool val) override;
 
-	void updatePortConfig(uint16_t, uint8_t lcr) override;
-	void updateMSR() override;
-	void transmitByte(uint8_t val, bool first) override;
-	void setBreak(bool value) override;
-	void handleUpperEvent(uint16_t type) override;
+  void updatePortConfig(uint16_t, uint8_t lcr) override;
+  void updateMSR() override;
+  void transmitByte(uint8_t val, bool first) override;
+  void setBreak(bool value) override;
+  void handleUpperEvent(uint16_t type) override;
 
 #ifdef CHECKIT_TESTPLUG
-	uint8_t loopbackdata;
+  uint8_t loopbackdata;
 #endif
-
 };
 
 #endif // INCLUDEGUARD

@@ -26,7 +26,7 @@
 #include "SDL_thread.h"
 
 #if !(defined(SDL_THREAD_PTHREAD_RECURSIVE_MUTEX) || \
-    defined(SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP))
+      defined(SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP))
 #define FAKE_RECURSIVE_MUTEX
 #endif
 

@@ -22,11 +22,11 @@
 
 #if SDL_HAVE_BLIT_N
 
-#include "SDL_video.h"
-#include "SDL_endian.h"
-#include "SDL_cpuinfo.h"
 #include "SDL_blit.h"
 #include "SDL_blit_copy.h"
+#include "SDL_cpuinfo.h"
+#include "SDL_endian.h"
+#include "SDL_video.h"
 
 /* General optimized routines that write char by char */
 #define HAVE_FAST_WRITE_INT8 1
@@ -76,10 +76,10 @@ static size_t GetL3CacheSize(void)
 #endif /* __MACOSX__ */
 
 #if (defined(__MACOSX__) && (__GNUC__ < 4))
-#define VECUINT8_LITERAL(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) \
-        (vector unsigned char) ( a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p )
-#define VECUINT16_LITERAL(a,b,c,d,e,f,g,h) \
-        (vector unsigned short) ( a,b,c,d,e,f,g,h )
+#define VECUINT8_LITERAL(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
+    (vector unsigned char)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#define VECUINT16_LITERAL(a, b, c, d, e, f, g, h) \
+    (vector unsigned short)(a, b, c, d, e, f, g, h)
 #else
 #define VECUINT8_LITERAL(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
     (vector unsigned char)                                               \
@@ -759,8 +759,8 @@ static void ConvertAltivec32to32_noprefetch(SDL_BlitInfo *info)
             src += 4;
             width -= 4;
             vbits = vec_perm(vbits, voverflow, valigner); /* src is ready. */
-            vbits = vec_perm(vbits, vzero, vpermute); /* swizzle it. */
-            vec_st(vbits, 0, dst);                    /* store it back out. */
+            vbits = vec_perm(vbits, vzero, vpermute);     /* swizzle it. */
+            vec_st(vbits, 0, dst);                        /* store it back out. */
             dst += 4;
             vbits = voverflow;
         }
@@ -853,8 +853,8 @@ static void ConvertAltivec32to32_prefetch(SDL_BlitInfo *info)
             src += 4;
             width -= 4;
             vbits = vec_perm(vbits, voverflow, valigner); /* src is ready. */
-            vbits = vec_perm(vbits, vzero, vpermute); /* swizzle it. */
-            vec_st(vbits, 0, dst);                    /* store it back out. */
+            vbits = vec_perm(vbits, vzero, vpermute);     /* swizzle it. */
+            vec_st(vbits, 0, dst);                        /* store it back out. */
             dst += 4;
             vbits = voverflow;
         }
@@ -951,11 +951,11 @@ static void Blit_RGB444_RGB888ARMSIMD(SDL_BlitInfo *info)
 #endif
 
 /* Special optimized blit for RGB 8-8-8 --> RGB 3-3-2 */
-#define RGB888_RGB332(dst, src)                    \
-    {                                              \
-        dst = (Uint8)((((src)&0x00E00000) >> 16) | \
-                      (((src)&0x0000E000) >> 11) | \
-                      (((src)&0x000000C0) >> 6));  \
+#define RGB888_RGB332(dst, src)                      \
+    {                                                \
+        dst = (Uint8)((((src) & 0x00E00000) >> 16) | \
+                      (((src) & 0x0000E000) >> 11) | \
+                      (((src) & 0x000000C0) >> 6));  \
     }
 static void Blit_RGB888_index8(SDL_BlitInfo *info)
 {
@@ -1065,11 +1065,11 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 }
 
 /* Special optimized blit for RGB 10-10-10 --> RGB 3-3-2 */
-#define RGB101010_RGB332(dst, src)                 \
-    {                                              \
-        dst = (Uint8)((((src)&0x38000000) >> 22) | \
-                      (((src)&0x000E0000) >> 15) | \
-                      (((src)&0x00000300) >> 8));  \
+#define RGB101010_RGB332(dst, src)                   \
+    {                                                \
+        dst = (Uint8)((((src) & 0x38000000) >> 22) | \
+                      (((src) & 0x000E0000) >> 15) | \
+                      (((src) & 0x00000300) >> 8));  \
     }
 static void Blit_RGB101010_index8(SDL_BlitInfo *info)
 {

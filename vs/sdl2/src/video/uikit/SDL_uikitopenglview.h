@@ -21,12 +21,12 @@
 
 #if defined(SDL_VIDEO_OPENGL_ES) || defined(SDL_VIDEO_OPENGL_ES2)
 
-#import <UIKit/UIKit.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
+#import <UIKit/UIKit.h>
 
-#import "SDL_uikitview.h"
 #include "SDL_uikitvideo.h"
+#import "SDL_uikitview.h"
 
 @interface SDL_uikitopenglview : SDL_uikitview
 
@@ -43,15 +43,15 @@
                  multisamples:(int)multisamples
                       context:(EAGLContext *)glcontext;
 
-@property (nonatomic, readonly, weak) EAGLContext *context;
+@property(nonatomic, readonly, weak) EAGLContext *context;
 
 /* The width and height of the drawable in pixels (as opposed to points.) */
-@property (nonatomic, readonly) int backingWidth;
-@property (nonatomic, readonly) int backingHeight;
+@property(nonatomic, readonly) int backingWidth;
+@property(nonatomic, readonly) int backingHeight;
 
-@property (nonatomic, readonly) GLuint drawableRenderbuffer;
-@property (nonatomic, readonly) GLuint drawableFramebuffer;
-@property (nonatomic, readonly) GLuint msaaResolveFramebuffer;
+@property(nonatomic, readonly) GLuint drawableRenderbuffer;
+@property(nonatomic, readonly) GLuint drawableFramebuffer;
+@property(nonatomic, readonly) GLuint msaaResolveFramebuffer;
 
 - (void)swapBuffers;
 

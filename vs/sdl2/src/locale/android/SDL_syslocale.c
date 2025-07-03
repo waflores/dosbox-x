@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "../../SDL_internal.h"
 #include "../SDL_syslocale.h"
+#include "../../SDL_internal.h"
 #include "../../core/android/SDL_android.h"
 
 void SDL_SYS_GetPreferredLocales(char *buf, size_t buflen)

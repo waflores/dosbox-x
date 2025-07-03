@@ -24,12 +24,12 @@
 #ifndef SDL_waylandwindow_h_
 #define SDL_waylandwindow_h_
 
+#include "../../events/SDL_touch_c.h"
 #include "../SDL_sysvideo.h"
 #include "SDL_syswm.h"
-#include "../../events/SDL_touch_c.h"
 
-#include "SDL_waylandvideo.h"
 #include "SDL_waylandshmbuffer.h"
+#include "SDL_waylandvideo.h"
 
 struct SDL_WaylandInput;
 
@@ -151,7 +151,7 @@ extern void Wayland_SuspendScreenSaver(_THIS);
 extern void Wayland_SetWindowIcon(_THIS, SDL_Window *window, SDL_Surface *icon);
 
 extern SDL_bool
-Wayland_GetWindowWMInfo(_THIS, SDL_Window * window, SDL_SysWMinfo * info);
+Wayland_GetWindowWMInfo(_THIS, SDL_Window *window, SDL_SysWMinfo *info);
 extern int Wayland_SetWindowHitTest(SDL_Window *window, SDL_bool enabled);
 extern int Wayland_FlashWindow(_THIS, SDL_Window *window, SDL_FlashOperation operation);
 extern void Wayland_RemoveOutputFromWindow(SDL_WindowData *window, struct wl_output *output);

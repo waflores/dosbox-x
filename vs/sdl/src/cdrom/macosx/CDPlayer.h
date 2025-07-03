@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -26,41 +27,42 @@
 
 #include <string.h>
 
+#include <AudioUnit/AudioUnit.h>
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <AudioUnit/AudioUnit.h>
 
 #include "SDL.h"
-#include "SDL_thread.h"
 #include "SDL_mutex.h"
+#include "SDL_thread.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void (*CDPlayerCompletionProc)(SDL_CD *cdrom) ;
+typedef void (*CDPlayerCompletionProc)(SDL_CD *cdrom);
 
-void     Lock ();
+void Lock();
 
-void     Unlock();
+void Unlock();
 
-int      LoadFile (const FSRef *ref, int startFrame, int endFrame); /* pass -1 to do nothing */
+int LoadFile(const FSRef *ref, int startFrame,
+             int endFrame); /* pass -1 to do nothing */
 
-int      ReleaseFile ();
+int ReleaseFile();
 
-int      PlayFile  ();
+int PlayFile();
 
-int      PauseFile ();
+int PauseFile();
 
-void     SetCompletionProc (CDPlayerCompletionProc proc, SDL_CD *cdrom);
+void SetCompletionProc(CDPlayerCompletionProc proc, SDL_CD *cdrom);
 
-int      ReadTOCData (FSVolumeRefNum theVolume, SDL_CD *theCD);
+int ReadTOCData(FSVolumeRefNum theVolume, SDL_CD *theCD);
 
-int      ListTrackFiles (FSVolumeRefNum theVolume, FSRef *trackFiles, int numTracks);
+int ListTrackFiles(FSVolumeRefNum theVolume, FSRef *trackFiles, int numTracks);
 
-int      DetectAudioCDVolumes (FSVolumeRefNum *volumes, int numVolumes);
+int DetectAudioCDVolumes(FSVolumeRefNum *volumes, int numVolumes);
 
-int      GetCurrentFrame ();
+int GetCurrentFrame();
 
 #ifdef __cplusplus
 };

@@ -34,10 +34,10 @@
 
 /* Windows includes */
 #include <agile.h>
-#include <windows.graphics.display.h>
-#include <windows.system.display.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
+#include <windows.graphics.display.h>
+#include <windows.system.display.h>
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
@@ -50,27 +50,27 @@ static const GUID SDL_IID_IDXGIFactory2 = { 0x50c83a1c, 0xe072, 0x4c48, { 0x87, 
 
 /* SDL includes */
 extern "C" {
-#include "SDL_video.h"
-#include "SDL_mouse.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
+#include "../../core/windows/SDL_windows.h"
 #include "../../events/SDL_events_c.h"
 #include "../../render/SDL_sysrender.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 #include "SDL_syswm.h"
-#include "SDL_winrtopengles.h"
-#include "../../core/windows/SDL_windows.h"
+#include "SDL_video.h"
 #include "SDL_winrtmessagebox.h"
+#include "SDL_winrtopengles.h"
 }
 
 #include "../../core/winrt/SDL_winrtapp_direct3d.h"
 #include "../../core/winrt/SDL_winrtapp_xaml.h"
-#include "SDL_winrtvideo_cpp.h"
+#include "SDL_hints.h"
+#include "SDL_main.h"
+#include "SDL_system.h"
 #include "SDL_winrtevents_c.h"
 #include "SDL_winrtgamebar_cpp.h"
 #include "SDL_winrtmouse_c.h"
-#include "SDL_main.h"
-#include "SDL_system.h"
-#include "SDL_hints.h"
+#include "SDL_winrtvideo_cpp.h"
 
 /* Initialization/Query functions */
 static int WINRT_VideoInit(_THIS);
@@ -79,12 +79,11 @@ static int WINRT_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMod
 static void WINRT_VideoQuit(_THIS);
 
 /* Window functions */
-static int WINRT_CreateWindow(_THIS, SDL_Window * window);
-static void WINRT_SetWindowSize(_THIS, SDL_Window * window);
-static void WINRT_SetWindowFullscreen(_THIS, SDL_Window * window, SDL_VideoDisplay * display, SDL_bool fullscreen);
-static void WINRT_DestroyWindow(_THIS, SDL_Window * window);
-static SDL_bool WINRT_GetWindowWMInfo(_THIS, SDL_Window * window, SDL_SysWMinfo * info);
-
+static int WINRT_CreateWindow(_THIS, SDL_Window *window);
+static void WINRT_SetWindowSize(_THIS, SDL_Window *window);
+static void WINRT_SetWindowFullscreen(_THIS, SDL_Window *window, SDL_VideoDisplay *display, SDL_bool fullscreen);
+static void WINRT_DestroyWindow(_THIS, SDL_Window *window);
+static SDL_bool WINRT_GetWindowWMInfo(_THIS, SDL_Window *window, SDL_SysWMinfo *info);
 
 /* Misc functions */
 static ABI::Windows::System::Display::IDisplayRequest *WINRT_CreateDisplayRequest(_THIS);
@@ -794,9 +793,9 @@ void WINRT_DestroyWindow(_THIS, SDL_Window *window)
     }
 }
 
-SDL_bool WINRT_GetWindowWMInfo(_THIS, SDL_Window * window, SDL_SysWMinfo * info)
+SDL_bool WINRT_GetWindowWMInfo(_THIS, SDL_Window *window, SDL_SysWMinfo *info)
 {
-    SDL_WindowData * data = (SDL_WindowData *) window->driverdata;
+    SDL_WindowData *data = (SDL_WindowData *)window->driverdata;
 
     if (info->version.major <= SDL_MAJOR_VERSION) {
         info->subsystem = SDL_SYSWM_WINRT;

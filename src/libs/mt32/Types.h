@@ -20,19 +20,19 @@
 
 namespace MT32Emu {
 
-typedef unsigned int       Bit32u;
-typedef   signed int       Bit32s;
+typedef unsigned int Bit32u;
+typedef signed int Bit32s;
 typedef unsigned short int Bit16u;
-typedef   signed short int Bit16s;
-typedef unsigned char      Bit8u;
-typedef   signed char      Bit8s;
+typedef signed short int Bit16s;
+typedef unsigned char Bit8u;
+typedef signed char Bit8s;
 
-typedef unsigned int       uint32_t;
-typedef   signed int       int32_t;
+typedef unsigned int uint32_t;
+typedef signed int int32_t;
 typedef unsigned short int uint16_t;
-typedef   signed short int int16_t;
-typedef unsigned char      uint8_t;
-typedef   signed char      int8_t;
-}
+typedef signed short int int16_t;
+typedef unsigned char uint8_t;
+typedef signed char int8_t;
+} // namespace MT32Emu
 
 #endif

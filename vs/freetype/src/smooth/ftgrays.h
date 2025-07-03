@@ -15,22 +15,20 @@
  *
  */
 
-
 #ifndef FTGRAYS_H_
 #define FTGRAYS_H_
 
 #ifdef __cplusplus
-  extern "C" {
+extern "C"
+{
 #endif
-
 
 #ifdef STANDALONE_
 #include "ftimage.h"
 #else
-#include <ft2build.h>
 #include <freetype/ftimage.h>
+#include <ft2build.h>
 #endif
-
 
   /**************************************************************************
    *
@@ -41,17 +39,15 @@
    * necessary to compile the library as a DLL.
    */
 #ifndef FT_EXPORT_VAR
-#define FT_EXPORT_VAR( x )  extern  x
+#define FT_EXPORT_VAR( x ) extern x
 #endif
 
-  FT_EXPORT_VAR( const FT_Raster_Funcs )  ft_grays_raster;
-
+  FT_EXPORT_VAR( const FT_Raster_Funcs ) ft_grays_raster;
 
 #ifdef __cplusplus
-  }
+}
 #endif
 
 #endif /* FTGRAYS_H_ */
-
 
 /* END */

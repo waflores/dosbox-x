@@ -11,9 +11,9 @@
 */
 /* Simple test of filesystem functions. */
 
-#include <stdio.h>
 #include "SDL.h"
 #include "SDL_test.h"
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {

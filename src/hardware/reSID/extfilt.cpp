@@ -20,12 +20,10 @@
 #define __EXTFILT_CC__
 #include "extfilt.h"
 
-
 // ----------------------------------------------------------------------------
 // Constructor.
 // ----------------------------------------------------------------------------
-ExternalFilter::ExternalFilter()
-{
+ExternalFilter::ExternalFilter() {
   reset();
   enable_filter(true);
   set_chip_model(MOS6581);
@@ -39,42 +37,34 @@ ExternalFilter::ExternalFilter()
   w0hp = 105;
 }
 
-
 // ----------------------------------------------------------------------------
 // Enable filter.
 // ----------------------------------------------------------------------------
-void ExternalFilter::enable_filter(bool enable)
-{
-  enabled = enable;
-}
-
+void ExternalFilter::enable_filter(bool enable) { enabled = enable; }
 
 // ----------------------------------------------------------------------------
 // Set chip model.
 // ----------------------------------------------------------------------------
-void ExternalFilter::set_chip_model(chip_model model)
-{
+void ExternalFilter::set_chip_model(chip_model model) {
   if (model == MOS6581) {
     // Maximum mixer DC output level; to be removed if the external
     // filter is turned off: ((wave DC + voice DC)*voices + mixer DC)*volume
     // See voice.cc and filter.cc for an explanation of the values.
-    mixer_DC = ((((0x800 - 0x380) + 0x800)*0xff*3 - 0xfff*0xff/18) >> 7)*0x0f;
-  }
-  else {
+    mixer_DC =
+        ((((0x800 - 0x380) + 0x800) * 0xff * 3 - 0xfff * 0xff / 18) >> 7) *
+        0x0f;
+  } else {
     // No DC offsets in the MOS8580.
     mixer_DC = 0;
   }
 }
 
-
 // ----------------------------------------------------------------------------
 // SID reset.
 // ----------------------------------------------------------------------------
-void ExternalFilter::reset()
-{
+void ExternalFilter::reset() {
   // State of filter.
   Vlp = 0;
   Vhp = 0;
   Vo = 0;
 }
-

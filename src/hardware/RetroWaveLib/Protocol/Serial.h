@@ -19,21 +19,21 @@
 
 #pragma once
 
-#include <stdint.h>
 #include <math.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef enum {
-	Retrowave_Serial_Transfer_End = 0,
-	Retrowave_Serial_Transfer_Start = 1,
+  Retrowave_Serial_Transfer_End = 0,
+  Retrowave_Serial_Transfer_Start = 1,
 } RetroWaveProtocol_Serial_ControlFlags;
 
 typedef struct {
-	uint8_t data : 7;
-	uint8_t is_data : 1;
+  uint8_t data : 7;
+  uint8_t is_data : 1;
 }
 #if defined(__GCC__)
 __attribute__((__packed__, gcc_struct))
@@ -41,7 +41,8 @@ __attribute__((__packed__, gcc_struct))
 RetroWaveProtocol_Serial_Byte;
 
 extern uint32_t retrowave_protocol_serial_packed_length(uint32_t len_in);
-extern uint32_t retrowave_protocol_serial_pack(const void *_buf_in, uint32_t len_in, void *_buf_out);
+extern uint32_t retrowave_protocol_serial_pack(const void *_buf_in,
+                                               uint32_t len_in, void *_buf_out);
 
 #ifdef __cplusplus
 }

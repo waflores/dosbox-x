@@ -19,28 +19,28 @@
 
 #pragma once
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef enum {
-	RetroWave_Board_Unknown = 0,
-	RetroWave_Board_OPL3 = 0x21 << 1,
-	RetroWave_Board_MiniBlaster = 0x20 << 1,
-	RetroWave_Board_MasterGear = 0x24 << 1
+  RetroWave_Board_Unknown = 0,
+  RetroWave_Board_OPL3 = 0x21 << 1,
+  RetroWave_Board_MiniBlaster = 0x20 << 1,
+  RetroWave_Board_MasterGear = 0x24 << 1
 } RetroWaveBoardType;
 
 typedef struct {
-	void *user_data;
-	void (*callback_io)(void *, uint32_t, const void *, void *, uint32_t);
-	uint8_t *cmd_buffer;
-	uint32_t cmd_buffer_used, cmd_buffer_size;
-	uint32_t transfer_speed_hint;
+  void *user_data;
+  void (*callback_io)(void *, uint32_t, const void *, void *, uint32_t);
+  uint8_t *cmd_buffer;
+  uint32_t cmd_buffer_used, cmd_buffer_size;
+  uint32_t transfer_speed_hint;
 } RetroWaveContext;
 
 extern void retrowave_init(RetroWaveContext *ctx);
@@ -48,7 +48,9 @@ extern void retrowave_deinit(RetroWaveContext *ctx);
 
 extern void retrowave_io_init(RetroWaveContext *ctx);
 
-extern void retrowave_cmd_buffer_init(RetroWaveContext *ctx, RetroWaveBoardType board_type, uint8_t first_reg);
+extern void retrowave_cmd_buffer_init(RetroWaveContext *ctx,
+                                      RetroWaveBoardType board_type,
+                                      uint8_t first_reg);
 
 extern void retrowave_flush(RetroWaveContext *ctx);
 

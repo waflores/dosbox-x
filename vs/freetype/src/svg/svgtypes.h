@@ -18,25 +18,23 @@
 #ifndef SVGTYPES_H_
 #define SVGTYPES_H_
 
-#include <ft2build.h>
-#include <freetype/internal/ftobjs.h>
 #include <freetype/ftrender.h>
+#include <freetype/internal/ftobjs.h>
 #include <freetype/otsvg.h>
+#include <ft2build.h>
 
+typedef struct SVG_RendererRec_
+{
+  FT_RendererRec    root; /* this inherits FT_RendererRec                */
+  FT_Bool           loaded;
+  FT_Bool           hooks_set;
+  SVG_RendererHooks hooks; /* this holds hooks for SVG rendering          */
+  FT_Pointer        state; /* a place for hooks to store state, if needed */
 
-  typedef struct SVG_RendererRec_
-  {
-    FT_RendererRec     root;   /* this inherits FT_RendererRec                */
-    FT_Bool            loaded;
-    FT_Bool            hooks_set;
-    SVG_RendererHooks  hooks;  /* this holds hooks for SVG rendering          */
-    FT_Pointer         state;  /* a place for hooks to store state, if needed */
+} SVG_RendererRec;
 
-  } SVG_RendererRec;
-
-  typedef struct SVG_RendererRec_*  SVG_Renderer;
+typedef struct SVG_RendererRec_* SVG_Renderer;
 
 #endif /* SVGTYPES_H_ */
-
 
 /* EOF */

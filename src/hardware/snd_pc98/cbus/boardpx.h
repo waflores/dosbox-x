@@ -15,5 +15,4 @@ void boardpx2_bind(void);
 }
 #endif
 
-#endif	// defined(SUPPORT_PX)
-
+#endif // defined(SUPPORT_PX)

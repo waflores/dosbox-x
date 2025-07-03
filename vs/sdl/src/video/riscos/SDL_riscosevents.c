@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -23,23 +24,22 @@
 
 /*
      File added by Alan Buckley (alan_baa@hotmail.com) for RISC OS compatability
-	 27 March 2003
+         27 March 2003
 
      Implements keyboard setup, event pump and keyboard and mouse polling
 */
 
-
-#include "SDL.h"
-#include "../../timer/SDL_timer_c.h"
-#include "../../events/SDL_sysevents.h"
 #include "../../events/SDL_events_c.h"
+#include "../../events/SDL_sysevents.h"
+#include "../../timer/SDL_timer_c.h"
 #include "../SDL_cursor_c.h"
-#include "SDL_riscosvideo.h"
+#include "SDL.h"
 #include "SDL_riscosevents_c.h"
+#include "SDL_riscosvideo.h"
 
+#include "ctype.h"
 #include "memory.h"
 #include "stdlib.h"
-#include "ctype.h"
 
 #include "kernel.h"
 #include "swis.h"
@@ -49,21 +49,21 @@ static SDLKey RO_keymap[SDLK_LAST];
 
 /* RISC OS Key codes */
 #define ROKEY_SHIFT 0
-#define ROKEY_CTRL  1
-#define ROKEY_ALT   2
+#define ROKEY_CTRL 1
+#define ROKEY_ALT 2
 /* Left shift is first key we will check for */
 #define ROKEY_LEFT_SHIFT 3
 
 /* Need to ignore mouse buttons as they are processed separately */
-#define ROKEY_LEFT_MOUSE   9
+#define ROKEY_LEFT_MOUSE 9
 #define ROKEY_CENTRE_MOUSE 10
-#define ROKEY_RIGHT_MOUSE  11
+#define ROKEY_RIGHT_MOUSE 11
 
 /* No key has been pressed return value*/
 #define ROKEY_NONE 255
 
 /* Id of last key in keyboard */
-#define ROKEY_LAST_KEY  124
+#define ROKEY_LAST_KEY 124
 
 /* Size of array for all keys */
 #define ROKEYBD_ARRAYSIZE 125
@@ -85,25 +85,23 @@ extern void RISCOS_CheckTimer();
 
 #endif
 
-void FULLSCREEN_PumpEvents(_THIS)
-{
-    /* Current implementation requires keyboard and mouse polling */
-	RISCOS_PollKeyboard();
-	RISCOS_PollMouse(this);
+void FULLSCREEN_PumpEvents(_THIS) {
+  /* Current implementation requires keyboard and mouse polling */
+  RISCOS_PollKeyboard();
+  RISCOS_PollMouse(this);
 #if SDL_THREADS_DISABLED
-//	DRenderer_FillBuffers();
-	if (SDL_timer_running) RISCOS_CheckTimer();
+  //	DRenderer_FillBuffers();
+  if (SDL_timer_running)
+    RISCOS_CheckTimer();
 #endif
 }
 
+void RISCOS_InitOSKeymap(_THIS) {
+  int i;
 
-void RISCOS_InitOSKeymap(_THIS)
-{
-	int i;
-
-	/* Map the VK keysyms */
-	for ( i=0; i<SDL_arraysize(RO_keymap); ++i )
-		RO_keymap[i] = SDLK_UNKNOWN;
+  /* Map the VK keysyms */
+  for (i = 0; i < SDL_arraysize(RO_keymap); ++i)
+    RO_keymap[i] = SDLK_UNKNOWN;
 
   RO_keymap[3] = SDLK_LSHIFT;
   RO_keymap[4] = SDLK_LCTRL;
@@ -118,8 +116,7 @@ void RISCOS_InitOSKeymap(_THIS)
   RO_keymap[20] = SDLK_F4;
   RO_keymap[21] = SDLK_8;
   RO_keymap[22] = SDLK_F7;
-  RO_keymap[23] = SDLK_MINUS,
-  RO_keymap[25] = SDLK_LEFT;
+  RO_keymap[23] = SDLK_MINUS, RO_keymap[25] = SDLK_LEFT;
   RO_keymap[26] = SDLK_KP6;
   RO_keymap[27] = SDLK_KP7;
   RO_keymap[28] = SDLK_F11;
@@ -139,7 +136,7 @@ void RISCOS_InitOSKeymap(_THIS)
   RO_keymap[43] = SDLK_KP9;
   RO_keymap[44] = SDLK_BREAK;
   RO_keymap[45] = SDLK_BACKQUOTE;
-/*  RO_keymap[46] = SDLK_currency; TODO: Figure out if this has a value */
+  /*  RO_keymap[46] = SDLK_currency; TODO: Figure out if this has a value */
   RO_keymap[47] = SDLK_BACKSPACE;
   RO_keymap[48] = SDLK_1;
   RO_keymap[49] = SDLK_2;
@@ -214,37 +211,31 @@ void RISCOS_InitOSKeymap(_THIS)
   SDL_memset(RO_pressed, 0, ROKEYBD_ARRAYSIZE);
 }
 
-
 /* Variable for mouse relative processing */
 int mouse_relative = 0;
 
 /* Check to see if we need to enter or leave mouse relative mode */
 
-void RISCOS_CheckMouseMode(_THIS)
-{
-    /* If the mouse is hidden and input is grabbed, we use relative mode */
-    if ( !(SDL_cursorstate & CURSOR_VISIBLE) &&
-        (this->input_grab != SDL_GRAB_OFF) ) {
-            mouse_relative = 1;
-     } else {
-            mouse_relative = 0;
-     }
+void RISCOS_CheckMouseMode(_THIS) {
+  /* If the mouse is hidden and input is grabbed, we use relative mode */
+  if (!(SDL_cursorstate & CURSOR_VISIBLE) &&
+      (this->input_grab != SDL_GRAB_OFF)) {
+    mouse_relative = 1;
+  } else {
+    mouse_relative = 0;
+  }
 }
 
-
-void RISCOS_PollMouse(_THIS)
-{
-   RISCOS_PollMouseHelper(this, 1);
-}
+void RISCOS_PollMouse(_THIS) { RISCOS_PollMouseHelper(this, 1); }
 
 extern int mouseInWindow;
 
-void WIMP_PollMouse(_THIS)
-{
-   /* Only poll when mouse is over the window */
-   if (!mouseInWindow) return;
+void WIMP_PollMouse(_THIS) {
+  /* Only poll when mouse is over the window */
+  if (!mouseInWindow)
+    return;
 
-   RISCOS_PollMouseHelper(this, 0);
+  RISCOS_PollMouseHelper(this, 0);
 }
 
 /* Static variables so only changes are reported */
@@ -253,297 +244,336 @@ static int last_buttons = 0;
 
 /* Share routine between WIMP and FULLSCREEN for polling mouse and
    passing on events */
-void RISCOS_PollMouseHelper(_THIS, int fullscreen)
-{
-    _kernel_swi_regs regs;
-    static int starting = 1;
+void RISCOS_PollMouseHelper(_THIS, int fullscreen) {
+  _kernel_swi_regs regs;
+  static int starting = 1;
 
-    if (_kernel_swi(OS_Mouse, &regs, &regs) == NULL)
-    {
-       Sint16 new_x = regs.r[0]; /* Initialy get as OS units */
-       Sint16 new_y = regs.r[1];
+  if (_kernel_swi(OS_Mouse, &regs, &regs) == NULL) {
+    Sint16 new_x = regs.r[0]; /* Initialy get as OS units */
+    Sint16 new_y = regs.r[1];
 
-       /* Discard mouse events until they let go of the mouse after starting */
-       if (starting && regs.r[2] != 0)
-         return;
-       else
-         starting = 0;
+    /* Discard mouse events until they let go of the mouse after starting */
+    if (starting && regs.r[2] != 0)
+      return;
+    else
+      starting = 0;
 
-       if (new_x != last_x || new_y != last_y || last_buttons != regs.r[2])
-       {
-          /* Something changed so generate appropriate events */
-          int topLeftX, topLeftY;  /* Top left OS units */
-          int x, y;                /* Mouse position in SDL pixels */
+    if (new_x != last_x || new_y != last_y || last_buttons != regs.r[2]) {
+      /* Something changed so generate appropriate events */
+      int topLeftX, topLeftY; /* Top left OS units */
+      int x, y;               /* Mouse position in SDL pixels */
 
-          if (fullscreen)
-          {
-             topLeftX = 0;
-             topLeftY = (this->hidden->height << this->hidden->yeig) - 1;
-          } else
-          {
-             int window_state[9];
+      if (fullscreen) {
+        topLeftX = 0;
+        topLeftY = (this->hidden->height << this->hidden->yeig) - 1;
+      } else {
+        int window_state[9];
 
-	         /* Get current window state */
-		     window_state[0] = this->hidden->window_handle;
-		     regs.r[1] = (unsigned int)window_state;
-		     _kernel_swi(Wimp_GetWindowState, &regs, &regs);
+        /* Get current window state */
+        window_state[0] = this->hidden->window_handle;
+        regs.r[1] = (unsigned int)window_state;
+        _kernel_swi(Wimp_GetWindowState, &regs, &regs);
 
-             topLeftX = window_state[1];
-             topLeftY = window_state[4];
+        topLeftX = window_state[1];
+        topLeftY = window_state[4];
+      }
+
+      /* Convert co-ordinates to workspace */
+      x = new_x - topLeftX;
+      y = topLeftY - new_y; /* Y goes from top of window/screen */
+
+      /* Convert OS units to pixels */
+      x >>= this->hidden->xeig;
+      y >>= this->hidden->yeig;
+
+      if (last_x != new_x || last_y != new_y) {
+        if (mouse_relative) {
+          int centre_x = SDL_VideoSurface->w / 2;
+          int centre_y = SDL_VideoSurface->h / 2;
+
+          if (centre_x != x || centre_y != y) {
+            if (SDL_VideoSurface)
+              SDL_PrivateMouseMotion(0, 1, x - centre_x, y - centre_y);
+            last_x = topLeftX + (centre_x << this->hidden->xeig);
+            last_y = topLeftY - (centre_y << this->hidden->yeig);
+
+            /* Re-centre the mouse pointer, so we still get relative
+               movement when the mouse is at the edge of the window
+               or screen.
+            */
+            {
+              unsigned char block[5];
+
+              block[0] = 3; /* OSWORD move pointer sub-reason code */
+              block[1] = last_x & 0xFF;
+              block[2] = (last_x >> 8) & 0xFF;
+              block[3] = last_y & 0xFF;
+              block[4] = (last_y >> 8) & 0xFF;
+
+              regs.r[0] = 21; /* OSWORD pointer stuff code */
+              regs.r[1] = (int)block;
+              _kernel_swi(OS_Word, &regs, &regs);
+            }
           }
+        } else {
+          last_x = new_x;
+          last_y = new_y;
+          SDL_PrivateMouseMotion(0, 0, x, y);
+        }
+      }
 
-		  /* Convert co-ordinates to workspace */
-		  x = new_x - topLeftX;
-          y = topLeftY - new_y; /* Y goes from top of window/screen */
-
-	 	  /* Convert OS units to pixels */
-	      x >>= this->hidden->xeig;
-		  y >>= this->hidden->yeig;
-
-          if (last_x != new_x || last_y != new_y)
-          {
-             if (mouse_relative)
-             {
-                int centre_x = SDL_VideoSurface->w/2;
-                int centre_y = SDL_VideoSurface->h/2;
-
-                if (centre_x != x || centre_y != y)
-                {
-                   if (SDL_VideoSurface) SDL_PrivateMouseMotion(0,1,x - centre_x, y - centre_y);
-                   last_x = topLeftX + (centre_x << this->hidden->xeig);
-                   last_y = topLeftY - (centre_y << this->hidden->yeig);
-
-                   /* Re-centre the mouse pointer, so we still get relative
-                      movement when the mouse is at the edge of the window
-                      or screen.
-                   */
-                   {
-                      unsigned char block[5];
-
-                      block[0] = 3; /* OSWORD move pointer sub-reason code */
-                      block[1] = last_x & 0xFF;
-                      block[2] = (last_x >> 8) & 0xFF;
-                      block[3] = last_y & 0xFF;
-                      block[4] = (last_y >> 8) & 0xFF;
-                       
-                      regs.r[0] = 21; /* OSWORD pointer stuff code */
-                      regs.r[1] = (int)block;
-                      _kernel_swi(OS_Word, &regs, &regs);
-               	   }
-                }
-             } else
-             {
-                last_x = new_x;
-                last_y = new_y;
-                SDL_PrivateMouseMotion(0,0,x,y);
-             }
-          }
-
-          if (last_buttons != regs.r[2])
-          {
-             int changed = last_buttons ^ regs.r[2];
-             last_buttons = regs.r[2];
-             if (changed & 4) SDL_PrivateMouseButton((last_buttons & 4) ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_LEFT, 0, 0);
-             if (changed & 2) SDL_PrivateMouseButton((last_buttons & 2) ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_MIDDLE, 0, 0);
-             if (changed & 1) SDL_PrivateMouseButton((last_buttons & 1) ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_RIGHT, 0, 0);
-          }
-       }
+      if (last_buttons != regs.r[2]) {
+        int changed = last_buttons ^ regs.r[2];
+        last_buttons = regs.r[2];
+        if (changed & 4)
+          SDL_PrivateMouseButton((last_buttons & 4) ? SDL_PRESSED
+                                                    : SDL_RELEASED,
+                                 SDL_BUTTON_LEFT, 0, 0);
+        if (changed & 2)
+          SDL_PrivateMouseButton((last_buttons & 2) ? SDL_PRESSED
+                                                    : SDL_RELEASED,
+                                 SDL_BUTTON_MIDDLE, 0, 0);
+        if (changed & 1)
+          SDL_PrivateMouseButton((last_buttons & 1) ? SDL_PRESSED
+                                                    : SDL_RELEASED,
+                                 SDL_BUTTON_RIGHT, 0, 0);
+      }
     }
+  }
 }
 
-void RISCOS_PollKeyboard()
-{
-	int which_key = ROKEY_LEFT_SHIFT;
-	int j;
-	int min_key, max_key;
-	SDL_keysym key;
+void RISCOS_PollKeyboard() {
+  int which_key = ROKEY_LEFT_SHIFT;
+  int j;
+  int min_key, max_key;
+  SDL_keysym key;
 
-	/* Scan the keyboard to see what is pressed */
-	while (which_key <= ROKEY_LAST_KEY)
-	{
-		which_key = (_kernel_osbyte(121, which_key, 0) & 0xFF);
-	    if (which_key != ROKEY_NONE)
-	    {
-		    switch(which_key)
-		    {
-		    /* Skip over mouse keys */
-		    case ROKEY_LEFT_MOUSE:
-		    case ROKEY_CENTRE_MOUSE:
-		    case ROKEY_RIGHT_MOUSE:
-				which_key = ROKEY_RIGHT_MOUSE;
-				break;
+  /* Scan the keyboard to see what is pressed */
+  while (which_key <= ROKEY_LAST_KEY) {
+    which_key = (_kernel_osbyte(121, which_key, 0) & 0xFF);
+    if (which_key != ROKEY_NONE) {
+      switch (which_key) {
+      /* Skip over mouse keys */
+      case ROKEY_LEFT_MOUSE:
+      case ROKEY_CENTRE_MOUSE:
+      case ROKEY_RIGHT_MOUSE:
+        which_key = ROKEY_RIGHT_MOUSE;
+        break;
 
-            /* Ignore keys that cause 2 internal number to be generated */
-			case 71: case 24: case 87: case 40:
-			    break;
+        /* Ignore keys that cause 2 internal number to be generated */
+      case 71:
+      case 24:
+      case 87:
+      case 40:
+        break;
 
-            /* Ignore break as it can be latched on */
-            case 44:
-                break;
+      /* Ignore break as it can be latched on */
+      case 44:
+        break;
 
-			default:
-				RO_pressed[which_key] += 2;
-				break;
-		    }
-			which_key++;
-		}
-	}
+      default:
+        RO_pressed[which_key] += 2;
+        break;
+      }
+      which_key++;
+    }
+  }
 
-	/* Generate key released messages */
-	min_key = ROKEY_LAST_KEY+1;
-	max_key = ROKEY_LEFT_SHIFT;
+  /* Generate key released messages */
+  min_key = ROKEY_LAST_KEY + 1;
+  max_key = ROKEY_LEFT_SHIFT;
 
-	for (j = ROKEY_LEFT_SHIFT; j <= ROKEY_LAST_KEY; j++)
-	{
-		if (RO_pressed[j])
-		{
-			if (RO_pressed[j] == 1)
-			{
-				RO_pressed[j] = 0;
-				SDL_PrivateKeyboard(SDL_RELEASED, TranslateKey(j,&key,0));
-			} else 
-			{
-				if (j < min_key) min_key = j;
-				if (j > max_key) max_key = j;
-			}
-		}
-	}
+  for (j = ROKEY_LEFT_SHIFT; j <= ROKEY_LAST_KEY; j++) {
+    if (RO_pressed[j]) {
+      if (RO_pressed[j] == 1) {
+        RO_pressed[j] = 0;
+        SDL_PrivateKeyboard(SDL_RELEASED, TranslateKey(j, &key, 0));
+      } else {
+        if (j < min_key)
+          min_key = j;
+        if (j > max_key)
+          max_key = j;
+      }
+    }
+  }
 
-	/* Generate key pressed messages */
-	for (j = min_key; j <= max_key; j++)
-	{
-		if (RO_pressed[j])
-		{
-			if (RO_pressed[j] == 2)
-			{
-				SDL_PrivateKeyboard(SDL_PRESSED,TranslateKey(j,&key,1));
-			}
-			RO_pressed[j] = 1;
-		}
-	}
+  /* Generate key pressed messages */
+  for (j = min_key; j <= max_key; j++) {
+    if (RO_pressed[j]) {
+      if (RO_pressed[j] == 2) {
+        SDL_PrivateKeyboard(SDL_PRESSED, TranslateKey(j, &key, 1));
+      }
+      RO_pressed[j] = 1;
+    }
+  }
 }
 
-static SDL_keysym *TranslateKey(int intkey, SDL_keysym *keysym, int pressed)
-{
-	/* Set the keysym information */
-	keysym->scancode = (unsigned char) intkey;
-	keysym->sym = RO_keymap[intkey];
-	keysym->mod = KMOD_NONE;
-	keysym->unicode = 0;
-	if ( pressed && SDL_TranslateUNICODE )
-	{
-		int state;
-		int ch;
+static SDL_keysym *TranslateKey(int intkey, SDL_keysym *keysym, int pressed) {
+  /* Set the keysym information */
+  keysym->scancode = (unsigned char)intkey;
+  keysym->sym = RO_keymap[intkey];
+  keysym->mod = KMOD_NONE;
+  keysym->unicode = 0;
+  if (pressed && SDL_TranslateUNICODE) {
+    int state;
+    int ch;
 
-		state = (_kernel_osbyte(202, 0, 255) & 0xFF);
+    state = (_kernel_osbyte(202, 0, 255) & 0xFF);
 
-		/*TODO: Take into account other keyboard layouts */
+    /*TODO: Take into account other keyboard layouts */
 
-		ch = keysym->sym; /* This should handle most unshifted keys */
+    ch = keysym->sym; /* This should handle most unshifted keys */
 
-        if (intkey < 9 || ch == SDLK_UNKNOWN)
-        {
-           ch = 0;
+    if (intkey < 9 || ch == SDLK_UNKNOWN) {
+      ch = 0;
 
-        } else if (state & 64) /* Control on */
-		{
-			ch = ch & 31;
+    } else if (state & 64) /* Control on */
+    {
+      ch = ch & 31;
 
-		} else 
-		{
-			int topOfKey = 0;
-            if (state & 8) /* Shift on */
-			{
-				topOfKey = 1;
-			}
+    } else {
+      int topOfKey = 0;
+      if (state & 8) /* Shift on */
+      {
+        topOfKey = 1;
+      }
 
-			if ((state & 16) == 0) /* Caps lock is on */
-			{
-			   if (ch >= SDLK_a && ch <= SDLK_z)
-			   {
- 				  if ((state & 128) == 0) /* Shift Enable off */
-				  {
-				     /* All letter become upper case */
-				 	 topOfKey = 1;
-				  } else
-				  {
-				     /* Shift+Letters gives lower case */
-				     topOfKey = 1 - topOfKey;
-				  }
-		       }
-			}
+      if ((state & 16) == 0) /* Caps lock is on */
+      {
+        if (ch >= SDLK_a && ch <= SDLK_z) {
+          if ((state & 128) == 0) /* Shift Enable off */
+          {
+            /* All letter become upper case */
+            topOfKey = 1;
+          } else {
+            /* Shift+Letters gives lower case */
+            topOfKey = 1 - topOfKey;
+          }
+        }
+      }
 
-			if (topOfKey)
-			{
-				/* Key produced with shift held down */
+      if (topOfKey) {
+        /* Key produced with shift held down */
 
-				/* Letters just give upper case version */
-				if (ch >= SDLK_a && ch <= SDLK_z) ch = toupper(ch);
-				else
-				{
-					switch(ch)
-					{
-					case SDLK_HASH:   ch = '~'; break;
-					case SDLK_QUOTE:  ch = '@'; break;
-					case SDLK_COMMA:  ch = '<'; break;
-					case SDLK_MINUS:  ch = '_'; break;
-					case SDLK_PERIOD: ch = '>'; break;
-					case SDLK_SLASH:  ch = '?'; break;
+        /* Letters just give upper case version */
+        if (ch >= SDLK_a && ch <= SDLK_z)
+          ch = toupper(ch);
+        else {
+          switch (ch) {
+          case SDLK_HASH:
+            ch = '~';
+            break;
+          case SDLK_QUOTE:
+            ch = '@';
+            break;
+          case SDLK_COMMA:
+            ch = '<';
+            break;
+          case SDLK_MINUS:
+            ch = '_';
+            break;
+          case SDLK_PERIOD:
+            ch = '>';
+            break;
+          case SDLK_SLASH:
+            ch = '?';
+            break;
 
-					case SDLK_0: ch = ')'; break;
-					case SDLK_1: ch = '!'; break;
-					case SDLK_2: ch = '"'; break;
-					case SDLK_3: ch = '£'; break;
-					case SDLK_4: ch = '$'; break;
-					case SDLK_5: ch = '%'; break;
-					case SDLK_6: ch = '^'; break;
-					case SDLK_7: ch = '&'; break;
-					case SDLK_8: ch = '*'; break;
-					case SDLK_9: ch = '('; break;
+          case SDLK_0:
+            ch = ')';
+            break;
+          case SDLK_1:
+            ch = '!';
+            break;
+          case SDLK_2:
+            ch = '"';
+            break;
+          case SDLK_3:
+            ch = '£';
+            break;
+          case SDLK_4:
+            ch = '$';
+            break;
+          case SDLK_5:
+            ch = '%';
+            break;
+          case SDLK_6:
+            ch = '^';
+            break;
+          case SDLK_7:
+            ch = '&';
+            break;
+          case SDLK_8:
+            ch = '*';
+            break;
+          case SDLK_9:
+            ch = '(';
+            break;
 
-					case SDLK_SEMICOLON:    ch = ':'; break;
-					case SDLK_EQUALS:       ch = '+'; break;
-					case SDLK_LEFTBRACKET:  ch = '{'; break;
-					case SDLK_BACKSLASH:    ch = '|'; break;
-					case SDLK_RIGHTBRACKET: ch = '}'; break;
-					case SDLK_BACKQUOTE:    ch = '¬'; break;
+          case SDLK_SEMICOLON:
+            ch = ':';
+            break;
+          case SDLK_EQUALS:
+            ch = '+';
+            break;
+          case SDLK_LEFTBRACKET:
+            ch = '{';
+            break;
+          case SDLK_BACKSLASH:
+            ch = '|';
+            break;
+          case SDLK_RIGHTBRACKET:
+            ch = '}';
+            break;
+          case SDLK_BACKQUOTE:
+            ch = '¬';
+            break;
 
-					default:
-						ch = 0; /* Map to zero character if we don't understand it */
-						break;
-					}
-				}
+          default:
+            ch = 0; /* Map to zero character if we don't understand it */
+            break;
+          }
+        }
 
-			} else if (ch > 126)
-			{
-				/* SDL key code < 126 map directly onto their Unicode equivalents */
-				/* Keypad 0 to 9 maps to numeric equivalent */
-				if (ch >= SDLK_KP0 && ch <= SDLK_KP9) ch = ch - SDLK_KP0 + '0';
-				else
-				{
-					/* Following switch maps other keys that produce an Ascii value */
-					switch(ch)
-					{
-					case SDLK_KP_PERIOD:   ch = '.'; break;
-					case SDLK_KP_DIVIDE:   ch = '/'; break;
-					case SDLK_KP_MULTIPLY: ch = '*'; break;
-					case SDLK_KP_MINUS:    ch = '-'; break;
-					case SDLK_KP_PLUS:     ch = '+'; break;
-					case SDLK_KP_EQUALS:   ch = '='; break;
+      } else if (ch > 126) {
+        /* SDL key code < 126 map directly onto their Unicode equivalents */
+        /* Keypad 0 to 9 maps to numeric equivalent */
+        if (ch >= SDLK_KP0 && ch <= SDLK_KP9)
+          ch = ch - SDLK_KP0 + '0';
+        else {
+          /* Following switch maps other keys that produce an Ascii value */
+          switch (ch) {
+          case SDLK_KP_PERIOD:
+            ch = '.';
+            break;
+          case SDLK_KP_DIVIDE:
+            ch = '/';
+            break;
+          case SDLK_KP_MULTIPLY:
+            ch = '*';
+            break;
+          case SDLK_KP_MINUS:
+            ch = '-';
+            break;
+          case SDLK_KP_PLUS:
+            ch = '+';
+            break;
+          case SDLK_KP_EQUALS:
+            ch = '=';
+            break;
 
-					default:
-						/* If we don't know what it is set the Unicode to 0 */
-						ch = 0;
-						break;
-					}
-				}
-			}			
-		}
-				
-		keysym->unicode = ch;
-	}
-	return(keysym);
+          default:
+            /* If we don't know what it is set the Unicode to 0 */
+            ch = 0;
+            break;
+          }
+        }
+      }
+    }
+
+    keysym->unicode = ch;
+  }
+  return (keysym);
 }
 
 /* end of SDL_riscosevents.c ... */
-

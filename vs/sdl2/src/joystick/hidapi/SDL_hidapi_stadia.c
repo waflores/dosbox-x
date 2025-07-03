@@ -22,12 +22,12 @@
 
 #ifdef SDL_JOYSTICK_HIDAPI
 
-#include "SDL_events.h"
-#include "SDL_joystick.h"
-#include "SDL_gamecontroller.h"
 #include "../SDL_sysjoystick.h"
-#include "SDL_hidapijoystick_c.h"
+#include "SDL_events.h"
+#include "SDL_gamecontroller.h"
 #include "SDL_hidapi_rumble.h"
+#include "SDL_hidapijoystick_c.h"
+#include "SDL_joystick.h"
 
 #ifdef SDL_JOYSTICK_HIDAPI_STADIA
 
@@ -124,7 +124,6 @@ static int HIDAPI_DriverStadia_RumbleJoystick(SDL_HIDAPI_Device *device, SDL_Joy
 
     if (ctx->rumble_supported) {
         Uint8 rumble_packet[] = { 0x05, 0x00, 0x00, 0x00, 0x00 };
-
 
         rumble_packet[1] = (low_frequency_rumble & 0xFF);
         rumble_packet[2] = (low_frequency_rumble >> 8);

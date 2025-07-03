@@ -24,21 +24,21 @@
 #ifndef SDL_DirectFB_vulkan_h_
 #define SDL_DirectFB_vulkan_h_
 
-#include "../SDL_vulkan_internal.h"
 #include "../SDL_sysvideo.h"
+#include "../SDL_vulkan_internal.h"
 
 #if defined(SDL_VIDEO_VULKAN) && defined(SDL_VIDEO_DRIVER_DIRECTFB)
 
 int DirectFB_Vulkan_LoadLibrary(_THIS, const char *path);
 void DirectFB_Vulkan_UnloadLibrary(_THIS);
 SDL_bool DirectFB_Vulkan_GetInstanceExtensions(_THIS,
-                                          SDL_Window *window,
-                                          unsigned *count,
-                                          const char **names);
+                                               SDL_Window *window,
+                                               unsigned *count,
+                                               const char **names);
 SDL_bool DirectFB_Vulkan_CreateSurface(_THIS,
-                                  SDL_Window *window,
-                                  VkInstance instance,
-                                  VkSurfaceKHR *surface);
+                                       SDL_Window *window,
+                                       VkInstance instance,
+                                       VkSurfaceKHR *surface);
 
 #endif
 

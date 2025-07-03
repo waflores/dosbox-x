@@ -24,9 +24,9 @@
 
 /* Output audio to Android */
 
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_androidaudio.h"
+#include "SDL_audio.h"
 
 #include "../../core/android/SDL_android.h"
 
@@ -34,7 +34,6 @@
 
 static SDL_AudioDevice *audioDevice = NULL;
 static SDL_AudioDevice *captureDevice = NULL;
-
 
 static int ANDROIDAUDIO_OpenDevice(_THIS, const char *devname)
 {

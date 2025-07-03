@@ -16,47 +16,45 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
+#include "seriallog.h"
 #include "dosbox.h"
 #include "logging.h"
-#include "setup.h"
 #include "serialdummy.h"
 #include "serialport.h"
-#include "seriallog.h"
+#include "setup.h"
 
-CSerialLog::CSerialLog(Bitu id,	CommandLine* cmd):CSerial(id, cmd) {
-	CSerial::Init_Registers();
-	// DSR+CTS on to make sure the DOS COM device will not get stuck waiting for them
-	setRI(false);
-	setCD(false);
-	setDSR(true);
-	setCTS(true);
-	InstallationSuccessful=true;
+CSerialLog::CSerialLog(Bitu id, CommandLine *cmd) : CSerial(id, cmd) {
+  CSerial::Init_Registers();
+  // DSR+CTS on to make sure the DOS COM device will not get stuck waiting for
+  // them
+  setRI(false);
+  setCD(false);
+  setDSR(true);
+  setCTS(true);
+  InstallationSuccessful = true;
 }
 
 CSerialLog::~CSerialLog() {
-	// clear events
-	removeEvent(SERIAL_TX_EVENT);
+  // clear events
+  removeEvent(SERIAL_TX_EVENT);
 }
 
 void CSerialLog::log_emit() {
-	if (!log_line.empty()) {
-		LOG_MSG("CSerial Log: %s",log_line.c_str());
-		log_line.clear();
-	}
+  if (!log_line.empty()) {
+    LOG_MSG("CSerial Log: %s", log_line.c_str());
+    log_line.clear();
+  }
 }
 
 void CSerialLog::handleUpperEvent(uint16_t type) {
-	if(type==SERIAL_TX_EVENT) {
-	//LOG_MSG("SERIAL_TX_EVENT");
-		ByteTransmitted(); // tx timeout
-	}
-	else if(type==SERIAL_THR_EVENT){
-		//LOG_MSG("SERIAL_THR_EVENT");
-		ByteTransmitting();
-		setEvent(SERIAL_TX_EVENT,bytetime);
-	}
-
+  if (type == SERIAL_TX_EVENT) {
+    // LOG_MSG("SERIAL_TX_EVENT");
+    ByteTransmitted(); // tx timeout
+  } else if (type == SERIAL_THR_EVENT) {
+    // LOG_MSG("SERIAL_THR_EVENT");
+    ByteTransmitting();
+    setEvent(SERIAL_TX_EVENT, bytetime);
+  }
 }
 
 /*****************************************************************************/
@@ -64,24 +62,27 @@ void CSerialLog::handleUpperEvent(uint16_t type) {
 /* parameters baudrate, stopbits, number of databits, parity.               **/
 /*****************************************************************************/
 void CSerialLog::updatePortConfig(uint16_t divider, uint8_t lcr) {
-    (void)divider;//UNUSED
-    (void)lcr;//UNUSED
-	//LOG_MSG("Serial port at 0x%x: Port params changed: %d Baud", base,dcb.BaudRate);
+  (void)divider; // UNUSED
+  (void)lcr;     // UNUSED
+             // LOG_MSG("Serial port at 0x%x: Port params changed: %d Baud",
+             // base,dcb.BaudRate);
 }
 
-void CSerialLog::updateMSR() {
-}
+void CSerialLog::updateMSR() {}
 
 void CSerialLog::transmitByte(uint8_t val, bool first) {
-	if(first) setEvent(SERIAL_THR_EVENT, bytetime/10); 
-	else setEvent(SERIAL_TX_EVENT, bytetime);
+  if (first)
+    setEvent(SERIAL_THR_EVENT, bytetime / 10);
+  else
+    setEvent(SERIAL_TX_EVENT, bytetime);
 
-	if (val == '\n' || val == '\r')
-		log_emit();
-	else {
-		log_line += (char)val;
-		if (log_line.length() >= 256) log_emit();
-	}
+  if (val == '\n' || val == '\r')
+    log_emit();
+  else {
+    log_line += (char)val;
+    if (log_line.length() >= 256)
+      log_emit();
+  }
 }
 
 /*****************************************************************************/
@@ -89,24 +90,22 @@ void CSerialLog::transmitByte(uint8_t val, bool first) {
 /*****************************************************************************/
 
 void CSerialLog::setBreak(bool value) {
-    (void)value;//UNUSED
-	//LOG_MSG("UART 0x%x: Break toggled: %d", base, value);
+  (void)value; // UNUSED
+               // LOG_MSG("UART 0x%x: Break toggled: %d", base, value);
 }
 
 /*****************************************************************************/
 /* setRTSDTR sets the modem control lines                                   **/
 /*****************************************************************************/
 void CSerialLog::setRTSDTR(bool rts, bool dtr) {
-	setRTS(rts);
-	setDTR(dtr);
+  setRTS(rts);
+  setDTR(dtr);
 }
 
-void CSerialLog::setRTS(bool val) {
-	setCTS(val);
-}
+void CSerialLog::setRTS(bool val) { setCTS(val); }
 
 void CSerialLog::setDTR(bool val) {
-	setDSR(val);
-	setRI(val);
-	setCD(val);
+  setDSR(val);
+  setRI(val);
+  setCD(val);
 }

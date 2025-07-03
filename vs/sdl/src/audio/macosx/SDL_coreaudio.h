@@ -27,19 +27,19 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
 struct SDL_PrivateAudioData {
-	AudioComponentInstance outputAudioUnit;
-	void *buffer;
-	UInt32 bufferOffset;
-	UInt32 bufferSize;
+  AudioComponentInstance outputAudioUnit;
+  void *buffer;
+  UInt32 bufferOffset;
+  UInt32 bufferSize;
 };
 
 /* Old variable names */
-#define outputAudioUnit		(this->hidden->outputAudioUnit)
-#define buffer		(this->hidden->buffer)
-#define bufferOffset		(this->hidden->bufferOffset)
-#define bufferSize		(this->hidden->bufferSize)
+#define outputAudioUnit (this->hidden->outputAudioUnit)
+#define buffer (this->hidden->buffer)
+#define bufferOffset (this->hidden->bufferOffset)
+#define bufferSize (this->hidden->bufferSize)
 
 #endif /* _SDL_coreaudio_h */

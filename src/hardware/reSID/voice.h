@@ -20,17 +20,16 @@
 #ifndef __VOICE_H__
 #define __VOICE_H__
 
+#include "envelope.h"
 #include "siddefs.h"
 #include "wave.h"
-#include "envelope.h"
 
-class Voice
-{
+class Voice {
 public:
   Voice();
 
   void set_chip_model(chip_model model);
-  void set_sync_source(Voice*);
+  void set_sync_source(Voice *);
   void reset();
 
   void writeCONTROL_REG(reg8);
@@ -39,8 +38,8 @@ public:
   // Range [-2048*255, 2047*255].
   RESID_INLINE sound_sample output();
 
-	void SaveState( std::ostream& stream );
-	void LoadState( std::istream& stream );
+  void SaveState(std::ostream &stream);
+  void LoadState(std::istream &stream);
 
 protected:
   WaveformGenerator wave;
@@ -52,9 +51,8 @@ protected:
   // Multiplying D/A DC offset.
   sound_sample voice_DC;
 
-friend class SID2;
+  friend class SID2;
 };
-
 
 // ----------------------------------------------------------------------------
 // Inline functions.
@@ -69,10 +67,11 @@ friend class SID2;
 // Ideal range [-2048*255, 2047*255].
 // ----------------------------------------------------------------------------
 RESID_INLINE
-sound_sample Voice::output()
-{
+sound_sample Voice::output() {
   // Multiply oscillator output with envelope output.
-  return ((sound_sample)wave.output() - (sound_sample)wave_zero)*(sound_sample)envelope.output() + (sound_sample)voice_DC;
+  return ((sound_sample)wave.output() - (sound_sample)wave_zero) *
+             (sound_sample)envelope.output() +
+         (sound_sample)voice_DC;
 }
 
 #endif // RESID_INLINING || defined(__VOICE_CC__)

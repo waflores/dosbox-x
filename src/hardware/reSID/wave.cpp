@@ -23,8 +23,7 @@
 // ----------------------------------------------------------------------------
 // Constructor.
 // ----------------------------------------------------------------------------
-WaveformGenerator::WaveformGenerator()
-{
+WaveformGenerator::WaveformGenerator() {
   sync_source = this;
   sync_dest = NULL;
   waveform = 0;
@@ -34,29 +33,24 @@ WaveformGenerator::WaveformGenerator()
   reset();
 }
 
-
 // ----------------------------------------------------------------------------
 // Set sync source.
 // ----------------------------------------------------------------------------
-void WaveformGenerator::set_sync_source(WaveformGenerator* source)
-{
+void WaveformGenerator::set_sync_source(WaveformGenerator *source) {
   sync_source = source;
   source->sync_dest = this;
 }
 
-
 // ----------------------------------------------------------------------------
 // Set chip model.
 // ----------------------------------------------------------------------------
-void WaveformGenerator::set_chip_model(chip_model model)
-{
+void WaveformGenerator::set_chip_model(chip_model model) {
   if (model == MOS6581) {
     wave__ST = wave6581__ST;
     wave_P_T = wave6581_P_T;
     wave_PS_ = wave6581_PS_;
     wave_PST = wave6581_PST;
-  }
-  else {
+  } else {
     wave__ST = wave8580__ST;
     wave_P_T = wave8580_P_T;
     wave_PS_ = wave8580_PS_;
@@ -64,32 +58,26 @@ void WaveformGenerator::set_chip_model(chip_model model)
   }
 }
 
-
 // ----------------------------------------------------------------------------
 // Register functions.
 // ----------------------------------------------------------------------------
-void WaveformGenerator::writeFREQ_LO(reg8 freq_lo)
-{
+void WaveformGenerator::writeFREQ_LO(reg8 freq_lo) {
   freq = (freq & 0xff00) | (freq_lo & 0x00ff);
 }
 
-void WaveformGenerator::writeFREQ_HI(reg8 freq_hi)
-{
+void WaveformGenerator::writeFREQ_HI(reg8 freq_hi) {
   freq = ((freq_hi << 8) & 0xff00) | (freq & 0x00ff);
 }
 
-void WaveformGenerator::writePW_LO(reg8 pw_lo)
-{
+void WaveformGenerator::writePW_LO(reg8 pw_lo) {
   pw = (pw & 0xf00) | (pw_lo & 0x0ff);
 }
 
-void WaveformGenerator::writePW_HI(reg8 pw_hi)
-{
+void WaveformGenerator::writePW_HI(reg8 pw_hi) {
   pw = ((pw_hi << 8) & 0xf00) | (pw & 0x0ff);
 }
 
-void WaveformGenerator::writeCONTROL_REG(reg8 control)
-{
+void WaveformGenerator::writeCONTROL_REG(reg8 control) {
   waveform = (control >> 4) & 0x0f;
   ring_mod = control & 0x04;
   sync = control & 0x02;
@@ -123,16 +111,12 @@ void WaveformGenerator::writeCONTROL_REG(reg8 control)
   // The gate bit is handled by the EnvelopeGenerator.
 }
 
-reg8 WaveformGenerator::readOSC()
-{
-  return output() >> 4;
-}
+reg8 WaveformGenerator::readOSC() { return output() >> 4; }
 
 // ----------------------------------------------------------------------------
 // SID reset.
 // ----------------------------------------------------------------------------
-void WaveformGenerator::reset()
-{
+void WaveformGenerator::reset() {
   accumulator = 0;
   shift_register = 0x7ffff8;
   freq = 0;
@@ -144,4 +128,3 @@ void WaveformGenerator::reset()
 
   msb_rising = false;
 }
-

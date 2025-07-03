@@ -9,4 +9,3 @@ void boardx2_bind(void);
 #ifdef __cplusplus
 }
 #endif
-

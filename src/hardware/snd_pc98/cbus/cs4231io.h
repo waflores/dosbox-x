@@ -17,4 +17,3 @@ REG8 IOINPCALL cs4231io5_r8(UINT port);
 #ifdef __cplusplus
 }
 #endif
-

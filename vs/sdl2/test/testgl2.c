@@ -9,10 +9,10 @@
   including commercial applications, and to alter it and redistribute it
   freely.
 */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "SDL_test_common.h"
 
@@ -26,7 +26,7 @@
 
 typedef struct GL_Context
 {
-#define SDL_PROC(ret, func, params) ret (APIENTRY *func) params;
+#define SDL_PROC(ret, func, params) ret(APIENTRY *func) params;
 #include "../src/render/opengl/SDL_glfuncs.h"
 #undef SDL_PROC
 } GL_Context;

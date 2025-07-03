@@ -39,18 +39,18 @@ using namespace Windows::Phone::UI::Input;
 
 /* SDL includes */
 extern "C" {
-#include "SDL_events.h"
-#include "SDL_hints.h"
-#include "SDL_main.h"
-#include "SDL_stdinc.h"
-#include "SDL_render.h"
-#include "../../video/SDL_sysvideo.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_windowevents_c.h"
 #include "../../render/SDL_sysrender.h"
+#include "../../video/SDL_sysvideo.h"
 #include "../windows/SDL_windows.h"
+#include "SDL_events.h"
+#include "SDL_hints.h"
+#include "SDL_main.h"
+#include "SDL_render.h"
+#include "SDL_stdinc.h"
 }
 
 #include "../../video/winrt/SDL_winrtevents_c.h"

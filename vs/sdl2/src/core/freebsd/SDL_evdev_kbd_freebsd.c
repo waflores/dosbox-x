@@ -28,11 +28,11 @@
 
 /* This logic is adapted from drivers/tty/vt/keyboard.c in the Linux kernel source, slightly modified to work with FreeBSD */
 
-#include <unistd.h>
 #include <fcntl.h>
+#include <sys/consio.h>
 #include <sys/ioctl.h>
 #include <sys/kbio.h>
-#include <sys/consio.h>
+#include <unistd.h>
 
 #include <signal.h>
 
@@ -325,7 +325,7 @@ void SDL_EVDEV_kbd_set_muted(SDL_EVDEV_keyboard_state *state, SDL_bool muted)
 {
 }
 
-void SDL_EVDEV_kbd_set_vt_switch_callbacks(SDL_EVDEV_keyboard_state *state, void (*release_callback)(void*), void *release_callback_data, void (*acquire_callback)(void*), void *acquire_callback_data)
+void SDL_EVDEV_kbd_set_vt_switch_callbacks(SDL_EVDEV_keyboard_state *state, void (*release_callback)(void *), void *release_callback_data, void (*acquire_callback)(void *), void *acquire_callback_data)
 {
 }
 

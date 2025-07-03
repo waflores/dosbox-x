@@ -1,8 +1,8 @@
 // Copyright 2016 Adrien Descamps
 // Distributed under BSD 3-Clause License
 
-#define PRECISION 6
-#define PRECISION_FACTOR (1<<PRECISION)
+#define PRECISION        6
+#define PRECISION_FACTOR (1 << PRECISION)
 
 typedef struct
 {
@@ -31,7 +31,7 @@ typedef struct
 #pragma warning(disable : 26451)
 #endif
 
-#define V(value) (int16_t)((value*PRECISION_FACTOR)+0.5)
+#define V(value) (int16_t)((value * PRECISION_FACTOR) + 0.5)
 
 // for ITU-T T.871, values can be found in section 7
 // for ITU-R BT.601-7 values are derived from equations in sections 2.5.1-2.5.3, assuming RGB is encoded using full range ([0-1]<->[0-255])
@@ -40,20 +40,20 @@ typedef struct
 
 static const YUV2RGBParam YUV2RGB[3] = {
     // ITU-T T.871 (JPEG)
-    {/*.y_shift=*/ 0, /*.y_factor=*/ V(1.0), /*.v_r_factor=*/ V(1.402), /*.u_g_factor=*/ -V(0.3441), /*.v_g_factor=*/ -V(0.7141), /*.u_b_factor=*/ V(1.772)},
+    { /*.y_shift=*/0, /*.y_factor=*/V(1.0), /*.v_r_factor=*/V(1.402), /*.u_g_factor=*/-V(0.3441), /*.v_g_factor=*/-V(0.7141), /*.u_b_factor=*/V(1.772) },
     // ITU-R BT.601-7
-    {/*.y_shift=*/ 16, /*.y_factor=*/ V(1.1644), /*.v_r_factor=*/ V(1.596), /*.u_g_factor=*/ -V(0.3918), /*.v_g_factor=*/ -V(0.813), /*.u_b_factor=*/ V(2.0172)},
+    { /*.y_shift=*/16, /*.y_factor=*/V(1.1644), /*.v_r_factor=*/V(1.596), /*.u_g_factor=*/-V(0.3918), /*.v_g_factor=*/-V(0.813), /*.u_b_factor=*/V(2.0172) },
     // ITU-R BT.709-6
-    {/*.y_shift=*/ 16, /*.y_factor=*/ V(1.1644), /*.v_r_factor=*/ V(1.7927), /*.u_g_factor=*/ -V(0.2132), /*.v_g_factor=*/ -V(0.5329), /*.u_b_factor=*/ V(2.1124)}
+    { /*.y_shift=*/16, /*.y_factor=*/V(1.1644), /*.v_r_factor=*/V(1.7927), /*.u_g_factor=*/-V(0.2132), /*.v_g_factor=*/-V(0.5329), /*.u_b_factor=*/V(2.1124) }
 };
 
 static const RGB2YUVParam RGB2YUV[3] = {
     // ITU-T T.871 (JPEG)
-    {/*.y_shift=*/ 0, /*.matrix=*/ {{V(0.299), V(0.587), V(0.114)}, {-V(0.1687), -V(0.3313), V(0.5)}, {V(0.5), -V(0.4187), -V(0.0813)}}},
+    { /*.y_shift=*/0, /*.matrix=*/{ { V(0.299), V(0.587), V(0.114) }, { -V(0.1687), -V(0.3313), V(0.5) }, { V(0.5), -V(0.4187), -V(0.0813) } } },
     // ITU-R BT.601-7
-    {/*.y_shift=*/ 16, /*.matrix=*/ {{V(0.2568), V(0.5041), V(0.0979)}, {-V(0.1482), -V(0.291), V(0.4392)}, {V(0.4392), -V(0.3678), -V(0.0714)}}},
+    { /*.y_shift=*/16, /*.matrix=*/{ { V(0.2568), V(0.5041), V(0.0979) }, { -V(0.1482), -V(0.291), V(0.4392) }, { V(0.4392), -V(0.3678), -V(0.0714) } } },
     // ITU-R BT.709-6
-    {/*.y_shift=*/ 16, /*.matrix=*/ {{V(0.1826), V(0.6142), V(0.062)}, {-V(0.1006), -V(0.3386), V(0.4392)}, {V(0.4392), -V(0.3989), -V(0.0403)}}}
+    { /*.y_shift=*/16, /*.matrix=*/{ { V(0.1826), V(0.6142), V(0.062) }, { -V(0.1006), -V(0.3386), V(0.4392) }, { V(0.4392), -V(0.3989), -V(0.0403) } } }
 };
 
 #ifdef _MSC_VER
@@ -61,14 +61,14 @@ static const RGB2YUVParam RGB2YUV[3] = {
 #endif
 
 /* The various layouts of YUV data we support */
-#define YUV_FORMAT_420	1
-#define YUV_FORMAT_422	2
-#define YUV_FORMAT_NV12	3
+#define YUV_FORMAT_420  1
+#define YUV_FORMAT_422  2
+#define YUV_FORMAT_NV12 3
 
 /* The various formats of RGB pixel that we support */
-#define RGB_FORMAT_RGB565	1
-#define RGB_FORMAT_RGB24	2
-#define RGB_FORMAT_RGBA		3
-#define RGB_FORMAT_BGRA		4
-#define RGB_FORMAT_ARGB		5
-#define RGB_FORMAT_ABGR		6
+#define RGB_FORMAT_RGB565 1
+#define RGB_FORMAT_RGB24  2
+#define RGB_FORMAT_RGBA   3
+#define RGB_FORMAT_BGRA   4
+#define RGB_FORMAT_ARGB   5
+#define RGB_FORMAT_ABGR   6

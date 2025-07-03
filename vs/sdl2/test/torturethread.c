@@ -12,9 +12,9 @@
 
 /* Simple test of the SDL threading code */
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include <string.h>
 
 #include "SDL.h"

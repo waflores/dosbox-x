@@ -50,10 +50,10 @@
 /* Non-standard function for iconv to unload the used dynamic library */
 void libiconv_clean(void);
 
-iconv_t libiconv_open (const char *tocode, const char *fromcode);
-int     libiconv_close(iconv_t cd);
-size_t  libiconv      (iconv_t cd, char **inbuf, size_t *inbytesleft,
-                       char **outbuf, size_t *outbytesleft);
+iconv_t libiconv_open(const char *tocode, const char *fromcode);
+int libiconv_close(iconv_t cd);
+size_t libiconv(iconv_t cd, char **inbuf, size_t *inbytesleft,
+                char **outbuf, size_t *outbytesleft);
 
 /* System codepage <-> UTF-8
  *

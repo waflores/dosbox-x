@@ -34,7 +34,7 @@ typedef struct
 } Dimensions;
 
 SDL_FORCE_INLINE void CopyFramebuffertoN3DS_16(u16 *dest, const Dimensions dest_dim, const u16 *source, const Dimensions source_dim);
-SDL_FORCE_INLINE void CopyFramebuffertoN3DS_24(u8  *dest, const Dimensions dest_dim, const u8  *source, const Dimensions source_dim);
+SDL_FORCE_INLINE void CopyFramebuffertoN3DS_24(u8 *dest, const Dimensions dest_dim, const u8 *source, const Dimensions source_dim);
 SDL_FORCE_INLINE void CopyFramebuffertoN3DS_32(u32 *dest, const Dimensions dest_dim, const u32 *source, const Dimensions source_dim);
 SDL_FORCE_INLINE int GetDestOffset(int x, int y, int dest_width);
 SDL_FORCE_INLINE int GetSourceOffset(int x, int y, int source_width);

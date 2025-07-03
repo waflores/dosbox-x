@@ -23,10 +23,10 @@
 #ifndef SDL_windowshaptic_c_h_
 #define SDL_windowshaptic_c_h_
 
-#include "SDL_thread.h"
-#include "../SDL_syshaptic.h"
 #include "../../core/windows/SDL_directx.h"
 #include "../../core/windows/SDL_xinput.h"
+#include "../SDL_syshaptic.h"
+#include "SDL_thread.h"
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus

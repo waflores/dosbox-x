@@ -32,12 +32,12 @@
 /** This connection exists and it goes nowhere
  */
 class NothingEthernetConnection : public EthernetConnection {
-	public:
-		NothingEthernetConnection();
-		~NothingEthernetConnection();
-		bool Initialize(Section* config) override;
-		void SendPacket(const uint8_t* packet, int len) override;
-		void GetPackets(std::function<void(const uint8_t*, int)> callback) override;
+public:
+  NothingEthernetConnection();
+  ~NothingEthernetConnection();
+  bool Initialize(Section *config) override;
+  void SendPacket(const uint8_t *packet, int len) override;
+  void GetPackets(std::function<void(const uint8_t *, int)> callback) override;
 };
 
 #endif

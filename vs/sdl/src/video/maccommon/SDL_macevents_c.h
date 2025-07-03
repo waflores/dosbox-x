@@ -24,7 +24,7 @@
 #include "../macrom/SDL_romvideo.h"
 
 /* Functions exported by SDL_macevents.c for the video subsystem
-*/
+ */
 extern void Mac_InitEvents(_THIS);
 extern void Mac_QuitEvents(_THIS);
 

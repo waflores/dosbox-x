@@ -22,11 +22,11 @@
 
 /* General keyboard handling code for SDL */
 
-#include "SDL_hints.h"
-#include "SDL_timer.h"
+#include "../video/SDL_sysvideo.h"
 #include "SDL_events.h"
 #include "SDL_events_c.h"
-#include "../video/SDL_sysvideo.h"
+#include "SDL_hints.h"
+#include "SDL_timer.h"
 #include "scancodes_ascii.h"
 
 /* #define DEBUG_KEYBOARD */

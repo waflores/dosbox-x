@@ -23,9 +23,9 @@
 #ifndef SDL_sysrender_h_
 #define SDL_sysrender_h_
 
-#include "SDL_render.h"
 #include "SDL_events.h"
 #include "SDL_mutex.h"
+#include "SDL_render.h"
 #include "SDL_yuv_sw_c.h"
 
 /* Set up for C function definitions, even when using C++ */
@@ -282,7 +282,7 @@ struct SDL_Renderer
     size_t vertex_data_used;
     size_t vertex_data_allocation;
 
-    SDL_bool destroyed;   /* already destroyed by SDL_DestroyWindow; just free this struct in SDL_DestroyRenderer. */
+    SDL_bool destroyed; /* already destroyed by SDL_DestroyWindow; just free this struct in SDL_DestroyRenderer. */
 
     void *driverdata;
 };

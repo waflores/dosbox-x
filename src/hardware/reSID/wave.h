@@ -31,12 +31,11 @@
 // The noise waveform is taken from intermediate bits of a 23 bit shift
 // register. This register is clocked by bit 19 of the accumulator.
 // ----------------------------------------------------------------------------
-class WaveformGenerator
-{
+class WaveformGenerator {
 public:
   WaveformGenerator();
 
-  void set_sync_source(WaveformGenerator*);
+  void set_sync_source(WaveformGenerator *);
   void set_chip_model(chip_model model);
 
   RESID_INLINE void clock();
@@ -54,12 +53,12 @@ public:
   // 12-bit waveform output.
   RESID_INLINE reg12 output();
 
-	void SaveState( std::ostream& stream );
-	void LoadState( std::istream& stream );
+  void SaveState(std::ostream &stream);
+  void LoadState(std::istream &stream);
 
 protected:
-  const WaveformGenerator* sync_source;
-  WaveformGenerator* sync_dest;
+  const WaveformGenerator *sync_source;
+  WaveformGenerator *sync_dest;
 
   // Tell whether the accumulator MSB was set high on this cycle.
   bool msb_rising;
@@ -111,15 +110,14 @@ protected:
   static reg8 wave8580_PS_[];
   static reg8 wave8580_PST[];
 
-  reg8* wave__ST;
-  reg8* wave_P_T;
-  reg8* wave_PS_;
-  reg8* wave_PST;
+  reg8 *wave__ST;
+  reg8 *wave_P_T;
+  reg8 *wave_PS_;
+  reg8 *wave_PST;
 
-friend class Voice;
-friend class SID2;
+  friend class Voice;
+  friend class SID2;
 };
-
 
 // ----------------------------------------------------------------------------
 // Inline functions.
@@ -133,8 +131,7 @@ friend class SID2;
 // SID clocking - 1 cycle.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void WaveformGenerator::clock()
-{
+void WaveformGenerator::clock() {
   // No operation if test bit is set.
   if (test) {
     return;
@@ -162,8 +159,7 @@ void WaveformGenerator::clock()
 // SID clocking - delta_t cycles.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void WaveformGenerator::clock(cycle_count delta_t)
-{
+void WaveformGenerator::clock(cycle_count delta_t) {
   // No operation if test bit is set.
   if (test) {
     return;
@@ -189,18 +185,17 @@ void WaveformGenerator::clock(cycle_count delta_t)
       // Determine whether bit 19 is set on the last period.
       // NB! Requires two's complement integer.
       if (shift_period <= 0x080000) {
-	// Check for flip from 0 to 1.
-	if (((accumulator - shift_period) & 0x080000) || !(accumulator & 0x080000))
-	{
-	  break;
-	}
-      }
-      else {
-	// Check for flip from 0 (to 1 or via 1 to 0) or from 1 via 0 to 1.
-	if (((accumulator - shift_period) & 0x080000) && !(accumulator & 0x080000))
-	{
-	  break;
-	}
+        // Check for flip from 0 to 1.
+        if (((accumulator - shift_period) & 0x080000) ||
+            !(accumulator & 0x080000)) {
+          break;
+        }
+      } else {
+        // Check for flip from 0 (to 1 or via 1 to 0) or from 1 via 0 to 1.
+        if (((accumulator - shift_period) & 0x080000) &&
+            !(accumulator & 0x080000)) {
+          break;
+        }
       }
     }
 
@@ -215,7 +210,6 @@ void WaveformGenerator::clock(cycle_count delta_t)
   }
 }
 
-
 // ----------------------------------------------------------------------------
 // Synchronize oscillators.
 // This must be done after all the oscillators have been clock()'ed since the
@@ -224,8 +218,7 @@ void WaveformGenerator::clock(cycle_count delta_t)
 // MSB is set high for hard sync to operate correctly. See SID2::clock().
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void WaveformGenerator::synchronize()
-{
+void WaveformGenerator::synchronize() {
   // A special case occurs when a sync source is synced itself on the same
   // cycle as when its MSB is set high. In this case the destination will
   // not be synced. This has been verified by sampling OSC3.
@@ -233,7 +226,6 @@ void WaveformGenerator::synchronize()
     sync_dest->accumulator = 0;
   }
 }
-
 
 // ----------------------------------------------------------------------------
 // Output functions.
@@ -245,10 +237,7 @@ void WaveformGenerator::synchronize()
 // Zero output.
 //
 RESID_INLINE
-reg12 WaveformGenerator::output____()
-{
-  return 0x000;
-}
+reg12 WaveformGenerator::output____() { return 0x000; }
 
 // Triangle:
 // The upper 12 bits of the accumulator are used.
@@ -258,10 +247,10 @@ reg12 WaveformGenerator::output____()
 // Ring modulation substitutes the MSB with MSB EOR sync_source MSB.
 //
 RESID_INLINE
-reg12 WaveformGenerator::output___T()
-{
-  reg24 msb = (ring_mod ? accumulator ^ sync_source->accumulator : accumulator)
-    & 0x800000;
+reg12 WaveformGenerator::output___T() {
+  reg24 msb =
+      (ring_mod ? accumulator ^ sync_source->accumulator : accumulator) &
+      0x800000;
   return ((msb ? ~accumulator : accumulator) >> 11) & 0xfff;
 }
 
@@ -269,10 +258,7 @@ reg12 WaveformGenerator::output___T()
 // The output is identical to the upper 12 bits of the accumulator.
 //
 RESID_INLINE
-reg12 WaveformGenerator::output__S_()
-{
-  return accumulator >> 12;
-}
+reg12 WaveformGenerator::output__S_() { return accumulator >> 12; }
 
 // Pulse:
 // The upper 12 bits of the accumulator are used.
@@ -285,8 +271,7 @@ reg12 WaveformGenerator::output__S_()
 // regardless of the pulse width setting.
 //
 RESID_INLINE
-reg12 WaveformGenerator::output_P__()
-{
+reg12 WaveformGenerator::output_P__() {
   return (test || (accumulator >> 12) >= pw) ? 0xfff : 0x000;
 }
 
@@ -310,17 +295,15 @@ reg12 WaveformGenerator::output_P__()
 // Since waveform output is 12 bits the output is left-shifted 4 times.
 //
 RESID_INLINE
-reg12 WaveformGenerator::outputN___()
-{
-  return
-    ((shift_register & 0x400000) >> 11) |
-    ((shift_register & 0x100000) >> 10) |
-    ((shift_register & 0x010000) >> 7) |
-    ((shift_register & 0x002000) >> 5) |
-    ((shift_register & 0x000800) >> 4) |
-    ((shift_register & 0x000080) >> 1) |
-    ((shift_register & 0x000010) << 1) |
-    ((shift_register & 0x000004) << 2);
+reg12 WaveformGenerator::outputN___() {
+  return ((shift_register & 0x400000) >> 11) |
+         ((shift_register & 0x100000) >> 10) |
+         ((shift_register & 0x010000) >> 7) |
+         ((shift_register & 0x002000) >> 5) |
+         ((shift_register & 0x000800) >> 4) |
+         ((shift_register & 0x000080) >> 1) |
+         ((shift_register & 0x000010) << 1) |
+         ((shift_register & 0x000004) << 2);
 }
 
 // Combined waveforms:
@@ -331,7 +314,7 @@ reg12 WaveformGenerator::outputN___()
 // in the output. The reason for this has not been determined.
 //
 // Example:
-// 
+//
 //             1 1
 // Bit #       1 0 9 8 7 6 5 4 3 2 1 0
 //             -----------------------
@@ -365,14 +348,14 @@ reg12 WaveformGenerator::outputN___()
 //
 // Sawtooth+Triangle:
 // The sawtooth output is used to look up an OSC3 sample.
-// 
+//
 // Pulse+Triangle:
 // The triangle output is right-shifted and used to look up an OSC3 sample.
 // The sample is output if the pulse output is on.
 // The reason for using the triangle output as the index is to handle ring
 // modulation. Only the first half of the sample is used, which should be OK
 // since the triangle waveform has half the resolution of the accumulator.
-// 
+//
 // Pulse+Sawtooth:
 // The sawtooth output is used to look up an OSC3 sample.
 // The sample is output if the pulse output is on.
@@ -380,28 +363,22 @@ reg12 WaveformGenerator::outputN___()
 // Pulse+Sawtooth+Triangle:
 // The sawtooth output is used to look up an OSC3 sample.
 // The sample is output if the pulse output is on.
-// 
+//
 RESID_INLINE
-reg12 WaveformGenerator::output__ST()
-{
-  return wave__ST[output__S_()] << 4;
-}
+reg12 WaveformGenerator::output__ST() { return wave__ST[output__S_()] << 4; }
 
 RESID_INLINE
-reg12 WaveformGenerator::output_P_T()
-{
+reg12 WaveformGenerator::output_P_T() {
   return (wave_P_T[output___T() >> 1] << 4) & output_P__();
 }
 
 RESID_INLINE
-reg12 WaveformGenerator::output_PS_()
-{
+reg12 WaveformGenerator::output_PS_() {
   return (wave_PS_[output__S_()] << 4) & output_P__();
 }
 
 RESID_INLINE
-reg12 WaveformGenerator::output_PST()
-{
+reg12 WaveformGenerator::output_PST() {
   return (wave_PST[output__S_()] << 4) & output_P__();
 }
 
@@ -415,53 +392,31 @@ reg12 WaveformGenerator::output_PST()
 // noise. We hope that nobody is actually using it.
 //
 RESID_INLINE
-reg12 WaveformGenerator::outputN__T()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputN__T() { return 0; }
 
 RESID_INLINE
-reg12 WaveformGenerator::outputN_S_()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputN_S_() { return 0; }
 
 RESID_INLINE
-reg12 WaveformGenerator::outputN_ST()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputN_ST() { return 0; }
 
 RESID_INLINE
-reg12 WaveformGenerator::outputNP__()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputNP__() { return 0; }
 
 RESID_INLINE
-reg12 WaveformGenerator::outputNP_T()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputNP_T() { return 0; }
 
 RESID_INLINE
-reg12 WaveformGenerator::outputNPS_()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputNPS_() { return 0; }
 
 RESID_INLINE
-reg12 WaveformGenerator::outputNPST()
-{
-  return 0;
-}
+reg12 WaveformGenerator::outputNPST() { return 0; }
 
 // ----------------------------------------------------------------------------
 // Select one of 16 possible combinations of waveforms.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-reg12 WaveformGenerator::output()
-{
+reg12 WaveformGenerator::output() {
   // It may seem cleaner to use an array of member functions to return
   // waveform output; however a switch with inline functions is faster.
 

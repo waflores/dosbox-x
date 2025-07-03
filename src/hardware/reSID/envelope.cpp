@@ -24,16 +24,12 @@
 // ----------------------------------------------------------------------------
 // Constructor.
 // ----------------------------------------------------------------------------
-EnvelopeGenerator::EnvelopeGenerator()
-{
-  reset();
-}
+EnvelopeGenerator::EnvelopeGenerator() { reset(); }
 
 // ----------------------------------------------------------------------------
 // SID reset.
 // ----------------------------------------------------------------------------
-void EnvelopeGenerator::reset()
-{
+void EnvelopeGenerator::reset() {
   envelope_counter = 0;
 
   attack = 0;
@@ -52,11 +48,10 @@ void EnvelopeGenerator::reset()
   hold_zero = true;
 }
 
-
 // Rate counter periods are calculated from the Envelope Rates table in
 // the Programmer's Reference Guide. The rate counter period is the number of
 // cycles between each increment of the envelope counter.
-// The rates have been verified by sampling ENV3. 
+// The rates have been verified by sampling ENV3.
 //
 // The rate counter is a 16 bit register which is incremented each cycle.
 // When the counter reaches a specific comparison value, the envelope counter
@@ -98,24 +93,23 @@ void EnvelopeGenerator::reset()
 // periods.
 //
 reg16 EnvelopeGenerator::rate_counter_period[] = {
-      9,  //   2ms*1.0MHz/256 =     7.81
-     32,  //   8ms*1.0MHz/256 =    31.25
-     63,  //  16ms*1.0MHz/256 =    62.50
-     95,  //  24ms*1.0MHz/256 =    93.75
-    149,  //  38ms*1.0MHz/256 =   148.44
-    220,  //  56ms*1.0MHz/256 =   218.75
-    267,  //  68ms*1.0MHz/256 =   265.63
-    313,  //  80ms*1.0MHz/256 =   312.50
-    392,  // 100ms*1.0MHz/256 =   390.63
-    977,  // 250ms*1.0MHz/256 =   976.56
-   1954,  // 500ms*1.0MHz/256 =  1953.13
-   3126,  // 800ms*1.0MHz/256 =  3125.00
-   3907,  //   1 s*1.0MHz/256 =  3906.25
-  11720,  //   3 s*1.0MHz/256 = 11718.75
-  19532,  //   5 s*1.0MHz/256 = 19531.25
-  31251   //   8 s*1.0MHz/256 = 31250.00
+    9,     //   2ms*1.0MHz/256 =     7.81
+    32,    //   8ms*1.0MHz/256 =    31.25
+    63,    //  16ms*1.0MHz/256 =    62.50
+    95,    //  24ms*1.0MHz/256 =    93.75
+    149,   //  38ms*1.0MHz/256 =   148.44
+    220,   //  56ms*1.0MHz/256 =   218.75
+    267,   //  68ms*1.0MHz/256 =   265.63
+    313,   //  80ms*1.0MHz/256 =   312.50
+    392,   // 100ms*1.0MHz/256 =   390.63
+    977,   // 250ms*1.0MHz/256 =   976.56
+    1954,  // 500ms*1.0MHz/256 =  1953.13
+    3126,  // 800ms*1.0MHz/256 =  3125.00
+    3907,  //   1 s*1.0MHz/256 =  3906.25
+    11720, //   3 s*1.0MHz/256 = 11718.75
+    19532, //   5 s*1.0MHz/256 = 19531.25
+    31251  //   8 s*1.0MHz/256 = 31250.00
 };
-
 
 // For decay and release, the clock to the envelope counter is sequentially
 // divided by 1, 2, 4, 8, 16, 30, 1 to create a piece-wise linear approximation
@@ -149,36 +143,19 @@ reg16 EnvelopeGenerator::rate_counter_period[] = {
 // complete envelopes.
 // NB! This one cycle delay is not modeled.
 
-
 // From the sustain levels it follows that both the low and high 4 bits of the
 // envelope counter are compared to the 4-bit sustain value.
 // This has been verified by sampling ENV3.
 //
 reg8 EnvelopeGenerator::sustain_level[] = {
-  0x00,
-  0x11,
-  0x22,
-  0x33,
-  0x44,
-  0x55,
-  0x66,
-  0x77,
-  0x88,
-  0x99,
-  0xaa,
-  0xbb,
-  0xcc,
-  0xdd,
-  0xee,
-  0xff,
+    0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+    0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff,
 };
-
 
 // ----------------------------------------------------------------------------
 // Register functions.
 // ----------------------------------------------------------------------------
-void EnvelopeGenerator::writeCONTROL_REG(reg8 control)
-{
+void EnvelopeGenerator::writeCONTROL_REG(reg8 control) {
   reg8 gate_next = control & 0x01;
 
   // The rate counter is never reset, thus there will be a delay before the
@@ -201,20 +178,17 @@ void EnvelopeGenerator::writeCONTROL_REG(reg8 control)
   gate = gate_next;
 }
 
-void EnvelopeGenerator::writeATTACK_DECAY(reg8 attack_decay)
-{
+void EnvelopeGenerator::writeATTACK_DECAY(reg8 attack_decay) {
   attack = (attack_decay >> 4) & 0x0f;
   decay = attack_decay & 0x0f;
   if (state == ATTACK) {
     rate_period = rate_counter_period[attack];
-  }
-  else if (state == DECAY_SUSTAIN) {
+  } else if (state == DECAY_SUSTAIN) {
     rate_period = rate_counter_period[decay];
   }
 }
 
-void EnvelopeGenerator::writeSUSTAIN_RELEASE(reg8 sustain_release)
-{
+void EnvelopeGenerator::writeSUSTAIN_RELEASE(reg8 sustain_release) {
   sustain = (sustain_release >> 4) & 0x0f;
   release = sustain_release & 0x0f;
   if (state == RELEASE) {
@@ -222,8 +196,4 @@ void EnvelopeGenerator::writeSUSTAIN_RELEASE(reg8 sustain_release)
   }
 }
 
-reg8 EnvelopeGenerator::readENV()
-{
-  return output();
-}
-
+reg8 EnvelopeGenerator::readENV() { return output(); }

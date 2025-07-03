@@ -113,7 +113,6 @@ typedef struct SDL_hid_device_info
     struct SDL_hid_device_info *next;
 } SDL_hid_device_info;
 
-
 /**
  * Initialize the HIDAPI library.
  *
@@ -188,7 +187,7 @@ extern DECLSPEC Uint32 SDLCALL SDL_hid_device_change_count(void);
  *
  * \sa SDL_hid_device_change_count
  */
-extern DECLSPEC SDL_hid_device_info * SDLCALL SDL_hid_enumerate(unsigned short vendor_id, unsigned short product_id);
+extern DECLSPEC SDL_hid_device_info *SDLCALL SDL_hid_enumerate(unsigned short vendor_id, unsigned short product_id);
 
 /**
  * Free an enumeration Linked List
@@ -218,7 +217,7 @@ extern DECLSPEC void SDLCALL SDL_hid_free_enumeration(SDL_hid_device_info *devs)
  *
  * \since This function is available since SDL 2.0.18.
  */
-extern DECLSPEC SDL_hid_device * SDLCALL SDL_hid_open(unsigned short vendor_id, unsigned short product_id, const wchar_t *serial_number);
+extern DECLSPEC SDL_hid_device *SDLCALL SDL_hid_open(unsigned short vendor_id, unsigned short product_id, const wchar_t *serial_number);
 
 /**
  * Open a HID device by its path name.
@@ -232,7 +231,7 @@ extern DECLSPEC SDL_hid_device * SDLCALL SDL_hid_open(unsigned short vendor_id, 
  *
  * \since This function is available since SDL 2.0.18.
  */
-extern DECLSPEC SDL_hid_device * SDLCALL SDL_hid_open_path(const char *path, int bExclusive);
+extern DECLSPEC SDL_hid_device *SDLCALL SDL_hid_open_path(const char *path, int bExclusive);
 
 /**
  * Write an Output report to a HID device.

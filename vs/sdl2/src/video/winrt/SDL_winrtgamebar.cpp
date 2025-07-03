@@ -29,8 +29,8 @@
 
 /* SDL includes */
 extern "C" {
-#include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 }
 #include "SDL_winrtvideo_cpp.h"
 

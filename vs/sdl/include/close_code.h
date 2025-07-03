@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -32,15 +33,15 @@
  *  @file close_code.h
  *  Reset structure packing at previous byte alignment
  */
-#if defined(_MSC_VER) || defined(__MWERKS__) || defined(__WATCOMC__)  || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(__MWERKS__) || defined(__WATCOMC__) ||        \
+    defined(__BORLANDC__)
 #ifdef __BORLANDC__
 #pragma nopackwarning
 #endif
 #if (defined(__MWERKS__) && defined(__MACOS__))
-#pragma options align=reset
+#pragma options align = reset
 #pragma enumsalwaysint reset
 #else
 #pragma pack(pop)
 #endif
 #endif /* Compiler needs structure packing set */
-

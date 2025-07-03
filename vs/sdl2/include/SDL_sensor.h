@@ -28,8 +28,8 @@
 #ifndef SDL_sensor_h_
 #define SDL_sensor_h_
 
-#include "SDL_stdinc.h"
 #include "SDL_error.h"
+#include "SDL_stdinc.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -113,14 +113,14 @@ typedef Sint32 SDL_SensorID;
  */
 typedef enum SDL_SensorType
 {
-    SDL_SENSOR_INVALID = -1,    /**< Returned for an invalid sensor */
-    SDL_SENSOR_UNKNOWN,         /**< Unknown sensor type */
-    SDL_SENSOR_ACCEL,           /**< Accelerometer */
-    SDL_SENSOR_GYRO,            /**< Gyroscope */
-    SDL_SENSOR_ACCEL_L,         /**< Accelerometer for left Joy-Con controller and Wii nunchuk */
-    SDL_SENSOR_GYRO_L,          /**< Gyroscope for left Joy-Con controller */
-    SDL_SENSOR_ACCEL_R,         /**< Accelerometer for right Joy-Con controller */
-    SDL_SENSOR_GYRO_R           /**< Gyroscope for right Joy-Con controller */
+    SDL_SENSOR_INVALID = -1, /**< Returned for an invalid sensor */
+    SDL_SENSOR_UNKNOWN,      /**< Unknown sensor type */
+    SDL_SENSOR_ACCEL,        /**< Accelerometer */
+    SDL_SENSOR_GYRO,         /**< Gyroscope */
+    SDL_SENSOR_ACCEL_L,      /**< Accelerometer for left Joy-Con controller and Wii nunchuk */
+    SDL_SENSOR_GYRO_L,       /**< Gyroscope for left Joy-Con controller */
+    SDL_SENSOR_ACCEL_R,      /**< Accelerometer for right Joy-Con controller */
+    SDL_SENSOR_GYRO_R        /**< Gyroscope for right Joy-Con controller */
 } SDL_SensorType;
 
 /**
@@ -131,7 +131,7 @@ typedef enum SDL_SensorType
  * rest will have an value of SDL_STANDARD_GRAVITY away from the center of the
  * earth, which is a positive Y value.
  */
-#define SDL_STANDARD_GRAVITY    9.80665f
+#define SDL_STANDARD_GRAVITY 9.80665f
 
 /* Function prototypes */
 
@@ -314,7 +314,6 @@ extern DECLSPEC void SDLCALL SDL_SensorClose(SDL_Sensor *sensor);
  * \since This function is available since SDL 2.0.9.
  */
 extern DECLSPEC void SDLCALL SDL_SensorUpdate(void);
-
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

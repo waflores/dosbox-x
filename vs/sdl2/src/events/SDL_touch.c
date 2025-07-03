@@ -22,9 +22,9 @@
 
 /* General touch handling code for SDL */
 
+#include "../video/SDL_sysvideo.h"
 #include "SDL_events.h"
 #include "SDL_events_c.h"
-#include "../video/SDL_sysvideo.h"
 
 static int SDL_num_touch = 0;
 static SDL_Touch **SDL_touchDevices = NULL;

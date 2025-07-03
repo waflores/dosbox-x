@@ -24,20 +24,19 @@
 #ifndef _SDL_ndsvideo_h
 #define _SDL_ndsvideo_h
 
-#include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
-
+#define _THIS SDL_VideoDevice *this
 
 /* Private display data */
 
 struct SDL_PrivateVideoData {
-    int w, h;
-    void *buffer;
-    short ndsmode;
-    short secondbufferallocd;
+  int w, h;
+  void *buffer;
+  short ndsmode;
+  short secondbufferallocd;
 };
 
 /*

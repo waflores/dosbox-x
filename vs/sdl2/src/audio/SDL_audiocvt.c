@@ -26,9 +26,9 @@
 #include "SDL_audio.h"
 #include "SDL_audio_c.h"
 
-#include "SDL_loadso.h"
 #include "../SDL_dataqueue.h"
 #include "SDL_cpuinfo.h"
+#include "SDL_loadso.h"
 
 #define DEBUG_AUDIOSTREAM 0
 
@@ -241,7 +241,7 @@ static int SDL_ResampleAudio(const int chans, const int inrate, const int outrat
                 const int srcframe = srcindex - j;
                 /* !!! FIXME: we can bubble this conditional out of here by doing a pre loop. */
                 const float insample = (srcframe < 0) ? lpadding[((paddinglen + srcframe) * chans) + chan] : inbuf[(srcframe * chans) + chan];
-                outsample += (float) (insample * (ResamplerFilter[filt_ind] + (interpolation1 * ResamplerFilterDifference[filt_ind])));
+                outsample += (float)(insample * (ResamplerFilter[filt_ind] + (interpolation1 * ResamplerFilterDifference[filt_ind])));
             }
 
             /* Do the right wing! */
@@ -250,7 +250,7 @@ static int SDL_ResampleAudio(const int chans, const int inrate, const int outrat
                 const int srcframe = srcindex + 1 + j;
                 /* !!! FIXME: we can bubble this conditional out of here by doing a post loop. */
                 const float insample = (srcframe >= inframes) ? rpadding[((srcframe - inframes) * chans) + chan] : inbuf[(srcframe * chans) + chan];
-                outsample += (float) (insample * (ResamplerFilter[filt_ind] + (interpolation2 * ResamplerFilterDifference[filt_ind])));
+                outsample += (float)(insample * (ResamplerFilter[filt_ind] + (interpolation2 * ResamplerFilterDifference[filt_ind])));
             }
 
             *(dst++) = outsample;
@@ -539,11 +539,11 @@ static void SDL_ResampleCVT(SDL_AudioCVT *cvt, const int chans, const SDL_AudioF
    !!! FIXME:  store channel info, so we have to have function entry
    !!! FIXME:  points for each supported channel count and multiple
    !!! FIXME:  vs arbitrary. When we rev the ABI, clean this up. */
-#define RESAMPLER_FUNCS(chans)                                              \
-    static void SDLCALL                                                     \
-        SDL_ResampleCVT_c##chans(SDL_AudioCVT *cvt, SDL_AudioFormat format) \
-    {                                                                       \
-        SDL_ResampleCVT(cvt, chans, format);                                \
+#define RESAMPLER_FUNCS(chans)                                          \
+    static void SDLCALL                                                 \
+    SDL_ResampleCVT_c##chans(SDL_AudioCVT *cvt, SDL_AudioFormat format) \
+    {                                                                   \
+        SDL_ResampleCVT(cvt, chans, format);                            \
     }
 RESAMPLER_FUNCS(1)
 RESAMPLER_FUNCS(2)
@@ -553,11 +553,11 @@ RESAMPLER_FUNCS(8)
 #undef RESAMPLER_FUNCS
 
 #ifdef HAVE_LIBSAMPLERATE_H
-#define RESAMPLER_FUNCS(chans)                                                  \
-    static void SDLCALL                                                         \
-        SDL_ResampleCVT_SRC_c##chans(SDL_AudioCVT *cvt, SDL_AudioFormat format) \
-    {                                                                           \
-        SDL_ResampleCVT_SRC(cvt, chans, format);                                \
+#define RESAMPLER_FUNCS(chans)                                              \
+    static void SDLCALL                                                     \
+    SDL_ResampleCVT_SRC_c##chans(SDL_AudioCVT *cvt, SDL_AudioFormat format) \
+    {                                                                       \
+        SDL_ResampleCVT_SRC(cvt, chans, format);                            \
     }
 RESAMPLER_FUNCS(1)
 RESAMPLER_FUNCS(2)
@@ -1008,11 +1008,11 @@ static void SDL_CleanupAudioStreamResampler(SDL_AudioStream *stream)
 }
 
 SDL_AudioStream *SDL_NewAudioStream(const SDL_AudioFormat src_format,
-                   const Uint8 src_channels,
-                   const int src_rate,
-                   const SDL_AudioFormat dst_format,
-                   const Uint8 dst_channels,
-                   const int dst_rate)
+                                    const Uint8 src_channels,
+                                    const int src_rate,
+                                    const SDL_AudioFormat dst_format,
+                                    const Uint8 dst_channels,
+                                    const int dst_rate)
 {
     int packetlen = 4096; /* !!! FIXME: good enough for now. */
     Uint8 pre_resample_channels;

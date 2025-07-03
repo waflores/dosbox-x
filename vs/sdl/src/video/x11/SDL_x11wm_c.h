@@ -34,4 +34,3 @@ extern int X11_GetWMInfo(_THIS, SDL_SysWMinfo *info);
 
 /* Functions to IM */
 extern int X11_GetIMInfo(_THIS, SDL_SysIMinfo *info);
-

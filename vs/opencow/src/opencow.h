@@ -41,41 +41,45 @@
 #define OCOW_API WINAPI
 #endif
 
-//for static linking
+// for static linking
 #if defined(STATIC_OPENCOW)
 
-#if !defined(__MINGW64_VERSION_MAJOR) //https://sourceforge.net/p/predef/wiki/Compilers/
-//legacy MinGW32 (no "_imp_" prefix, no indirect call)
+#if !defined(                                                                  \
+    __MINGW64_VERSION_MAJOR) // https://sourceforge.net/p/predef/wiki/Compilers/
+// legacy MinGW32 (no "_imp_" prefix, no indirect call)
 
 // #ifndef __MINGW_IMP_SYMBOL
 // #define __MINGW_IMP_SYMBOL(x) x
 // #endif
 
-#   define OCOW_DEF(RetT, x, ...) RetT OCOW_API x __VA_ARGS__
+#define OCOW_DEF(RetT, x, ...) RetT OCOW_API x __VA_ARGS__
 
 #else
-//MinGW32 on MinGW-w64
-//indrect call with __imp_wrapper
+// MinGW32 on MinGW-w64
+// indrect call with __imp_wrapper
 
 //(hack. they are read only symbols)
-//a faked "imported entry" is added as if the imported symbol is a function pointer:
-//naked function _imp__xxx() {
-//raw addr of next (as a 'pointer')
-//next: jmp xxx()
+// a faked "imported entry" is added as if the imported symbol is a function
+// pointer: naked function _imp__xxx() { raw addr of next (as a 'pointer') next:
+// jmp xxx()
 //}
-//asm name (symbol) is used for the internal implementation xxx(), because name mangling for stdcall is hard to utilize.
-//asm name used is used for the "export" function to avoid function re-definitions.
+// asm name (symbol) is used for the internal implementation xxx(), because name
+// mangling for stdcall is hard to utilize. asm name used is used for the
+// "export" function to avoid function re-definitions.
 
-#   define OCOW_DEF(RetT, x, ...) RetT OCOW_API ocow_##x __VA_ARGS__ asm("_ocow_"#x); \
-                                   RetT OCOW_API __attribute__((naked)) __MINGW_IMP_SYMBOL(x) __VA_ARGS__ {asm(".long 1f \n\t 1: jmp _ocow_"#x);} \
-                                   RetT OCOW_API ocow_##x __VA_ARGS__
+#define OCOW_DEF(RetT, x, ...)                                                 \
+  RetT OCOW_API ocow_##x __VA_ARGS__ asm("_ocow_" #x);                         \
+  RetT OCOW_API __attribute__((naked)) __MINGW_IMP_SYMBOL(x) __VA_ARGS__ {     \
+    asm(".long 1f \n\t 1: jmp _ocow_" #x);                                     \
+  }                                                                            \
+  RetT OCOW_API ocow_##x __VA_ARGS__
 
 #endif
 
 #else
 
-#   define OCOW_DEF(RetT, x, ...) RetT OCOW_API x __VA_ARGS__
+#define OCOW_DEF(RetT, x, ...) RetT OCOW_API x __VA_ARGS__
 
 #endif
 
-#endif //OPENCOW_H
+#endif // OPENCOW_H

@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -23,7 +24,6 @@
 
 #ifndef _SDL_os2fslib_h
 #define _SDL_os2fslib_h
-
 
 // OS2 specific includes
 #define INCL_TYPES
@@ -37,31 +37,31 @@
 #include <FSLib.h>
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *_this
+#define _THIS SDL_VideoDevice *_this
 
 /* Private display data */
-struct SDL_PrivateVideoData
-{
-  FSLib_VideoMode_p   pAvailableFSLibVideoModes;
-  SDL_Rect          **pListModesResult; // Allocated memory to return list of modes for os2fslib_ListModes() API
+struct SDL_PrivateVideoData {
+  FSLib_VideoMode_p pAvailableFSLibVideoModes;
+  SDL_Rect **pListModesResult; // Allocated memory to return list of modes for
+                               // os2fslib_ListModes() API
 
-  FSLib_VideoMode     SrcBufferDesc;    // Description of current source image buffer
-  char               *pchSrcBuffer;     // The source image buffer itself
-  SDL_Surface        *pSDLSurface;      // The SDL surface describing the buffer
-  HMTX                hmtxUseSrcBuffer; // Mutex semaphore to manipulate src buffer
-  HWND                hwndFrame, hwndClient;  // Window handle of frame and client
-  int                 iPMThreadStatus;  // 0: Not running
-                                        // 1: Running
-                                        // Other: Not running, had an error
-  int                 tidPMThread;      // Thread ID of PM Thread
-  int                 fInFocus;         // True if we're in focus!
-  int                 iSkipWMMOUSEMOVE; // Number of WM_MOUSEMOVE messages to skip!
-  int                 iMouseVisible;    //
+  FSLib_VideoMode SrcBufferDesc; // Description of current source image buffer
+  char *pchSrcBuffer;            // The source image buffer itself
+  SDL_Surface *pSDLSurface;      // The SDL surface describing the buffer
+  HMTX hmtxUseSrcBuffer;         // Mutex semaphore to manipulate src buffer
+  HWND hwndFrame, hwndClient;    // Window handle of frame and client
+  int iPMThreadStatus;           // 0: Not running
+                                 // 1: Running
+                                 // Other: Not running, had an error
+  int tidPMThread;               // Thread ID of PM Thread
+  int fInFocus;                  // True if we're in focus!
+  int iSkipWMMOUSEMOVE;          // Number of WM_MOUSEMOVE messages to skip!
+  int iMouseVisible;             //
 
-  PFNWP               pfnOldFrameProc;  // Old window frame procedure
-  int                 bProportionalResize; // 0: No proportional resizing
-                                           // 1: Do proportional resizing
-  ULONG               ulResizingFlag;   // First resizing flag value
+  PFNWP pfnOldFrameProc;   // Old window frame procedure
+  int bProportionalResize; // 0: No proportional resizing
+                           // 1: Do proportional resizing
+  ULONG ulResizingFlag;    // First resizing flag value
 };
 
 /* OS/2 specific backdoor function to be able to set FrameControlFlags of */

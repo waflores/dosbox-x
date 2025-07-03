@@ -25,15 +25,15 @@
 
 #include "SDL_platform.h"
 
-typedef signed char        int8_t;
-typedef unsigned char      uint8_t;
-typedef signed short       int16_t;
-typedef unsigned short     uint16_t;
-typedef signed int         int32_t;
-typedef unsigned int       uint32_t;
-typedef signed long long   int64_t;
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
+typedef signed short int16_t;
+typedef unsigned short uint16_t;
+typedef signed int int32_t;
+typedef unsigned int uint32_t;
+typedef signed long long int64_t;
 typedef unsigned long long uint64_t;
-typedef unsigned long      uintptr_t;
+typedef unsigned long uintptr_t;
 
 #define HAVE_STDARG_H    1
 #define HAVE_STDDEF_H    1
@@ -60,16 +60,16 @@ typedef unsigned long      uintptr_t;
 #define SDL_THREAD_NGAGE 1
 
 /* Enable the N-Gage timer support (src/timer/ngage/\*.c) */
-#define SDL_TIMER_NGAGE  1
+#define SDL_TIMER_NGAGE 1
 
 /* Enable the N-Gage video driver (src/video/ngage/\*.c) */
 #define SDL_VIDEO_DRIVER_NGAGE 1
 
 /* Enable the dummy audio driver (src/audio/dummy/\*.c) */
-#define SDL_AUDIO_DRIVER_DUMMY  1
+#define SDL_AUDIO_DRIVER_DUMMY 1
 
 /* Enable the stub joystick driver (src/joystick/dummy/\*.c) */
-#define SDL_JOYSTICK_DISABLED   1
+#define SDL_JOYSTICK_DISABLED 1
 
 /* Enable the stub haptic driver (src/haptic/dummy/\*.c) */
 #define SDL_HAPTIC_DISABLED 1

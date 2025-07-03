@@ -22,9 +22,9 @@
 
 #if defined(SDL_VIDEO_DRIVER_WINDOWS) && defined(SDL_VIDEO_OPENGL_EGL) && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
 
-#include "SDL_windowsvideo.h"
-#include "SDL_windowsopengles.h"
 #include "SDL_windowsopengl.h"
+#include "SDL_windowsopengles.h"
+#include "SDL_windowsvideo.h"
 #include "SDL_windowswindow.h"
 
 /* EGL implementation of SDL OpenGL support */
@@ -99,7 +99,7 @@ SDL_EGL_SwapWindow_impl(WIN)
 SDL_EGL_MakeCurrent_impl(WIN)
 /* *INDENT-ON* */ /* clang-format on */
 
-int WIN_GLES_SetupWindow(_THIS, SDL_Window *window)
+    int WIN_GLES_SetupWindow(_THIS, SDL_Window *window)
 {
     /* The current context is lost in here; save it and reset it. */
     SDL_WindowData *windowdata = (SDL_WindowData *)window->driverdata;
@@ -110,7 +110,7 @@ int WIN_GLES_SetupWindow(_THIS, SDL_Window *window)
 /* !!! FIXME: commenting out this assertion is (I think) incorrect; figure out why driver_loaded is wrong for ANGLE instead. --ryan. */
 #if 0 /* When hint SDL_HINT_OPENGL_ES_DRIVER is set to "1" (e.g. for ANGLE support), _this->gl_config.driver_loaded can be 1, while the below lines function. */
         SDL_assert(!_this->gl_config.driver_loaded);
-        #endif
+#endif
         if (SDL_EGL_LoadLibrary(_this, NULL, EGL_DEFAULT_DISPLAY, 0) < 0) {
             SDL_EGL_UnloadLibrary(_this);
             return -1;

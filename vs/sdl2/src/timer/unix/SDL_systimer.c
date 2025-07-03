@@ -22,14 +22,14 @@
 
 #ifdef SDL_TIMER_UNIX
 
+#include <errno.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <errno.h>
 
-#include "SDL_timer.h"
-#include "SDL_hints.h"
 #include "../SDL_timer_c.h"
+#include "SDL_hints.h"
+#include "SDL_timer.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>

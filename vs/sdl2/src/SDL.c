@@ -41,10 +41,10 @@
 /* Initialization code for SDL */
 
 #include "SDL.h"
-#include "SDL_bits.h"
-#include "SDL_revision.h"
 #include "SDL_assert_c.h"
+#include "SDL_bits.h"
 #include "SDL_log_c.h"
+#include "SDL_revision.h"
 #include "events/SDL_events_c.h"
 #include "haptic/SDL_haptic_c.h"
 #include "joystick/SDL_joystick_c.h"
@@ -570,7 +570,7 @@ const char *SDL_GetRevision(void)
 /* Get the library source revision number */
 int SDL_GetRevisionNumber(void)
 {
-    return 0;  /* doesn't make sense without Mercurial. */
+    return 0; /* doesn't make sense without Mercurial. */
 }
 
 /* Get the name of the platform */

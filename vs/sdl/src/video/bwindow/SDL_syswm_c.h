@@ -21,9 +21,8 @@
 */
 #include "SDL_config.h"
 
-#include "SDL_syswm.h"
 #include "SDL_lowvideo.h"
-
+#include "SDL_syswm.h"
 
 /* Functions to be exported */
 extern void BE_SetWMCaption(_THIS, const char *title, const char *icon);

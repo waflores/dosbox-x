@@ -25,7 +25,8 @@
 extern "C" {
 #endif
 
-extern void retrowave_miniblaster_queue(RetroWaveContext *ctx, uint8_t reg, uint8_t val);
+extern void retrowave_miniblaster_queue(RetroWaveContext *ctx, uint8_t reg,
+                                        uint8_t val);
 
 #ifdef __cplusplus
 };

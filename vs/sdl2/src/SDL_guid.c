@@ -20,7 +20,6 @@
 */
 #include "SDL_internal.h"
 
-
 #include "SDL_guid.h"
 
 /* convert the guid to a printable string */

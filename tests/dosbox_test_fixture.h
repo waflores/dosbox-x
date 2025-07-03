@@ -12,9 +12,9 @@
 
 class DOSBoxTestFixture : public ::testing::Test {
 public:
-	DOSBoxTestFixture() {}
-	void SetUp() override {}
-	void TearDown() override {}
+  DOSBoxTestFixture() {}
+  void SetUp() override {}
+  void TearDown() override {}
 };
 
 #endif

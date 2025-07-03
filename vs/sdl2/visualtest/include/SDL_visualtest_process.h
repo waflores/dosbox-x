@@ -8,8 +8,8 @@
 #include <SDL_platform.h>
 
 #if defined(__WIN32__)
-#include <windows.h>
 #include <shlwapi.h>
+#include <windows.h>
 #elif defined(__LINUX__)
 #include <unistd.h>
 #else
@@ -29,10 +29,10 @@ extern "C" {
  */
 typedef struct SDL_ProcessInfo
 {
-//#if defined(_WIN32) || defined(__WIN32__)
+// #if defined(_WIN32) || defined(__WIN32__)
 #if defined(__WIN32__)
     PROCESS_INFORMATION pi;
-//#elif defined(__linux__)
+// #elif defined(__linux__)
 #elif defined(__LINUX__)
     int pid;
 #endif
@@ -44,8 +44,8 @@ typedef struct SDL_ProcessInfo
  */
 typedef struct SDL_ProcessExitStatus
 {
-    int exit_success;   /*!< Zero if the process exited successfully */
-    int exit_status;    /*!< The exit status of the process. 8-bit value. */
+    int exit_success; /*!< Zero if the process exited successfully */
+    int exit_status;  /*!< The exit status of the process. 8-bit value. */
 } SDL_ProcessExitStatus;
 
 /**
@@ -58,7 +58,7 @@ typedef struct SDL_ProcessExitStatus
  *
  * \return Non-zero on success, zero on failure.
  */
-int SDL_LaunchProcess(char* file, char* args, SDL_ProcessInfo* pinfo);
+int SDL_LaunchProcess(char *file, char *args, SDL_ProcessInfo *pinfo);
 
 /**
  * Checks if a process is running or not.
@@ -69,7 +69,7 @@ int SDL_LaunchProcess(char* file, char* args, SDL_ProcessInfo* pinfo);
  * \return 1 if the process is still running; zero if it is not and -1 if the
  *         status could not be retrieved.
  */
-int SDL_IsProcessRunning(SDL_ProcessInfo* pinfo);
+int SDL_IsProcessRunning(SDL_ProcessInfo *pinfo);
 
 /**
  * Kills a currently running process.
@@ -80,7 +80,7 @@ int SDL_IsProcessRunning(SDL_ProcessInfo* pinfo);
  *
  * \return 1 on success, 0 on failure.
  */
-int SDL_KillProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps);
+int SDL_KillProcess(SDL_ProcessInfo *pinfo, SDL_ProcessExitStatus *ps);
 
 /**
  * Cleanly exits the process represented by \c pinfo and stores the exit status
@@ -88,7 +88,7 @@ int SDL_KillProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps);
  *
  * \return 1 on success, 0 on failure.
  */
-int SDL_QuitProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps);
+int SDL_QuitProcess(SDL_ProcessInfo *pinfo, SDL_ProcessExitStatus *ps);
 
 /**
  * Gets the exit status of a process. If the exit status is -1, the process is
@@ -100,7 +100,7 @@ int SDL_QuitProcess(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps);
  *
  * \return 1 on success, 0 on failure.
  */
-int SDL_GetProcessExitStatus(SDL_ProcessInfo* pinfo, SDL_ProcessExitStatus* ps);
+int SDL_GetProcessExitStatus(SDL_ProcessInfo *pinfo, SDL_ProcessExitStatus *ps);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

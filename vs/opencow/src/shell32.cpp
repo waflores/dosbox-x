@@ -33,16 +33,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// define these symbols so that we don't get dllimport linkage 
+// define these symbols so that we don't get dllimport linkage
 // from the system headers
 #define _SHELL32_
 
-#include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <windows.h>
 
 #include "MbcsBuffer.h"
-
 
 // ----------------------------------------------------------------------------
 // API
@@ -54,105 +53,90 @@
 
 EXTERN_C {
 
-OCOW_DEF(LPITEMIDLIST, SHBrowseForFolderW,
-    (LPBROWSEINFOW lpbi)
-    )
-{
+  OCOW_DEF(LPITEMIDLIST, SHBrowseForFolderW, (LPBROWSEINFOW lpbi)) {
     char mbcsDisplayName[MAX_PATH];
 
     BROWSEINFOA biA;
     ::ZeroMemory(&biA, sizeof(biA));
 
-    biA.hwndOwner       = lpbi->hwndOwner;
-    biA.pidlRoot        = lpbi->pidlRoot;
-    biA.ulFlags         = lpbi->ulFlags;
-    biA.lpfn            = lpbi->lpfn;
-    biA.lParam          = lpbi->lParam;
-    biA.iImage          = lpbi->iImage;
-    biA.pszDisplayName  = mbcsDisplayName;
+    biA.hwndOwner = lpbi->hwndOwner;
+    biA.pidlRoot = lpbi->pidlRoot;
+    biA.ulFlags = lpbi->ulFlags;
+    biA.lpfn = lpbi->lpfn;
+    biA.lParam = lpbi->lParam;
+    biA.iImage = lpbi->iImage;
+    biA.pszDisplayName = mbcsDisplayName;
 
     CMbcsBuffer mbcsTitle;
     if (!mbcsTitle.FromUnicode(lpbi->lpszTitle))
-        return NULL;
+      return NULL;
     biA.lpszTitle = mbcsTitle;
 
     LPITEMIDLIST result = ::SHBrowseForFolderA(&biA);
     if (!result)
-        return NULL;
+      return NULL;
 
-    ::MultiByteToWideChar(CP_ACP, 0, mbcsDisplayName, -1, lpbi->pszDisplayName, MAX_PATH);
+    ::MultiByteToWideChar(CP_ACP, 0, mbcsDisplayName, -1, lpbi->pszDisplayName,
+                          MAX_PATH);
     return result;
-}
+  }
 
-// SHChangeNotify
-// SHFileOperationW
-// SHGetFileInfoW
-// SHGetNewLinkInfoW
+  // SHChangeNotify
+  // SHFileOperationW
+  // SHGetFileInfoW
+  // SHGetNewLinkInfoW
 
-OCOW_DEF(BOOL, SHGetPathFromIDListW,
-    (LPCITEMIDLIST pidl, 
-    LPWSTR pszPath
-    ))
-{
+  OCOW_DEF(BOOL, SHGetPathFromIDListW, (LPCITEMIDLIST pidl, LPWSTR pszPath)) {
     char mbcsPath[MAX_PATH];
     BOOL success = ::SHGetPathFromIDListA(pidl, mbcsPath);
     if (!success)
-        return FALSE;
+      return FALSE;
 
-    int nResult = ::MultiByteToWideChar(CP_ACP, 0, mbcsPath, -1, pszPath, MAX_PATH);
+    int nResult =
+        ::MultiByteToWideChar(CP_ACP, 0, mbcsPath, -1, pszPath, MAX_PATH);
     if (nResult < 1)
-        return FALSE;
+      return FALSE;
 
     return TRUE;
-}
+  }
 
-OCOW_DEF(INT, ShellAboutW,
-    (HWND hWnd, 
-    LPCWSTR szApp, 
-    LPCWSTR szOtherStuff, 
-    HICON hIcon
-    ))
-{
+  OCOW_DEF(INT, ShellAboutW,
+           (HWND hWnd, LPCWSTR szApp, LPCWSTR szOtherStuff, HICON hIcon)) {
     CMbcsBuffer mbcsApp;
     if (!mbcsApp.FromUnicode(szApp))
-        return 0;
+      return 0;
 
     CMbcsBuffer mbcsOtherStuff;
     if (!mbcsOtherStuff.FromUnicode(szOtherStuff))
-        return 0;
+      return 0;
 
     return ::ShellAboutA(hWnd, mbcsApp, mbcsOtherStuff, hIcon);
-}
+  }
 
-// ShellExecuteExW
+  // ShellExecuteExW
 
-OCOW_DEF(HINSTANCE, ShellExecuteW,
-    (HWND hwnd, 
-    LPCWSTR lpOperation, 
-    LPCWSTR lpFile, 
-    LPCWSTR lpParameters, 
-    LPCWSTR lpDirectory, 
-    INT nShowCmd
-    ))
-{
+  OCOW_DEF(HINSTANCE, ShellExecuteW,
+           (HWND hwnd, LPCWSTR lpOperation, LPCWSTR lpFile,
+            LPCWSTR lpParameters, LPCWSTR lpDirectory, INT nShowCmd)) {
     CMbcsBuffer mbcsOperation;
     if (!mbcsOperation.FromUnicode(lpOperation))
-        return 0;
+      return 0;
 
     CMbcsBuffer mbcsFile;
     if (!mbcsFile.FromUnicode(lpFile))
-        return 0;
+      return 0;
 
     CMbcsBuffer mbcsParameters;
     if (!mbcsParameters.FromUnicode(lpParameters))
-        return 0;
+      return 0;
 
     CMbcsBuffer mbcsDirectory;
     if (!mbcsDirectory.FromUnicode(lpDirectory))
-        return 0;
+      return 0;
 
-    return ::ShellExecuteA(hwnd, mbcsOperation, mbcsFile, mbcsParameters, mbcsDirectory, nShowCmd);
-}
+    return ::ShellExecuteA(hwnd, mbcsOperation, mbcsFile, mbcsParameters,
+                           mbcsDirectory, nShowCmd);
+  }
 
-// Shell_NotifyIconW
-}//EXTERN_C
+  // Shell_NotifyIconW
+} // EXTERN_C

@@ -33,69 +33,58 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// define these symbols so that we don't get dllimport linkage 
+// define these symbols so that we don't get dllimport linkage
 // from the system headers
 #define _CRTIMP
 
-#include <windows.h>
-#include <wchar.h>
 #include <direct.h>
+#include <wchar.h>
+#include <windows.h>
 #if defined(__MINGW64_VERSION_MAJOR)
 #include <crtdbg.h>
 #endif
-#include <stdio.h>
 #include <io.h>
 #include <stdarg.h>
-#include <sys/types.h>
+#include <stdio.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #define OCOW_API __cdecl
 #include "MbcsBuffer.h"
-
 
 // ----------------------------------------------------------------------------
 // API
 EXTERN_C {
 
-OCOW_DEF(int, _wrename,
-    (const wchar_t * oldname, 
-    const wchar_t * newname
-    ))
-{
+  OCOW_DEF(int, _wrename, (const wchar_t *oldname, const wchar_t *newname)) {
     CMbcsBuffer mbcsOldname;
     if (!mbcsOldname.FromUnicode(oldname)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     CMbcsBuffer mbcsNewname;
     if (!mbcsNewname.FromUnicode(newname)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::rename(mbcsOldname, mbcsNewname);
-}
+  }
 
-OCOW_DEF(int, _wremove,
-    (const wchar_t * path
-    ))
-{
+  OCOW_DEF(int, _wremove, (const wchar_t *path)) {
     CMbcsBuffer mbcsPath;
     if (!mbcsPath.FromUnicode(path)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::remove(mbcsPath);
-}
+  }
 
-OCOW_DEF(int, _wopen,
-    (const wchar_t * filename, 
-    int oflag, 
-    ... /* [int pmode] */
-    ))
-{
+  OCOW_DEF(int, _wopen,
+           (const wchar_t *filename, int oflag, ... /* [int pmode] */
+            )) {
     va_list marker;
     int pmode;
 
@@ -105,181 +94,153 @@ OCOW_DEF(int, _wopen,
 
     CMbcsBuffer mbcsFilename;
     if (!mbcsFilename.FromUnicode(filename)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::_open(mbcsFilename, oflag, pmode);
-}
+  }
 
-OCOW_DEF(int, _waccess,
-    (const wchar_t * path, 
-    int mode
-    ))
-{
+  OCOW_DEF(int, _waccess, (const wchar_t *path, int mode)) {
     CMbcsBuffer mbcsPath;
     if (!mbcsPath.FromUnicode(path)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
     return ::_access(mbcsPath, mode);
-}
+  }
 
-OCOW_DEF(int, _wchdir,
-    (const wchar_t * dirname
-    ))
-{
+  OCOW_DEF(int, _wchdir, (const wchar_t *dirname)) {
     CMbcsBuffer mbcsDirname;
     if (!mbcsDirname.FromUnicode(dirname)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::_chdir(mbcsDirname);
-}
+  }
 
-OCOW_DEF(wchar_t *, _wgetcwd,
-    (wchar_t * buffer, 
-    int maxlen
-    ))
-{
+  OCOW_DEF(wchar_t *, _wgetcwd, (wchar_t * buffer, int maxlen)) {
     CMbcsBuffer mbcsBuffer;
     if (!::_getcwd(mbcsBuffer, mbcsBuffer.BufferSize()))
-        return NULL;
+      return NULL;
 
     int nBufferLen = ::lstrlenA(mbcsBuffer) + 1;
-    int nRequiredLen = ::MultiByteToWideChar(CP_ACP, 0, mbcsBuffer, nBufferLen, 0, 0);
+    int nRequiredLen =
+        ::MultiByteToWideChar(CP_ACP, 0, mbcsBuffer, nBufferLen, 0, 0);
     if (buffer && maxlen < nRequiredLen) {
-        errno = ERANGE;
-        return NULL;
+      errno = ERANGE;
+      return NULL;
     }
 
     if (!buffer) {
-        if (maxlen < nRequiredLen)
-            maxlen = nRequiredLen;
-        buffer = (wchar_t *) malloc(sizeof(wchar_t) * maxlen);
-        if (!buffer) {
-            errno = ENOMEM;
-            return NULL;
-        }
+      if (maxlen < nRequiredLen)
+        maxlen = nRequiredLen;
+      buffer = (wchar_t *)malloc(sizeof(wchar_t) * maxlen);
+      if (!buffer) {
+        errno = ENOMEM;
+        return NULL;
+      }
     }
 
     ::MultiByteToWideChar(CP_ACP, 0, mbcsBuffer, nBufferLen, buffer, maxlen);
     return buffer;
-}
+  }
 
-OCOW_DEF(wchar_t *, _wgetdcwd,
-   (int drive,
-   wchar_t *buffer,
-   int maxlen
-   ))
-{
-    char * localBuffer = NULL;
+  OCOW_DEF(wchar_t *, _wgetdcwd, (int drive, wchar_t *buffer, int maxlen)) {
+    char *localBuffer = NULL;
     char stackBuffer[MAX_PATH];
-    char * cwd;
-    wchar_t * outputBuffer;
+    char *cwd;
+    wchar_t *outputBuffer;
     int byteLen, charLen, outputBufferLen;
 
     // use a stack buffer if possible, otherwise we let
     // the CRT allocate it for us
     if (buffer && maxlen <= MAX_PATH)
-        localBuffer = stackBuffer;
+      localBuffer = stackBuffer;
 
     // get the current drive path, this will allocate the buffer if
-    // localBuffer is still set to NULL. If there is an error we can 
+    // localBuffer is still set to NULL. If there is an error we can
     // just return because we haven't allocated anything and the errno
     // will be set appropriately.
     cwd = ::_getdcwd(drive, localBuffer, localBuffer ? MAX_PATH : 0);
     if (!cwd)
-        return NULL;
-    byteLen = (int) ::lstrlenA(cwd) + 1; // byte length including null terminator
+      return NULL;
+    byteLen = (int)::lstrlenA(cwd) + 1; // byte length including null terminator
 
     // determine the size of the buffer required and return the appropriate
     // error if they have not supplied a buffer big enough
     charLen = ::MultiByteToWideChar(CP_ACP, 0, cwd, byteLen, 0, 0);
     if (charLen == 0 || (buffer && maxlen < charLen)) {
-        if (cwd != localBuffer)
-            ::free(cwd);
-        errno = ERANGE;
-        return NULL;
+      if (cwd != localBuffer)
+        ::free(cwd);
+      errno = ERANGE;
+      return NULL;
     }
 
     // allocate an output buffer if required
     outputBuffer = buffer;
     outputBufferLen = maxlen;
     if (!outputBuffer) {
-        if (outputBufferLen < charLen)
-            outputBufferLen = charLen;
-        outputBuffer = (wchar_t*) ::malloc(outputBufferLen * sizeof(wchar_t));
-        if (!outputBuffer) {
-            if (cwd != localBuffer)
-                ::free(cwd);
-            errno = ENOMEM;
-            return NULL;
-        }
+      if (outputBufferLen < charLen)
+        outputBufferLen = charLen;
+      outputBuffer = (wchar_t *)::malloc(outputBufferLen * sizeof(wchar_t));
+      if (!outputBuffer) {
+        if (cwd != localBuffer)
+          ::free(cwd);
+        errno = ENOMEM;
+        return NULL;
+      }
     }
 
     // convert the MBCS path to wide char, we already know that this
     // will not fail because we definitely have a buffer big enough
     // and it has already scanned the string for bad characters.
-    ::MultiByteToWideChar(CP_ACP, 0, cwd, byteLen, outputBuffer, outputBufferLen);
+    ::MultiByteToWideChar(CP_ACP, 0, cwd, byteLen, outputBuffer,
+                          outputBufferLen);
     if (cwd != localBuffer)
-        ::free(cwd);
+      ::free(cwd);
     return outputBuffer;
-}
+  }
 
-OCOW_DEF(int, _wmkdir,
-    (const wchar_t * dirname
-    ))
-{
+  OCOW_DEF(int, _wmkdir, (const wchar_t *dirname)) {
     CMbcsBuffer mbcsDirname;
     if (!mbcsDirname.FromUnicode(dirname)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::_mkdir(mbcsDirname);
-}
+  }
 
-OCOW_DEF(int, _wrmdir,
-    (const wchar_t * dirname
-    ))
-{
+  OCOW_DEF(int, _wrmdir, (const wchar_t *dirname)) {
     CMbcsBuffer mbcsDirname;
     if (!mbcsDirname.FromUnicode(dirname)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::_rmdir(mbcsDirname);
-}
+  }
 
-OCOW_DEF(int, _wstat,
-    (const wchar_t * path, 
-    struct _stat * buffer
-    ))
-{
+  OCOW_DEF(int, _wstat, (const wchar_t *path, struct _stat *buffer)) {
     CMbcsBuffer mbcsPath;
     if (!mbcsPath.FromUnicode(path)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::_stat(mbcsPath, buffer);
-}
+  }
 
-OCOW_DEF(int, _wstati64,
-    (const wchar_t * path, 
-    struct _stati64 * buffer
-    ))
-{
+  OCOW_DEF(int, _wstati64, (const wchar_t *path, struct _stati64 *buffer)) {
     CMbcsBuffer mbcsPath;
     if (!mbcsPath.FromUnicode(path)) {
-        errno = ENOENT;
-        return -1;
+      errno = ENOENT;
+      return -1;
     }
 
     return ::_stati64(mbcsPath, buffer);
-}
+  }
 
-}//EXTERN_C 
+} // EXTERN_C

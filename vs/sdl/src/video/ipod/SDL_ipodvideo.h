@@ -30,9 +30,8 @@
 #define _SDL_ipodvideo_h
 
 struct SDL_PrivateVideoData {
-    char *buffer;
-    int w, h;
+  char *buffer;
+  int w, h;
 };
-
 
 #endif

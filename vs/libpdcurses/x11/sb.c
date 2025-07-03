@@ -40,16 +40,15 @@ bool sb_started = FALSE;
 /* sb_init() is the sb initialization routine.
    This must be called before initscr(). */
 
-int sb_init(void)
-{
-    PDC_LOG(("sb_init() - called\n"));
+int sb_init(void) {
+  PDC_LOG(("sb_init() - called\n"));
 
-    if (SP)
-        return ERR;
+  if (SP)
+    return ERR;
 
-    sb_started = TRUE;
+  sb_started = TRUE;
 
-    return OK;
+  return OK;
 }
 
 /* sb_set_horz() - Used to set horizontal scrollbar.
@@ -58,19 +57,18 @@ int sb_init(void)
    viewport = size of viewport in columns
    cur = current column in total */
 
-int sb_set_horz(int total, int viewport, int cur)
-{
-    PDC_LOG(("sb_set_horz() - called: total %d viewport %d cur %d\n",
-             total, viewport, cur));
+int sb_set_horz(int total, int viewport, int cur) {
+  PDC_LOG(("sb_set_horz() - called: total %d viewport %d cur %d\n", total,
+           viewport, cur));
 
-    if (!SP)
-        return ERR;
+  if (!SP)
+    return ERR;
 
-    SP->sb_total_x = total;
-    SP->sb_viewport_x = viewport;
-    SP->sb_cur_x = cur;
+  SP->sb_total_x = total;
+  SP->sb_viewport_x = viewport;
+  SP->sb_cur_x = cur;
 
-    return OK;
+  return OK;
 }
 
 /* sb_set_vert() - Used to set vertical scrollbar.
@@ -79,19 +77,18 @@ int sb_set_horz(int total, int viewport, int cur)
    viewport = size of viewport in columns
    cur = current column in total */
 
-int sb_set_vert(int total, int viewport, int cur)
-{
-    PDC_LOG(("sb_set_vert() - called: total %d viewport %d cur %d\n",
-             total, viewport, cur));
+int sb_set_vert(int total, int viewport, int cur) {
+  PDC_LOG(("sb_set_vert() - called: total %d viewport %d cur %d\n", total,
+           viewport, cur));
 
-    if (!SP)
-        return ERR;
+  if (!SP)
+    return ERR;
 
-    SP->sb_total_y = total;
-    SP->sb_viewport_y = viewport;
-    SP->sb_cur_y = cur;
+  SP->sb_total_y = total;
+  SP->sb_viewport_y = viewport;
+  SP->sb_cur_y = cur;
 
-    return OK;
+  return OK;
 }
 
 /* sb_get_horz() - Used to get horizontal scrollbar.
@@ -100,21 +97,20 @@ int sb_set_vert(int total, int viewport, int cur)
    viewport = size of viewport in lines
    cur = current line in total */
 
-int sb_get_horz(int *total, int *viewport, int *cur)
-{
-    PDC_LOG(("sb_get_horz() - called\n"));
+int sb_get_horz(int *total, int *viewport, int *cur) {
+  PDC_LOG(("sb_get_horz() - called\n"));
 
-    if (!SP)
-        return ERR;
+  if (!SP)
+    return ERR;
 
-    if (total)
-        *total = SP->sb_total_x;
-    if (viewport)
-        *viewport = SP->sb_viewport_x;
-    if (cur)
-        *cur = SP->sb_cur_x;
+  if (total)
+    *total = SP->sb_total_x;
+  if (viewport)
+    *viewport = SP->sb_viewport_x;
+  if (cur)
+    *cur = SP->sb_cur_x;
 
-    return OK;
+  return OK;
 }
 
 /* sb_get_vert() - Used to get vertical scrollbar.
@@ -123,33 +119,31 @@ int sb_get_horz(int *total, int *viewport, int *cur)
    viewport = size of viewport in lines
    cur = current line in total */
 
-int sb_get_vert(int *total, int *viewport, int *cur)
-{
-    PDC_LOG(("sb_get_vert() - called\n"));
+int sb_get_vert(int *total, int *viewport, int *cur) {
+  PDC_LOG(("sb_get_vert() - called\n"));
 
-    if (!SP)
-        return ERR;
+  if (!SP)
+    return ERR;
 
-    if (total)
-        *total = SP->sb_total_y;
-    if (viewport)
-        *viewport = SP->sb_viewport_y;
-    if (cur)
-        *cur = SP->sb_cur_y;
+  if (total)
+    *total = SP->sb_total_y;
+  if (viewport)
+    *viewport = SP->sb_viewport_y;
+  if (cur)
+    *cur = SP->sb_cur_y;
 
-    return OK;
+  return OK;
 }
 
 /* sb_refresh() - Used to draw the scrollbars. */
 
-int sb_refresh(void)
-{
-    PDC_LOG(("sb_refresh() - called\n"));
+int sb_refresh(void) {
+  PDC_LOG(("sb_refresh() - called\n"));
 
-    if (!SP)
-        return ERR;
+  if (!SP)
+    return ERR;
 
-    XCursesInstruct(CURSES_REFRESH_SCROLLBAR);
+  XCursesInstruct(CURSES_REFRESH_SCROLLBAR);
 
-    return OK;
+  return OK;
 }

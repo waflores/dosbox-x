@@ -23,8 +23,8 @@
 #ifndef SDL_POWER_DISABLED
 #ifdef SDL_POWER_ANDROID
 
-#include "SDL_power.h"
 #include "../SDL_syspower.h"
+#include "SDL_power.h"
 
 #include "../../core/android/SDL_android.h"
 

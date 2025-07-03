@@ -32,10 +32,10 @@
 
 #include "SDL_video.h"
 
-#include "SDL_offscreenvideo.h"
 #include "SDL_offscreenevents_c.h"
 #include "SDL_offscreenframebuffer_c.h"
 #include "SDL_offscreenopengles.h"
+#include "SDL_offscreenvideo.h"
 #include "SDL_offscreenwindow.h"
 
 #define OFFSCREENVID_DRIVER_NAME "offscreen"

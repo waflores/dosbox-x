@@ -22,10 +22,10 @@
 
 #if SDL_HAVE_BLIT_1
 
-#include "SDL_video.h"
 #include "SDL_blit.h"
-#include "SDL_sysvideo.h"
 #include "SDL_endian.h"
+#include "SDL_sysvideo.h"
+#include "SDL_video.h"
 
 /* Functions to blit from 8-bit surfaces to other surfaces */
 
@@ -532,7 +532,7 @@ SDL_BlitFunc SDL_CalculateBlit1(SDL_Surface *surface)
     case SDL_COPY_COLORKEY:
         return one_blitkey[which];
 
-    case SDL_COPY_COLORKEY | SDL_COPY_BLEND:  /* this is not super-robust but handles a specific case we found sdl12-compat. */
+    case SDL_COPY_COLORKEY | SDL_COPY_BLEND: /* this is not super-robust but handles a specific case we found sdl12-compat. */
         return (surface->map->info.a == 255) ? one_blitkey[which] : (SDL_BlitFunc)NULL;
 
     case SDL_COPY_MODULATE_ALPHA | SDL_COPY_BLEND:

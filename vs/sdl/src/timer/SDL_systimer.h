@@ -26,7 +26,6 @@
 #include "SDL_timer.h"
 #include "SDL_timer_c.h"
 
-
 /* Initialize the system dependent timer subsystem */
 extern int SDL_SYS_TimerInit(void);
 

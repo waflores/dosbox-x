@@ -23,42 +23,42 @@
 
 #ifdef SDL_VIDEO_DRIVER_WAYLAND
 
-#include "SDL_video.h"
+#include "../../events/SDL_events_c.h"
 #include "SDL_mouse.h"
 #include "SDL_stdinc.h"
-#include "../../events/SDL_events_c.h"
+#include "SDL_video.h"
 
-#include "SDL_waylandvideo.h"
-#include "SDL_waylandevents_c.h"
-#include "SDL_waylandwindow.h"
-#include "SDL_waylandopengles.h"
-#include "SDL_waylandmouse.h"
-#include "SDL_waylandkeyboard.h"
-#include "SDL_waylandtouch.h"
-#include "SDL_waylandclipboard.h"
-#include "SDL_waylandvulkan.h"
-#include "SDL_waylandmessagebox.h"
 #include "SDL_hints.h"
+#include "SDL_waylandclipboard.h"
+#include "SDL_waylandevents_c.h"
+#include "SDL_waylandkeyboard.h"
+#include "SDL_waylandmessagebox.h"
+#include "SDL_waylandmouse.h"
+#include "SDL_waylandopengles.h"
+#include "SDL_waylandtouch.h"
+#include "SDL_waylandvideo.h"
+#include "SDL_waylandvulkan.h"
+#include "SDL_waylandwindow.h"
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <xkbcommon/xkbcommon.h>
 
 #include <wayland-util.h>
 
-#include "xdg-shell-client-protocol.h"
-#include "xdg-decoration-unstable-v1-client-protocol.h"
-#include "keyboard-shortcuts-inhibit-unstable-v1-client-protocol.h"
-#include "idle-inhibit-unstable-v1-client-protocol.h"
-#include "xdg-activation-v1-client-protocol.h"
-#include "text-input-unstable-v3-client-protocol.h"
-#include "tablet-unstable-v2-client-protocol.h"
-#include "xdg-output-unstable-v1-client-protocol.h"
-#include "viewporter-client-protocol.h"
-#include "primary-selection-unstable-v1-client-protocol.h"
-#include "fractional-scale-v1-client-protocol.h"
 #include "cursor-shape-v1-client-protocol.h"
+#include "fractional-scale-v1-client-protocol.h"
+#include "idle-inhibit-unstable-v1-client-protocol.h"
+#include "keyboard-shortcuts-inhibit-unstable-v1-client-protocol.h"
+#include "primary-selection-unstable-v1-client-protocol.h"
+#include "tablet-unstable-v2-client-protocol.h"
+#include "text-input-unstable-v3-client-protocol.h"
+#include "viewporter-client-protocol.h"
+#include "xdg-activation-v1-client-protocol.h"
+#include "xdg-decoration-unstable-v1-client-protocol.h"
+#include "xdg-output-unstable-v1-client-protocol.h"
+#include "xdg-shell-client-protocol.h"
 #include "xdg-toplevel-icon-v1-client-protocol.h"
 
 #ifdef HAVE_LIBDECOR_H
@@ -888,7 +888,7 @@ static void display_handle_global(void *data, struct wl_registry *registry, uint
             Wayland_CreateCursorShapeDevice(d->input);
         }
     } else if (SDL_strcmp(interface, "xdg_toplevel_icon_manager_v1") == 0) {
-            d->xdg_toplevel_icon_manager_v1 = wl_registry_bind(d->registry, id, &xdg_toplevel_icon_manager_v1_interface, 1);
+        d->xdg_toplevel_icon_manager_v1 = wl_registry_bind(d->registry, id, &xdg_toplevel_icon_manager_v1_interface, 1);
 #ifdef SDL_VIDEO_DRIVER_WAYLAND_QT_TOUCH
     } else if (SDL_strcmp(interface, "qt_touch_extension") == 0) {
         Wayland_touch_create(d, id);

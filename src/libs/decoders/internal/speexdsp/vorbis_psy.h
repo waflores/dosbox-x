@@ -35,12 +35,11 @@
 #ifdef VORBIS_PSYCHO
 
 #include "smallft.h"
-#define P_BANDS 17      /* 62Hz to 16kHz */
+#define P_BANDS 17 /* 62Hz to 16kHz */
 #define NOISE_COMPAND_LEVELS 40
 
-
-#define todB(x)   ((x)>1e-13?log((x)*(x))*4.34294480f:-30)
-#define fromdB(x) (exp((x)*.11512925f))
+#define todB(x) ((x) > 1e-13 ? log((x) * (x)) * 4.34294480f : -30)
+#define fromdB(x) (exp((x) * .11512925f))
 
 /* The bark scale equations are approximations, since the original
    table was somewhat hand rolled.  The below are chosen to have the
@@ -51,29 +50,29 @@
 
    all f in Hz, z in Bark */
 
-#define toBARK(n)   (13.1f*atan(.00074f*(n))+2.24f*atan((n)*(n)*1.85e-8f)+1e-4f*(n))
-#define fromBARK(z) (102.f*(z)-2.f*pow(z,2.f)+.4f*pow(z,3.f)+pow(1.46f,z)-1.f)
+#define toBARK(n)                                                              \
+  (13.1f * atan(.00074f * (n)) + 2.24f * atan((n) * (n) * 1.85e-8f) +          \
+   1e-4f * (n))
+#define fromBARK(z)                                                            \
+  (102.f * (z) - 2.f * pow(z, 2.f) + .4f * pow(z, 3.f) + pow(1.46f, z) - 1.f)
 
 /* Frequency to octave.  We arbitrarily declare 63.5 Hz to be octave
    0.0 */
 
-#define toOC(n)     (log(n)*1.442695f-5.965784f)
-#define fromOC(o)   (exp(((o)+5.965784f)*.693147f))
-
+#define toOC(n) (log(n) * 1.442695f - 5.965784f)
+#define fromOC(o) (exp(((o) + 5.965784f) * .693147f))
 
 typedef struct {
 
   float noisewindowlo;
   float noisewindowhi;
-  int   noisewindowlomin;
-  int   noisewindowhimin;
-  int   noisewindowfixed;
+  int noisewindowlomin;
+  int noisewindowhimin;
+  int noisewindowfixed;
   float noiseoff[P_BANDS];
   float noisecompand[NOISE_COMPAND_LEVELS];
 
 } VorbisPsyInfo;
-
-
 
 typedef struct {
   int n;
@@ -83,15 +82,15 @@ typedef struct {
 
   float *window;
   float *noiseoffset;
-  long  *bark;
+  long *bark;
 
 } VorbisPsy;
-
 
 VorbisPsy *vorbis_psy_init(int rate, int size);
 void vorbis_psy_destroy(VorbisPsy *psy);
 void compute_curve(VorbisPsy *psy, float *audio, float *curve);
-void curve_to_lpc(VorbisPsy *psy, float *curve, float *awk1, float *awk2, int ord);
+void curve_to_lpc(VorbisPsy *psy, float *curve, float *awk1, float *awk2,
+                  int ord);
 
 #endif
 #endif

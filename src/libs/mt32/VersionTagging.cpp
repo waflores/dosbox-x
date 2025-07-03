@@ -18,9 +18,10 @@
 #include "globals.h"
 
 extern "C" {
-// Here's a list of all tagged minor library versions through global (potentially versioned) symbols.
-// An application that's been linked with an older library version will be able to find a matching tag,
-// while for an application linked with a newer library version there will be no match.
+// Here's a list of all tagged minor library versions through global
+// (potentially versioned) symbols. An application that's been linked with an
+// older library version will be able to find a matching tag, while for an
+// application linked with a newer library version there will be no match.
 
 MT32EMU_EXPORT_V(2.5) extern const volatile char mt32emu_2_5 = 0;
 MT32EMU_EXPORT_V(2.6) extern const volatile char mt32emu_2_6 = 0;

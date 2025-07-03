@@ -25,15 +25,17 @@
 
 typedef struct _VODATA *PVODATA;
 
-typedef struct _VIDEOOUTPUTINFO {
-    ULONG     ulBPP;
-    ULONG     fccColorEncoding;
-    ULONG     ulScanLineSize;
-    ULONG     ulHorizResolution;
-    ULONG     ulVertResolution;
+typedef struct _VIDEOOUTPUTINFO
+{
+    ULONG ulBPP;
+    ULONG fccColorEncoding;
+    ULONG ulScanLineSize;
+    ULONG ulHorizResolution;
+    ULONG ulVertResolution;
 } VIDEOOUTPUTINFO;
 
-typedef struct _OS2VIDEOOUTPUT {
+typedef struct _OS2VIDEOOUTPUT
+{
     BOOL (*QueryInfo)(VIDEOOUTPUTINFO *pInfo);
     PVODATA (*Open)();
     VOID (*Close)(PVODATA pVOData);

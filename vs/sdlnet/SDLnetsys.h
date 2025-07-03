@@ -49,20 +49,20 @@ typedef int socklen_t;
 #ifdef __FreeBSD__
 #include <sys/socket.h>
 #endif
+#include <fcntl.h>
+#include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <netinet/in.h>
 #ifndef __BEOS__
 #include <arpa/inet.h>
 #endif
 #ifdef linux /* FIXME: what other platforms have this? */
 #include <netinet/tcp.h>
 #endif
-#include <sys/socket.h>
 #include <net/if.h>
 #include <netdb.h>
+#include <sys/socket.h>
 #endif /* WIN32 */
 
 /* FIXME: What platforms need this? */
@@ -73,13 +73,13 @@ typedef Uint32 socklen_t;
 /* System-dependent definitions */
 #ifndef __USE_W32_SOCKETS
 #ifdef __OS2__
-#define closesocket     soclose
-#else  /* !__OS2__ */
-#define closesocket	close
+#define closesocket soclose
+#else /* !__OS2__ */
+#define closesocket close
 #endif /* __OS2__ */
-#define SOCKET	int
-#define INVALID_SOCKET	-1
-#define SOCKET_ERROR	-1
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
 #endif /* __USE_W32_SOCKETS */
 
 #ifdef __USE_W32_SOCKETS
@@ -92,4 +92,3 @@ typedef Uint32 socklen_t;
 int SDLNet_GetLastError(void);
 void SDLNet_SetLastError(int err);
 #endif
-

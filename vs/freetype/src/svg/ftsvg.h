@@ -18,18 +18,16 @@
 #ifndef FTSVG_H_
 #define FTSVG_H_
 
-#include <ft2build.h>
 #include <freetype/ftrender.h>
 #include <freetype/internal/ftobjs.h>
-
+#include <ft2build.h>
 
 FT_BEGIN_HEADER
 
-  FT_DECLARE_RENDERER( ft_svg_renderer_class )
+FT_DECLARE_RENDERER( ft_svg_renderer_class )
 
 FT_END_HEADER
 
 #endif /* FTSVG_H_ */
-
 
 /* END */

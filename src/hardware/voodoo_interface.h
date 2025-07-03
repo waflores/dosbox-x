@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright (C) 2002-2021  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,43 +16,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef DOSBOX_VOODOO_IF_H
 #define DOSBOX_VOODOO_IF_H
 
 typedef struct vdraw {
-	Bitu width;
-	Bitu height;
-	Bitu bpp;
-	float vfreq;
-	double frame_start;
-	bool doublewidth;
-	bool doubleheight;
+  Bitu width;
+  Bitu height;
+  Bitu bpp;
+  float vfreq;
+  double frame_start;
+  bool doublewidth;
+  bool doubleheight;
 
-	bool override_on;
+  bool override_on;
 
-	bool screen_update_requested;
-	bool screen_update_pending;
+  bool screen_update_requested;
+  bool screen_update_pending;
 } voodoo_draw;
-
 
 class Voodoo_PageHandler : public PageHandler {
 public:
-	Voodoo_PageHandler(HostPt /*addr*/){
-		flags=PFLAG_NOCODE;
-	}
+  Voodoo_PageHandler(HostPt /*addr*/) { flags = PFLAG_NOCODE; }
 
-	~Voodoo_PageHandler() {
-	}
+  ~Voodoo_PageHandler() {}
 
-	uint8_t readb(PhysPt addr) override;
-	void writeb(PhysPt addr,uint8_t val) override;
-	uint16_t readw(PhysPt addr) override;
-	void writew(PhysPt addr,uint16_t val) override;
-	uint32_t readd(PhysPt addr) override;
-	void writed(PhysPt addr,uint32_t val) override;
+  uint8_t readb(PhysPt addr) override;
+  void writeb(PhysPt addr, uint8_t val) override;
+  uint16_t readw(PhysPt addr) override;
+  void writew(PhysPt addr, uint16_t val) override;
+  uint32_t readd(PhysPt addr) override;
+  void writed(PhysPt addr, uint32_t val) override;
 };
-
 
 void Voodoo_Initialize(Bits emulation_type, Bits card_type, bool max_voodoomem);
 void Voodoo_Shut_Down();
@@ -60,6 +54,6 @@ void Voodoo_Shut_Down();
 void Voodoo_PCI_InitEnable(Bitu val);
 void Voodoo_PCI_Enable(bool enable);
 
-PageHandler* Voodoo_GetPageHandler();
+PageHandler *Voodoo_GetPageHandler();
 
 #endif

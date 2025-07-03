@@ -16,17 +16,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef DOSBOX_IPX_H
 #define DOSBOX_IPX_H
 
 // Uncomment this for a lot of debug messages:
-//#define IPX_DEBUGMSG 
+// #define IPX_DEBUGMSG
 
 #ifdef IPX_DEBUGMSG
 #define LOG_IPX LOG_MSG
 #else
-#if defined (_MSC_VER)
+#if defined(_MSC_VER)
 #define LOG_IPX
 #else
 #define LOG_IPX(...)
@@ -36,29 +35,29 @@
 #include "mem.h"
 
 // In Use Flag codes
-#define USEFLAG_AVAILABLE  0x00
-#define USEFLAG_AESTEMP    0xe0
-#define USEFLAG_IPXCRIT    0xf8
-#define USEFLAG_SPXLISTEN  0xf9
+#define USEFLAG_AVAILABLE 0x00
+#define USEFLAG_AESTEMP 0xe0
+#define USEFLAG_IPXCRIT 0xf8
+#define USEFLAG_SPXLISTEN 0xf9
 #define USEFLAG_PROCESSING 0xfa
-#define USEFLAG_HOLDING    0xfb
+#define USEFLAG_HOLDING 0xfb
 #define USEFLAG_AESWAITING 0xfc
-#define USEFLAG_AESCOUNT   0xfd
-#define USEFLAG_LISTENING  0xfe
-#define USEFLAG_SENDING    0xff
+#define USEFLAG_AESCOUNT 0xfd
+#define USEFLAG_LISTENING 0xfe
+#define USEFLAG_SENDING 0xff
 
 // Completion codes
-#define COMP_SUCCESS          0x00
-#define COMP_REMOTETERM       0xec
-#define COMP_DISCONNECT       0xed
-#define COMP_INVALIDID        0xee
-#define COMP_SPXTABLEFULL     0xef
+#define COMP_SUCCESS 0x00
+#define COMP_REMOTETERM 0xec
+#define COMP_DISCONNECT 0xed
+#define COMP_INVALIDID 0xee
+#define COMP_SPXTABLEFULL 0xef
 #define COMP_EVENTNOTCANCELED 0xf9
-#define COMP_NOCONNECTION     0xfa
-#define COMP_CANCELLED        0xfc
-#define COMP_MALFORMED        0xfd
-#define COMP_UNDELIVERABLE    0xfe
-#define COMP_HARDWAREERROR    0xff
+#define COMP_NOCONNECTION 0xfa
+#define COMP_CANCELLED 0xfc
+#define COMP_MALFORMED 0xfd
+#define COMP_UNDELIVERABLE 0xfe
+#define COMP_HARDWAREERROR 0xff
 
 #ifdef _MSC_VER
 #pragma pack(1)
@@ -72,95 +71,91 @@
 #endif
 
 struct PackedIP {
-	Uint32 host;
-	Uint16 port;
+  Uint32 host;
+  Uint16 port;
 } GCC_ATTRIBUTE(packed);
 
 struct nodeType {
-	Uint8 node[6];
-} GCC_ATTRIBUTE(packed) ;
+  Uint8 node[6];
+} GCC_ATTRIBUTE(packed);
 
 struct IPXHeader {
-	Uint8 checkSum[2];
-	Uint8 length[2];
-	Uint8 transControl; // Transport control
-	Uint8 pType; // Packet type
+  Uint8 checkSum[2];
+  Uint8 length[2];
+  Uint8 transControl; // Transport control
+  Uint8 pType;        // Packet type
 
-	struct transport {
-		Uint8 network[4];
-		union addrtype {
-			nodeType byNode;
-			PackedIP byIP ;
-		} GCC_ATTRIBUTE(packed) addr;
-		Uint8 socket[2];
-	} dest, src;
+  struct transport {
+    Uint8 network[4];
+    union addrtype {
+      nodeType byNode;
+      PackedIP byIP;
+    } GCC_ATTRIBUTE(packed) addr;
+    Uint8 socket[2];
+  } dest, src;
 } GCC_ATTRIBUTE(packed);
 
 struct fragmentDescriptor {
-	uint16_t offset;
-	uint16_t segment;
-	uint16_t size;
+  uint16_t offset;
+  uint16_t segment;
+  uint16_t size;
 };
 
 #define IPXBUFFERSIZE 1424
 
 class ECBClass {
 public:
-	RealPt ECBAddr;
-	bool isInESRList;
-   	ECBClass *prevECB;	// Linked List
-	ECBClass *nextECB;
-	
-	uint8_t iuflag;		// Need to save data since we are not always in
-	uint16_t mysocket;	// real mode
+  RealPt ECBAddr;
+  bool isInESRList;
+  ECBClass *prevECB; // Linked List
+  ECBClass *nextECB;
 
-	uint8_t* databuffer;	// received data is stored here until we get called
-	Bitu buflen;		// by Interrupt
+  uint8_t iuflag;    // Need to save data since we are not always in
+  uint16_t mysocket; // real mode
 
-#ifdef IPX_DEBUGMSG 
-	Bitu SerialNumber;
+  uint8_t *databuffer; // received data is stored here until we get called
+  Bitu buflen;         // by Interrupt
+
+#ifdef IPX_DEBUGMSG
+  Bitu SerialNumber;
 #endif
 
-	ECBClass(uint16_t segment, uint16_t offset);
-	uint16_t getSocket(void);
+  ECBClass(uint16_t segment, uint16_t offset);
+  uint16_t getSocket(void);
 
-	uint8_t getInUseFlag(void);
+  uint8_t getInUseFlag(void);
 
-	void setInUseFlag(uint8_t flagval);
+  void setInUseFlag(uint8_t flagval);
 
-	void setCompletionFlag(uint8_t flagval);
+  void setCompletionFlag(uint8_t flagval);
 
-	uint16_t getFragCount(void);
+  uint16_t getFragCount(void);
 
-	bool writeData();
-	void writeDataBuffer(uint8_t* buffer, uint16_t length);
+  bool writeData();
+  void writeDataBuffer(uint8_t *buffer, uint16_t length);
 
-	void getFragDesc(uint16_t descNum, fragmentDescriptor *fragDesc);
-	RealPt getESRAddr(void);
+  void getFragDesc(uint16_t descNum, fragmentDescriptor *fragDesc);
+  RealPt getESRAddr(void);
 
-	void NotifyESR(void);
+  void NotifyESR(void);
 
-	void setImmAddress(uint8_t *immAddr);
-	void getImmAddress(uint8_t* immAddr);
+  void setImmAddress(uint8_t *immAddr);
+  void getImmAddress(uint8_t *immAddr);
 
-	~ECBClass();
+  ~ECBClass();
 };
 
-// The following routines may not be needed on all systems.  On my build of SDL the IPaddress structure is 8 octets 
-// and therefore screws up my IPXheader structure since it needs to be packed.
+// The following routines may not be needed on all systems.  On my build of SDL
+// the IPaddress structure is 8 octets and therefore screws up my IPXheader
+// structure since it needs to be packed.
 
-void UnpackIP(PackedIP ipPack, IPaddress * ipAddr);
+void UnpackIP(PackedIP ipPack, IPaddress *ipAddr);
 void PackIP(IPaddress ipAddr, PackedIP *ipPack);
 
 #ifdef _MSC_VER
 #pragma pack()
 #endif
 
-enum {
-	IPX_NONE=0,
-	IPX_OLD,
-	IPX_OLD_LLC,
-	IPX_8137
-};
+enum { IPX_NONE = 0, IPX_OLD, IPX_OLD_LLC, IPX_8137 };
 
 #endif

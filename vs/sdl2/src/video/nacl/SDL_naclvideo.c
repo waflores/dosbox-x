@@ -22,20 +22,20 @@
 
 #ifdef SDL_VIDEO_DRIVER_NACL
 
+#include "nacl_io/nacl_io.h"
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi_simple/ps.h"
-#include "ppapi_simple/ps_interface.h"
 #include "ppapi_simple/ps_event.h"
-#include "nacl_io/nacl_io.h"
+#include "ppapi_simple/ps_interface.h"
 
-#include "SDL_naclvideo.h"
-#include "SDL_naclwindow.h"
+#include "../../events/SDL_events_c.h"
+#include "../SDL_sysvideo.h"
 #include "SDL_naclevents_c.h"
 #include "SDL_naclopengles.h"
+#include "SDL_naclvideo.h"
+#include "SDL_naclwindow.h"
 #include "SDL_video.h"
-#include "../SDL_sysvideo.h"
-#include "../../events/SDL_events_c.h"
 
 #define NACLVID_DRIVER_NAME "nacl"
 
@@ -43,7 +43,7 @@
  * may appear even before SDL starts and we want to remember
  * the window width and height
  */
-static SDL_VideoData nacl = {0};
+static SDL_VideoData nacl = { 0 };
 
 void NACL_SetScreenResolution(int width, int height, Uint32 format)
 {
@@ -60,36 +60,36 @@ void NACL_SetScreenResolution(int width, int height, Uint32 format)
     }
 
     /* FIXME: Check threading issues...otherwise use a hardcoded _this->context across all threads */
-    context = (PP_Resource) SDL_GL_GetCurrentContext();
+    context = (PP_Resource)SDL_GL_GetCurrentContext();
     if (context) {
         PSInterfaceGraphics3D()->ResizeBuffers(context, width, height);
     }
-
 }
-
-
 
 /* Initialization/Query functions */
 static int NACL_VideoInit(_THIS);
 static void NACL_VideoQuit(_THIS);
 
-static int NACL_Available(void) {
+static int NACL_Available(void)
+{
     return PSGetInstanceId() != 0;
 }
 
-static void NACL_DeleteDevice(SDL_VideoDevice *device) {
-    SDL_VideoData *driverdata = (SDL_VideoData*) device->driverdata;
-    driverdata->ppb_core->ReleaseResource((PP_Resource) driverdata->ppb_message_loop);
+static void NACL_DeleteDevice(SDL_VideoDevice *device)
+{
+    SDL_VideoData *driverdata = (SDL_VideoData *)device->driverdata;
+    driverdata->ppb_core->ReleaseResource((PP_Resource)driverdata->ppb_message_loop);
     /* device->driverdata is not freed because it points to static memory */
     SDL_free(device);
 }
 
-static int NACL_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
+static int NACL_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
     return 0;
 }
 
-static SDL_VideoDevice *NACL_CreateDevice(void) {
+static SDL_VideoDevice *NACL_CreateDevice(void)
+{
     SDL_VideoDevice *device;
 
     if (!NACL_Available()) {
@@ -97,7 +97,7 @@ static SDL_VideoDevice *NACL_CreateDevice(void) {
     }
 
     /* Initialize all variables that we clean on shutdown */
-    device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
+    device = (SDL_VideoDevice *)SDL_calloc(1, sizeof(SDL_VideoDevice));
     if (!device) {
         SDL_OutOfMemory();
         return NULL;
@@ -139,8 +139,9 @@ VideoBootStrap NACL_bootstrap = {
     NULL /* no ShowMessageBox implementation */
 };
 
-int NACL_VideoInit(_THIS) {
-    SDL_VideoData *driverdata = (SDL_VideoData *) _this->driverdata;
+int NACL_VideoInit(_THIS)
+{
+    SDL_VideoData *driverdata = (SDL_VideoData *)_this->driverdata;
     SDL_DisplayMode mode;
 
     SDL_zero(mode);
@@ -165,12 +166,11 @@ int NACL_VideoInit(_THIS) {
     driverdata->ppb_image_data = PSInterfaceImageData();
     driverdata->ppb_view = PSInterfaceView();
     driverdata->ppb_var = PSInterfaceVar();
-    driverdata->ppb_input_event = (PPB_InputEvent*) PSGetInterface(PPB_INPUT_EVENT_INTERFACE);
-    driverdata->ppb_keyboard_input_event = (PPB_KeyboardInputEvent*) PSGetInterface(PPB_KEYBOARD_INPUT_EVENT_INTERFACE);
-    driverdata->ppb_mouse_input_event = (PPB_MouseInputEvent*) PSGetInterface(PPB_MOUSE_INPUT_EVENT_INTERFACE);
-    driverdata->ppb_wheel_input_event = (PPB_WheelInputEvent*) PSGetInterface(PPB_WHEEL_INPUT_EVENT_INTERFACE);
-    driverdata->ppb_touch_input_event = (PPB_TouchInputEvent*) PSGetInterface(PPB_TOUCH_INPUT_EVENT_INTERFACE);
-
+    driverdata->ppb_input_event = (PPB_InputEvent *)PSGetInterface(PPB_INPUT_EVENT_INTERFACE);
+    driverdata->ppb_keyboard_input_event = (PPB_KeyboardInputEvent *)PSGetInterface(PPB_KEYBOARD_INPUT_EVENT_INTERFACE);
+    driverdata->ppb_mouse_input_event = (PPB_MouseInputEvent *)PSGetInterface(PPB_MOUSE_INPUT_EVENT_INTERFACE);
+    driverdata->ppb_wheel_input_event = (PPB_WheelInputEvent *)PSGetInterface(PPB_WHEEL_INPUT_EVENT_INTERFACE);
+    driverdata->ppb_touch_input_event = (PPB_TouchInputEvent *)PSGetInterface(PPB_TOUCH_INPUT_EVENT_INTERFACE);
 
     driverdata->message_loop = driverdata->ppb_message_loop->Create(driverdata->instance);
 
@@ -180,7 +180,8 @@ int NACL_VideoInit(_THIS) {
     return 0;
 }
 
-void NACL_VideoQuit(_THIS) {
+void NACL_VideoQuit(_THIS)
+{
 }
 
 #endif /* SDL_VIDEO_DRIVER_NACL */

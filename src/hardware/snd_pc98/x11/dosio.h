@@ -1,52 +1,51 @@
-#ifndef	NP2_X11_DOSIO_H__
-#define	NP2_X11_DOSIO_H__
+#ifndef NP2_X11_DOSIO_H__
+#define NP2_X11_DOSIO_H__
 
 #include <stdio.h>
 
-typedef FILE *			FILEH;
-#define	FILEH_INVALID		NULL
+typedef FILE *FILEH;
+#define FILEH_INVALID NULL
 
-#define	FSEEK_SET		SEEK_SET
-#define	FSEEK_CUR		SEEK_CUR
-#define	FSEEK_END		SEEK_END
+#define FSEEK_SET SEEK_SET
+#define FSEEK_CUR SEEK_CUR
+#define FSEEK_END SEEK_END
 
 enum {
-	FILEATTR_READONLY	= 0x01,
-	FILEATTR_HIDDEN		= 0x02,
-	FILEATTR_SYSTEM		= 0x04,
-	FILEATTR_VOLUME		= 0x08,
-	FILEATTR_DIRECTORY	= 0x10,
-	FILEATTR_ARCHIVE	= 0x20
+  FILEATTR_READONLY = 0x01,
+  FILEATTR_HIDDEN = 0x02,
+  FILEATTR_SYSTEM = 0x04,
+  FILEATTR_VOLUME = 0x08,
+  FILEATTR_DIRECTORY = 0x10,
+  FILEATTR_ARCHIVE = 0x20
 };
 
 enum {
-	FLICAPS_SIZE		= (1 << 0),
-	FLICAPS_ATTR		= (1 << 1),
-	FLICAPS_DATE		= (1 << 2),
-	FLICAPS_TIME		= (1 << 3)
+  FLICAPS_SIZE = (1 << 0),
+  FLICAPS_ATTR = (1 << 1),
+  FLICAPS_DATE = (1 << 2),
+  FLICAPS_TIME = (1 << 3)
 };
 
 typedef struct {
-	UINT16	year;		/* cx */
-	BYTE	month;		/* dh */
-	BYTE	day;		/* dl */
+  UINT16 year; /* cx */
+  BYTE month;  /* dh */
+  BYTE day;    /* dl */
 } DOSDATE;
 
 typedef struct {
-	BYTE	hour;		/* ch */
-	BYTE	minute;		/* cl */
-	BYTE	second;		/* dh */
+  BYTE hour;   /* ch */
+  BYTE minute; /* cl */
+  BYTE second; /* dh */
 } DOSTIME;
 
 typedef struct {
-	UINT	caps;
-	UINT32	size;
-	UINT32	attr;
-	DOSDATE	date;
-	DOSTIME	time;
-	char	path[MAX_PATH];
+  UINT caps;
+  UINT32 size;
+  UINT32 attr;
+  DOSDATE date;
+  DOSTIME time;
+  char path[MAX_PATH];
 } FLINFO;
-
 
 /* DOSIO:関数の準備 */
 void dosio_init(void);
@@ -85,4 +84,4 @@ void file_cutext(OEMCHAR *path);
 void file_cutseparator(OEMCHAR *path);
 void file_setseparator(OEMCHAR *path, int maxlen);
 
-#endif	/* NP2_X11_DOSIO_H__ */
+#endif /* NP2_X11_DOSIO_H__ */

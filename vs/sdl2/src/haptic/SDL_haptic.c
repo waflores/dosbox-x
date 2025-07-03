@@ -20,13 +20,14 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_syshaptic.h"
-#include "SDL_haptic_c.h"
-#include "../joystick/SDL_joystick_c.h" /* For SDL_PrivateJoystickValid */
-#include "SDL_hints.h"
 #include "../SDL_hints_c.h"
+#include "../joystick/SDL_joystick_c.h" /* For SDL_PrivateJoystickValid */
+#include "SDL_haptic_c.h"
+#include "SDL_hints.h"
+#include "SDL_syshaptic.h"
 
-typedef struct SDL_Haptic_VIDPID_Naxes {
+typedef struct SDL_Haptic_VIDPID_Naxes
+{
     Uint16 vid;
     Uint16 pid;
     Uint16 naxes;

@@ -31,15 +31,14 @@
 
 #include "../celt/mathops.h"
 #include "../celt/os_support.h"
-#include "opus_private.h"
-#include "opus_defines.h"
-#include "opus_projection.h"
-#include "opus_multistream.h"
 #include "../celt/stack_alloc.h"
 #include "mapping_matrix.h"
+#include "opus_defines.h"
+#include "opus_multistream.h"
+#include "opus_private.h"
+#include "opus_projection.h"
 
-struct OpusProjectionEncoder
-{
+struct OpusProjectionEncoder {
   opus_int32 mixing_matrix_size_in_bytes;
   opus_int32 demixing_matrix_size_in_bytes;
   /* Encoder states go here */
@@ -47,36 +46,23 @@ struct OpusProjectionEncoder
 
 #if !defined(DISABLE_FLOAT_API)
 static void opus_projection_copy_channel_in_float(
-  opus_val16 *dst,
-  int dst_stride,
-  const void *src,
-  int src_stride,
-  int src_channel,
-  int frame_size,
-  void *user_data
-)
-{
-  mapping_matrix_multiply_channel_in_float((const MappingMatrix*)user_data,
-    (const float*)src, src_stride, dst, src_channel, dst_stride, frame_size);
+    opus_val16 *dst, int dst_stride, const void *src, int src_stride,
+    int src_channel, int frame_size, void *user_data) {
+  mapping_matrix_multiply_channel_in_float((const MappingMatrix *)user_data,
+                                           (const float *)src, src_stride, dst,
+                                           src_channel, dst_stride, frame_size);
 }
 #endif
 
 static void opus_projection_copy_channel_in_short(
-  opus_val16 *dst,
-  int dst_stride,
-  const void *src,
-  int src_stride,
-  int src_channel,
-  int frame_size,
-  void *user_data
-)
-{
-  mapping_matrix_multiply_channel_in_short((const MappingMatrix*)user_data,
-    (const opus_int16*)src, src_stride, dst, src_channel, dst_stride, frame_size);
+    opus_val16 *dst, int dst_stride, const void *src, int src_stride,
+    int src_channel, int frame_size, void *user_data) {
+  mapping_matrix_multiply_channel_in_short(
+      (const MappingMatrix *)user_data, (const opus_int16 *)src, src_stride,
+      dst, src_channel, dst_stride, frame_size);
 }
 
-static int get_order_plus_one_from_channels(int channels, int *order_plus_one)
-{
+static int get_order_plus_one_from_channels(int channels, int *order_plus_one) {
   int order_plus_one_;
   int acn_channels;
   int nondiegetic_channels;
@@ -100,10 +86,8 @@ static int get_order_plus_one_from_channels(int channels, int *order_plus_one)
 
 static int get_streams_from_channels(int channels, int mapping_family,
                                      int *streams, int *coupled_streams,
-                                     int *order_plus_one)
-{
-  if (mapping_family == 3)
-  {
+                                     int *order_plus_one) {
+  if (mapping_family == 3) {
     if (get_order_plus_one_from_channels(channels, order_plus_one) != OPUS_OK)
       return OPUS_BAD_ARG;
     if (streams)
@@ -115,33 +99,29 @@ static int get_streams_from_channels(int channels, int mapping_family,
   return OPUS_BAD_ARG;
 }
 
-static MappingMatrix *get_mixing_matrix(OpusProjectionEncoder *st)
-{
+static MappingMatrix *get_mixing_matrix(OpusProjectionEncoder *st) {
   /* void* cast avoids clang -Wcast-align warning */
-  return (MappingMatrix *)(void*)((char*)st +
-    align(sizeof(OpusProjectionEncoder)));
+  return (MappingMatrix *)(void *)((char *)st +
+                                   align(sizeof(OpusProjectionEncoder)));
 }
 
-static MappingMatrix *get_enc_demixing_matrix(OpusProjectionEncoder *st)
-{
+static MappingMatrix *get_enc_demixing_matrix(OpusProjectionEncoder *st) {
   /* void* cast avoids clang -Wcast-align warning */
-  return (MappingMatrix *)(void*)((char*)st +
-    align(sizeof(OpusProjectionEncoder) +
-    st->mixing_matrix_size_in_bytes));
+  return (MappingMatrix *)(void *)((char *)st +
+                                   align(sizeof(OpusProjectionEncoder) +
+                                         st->mixing_matrix_size_in_bytes));
 }
 
-static OpusMSEncoder *get_multistream_encoder(OpusProjectionEncoder *st)
-{
+static OpusMSEncoder *get_multistream_encoder(OpusProjectionEncoder *st) {
   /* void* cast avoids clang -Wcast-align warning */
-  return (OpusMSEncoder *)(void*)((char*)st +
-    align(sizeof(OpusProjectionEncoder) +
-    st->mixing_matrix_size_in_bytes +
-    st->demixing_matrix_size_in_bytes));
+  return (OpusMSEncoder *)(void *)((char *)st +
+                                   align(sizeof(OpusProjectionEncoder) +
+                                         st->mixing_matrix_size_in_bytes +
+                                         st->demixing_matrix_size_in_bytes));
 }
 
 opus_int32 opus_projection_ambisonics_encoder_get_size(int channels,
-                                                       int mapping_family)
-{
+                                                       int mapping_family) {
   int nb_streams;
   int nb_coupled_streams;
   int order_plus_one;
@@ -156,37 +136,31 @@ opus_int32 opus_projection_ambisonics_encoder_get_size(int channels,
   if (ret != OPUS_OK)
     return 0;
 
-  if (order_plus_one == 2)
-  {
+  if (order_plus_one == 2) {
     mixing_matrix_rows = mapping_matrix_foa_mixing.rows;
     mixing_matrix_cols = mapping_matrix_foa_mixing.cols;
     demixing_matrix_rows = mapping_matrix_foa_demixing.rows;
     demixing_matrix_cols = mapping_matrix_foa_demixing.cols;
-  }
-  else if (order_plus_one == 3)
-  {
+  } else if (order_plus_one == 3) {
     mixing_matrix_rows = mapping_matrix_soa_mixing.rows;
     mixing_matrix_cols = mapping_matrix_soa_mixing.cols;
     demixing_matrix_rows = mapping_matrix_soa_demixing.rows;
     demixing_matrix_cols = mapping_matrix_soa_demixing.cols;
-  }
-  else if (order_plus_one == 4)
-  {
+  } else if (order_plus_one == 4) {
     mixing_matrix_rows = mapping_matrix_toa_mixing.rows;
     mixing_matrix_cols = mapping_matrix_toa_mixing.cols;
     demixing_matrix_rows = mapping_matrix_toa_demixing.rows;
     demixing_matrix_cols = mapping_matrix_toa_demixing.cols;
-  }
-  else
+  } else
     return 0;
 
   mixing_matrix_size =
-    mapping_matrix_get_size(mixing_matrix_rows, mixing_matrix_cols);
+      mapping_matrix_get_size(mixing_matrix_rows, mixing_matrix_cols);
   if (!mixing_matrix_size)
     return 0;
 
   demixing_matrix_size =
-    mapping_matrix_get_size(demixing_matrix_rows, demixing_matrix_cols);
+      mapping_matrix_get_size(demixing_matrix_rows, demixing_matrix_cols);
   if (!demixing_matrix_size)
     return 0;
 
@@ -195,15 +169,15 @@ opus_int32 opus_projection_ambisonics_encoder_get_size(int channels,
   if (!encoder_size)
     return 0;
 
-  return align(sizeof(OpusProjectionEncoder)) +
-    mixing_matrix_size + demixing_matrix_size + encoder_size;
+  return align(sizeof(OpusProjectionEncoder)) + mixing_matrix_size +
+         demixing_matrix_size + encoder_size;
 }
 
-int opus_projection_ambisonics_encoder_init(OpusProjectionEncoder *st, opus_int32 Fs,
-                                            int channels, int mapping_family,
-                                            int *streams, int *coupled_streams,
-                                            int application)
-{
+int opus_projection_ambisonics_encoder_init(OpusProjectionEncoder *st,
+                                            opus_int32 Fs, int channels,
+                                            int mapping_family, int *streams,
+                                            int *coupled_streams,
+                                            int application) {
   MappingMatrix *mixing_matrix;
   MappingMatrix *demixing_matrix;
   OpusMSEncoder *ms_encoder;
@@ -217,80 +191,71 @@ int opus_projection_ambisonics_encoder_init(OpusProjectionEncoder *st, opus_int3
   }
 
   if (get_streams_from_channels(channels, mapping_family, streams,
-    coupled_streams, &order_plus_one) != OPUS_OK)
+                                coupled_streams, &order_plus_one) != OPUS_OK)
     return OPUS_BAD_ARG;
 
-  if (mapping_family == 3)
-  {
+  if (mapping_family == 3) {
     /* Assign mixing matrix based on available pre-computed matrices. */
     mixing_matrix = get_mixing_matrix(st);
-    if (order_plus_one == 2)
-    {
+    if (order_plus_one == 2) {
       mapping_matrix_init(mixing_matrix, mapping_matrix_foa_mixing.rows,
-        mapping_matrix_foa_mixing.cols, mapping_matrix_foa_mixing.gain,
-        mapping_matrix_foa_mixing_data,
-        sizeof(mapping_matrix_foa_mixing_data));
-    }
-    else if (order_plus_one == 3)
-    {
+                          mapping_matrix_foa_mixing.cols,
+                          mapping_matrix_foa_mixing.gain,
+                          mapping_matrix_foa_mixing_data,
+                          sizeof(mapping_matrix_foa_mixing_data));
+    } else if (order_plus_one == 3) {
       mapping_matrix_init(mixing_matrix, mapping_matrix_soa_mixing.rows,
-        mapping_matrix_soa_mixing.cols, mapping_matrix_soa_mixing.gain,
-        mapping_matrix_soa_mixing_data,
-        sizeof(mapping_matrix_soa_mixing_data));
-    }
-    else if (order_plus_one == 4)
-    {
+                          mapping_matrix_soa_mixing.cols,
+                          mapping_matrix_soa_mixing.gain,
+                          mapping_matrix_soa_mixing_data,
+                          sizeof(mapping_matrix_soa_mixing_data));
+    } else if (order_plus_one == 4) {
       mapping_matrix_init(mixing_matrix, mapping_matrix_toa_mixing.rows,
-        mapping_matrix_toa_mixing.cols, mapping_matrix_toa_mixing.gain,
-        mapping_matrix_toa_mixing_data,
-        sizeof(mapping_matrix_toa_mixing_data));
-    }
-    else
+                          mapping_matrix_toa_mixing.cols,
+                          mapping_matrix_toa_mixing.gain,
+                          mapping_matrix_toa_mixing_data,
+                          sizeof(mapping_matrix_toa_mixing_data));
+    } else
       return OPUS_BAD_ARG;
 
-    st->mixing_matrix_size_in_bytes = mapping_matrix_get_size(
-      mixing_matrix->rows, mixing_matrix->cols);
+    st->mixing_matrix_size_in_bytes =
+        mapping_matrix_get_size(mixing_matrix->rows, mixing_matrix->cols);
     if (!st->mixing_matrix_size_in_bytes)
       return OPUS_BAD_ARG;
 
     /* Assign demixing matrix based on available pre-computed matrices. */
     demixing_matrix = get_enc_demixing_matrix(st);
-    if (order_plus_one == 2)
-    {
+    if (order_plus_one == 2) {
       mapping_matrix_init(demixing_matrix, mapping_matrix_foa_demixing.rows,
-        mapping_matrix_foa_demixing.cols, mapping_matrix_foa_demixing.gain,
-        mapping_matrix_foa_demixing_data,
-        sizeof(mapping_matrix_foa_demixing_data));
-    }
-    else if (order_plus_one == 3)
-    {
+                          mapping_matrix_foa_demixing.cols,
+                          mapping_matrix_foa_demixing.gain,
+                          mapping_matrix_foa_demixing_data,
+                          sizeof(mapping_matrix_foa_demixing_data));
+    } else if (order_plus_one == 3) {
       mapping_matrix_init(demixing_matrix, mapping_matrix_soa_demixing.rows,
-        mapping_matrix_soa_demixing.cols, mapping_matrix_soa_demixing.gain,
-        mapping_matrix_soa_demixing_data,
-        sizeof(mapping_matrix_soa_demixing_data));
-    }
-    else if (order_plus_one == 4)
-    {
+                          mapping_matrix_soa_demixing.cols,
+                          mapping_matrix_soa_demixing.gain,
+                          mapping_matrix_soa_demixing_data,
+                          sizeof(mapping_matrix_soa_demixing_data));
+    } else if (order_plus_one == 4) {
       mapping_matrix_init(demixing_matrix, mapping_matrix_toa_demixing.rows,
-        mapping_matrix_toa_demixing.cols, mapping_matrix_toa_demixing.gain,
-        mapping_matrix_toa_demixing_data,
-        sizeof(mapping_matrix_toa_demixing_data));
-    }
-    else
+                          mapping_matrix_toa_demixing.cols,
+                          mapping_matrix_toa_demixing.gain,
+                          mapping_matrix_toa_demixing_data,
+                          sizeof(mapping_matrix_toa_demixing_data));
+    } else
       return OPUS_BAD_ARG;
 
-    st->demixing_matrix_size_in_bytes = mapping_matrix_get_size(
-      demixing_matrix->rows, demixing_matrix->cols);
+    st->demixing_matrix_size_in_bytes =
+        mapping_matrix_get_size(demixing_matrix->rows, demixing_matrix->cols);
     if (!st->demixing_matrix_size_in_bytes)
       return OPUS_BAD_ARG;
-  }
-  else
+  } else
     return OPUS_UNIMPLEMENTED;
 
   /* Ensure matrices are large enough for desired coding scheme. */
   if (*streams + *coupled_streams > mixing_matrix->rows ||
-      channels > mixing_matrix->cols ||
-      channels > demixing_matrix->rows ||
+      channels > mixing_matrix->cols || channels > demixing_matrix->rows ||
       *streams + *coupled_streams > demixing_matrix->cols)
     return OPUS_BAD_ARG;
 
@@ -307,8 +272,7 @@ int opus_projection_ambisonics_encoder_init(OpusProjectionEncoder *st, opus_int3
 
 OpusProjectionEncoder *opus_projection_ambisonics_encoder_create(
     opus_int32 Fs, int channels, int mapping_family, int *streams,
-    int *coupled_streams, int application, int *error)
-{
+    int *coupled_streams, int application, int *error) {
   int size;
   int ret;
   OpusProjectionEncoder *st;
@@ -321,18 +285,16 @@ OpusProjectionEncoder *opus_projection_ambisonics_encoder_create(
     return NULL;
   }
   st = (OpusProjectionEncoder *)opus_alloc(size);
-  if (!st)
-  {
+  if (!st) {
     if (error)
       *error = OPUS_ALLOC_FAIL;
     return NULL;
   }
 
   /* Initialize projection encoder with provided settings. */
-  ret = opus_projection_ambisonics_encoder_init(st, Fs, channels,
-     mapping_family, streams, coupled_streams, application);
-  if (ret != OPUS_OK)
-  {
+  ret = opus_projection_ambisonics_encoder_init(
+      st, Fs, channels, mapping_family, streams, coupled_streams, application);
+  if (ret != OPUS_OK) {
     opus_free(st);
     st = NULL;
   }
@@ -343,42 +305,40 @@ OpusProjectionEncoder *opus_projection_ambisonics_encoder_create(
 
 int opus_projection_encode(OpusProjectionEncoder *st, const opus_int16 *pcm,
                            int frame_size, unsigned char *data,
-                           opus_int32 max_data_bytes)
-{
-  return opus_multistream_encode_native(get_multistream_encoder(st),
-    opus_projection_copy_channel_in_short, pcm, frame_size, data,
-    max_data_bytes, 16, downmix_int, 0, get_mixing_matrix(st));
+                           opus_int32 max_data_bytes) {
+  return opus_multistream_encode_native(
+      get_multistream_encoder(st), opus_projection_copy_channel_in_short, pcm,
+      frame_size, data, max_data_bytes, 16, downmix_int, 0,
+      get_mixing_matrix(st));
 }
 
 #ifndef DISABLE_FLOAT_API
 #ifdef FIXED_POINT
 int opus_projection_encode_float(OpusProjectionEncoder *st, const float *pcm,
                                  int frame_size, unsigned char *data,
-                                 opus_int32 max_data_bytes)
-{
-  return opus_multistream_encode_native(get_multistream_encoder(st),
-    opus_projection_copy_channel_in_float, pcm, frame_size, data,
-    max_data_bytes, 16, downmix_float, 1, get_mixing_matrix(st));
+                                 opus_int32 max_data_bytes) {
+  return opus_multistream_encode_native(
+      get_multistream_encoder(st), opus_projection_copy_channel_in_float, pcm,
+      frame_size, data, max_data_bytes, 16, downmix_float, 1,
+      get_mixing_matrix(st));
 }
 #else
 int opus_projection_encode_float(OpusProjectionEncoder *st, const float *pcm,
                                  int frame_size, unsigned char *data,
-                                 opus_int32 max_data_bytes)
-{
-  return opus_multistream_encode_native(get_multistream_encoder(st),
-    opus_projection_copy_channel_in_float, pcm, frame_size, data,
-    max_data_bytes, 24, downmix_float, 1, get_mixing_matrix(st));
+                                 opus_int32 max_data_bytes) {
+  return opus_multistream_encode_native(
+      get_multistream_encoder(st), opus_projection_copy_channel_in_float, pcm,
+      frame_size, data, max_data_bytes, 24, downmix_float, 1,
+      get_mixing_matrix(st));
 }
 #endif
 #endif
 
-void opus_projection_encoder_destroy(OpusProjectionEncoder *st)
-{
+void opus_projection_encoder_destroy(OpusProjectionEncoder *st) {
   opus_free(st);
 }
 
-int opus_projection_encoder_ctl(OpusProjectionEncoder *st, int request, ...)
-{
+int opus_projection_encoder_ctl(OpusProjectionEncoder *st, int request, ...) {
   va_list ap;
   MappingMatrix *demixing_matrix;
   OpusMSEncoder *ms_encoder;
@@ -388,32 +348,25 @@ int opus_projection_encoder_ctl(OpusProjectionEncoder *st, int request, ...)
   demixing_matrix = get_enc_demixing_matrix(st);
 
   va_start(ap, request);
-  switch(request)
-  {
-  case OPUS_PROJECTION_GET_DEMIXING_MATRIX_SIZE_REQUEST:
-  {
-    opus_int32 *value = va_arg(ap, opus_int32*);
-    if (!value)
-    {
+  switch (request) {
+  case OPUS_PROJECTION_GET_DEMIXING_MATRIX_SIZE_REQUEST: {
+    opus_int32 *value = va_arg(ap, opus_int32 *);
+    if (!value) {
       goto bad_arg;
     }
-    *value =
-      ms_encoder->layout.nb_channels * (ms_encoder->layout.nb_streams
-      + ms_encoder->layout.nb_coupled_streams) * sizeof(opus_int16);
-  }
-  break;
-  case OPUS_PROJECTION_GET_DEMIXING_MATRIX_GAIN_REQUEST:
-  {
-    opus_int32 *value = va_arg(ap, opus_int32*);
-    if (!value)
-    {
+    *value = ms_encoder->layout.nb_channels *
+             (ms_encoder->layout.nb_streams +
+              ms_encoder->layout.nb_coupled_streams) *
+             sizeof(opus_int16);
+  } break;
+  case OPUS_PROJECTION_GET_DEMIXING_MATRIX_GAIN_REQUEST: {
+    opus_int32 *value = va_arg(ap, opus_int32 *);
+    if (!value) {
       goto bad_arg;
     }
     *value = demixing_matrix->gain;
-  }
-  break;
-  case OPUS_PROJECTION_GET_DEMIXING_MATRIX_REQUEST:
-  {
+  } break;
+  case OPUS_PROJECTION_GET_DEMIXING_MATRIX_REQUEST: {
     int i, j, k, l;
     int nb_input_streams;
     int nb_output_streams;
@@ -423,20 +376,18 @@ int opus_projection_encoder_ctl(OpusProjectionEncoder *st, int request, ...)
     opus_int32 internal_size;
 
     /* (I/O is in relation to the decoder's perspective). */
-    nb_input_streams = ms_encoder->layout.nb_streams +
-      ms_encoder->layout.nb_coupled_streams;
+    nb_input_streams =
+        ms_encoder->layout.nb_streams + ms_encoder->layout.nb_coupled_streams;
     nb_output_streams = ms_encoder->layout.nb_channels;
 
     external_char = va_arg(ap, unsigned char *);
     external_size = va_arg(ap, opus_int32);
-    if (!external_char)
-    {
+    if (!external_char) {
       goto bad_arg;
     }
     internal_short = mapping_matrix_get_data(demixing_matrix);
     internal_size = nb_input_streams * nb_output_streams * sizeof(opus_int16);
-    if (external_size != internal_size)
-    {
+    if (external_size != internal_size) {
       goto bad_arg;
     }
 
@@ -445,18 +396,15 @@ int opus_projection_encoder_ctl(OpusProjectionEncoder *st, int request, ...)
     for (i = 0; i < nb_input_streams; i++) {
       for (j = 0; j < nb_output_streams; j++) {
         k = demixing_matrix->rows * i + j;
-        external_char[2*l] = (unsigned char)internal_short[k];
-        external_char[2*l+1] = (unsigned char)(internal_short[k] >> 8);
+        external_char[2 * l] = (unsigned char)internal_short[k];
+        external_char[2 * l + 1] = (unsigned char)(internal_short[k] >> 8);
         l++;
       }
     }
-  }
-  break;
-  default:
-  {
+  } break;
+  default: {
     ret = opus_multistream_encoder_ctl_va_list(ms_encoder, request, ap);
-  }
-  break;
+  } break;
   }
   va_end(ap);
   return ret;
@@ -465,4 +413,3 @@ bad_arg:
   va_end(ap);
   return OPUS_BAD_ARG;
 }
-

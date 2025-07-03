@@ -584,11 +584,11 @@ static const SDL_UDEV_Symbols *udev_ctx = NULL;
 #elif defined(__MACOSX__)
 #include "mac/hid.c"
 #define HAVE_PLATFORM_BACKEND
-#define udev_ctx              1
+#define udev_ctx 1
 #elif defined(__WINDOWS__) || defined(__WINGDK__)
 #include "windows/hid.c"
 #define HAVE_PLATFORM_BACKEND
-#define udev_ctx              1
+#define udev_ctx 1
 #elif defined(__ANDROID__)
 /* The implementation for Android is in a separate .cpp file */
 #include "hidapi/hidapi.h"
@@ -885,7 +885,8 @@ static int SDL_libusb_get_string_descriptor(libusb_device_handle *dev,
  * via libusb; these are typically devices that look like HIDs but have a
  * quirk that requires direct access to the hardware.
  */
-static const struct {
+static const struct
+{
     Uint16 vendor;
     Uint16 product;
 } SDL_libusb_whitelist[] = {
@@ -906,9 +907,9 @@ IsInWhitelist(Uint16 vendor, Uint16 product)
 }
 
 #if defined(HAVE_PLATFORM_BACKEND) || HAVE_DRIVER_BACKEND
- #define use_libusb_whitelist_default  SDL_TRUE
+#define use_libusb_whitelist_default SDL_TRUE
 #else
- #define use_libusb_whitelist_default SDL_FALSE
+#define use_libusb_whitelist_default SDL_FALSE
 #endif /* HAVE_PLATFORM_BACKEND || HAVE_DRIVER_BACKEND */
 static SDL_bool use_libusb_whitelist = use_libusb_whitelist_default;
 

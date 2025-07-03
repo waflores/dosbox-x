@@ -70,11 +70,11 @@
  * intersection.
  */
 
+#include <math.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <math.h>
 
 /* Normally use <png.h> here to get the installed libpng, but this is done to
  * ensure the code picks up the local libpng implementation:
@@ -83,102 +83,82 @@
 
 #if defined(PNG_SIMPLIFIED_WRITE_SUPPORTED) && defined(PNG_STDIO_SUPPORTED)
 
-static const struct color
-{
-   const char *name;
-   double      red;
-   double      green;
-   double      blue;
+static const struct color {
+  const char *name;
+  double red;
+  double green;
+  double blue;
 } colors[] =
-/* color ::= black|white|red|green|yellow|blue
- * color ::= brown|purple|pink|orange|gray|cyan
- */
-{
-   { "black",   0,    0,  0 },
-   { "white",   1,    1,  1 },
-   { "red",     1,    0,  0 },
-   { "green",   0,    1,  0 },
-   { "yellow",  1,    1,  0 },
-   { "blue",    0,    0,  1 },
-   { "brown",  .5, .125,  0 },
-   { "purple",  1,    0,  1 },
-   { "pink",    1,   .5, .5 },
-   { "orange",  1,   .5,  0 },
-   { "gray",    0,   .5, .5 },
-   { "cyan",    0,    1,  1 }
-};
-#define color_count ((sizeof colors)/(sizeof colors[0]))
+    /* color ::= black|white|red|green|yellow|blue
+     * color ::= brown|purple|pink|orange|gray|cyan
+     */
+    {{"black", 0, 0, 0},     {"white", 1, 1, 1},  {"red", 1, 0, 0},
+     {"green", 0, 1, 0},     {"yellow", 1, 1, 0}, {"blue", 0, 0, 1},
+     {"brown", .5, .125, 0}, {"purple", 1, 0, 1}, {"pink", 1, .5, .5},
+     {"orange", 1, .5, 0},   {"gray", 0, .5, .5}, {"cyan", 0, 1, 1}};
+#define color_count ((sizeof colors) / (sizeof colors[0]))
 
-static const struct color *
-color_of(const char *arg)
-{
-   int icolor = color_count;
+static const struct color *color_of(const char *arg) {
+  int icolor = color_count;
 
-   while (--icolor >= 0)
-   {
-      if (strcmp(colors[icolor].name, arg) == 0)
-         return colors+icolor;
-   }
+  while (--icolor >= 0) {
+    if (strcmp(colors[icolor].name, arg) == 0)
+      return colors + icolor;
+  }
 
-   fprintf(stderr, "genpng: invalid color %s\n", arg);
-   exit(1);
+  fprintf(stderr, "genpng: invalid color %s\n", arg);
+  exit(1);
 }
 
-static double
-width_of(const char *arg)
-{
-   if (strcmp(arg, "filled") == 0)
-      return 0;
+static double width_of(const char *arg) {
+  if (strcmp(arg, "filled") == 0)
+    return 0;
 
-   else
-   {
-      char *ep = NULL;
-      double w = strtod(arg, &ep);
+  else {
+    char *ep = NULL;
+    double w = strtod(arg, &ep);
 
-      if (ep != NULL && *ep == 0 && w > 0)
-         return w;
-   }
-
-   fprintf(stderr, "genpng: invalid line width %s\n", arg);
-   exit(1);
-}
-
-static double
-coordinate_of(const char *arg)
-{
-   char *ep = NULL;
-   double w = strtod(arg, &ep);
-
-   if (ep != NULL && *ep == 0)
+    if (ep != NULL && *ep == 0 && w > 0)
       return w;
+  }
 
-   fprintf(stderr, "genpng: invalid coordinate value %s\n", arg);
-   exit(1);
+  fprintf(stderr, "genpng: invalid line width %s\n", arg);
+  exit(1);
+}
+
+static double coordinate_of(const char *arg) {
+  char *ep = NULL;
+  double w = strtod(arg, &ep);
+
+  if (ep != NULL && *ep == 0)
+    return w;
+
+  fprintf(stderr, "genpng: invalid coordinate value %s\n", arg);
+  exit(1);
 }
 
 struct arg; /* forward declaration */
 
 typedef int (*shape_fn_ptr)(const struct arg *arg, double x, double y);
-   /* A function to determine if (x,y) is inside the shape.
-    *
-    * There are two implementations:
-    *
-    *    inside_fn: returns true if the point is inside
-    *    check_fn:  returns;
-    *       -1: the point is outside the shape by more than the filter width (2)
-    *        0: the point may be inside the shape
-    *       +1: the point is inside the shape by more than the filter width
-    */
+/* A function to determine if (x,y) is inside the shape.
+ *
+ * There are two implementations:
+ *
+ *    inside_fn: returns true if the point is inside
+ *    check_fn:  returns;
+ *       -1: the point is outside the shape by more than the filter width (2)
+ *        0: the point may be inside the shape
+ *       +1: the point is inside the shape by more than the filter width
+ */
 #define OUTSIDE (-1)
-#define INSIDE  (1)
+#define INSIDE (1)
 
-struct arg
-{
-   const struct color *color;
-   shape_fn_ptr        inside_fn;
-   shape_fn_ptr        check_fn;
-   double              width; /* line width, 0 for 'filled' */
-   double              x1, y1, x2, y2;
+struct arg {
+  const struct color *color;
+  shape_fn_ptr inside_fn;
+  shape_fn_ptr check_fn;
+  double width; /* line width, 0 for 'filled' */
+  double x1, y1, x2, y2;
 };
 
 /* IMPLEMENTATION NOTE:
@@ -262,82 +242,72 @@ while (x<2*super) {
 quit
 #endif
 
-#define BICUBIC1(x) /*     |x| <= 1 */ ((1.5*(x)* - 2.5)*(x)*(x) + 1)
-#define BICUBIC2(x) /* 1 < |x| <  2 */ (((2.5 - 0.5*(x))*(x) - 4)*(x) + 2)
+#define BICUBIC1(x) /*     |x| <= 1 */ ((1.5 * (x) * -2.5) * (x) * (x) + 1)
+#define BICUBIC2(x) /* 1 < |x| <  2 */ (((2.5 - 0.5 * (x)) * (x) - 4) * (x) + 2)
 #define FILTER_WEIGHT 9 /* Twice the first sum below */
-#define FILTER_WIDTH  2 /* Actually half the width; -2..+2 */
-#define FILTER_STEPS  8 /* steps per filter unit */
-static const double
-bicubic[16][2] =
-{
-   /* These numbers are exact; the weight for the filter is 1/9, but this
-    * would make the numbers inexact, so it is not included here.
-    */
-   /*          bicubic      sum        */
-   /* 0*/ { 1.0000000000, 4.5000000000 },
-   /* 1*/ {  .9638671875, 3.5000000000 },
-   /* 2*/ {  .8671875000, 2.5361328125 },
-   /* 3*/ {  .7275390625, 1.6689453125 },
-   /* 4*/ {  .5625000000,  .9414062500 },
-   /* 5*/ {  .3896484375,  .3789062500 },
-   /* 6*/ {  .2265625000, -.0107421875 },
-   /* 7*/ {  .0908203125, -.2373046875 },
-   /* 8*/ {            0, -.3281250000 },
-   /* 9*/ { -.0478515625, -.3281250000 },
-   /*10*/ { -.0703125000, -.2802734375 },
-   /*11*/ { -.0732421875, -.2099609375 },
-   /*12*/ { -.0625000000, -.1367187500 },
-   /*13*/ { -.0439453125, -.0742187500 },
-   /*14*/ { -.0234375000, -.0302734375 },
-   /*15*/ { -.0068359375, -.0068359375 }
-};
+#define FILTER_WIDTH 2  /* Actually half the width; -2..+2 */
+#define FILTER_STEPS 8  /* steps per filter unit */
+static const double bicubic[16][2] = {
+    /* These numbers are exact; the weight for the filter is 1/9, but this
+     * would make the numbers inexact, so it is not included here.
+     */
+    /*          bicubic      sum        */
+    /* 0*/ {1.0000000000, 4.5000000000},
+    /* 1*/ {.9638671875, 3.5000000000},
+    /* 2*/ {.8671875000, 2.5361328125},
+    /* 3*/ {.7275390625, 1.6689453125},
+    /* 4*/ {.5625000000, .9414062500},
+    /* 5*/ {.3896484375, .3789062500},
+    /* 6*/ {.2265625000, -.0107421875},
+    /* 7*/ {.0908203125, -.2373046875},
+    /* 8*/ {0, -.3281250000},
+    /* 9*/ {-.0478515625, -.3281250000},
+    /*10*/ {-.0703125000, -.2802734375},
+    /*11*/ {-.0732421875, -.2099609375},
+    /*12*/ {-.0625000000, -.1367187500},
+    /*13*/ {-.0439453125, -.0742187500},
+    /*14*/ {-.0234375000, -.0302734375},
+    /*15*/ {-.0068359375, -.0068359375}};
 
-static double
-alpha_calc(const struct arg *arg, double x, double y)
-{
-   /* For [x-2..x+2],[y-2,y+2] calculate the weighted bicubic given a function
-    * which tells us whether a point is inside or outside the shape.  First
-    * check if we need to do this at all:
-    */
-   switch (arg->check_fn(arg, x, y))
-   {
-      case OUTSIDE:
-         return 0; /* all samples outside the shape */
+static double alpha_calc(const struct arg *arg, double x, double y) {
+  /* For [x-2..x+2],[y-2,y+2] calculate the weighted bicubic given a function
+   * which tells us whether a point is inside or outside the shape.  First
+   * check if we need to do this at all:
+   */
+  switch (arg->check_fn(arg, x, y)) {
+  case OUTSIDE:
+    return 0; /* all samples outside the shape */
 
-      case INSIDE:
-         return 1; /* all samples inside the shape */
+  case INSIDE:
+    return 1; /* all samples inside the shape */
 
-      default:
-      {
-         int dy;
-         double alpha = 0;
+  default: {
+    int dy;
+    double alpha = 0;
 
-#        define FILTER_D (FILTER_WIDTH*FILTER_STEPS-1)
-         for (dy=-FILTER_D; dy<=FILTER_D; ++dy)
-         {
-            double wy = bicubic[abs(dy)][0];
+#define FILTER_D (FILTER_WIDTH * FILTER_STEPS - 1)
+    for (dy = -FILTER_D; dy <= FILTER_D; ++dy) {
+      double wy = bicubic[abs(dy)][0];
 
-            if (wy != 0)
-            {
-               double alphay = 0;
-               int dx;
+      if (wy != 0) {
+        double alphay = 0;
+        int dx;
 
-               for (dx=-FILTER_D; dx<=FILTER_D; ++dx)
-               {
-                  double wx = bicubic[abs(dx)][0];
+        for (dx = -FILTER_D; dx <= FILTER_D; ++dx) {
+          double wx = bicubic[abs(dx)][0];
 
-                  if (wx != 0 && arg->inside_fn(arg, x+dx/16, y+dy/16))
-                     alphay += wx;
-               }
+          if (wx != 0 && arg->inside_fn(arg, x + dx / 16, y + dy / 16))
+            alphay += wx;
+        }
 
-               alpha += wy * alphay;
-            }
-         }
-
-         /* This needs to be weighted for each dimension: */
-         return alpha / (FILTER_WEIGHT*FILTER_WEIGHT);
+        alpha += wy * alphay;
       }
-   }
+    }
+
+    /* This needs to be weighted for each dimension: */
+    return alpha / (FILTER_WEIGHT * FILTER_WEIGHT);
+  }
+  }
 }
 
 /* These are the shape functions. */
@@ -345,109 +315,100 @@ alpha_calc(const struct arg *arg, double x, double y)
  * { inside_square_filled, check_square_filled },
  * { inside_square, check_square }
  */
-static int
-square_check(double x, double y, double x1, double y1, double x2, double y2)
-   /* Is x,y inside the square (x1,y1)..(x2,y2)? */
+static int square_check(double x, double y, double x1, double y1, double x2,
+                        double y2)
+/* Is x,y inside the square (x1,y1)..(x2,y2)? */
 {
-   /* Do a modified Cohen-Sutherland on one point, bit patterns that indicate
-    * 'outside' are:
-    *
-    *   x<x1 | x<y1 | x<x2 | x<y2
-    *    0      x      0      x     To the right
-    *    1      x      1      x     To the left
-    *    x      0      x      0     Below
-    *    x      1      x      1     Above
-    *
-    * So 'inside' is (x<x1) != (x<x2) && (y<y1) != (y<y2);
-    */
-   return ((x<x1) ^ (x<x2)) & ((y<y1) ^ (y<y2));
+  /* Do a modified Cohen-Sutherland on one point, bit patterns that indicate
+   * 'outside' are:
+   *
+   *   x<x1 | x<y1 | x<x2 | x<y2
+   *    0      x      0      x     To the right
+   *    1      x      1      x     To the left
+   *    x      0      x      0     Below
+   *    x      1      x      1     Above
+   *
+   * So 'inside' is (x<x1) != (x<x2) && (y<y1) != (y<y2);
+   */
+  return ((x < x1) ^ (x < x2)) & ((y < y1) ^ (y < y2));
 }
 
-static int
-inside_square_filled(const struct arg *arg, double x, double y)
-{
-   return square_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2);
+static int inside_square_filled(const struct arg *arg, double x, double y) {
+  return square_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2);
 }
 
-static int
-square_check_line(const struct arg *arg, double x, double y, double w)
-   /* Check for a point being inside the boundaries implied by the given arg
-    * and assuming a width 2*w each side of the boundaries.  This returns the
-    * 'check' INSIDE/OUTSIDE/0 result but note the semantics:
-    *
-    *          +--------------+
-    *          |              |   OUTSIDE
-    *          |   INSIDE     |
-    *          |              |
-    *          +--------------+
-    *
-    * And '0' means within the line boundaries.
-    */
+static int square_check_line(const struct arg *arg, double x, double y,
+                             double w)
+/* Check for a point being inside the boundaries implied by the given arg
+ * and assuming a width 2*w each side of the boundaries.  This returns the
+ * 'check' INSIDE/OUTSIDE/0 result but note the semantics:
+ *
+ *          +--------------+
+ *          |              |   OUTSIDE
+ *          |   INSIDE     |
+ *          |              |
+ *          +--------------+
+ *
+ * And '0' means within the line boundaries.
+ */
 {
-   double cx = (arg->x1+arg->x2)/2;
-   double wx = fabs(arg->x1-arg->x2)/2;
-   double cy = (arg->y1+arg->y2)/2;
-   double wy = fabs(arg->y1-arg->y2)/2;
+  double cx = (arg->x1 + arg->x2) / 2;
+  double wx = fabs(arg->x1 - arg->x2) / 2;
+  double cy = (arg->y1 + arg->y2) / 2;
+  double wy = fabs(arg->y1 - arg->y2) / 2;
 
-   if (square_check(x, y, cx-wx-w, cy-wy-w, cx+wx+w, cy+wy+w))
-   {
-      /* Inside, but maybe too far; check for the redundant case where
-       * the lines overlap:
-       */
-      wx -= w;
-      wy -= w;
-      if (wx > 0 && wy > 0 && square_check(x, y, cx-wx, cy-wy, cx+wx, cy+wy))
-         return INSIDE; /* between (inside) the boundary lines. */
+  if (square_check(x, y, cx - wx - w, cy - wy - w, cx + wx + w, cy + wy + w)) {
+    /* Inside, but maybe too far; check for the redundant case where
+     * the lines overlap:
+     */
+    wx -= w;
+    wy -= w;
+    if (wx > 0 && wy > 0 &&
+        square_check(x, y, cx - wx, cy - wy, cx + wx, cy + wy))
+      return INSIDE; /* between (inside) the boundary lines. */
 
-      return 0; /* inside the lines themselves. */
-   }
+    return 0; /* inside the lines themselves. */
+  }
 
-   return OUTSIDE; /* outside the boundary lines. */
+  return OUTSIDE; /* outside the boundary lines. */
 }
 
-static int
-check_square_filled(const struct arg *arg, double x, double y)
-{
-   /* The filter extends +/-FILTER_WIDTH each side of each output point, so
-    * the check has to expand and contract the square by that amount; '0'
-    * means close enough to the edge of the square that the bicubic filter has
-    * to be run, OUTSIDE means alpha==0, INSIDE means alpha==1.
-    */
-   return square_check_line(arg, x, y, FILTER_WIDTH);
+static int check_square_filled(const struct arg *arg, double x, double y) {
+  /* The filter extends +/-FILTER_WIDTH each side of each output point, so
+   * the check has to expand and contract the square by that amount; '0'
+   * means close enough to the edge of the square that the bicubic filter has
+   * to be run, OUTSIDE means alpha==0, INSIDE means alpha==1.
+   */
+  return square_check_line(arg, x, y, FILTER_WIDTH);
 }
 
-static int
-inside_square(const struct arg *arg, double x, double y)
-{
-   /* Return true if within the drawn lines, else false, no need to distinguish
-    * INSIDE vs OUTSIDE here:
-    */
-   return square_check_line(arg, x, y, arg->width/2) == 0;
+static int inside_square(const struct arg *arg, double x, double y) {
+  /* Return true if within the drawn lines, else false, no need to distinguish
+   * INSIDE vs OUTSIDE here:
+   */
+  return square_check_line(arg, x, y, arg->width / 2) == 0;
 }
 
-static int
-check_square(const struct arg *arg, double x, double y)
-{
-   /* So for this function a result of 'INSIDE' means inside the actual lines.
-    */
-   double w = arg->width/2;
+static int check_square(const struct arg *arg, double x, double y) {
+  /* So for this function a result of 'INSIDE' means inside the actual lines.
+   */
+  double w = arg->width / 2;
 
-   if (square_check_line(arg, x, y, w+FILTER_WIDTH) == 0)
-   {
-      /* Somewhere close to the boundary lines. If far enough inside one of
-       * them then we can return INSIDE:
-       */
-      w -= FILTER_WIDTH;
+  if (square_check_line(arg, x, y, w + FILTER_WIDTH) == 0) {
+    /* Somewhere close to the boundary lines. If far enough inside one of
+     * them then we can return INSIDE:
+     */
+    w -= FILTER_WIDTH;
 
-      if (w > 0 && square_check_line(arg, x, y, w) == 0)
-         return INSIDE;
+    if (w > 0 && square_check_line(arg, x, y, w) == 0)
+      return INSIDE;
 
-      /* Point is somewhere in the filter region: */
-      return 0;
-   }
+    /* Point is somewhere in the filter region: */
+    return 0;
+  }
 
-   else /* Inside or outside the square by more than w+FILTER_WIDTH. */
-      return OUTSIDE;
+  else /* Inside or outside the square by more than w+FILTER_WIDTH. */
+    return OUTSIDE;
 }
 
 /* "circle",
@@ -457,426 +418,389 @@ check_square(const struct arg *arg, double x, double y)
  * The functions here are analogous to the square ones; however, they check
  * the corresponding ellipse as opposed to the rectangle.
  */
-static int
-circle_check(double x, double y, double x1, double y1, double x2, double y2)
-{
-   if (square_check(x, y, x1, y1, x2, y2))
-   {
-      /* Inside the square, so maybe inside the circle too: */
-      const double cx = (x1 + x2)/2;
-      const double cy = (y1 + y2)/2;
-      const double dx = x1 - x2;
-      const double dy = y1 - y2;
+static int circle_check(double x, double y, double x1, double y1, double x2,
+                        double y2) {
+  if (square_check(x, y, x1, y1, x2, y2)) {
+    /* Inside the square, so maybe inside the circle too: */
+    const double cx = (x1 + x2) / 2;
+    const double cy = (y1 + y2) / 2;
+    const double dx = x1 - x2;
+    const double dy = y1 - y2;
 
-      x = (x - cx)/dx;
-      y = (y - cy)/dy;
+    x = (x - cx) / dx;
+    y = (y - cy) / dy;
 
-      /* It is outside if the distance from the center is more than half the
-       * diameter:
-       */
-      return x*x+y*y < .25;
-   }
+    /* It is outside if the distance from the center is more than half the
+     * diameter:
+     */
+    return x * x + y * y < .25;
+  }
 
-   return 0; /* outside */
+  return 0; /* outside */
 }
 
-static int
-inside_circle_filled(const struct arg *arg, double x, double y)
-{
-   return circle_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2);
+static int inside_circle_filled(const struct arg *arg, double x, double y) {
+  return circle_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2);
 }
 
-static int
-circle_check_line(const struct arg *arg, double x, double y, double w)
-   /* Check for a point being inside the boundaries implied by the given arg
-    * and assuming a width 2*w each side of the boundaries.  This function has
-    * the same semantic as square_check_line but tests the circle.
-    */
+static int circle_check_line(const struct arg *arg, double x, double y,
+                             double w)
+/* Check for a point being inside the boundaries implied by the given arg
+ * and assuming a width 2*w each side of the boundaries.  This function has
+ * the same semantic as square_check_line but tests the circle.
+ */
 {
-   double cx = (arg->x1+arg->x2)/2;
-   double wx = fabs(arg->x1-arg->x2)/2;
-   double cy = (arg->y1+arg->y2)/2;
-   double wy = fabs(arg->y1-arg->y2)/2;
+  double cx = (arg->x1 + arg->x2) / 2;
+  double wx = fabs(arg->x1 - arg->x2) / 2;
+  double cy = (arg->y1 + arg->y2) / 2;
+  double wy = fabs(arg->y1 - arg->y2) / 2;
 
-   if (circle_check(x, y, cx-wx-w, cy-wy-w, cx+wx+w, cy+wy+w))
-   {
-      /* Inside, but maybe too far; check for the redundant case where
-       * the lines overlap:
-       */
-      wx -= w;
-      wy -= w;
-      if (wx > 0 && wy > 0 && circle_check(x, y, cx-wx, cy-wy, cx+wx, cy+wy))
-         return INSIDE; /* between (inside) the boundary lines. */
+  if (circle_check(x, y, cx - wx - w, cy - wy - w, cx + wx + w, cy + wy + w)) {
+    /* Inside, but maybe too far; check for the redundant case where
+     * the lines overlap:
+     */
+    wx -= w;
+    wy -= w;
+    if (wx > 0 && wy > 0 &&
+        circle_check(x, y, cx - wx, cy - wy, cx + wx, cy + wy))
+      return INSIDE; /* between (inside) the boundary lines. */
 
-      return 0; /* inside the lines themselves. */
-   }
+    return 0; /* inside the lines themselves. */
+  }
 
-   return OUTSIDE; /* outside the boundary lines. */
+  return OUTSIDE; /* outside the boundary lines. */
 }
 
-static int
-check_circle_filled(const struct arg *arg, double x, double y)
-{
-   return circle_check_line(arg, x, y, FILTER_WIDTH);
+static int check_circle_filled(const struct arg *arg, double x, double y) {
+  return circle_check_line(arg, x, y, FILTER_WIDTH);
 }
 
-static int
-inside_circle(const struct arg *arg, double x, double y)
-{
-   return circle_check_line(arg, x, y, arg->width/2) == 0;
+static int inside_circle(const struct arg *arg, double x, double y) {
+  return circle_check_line(arg, x, y, arg->width / 2) == 0;
 }
 
-static int
-check_circle(const struct arg *arg, double x, double y)
-{
-   /* Exactly as the 'square' code.  */
-   double w = arg->width/2;
+static int check_circle(const struct arg *arg, double x, double y) {
+  /* Exactly as the 'square' code.  */
+  double w = arg->width / 2;
 
-   if (circle_check_line(arg, x, y, w+FILTER_WIDTH) == 0)
-   {
-      w -= FILTER_WIDTH;
+  if (circle_check_line(arg, x, y, w + FILTER_WIDTH) == 0) {
+    w -= FILTER_WIDTH;
 
-      if (w > 0 && circle_check_line(arg, x, y, w) == 0)
-         return INSIDE;
+    if (w > 0 && circle_check_line(arg, x, y, w) == 0)
+      return INSIDE;
 
-      /* Point is somewhere in the filter region: */
-      return 0;
-   }
+    /* Point is somewhere in the filter region: */
+    return 0;
+  }
 
-   else /* Inside or outside the square by more than w+FILTER_WIDTH. */
-      return OUTSIDE;
+  else /* Inside or outside the square by more than w+FILTER_WIDTH. */
+    return OUTSIDE;
 }
 
 /* "line",
  * { NULL, NULL },  There is no 'filled' line.
  * { inside_line, check_line }
  */
-static int
-line_check(double x, double y, double x1, double y1, double x2, double y2,
-   double w, double expand)
-{
-   /* Shift all the points to (arg->x1, arg->y1) */
-   double lx = x2 - x1;
-   double ly = y2 - y1;
-   double len2 = lx*lx + ly*ly;
-   double cross, dot;
+static int line_check(double x, double y, double x1, double y1, double x2,
+                      double y2, double w, double expand) {
+  /* Shift all the points to (arg->x1, arg->y1) */
+  double lx = x2 - x1;
+  double ly = y2 - y1;
+  double len2 = lx * lx + ly * ly;
+  double cross, dot;
 
-   x -= x1;
-   y -= y1;
+  x -= x1;
+  y -= y1;
 
-   /* The dot product is the distance down the line, the cross product is
-    * the distance away from the line:
-    *
-    *    distance = |cross| / sqrt(len2)
-    */
-   cross = x * ly - y * lx;
+  /* The dot product is the distance down the line, the cross product is
+   * the distance away from the line:
+   *
+   *    distance = |cross| / sqrt(len2)
+   */
+  cross = x * ly - y * lx;
 
-   /* If 'distance' is more than w the point is definitely outside the line:
-    *
-    *     distance >= w
-    *     |cross|  >= w * sqrt(len2)
-    *     cross^2  >= w^2 * len2:
-    */
-   if (cross*cross >= (w+expand)*(w+expand)*len2)
-      return 0; /* outside */
+  /* If 'distance' is more than w the point is definitely outside the line:
+   *
+   *     distance >= w
+   *     |cross|  >= w * sqrt(len2)
+   *     cross^2  >= w^2 * len2:
+   */
+  if (cross * cross >= (w + expand) * (w + expand) * len2)
+    return 0; /* outside */
 
-   /* Now find the distance *along* the line; this comes from the dot product
-    * lx.x+ly.y. The actual distance (in pixels) is:
-    *
-    *   distance = dot / sqrt(len2)
-    */
-   dot = lx * x + ly * y;
+  /* Now find the distance *along* the line; this comes from the dot product
+   * lx.x+ly.y. The actual distance (in pixels) is:
+   *
+   *   distance = dot / sqrt(len2)
+   */
+  dot = lx * x + ly * y;
 
-   /* The test for 'outside' is:
-    *
-    *    distance < 0 || distance > sqrt(len2)
-    *                 -> dot / sqrt(len2) > sqrt(len2)
-    *                 -> dot > len2
-    *
-    * But 'expand' is used for the filter width and needs to be handled too:
-    */
-   return dot > -expand && dot < len2+expand;
+  /* The test for 'outside' is:
+   *
+   *    distance < 0 || distance > sqrt(len2)
+   *                 -> dot / sqrt(len2) > sqrt(len2)
+   *                 -> dot > len2
+   *
+   * But 'expand' is used for the filter width and needs to be handled too:
+   */
+  return dot > -expand && dot < len2 + expand;
 }
 
-static int
-inside_line(const struct arg *arg, double x, double y)
-{
-   return line_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2, arg->width/2, 0);
+static int inside_line(const struct arg *arg, double x, double y) {
+  return line_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2, arg->width / 2,
+                    0);
 }
 
-static int
-check_line(const struct arg *arg, double x, double y)
-{
-   /* The end caps of the line must be checked too; it's not enough just to
-    * widen the line by FILTER_WIDTH; 'expand' exists for this purpose:
-    */
-   if (line_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2, arg->width/2,
-       FILTER_WIDTH))
-   {
-      /* Inside the line+filter; far enough inside that the filter isn't
-       * required?
-       */
-      if (arg->width > 2*FILTER_WIDTH &&
-          line_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2, arg->width/2,
-             -FILTER_WIDTH))
-         return INSIDE;
+static int check_line(const struct arg *arg, double x, double y) {
+  /* The end caps of the line must be checked too; it's not enough just to
+   * widen the line by FILTER_WIDTH; 'expand' exists for this purpose:
+   */
+  if (line_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2, arg->width / 2,
+                 FILTER_WIDTH)) {
+    /* Inside the line+filter; far enough inside that the filter isn't
+     * required?
+     */
+    if (arg->width > 2 * FILTER_WIDTH &&
+        line_check(x, y, arg->x1, arg->y1, arg->x2, arg->y2, arg->width / 2,
+                   -FILTER_WIDTH))
+      return INSIDE;
 
-      return 0;
-   }
+    return 0;
+  }
 
-   return OUTSIDE;
+  return OUTSIDE;
 }
 
-static const struct
-{
-   const char    *name;
-   shape_fn_ptr   function[2/*fill,line*/][2];
-#  define         FN_INSIDE 0
-#  define         FN_CHECK 1
-} shape_defs[] =
-{
-   {  "square",
-      {  { inside_square_filled, check_square_filled },
-         { inside_square, check_square } }
-   },
-   {  "circle",
-      {  { inside_circle_filled, check_circle_filled },
-         { inside_circle, check_circle } }
-   },
-   {  "line",
-      {  { NULL, NULL },
-         { inside_line, check_line } }
-   }
-};
+static const struct {
+  const char *name;
+  shape_fn_ptr function[2 /*fill,line*/][2];
+#define FN_INSIDE 0
+#define FN_CHECK 1
+} shape_defs[] = {{"square",
+                   {{inside_square_filled, check_square_filled},
+                    {inside_square, check_square}}},
+                  {"circle",
+                   {{inside_circle_filled, check_circle_filled},
+                    {inside_circle, check_circle}}},
+                  {"line", {{NULL, NULL}, {inside_line, check_line}}}};
 
-#define shape_count ((sizeof shape_defs)/(sizeof shape_defs[0]))
+#define shape_count ((sizeof shape_defs) / (sizeof shape_defs[0]))
 
-static shape_fn_ptr
-shape_of(const char *arg, double width, int f)
-{
-   unsigned int i;
+static shape_fn_ptr shape_of(const char *arg, double width, int f) {
+  unsigned int i;
 
-   for (i=0; i<shape_count; ++i) if (strcmp(shape_defs[i].name, arg) == 0)
-   {
+  for (i = 0; i < shape_count; ++i)
+    if (strcmp(shape_defs[i].name, arg) == 0) {
       shape_fn_ptr fn = shape_defs[i].function[width != 0][f];
 
       if (fn != NULL)
-         return fn;
+        return fn;
 
       fprintf(stderr, "genpng: %s %s not supported\n",
-         width == 0 ? "filled" : "unfilled", arg);
+              width == 0 ? "filled" : "unfilled", arg);
       exit(1);
-   }
+    }
 
-   fprintf(stderr, "genpng: %s: not a valid shape name\n", arg);
-   exit(1);
+  fprintf(stderr, "genpng: %s: not a valid shape name\n", arg);
+  exit(1);
 }
 
-static void
-parse_arg(struct arg *arg, const char **argv/*7 arguments*/)
-{
-   /* shape ::= color width shape x1 y1 x2 y2 */
-   arg->color = color_of(argv[0]);
-   arg->width = width_of(argv[1]);
-   arg->inside_fn = shape_of(argv[2], arg->width, FN_INSIDE);
-   arg->check_fn = shape_of(argv[2], arg->width, FN_CHECK);
-   arg->x1 = coordinate_of(argv[3]);
-   arg->y1 = coordinate_of(argv[4]);
-   arg->x2 = coordinate_of(argv[5]);
-   arg->y2 = coordinate_of(argv[6]);
+static void parse_arg(struct arg *arg, const char **argv /*7 arguments*/) {
+  /* shape ::= color width shape x1 y1 x2 y2 */
+  arg->color = color_of(argv[0]);
+  arg->width = width_of(argv[1]);
+  arg->inside_fn = shape_of(argv[2], arg->width, FN_INSIDE);
+  arg->check_fn = shape_of(argv[2], arg->width, FN_CHECK);
+  arg->x1 = coordinate_of(argv[3]);
+  arg->y1 = coordinate_of(argv[4]);
+  arg->x2 = coordinate_of(argv[5]);
+  arg->y2 = coordinate_of(argv[6]);
 }
 
-static png_uint_32
-read_wh(const char *name, const char *str)
-   /* read a PNG width or height */
+static png_uint_32 read_wh(const char *name, const char *str)
+/* read a PNG width or height */
 {
-   char *ep = NULL;
-   unsigned long ul = strtoul(str, &ep, 10);
+  char *ep = NULL;
+  unsigned long ul = strtoul(str, &ep, 10);
 
-   if (ep != NULL && *ep == 0 && ul > 0 && ul <= 0x7fffffff)
-      return (png_uint_32)/*SAFE*/ul;
+  if (ep != NULL && *ep == 0 && ul > 0 && ul <= 0x7fffffff)
+    return (png_uint_32) /*SAFE*/ ul;
 
-   fprintf(stderr, "genpng: %s: invalid number %s\n", name, str);
-   exit(1);
+  fprintf(stderr, "genpng: %s: invalid number %s\n", name, str);
+  exit(1);
 }
 
-static void
-pixel(png_uint_16p p, struct arg *args, int nargs, double x, double y)
-{
-   /* Fill in the pixel by checking each shape (args[nargs]) for effects on
-    * the corresponding sample:
-    */
-   double r=0, g=0, b=0, a=0;
+static void pixel(png_uint_16p p, struct arg *args, int nargs, double x,
+                  double y) {
+  /* Fill in the pixel by checking each shape (args[nargs]) for effects on
+   * the corresponding sample:
+   */
+  double r = 0, g = 0, b = 0, a = 0;
 
-   while (--nargs >= 0 && a != 1)
-   {
-      /* NOTE: alpha_calc can return a value outside the range 0..1 with the
-       * bicubic filter.
-       */
-      const double alpha = alpha_calc(args+nargs, x, y) * (1-a);
+  while (--nargs >= 0 && a != 1) {
+    /* NOTE: alpha_calc can return a value outside the range 0..1 with the
+     * bicubic filter.
+     */
+    const double alpha = alpha_calc(args + nargs, x, y) * (1 - a);
 
-      r += alpha * args[nargs].color->red;
-      g += alpha * args[nargs].color->green;
-      b += alpha * args[nargs].color->blue;
-      a += alpha;
-   }
+    r += alpha * args[nargs].color->red;
+    g += alpha * args[nargs].color->green;
+    b += alpha * args[nargs].color->blue;
+    a += alpha;
+  }
 
-   /* 'a' may be negative or greater than 1; if it is, negative clamp the
-    * pixel to 0 if >1 clamp r/g/b:
-    */
-   if (a > 0)
-   {
-      if (a > 1)
-      {
-         if (r > 1) r = 1;
-         if (g > 1) g = 1;
-         if (b > 1) b = 1;
-         a = 1;
-      }
+  /* 'a' may be negative or greater than 1; if it is, negative clamp the
+   * pixel to 0 if >1 clamp r/g/b:
+   */
+  if (a > 0) {
+    if (a > 1) {
+      if (r > 1)
+        r = 1;
+      if (g > 1)
+        g = 1;
+      if (b > 1)
+        b = 1;
+      a = 1;
+    }
 
-      /* And fill in the pixel: */
-      p[0] = (png_uint_16)/*SAFE*/round(r * 65535);
-      p[1] = (png_uint_16)/*SAFE*/round(g * 65535);
-      p[2] = (png_uint_16)/*SAFE*/round(b * 65535);
-      p[3] = (png_uint_16)/*SAFE*/round(a * 65535);
-   }
+    /* And fill in the pixel: */
+    p[0] = (png_uint_16) /*SAFE*/ round(r * 65535);
+    p[1] = (png_uint_16) /*SAFE*/ round(g * 65535);
+    p[2] = (png_uint_16) /*SAFE*/ round(b * 65535);
+    p[3] = (png_uint_16) /*SAFE*/ round(a * 65535);
+  }
 
-   else
-      p[3] = p[2] = p[1] = p[0] = 0;
+  else
+    p[3] = p[2] = p[1] = p[0] = 0;
 }
 
-int
-main(int argc, const char **argv)
-{
-   int convert_to_8bit = 0;
+int main(int argc, const char **argv) {
+  int convert_to_8bit = 0;
 
-   /* There is one option: --8bit: */
-   if (argc > 1 && strcmp(argv[1], "--8bit") == 0)
-      --argc, ++argv, convert_to_8bit = 1;
+  /* There is one option: --8bit: */
+  if (argc > 1 && strcmp(argv[1], "--8bit") == 0)
+    --argc, ++argv, convert_to_8bit = 1;
 
-   if (argc >= 3)
-   {
-      png_uint_16p buffer;
-      int nshapes;
-      png_image image;
-#     define max_shapes 256
-      struct arg arg_list[max_shapes];
+  if (argc >= 3) {
+    png_uint_16p buffer;
+    int nshapes;
+    png_image image;
+#define max_shapes 256
+    struct arg arg_list[max_shapes];
 
-      /* The libpng Simplified API write code requires a fully initialized
-       * structure.
-       */
-      memset(&image, 0, sizeof image);
-      image.version = PNG_IMAGE_VERSION;
-      image.opaque = NULL;
-      image.width = read_wh("width", argv[1]);
-      image.height = read_wh("height", argv[2]);
-      image.format = PNG_FORMAT_LINEAR_RGB_ALPHA;
-      image.flags = 0;
-      image.colormap_entries = 0;
+    /* The libpng Simplified API write code requires a fully initialized
+     * structure.
+     */
+    memset(&image, 0, sizeof image);
+    image.version = PNG_IMAGE_VERSION;
+    image.opaque = NULL;
+    image.width = read_wh("width", argv[1]);
+    image.height = read_wh("height", argv[2]);
+    image.format = PNG_FORMAT_LINEAR_RGB_ALPHA;
+    image.flags = 0;
+    image.colormap_entries = 0;
 
-      /* Check the remainder of the arguments */
-      for (nshapes=0; 3+7*(nshapes+1) <= argc && nshapes < max_shapes;
-           ++nshapes)
-         parse_arg(arg_list+nshapes, argv+3+7*nshapes);
+    /* Check the remainder of the arguments */
+    for (nshapes = 0; 3 + 7 * (nshapes + 1) <= argc && nshapes < max_shapes;
+         ++nshapes)
+      parse_arg(arg_list + nshapes, argv + 3 + 7 * nshapes);
 
-      if (3+7*nshapes != argc)
-      {
-         fprintf(stderr, "genpng: %s: too many arguments\n", argv[3+7*nshapes]);
-         return 1;
-      }
+    if (3 + 7 * nshapes != argc) {
+      fprintf(stderr, "genpng: %s: too many arguments\n",
+              argv[3 + 7 * nshapes]);
+      return 1;
+    }
 
 #if 1
-     /* TO do: determine whether this guard against overflow is necessary.
-      * This comment in png.h indicates that it should be safe: "libpng will
-      * refuse to process an image where such an overflow would occur", but
-      * I don't see where the image gets rejected when the buffer is too
-      * large before the malloc is attempted.
-      */
-      if (image.height > ((size_t)(-1))/(8*image.width)) {
-         fprintf(stderr, "genpng: image buffer would be too big");
-         return 1;
-      }
+    /* TO do: determine whether this guard against overflow is necessary.
+     * This comment in png.h indicates that it should be safe: "libpng will
+     * refuse to process an image where such an overflow would occur", but
+     * I don't see where the image gets rejected when the buffer is too
+     * large before the malloc is attempted.
+     */
+    if (image.height > ((size_t)(-1)) / (8 * image.width)) {
+      fprintf(stderr, "genpng: image buffer would be too big");
+      return 1;
+    }
 #endif
 
-      /* Create the buffer: */
-      buffer = malloc(PNG_IMAGE_SIZE(image));
+    /* Create the buffer: */
+    buffer = malloc(PNG_IMAGE_SIZE(image));
 
-      if (buffer != NULL)
-      {
-         png_uint_32 y;
+    if (buffer != NULL) {
+      png_uint_32 y;
 
-         /* Write each row... */
-         for (y=0; y<image.height; ++y)
-         {
-            png_uint_32 x;
+      /* Write each row... */
+      for (y = 0; y < image.height; ++y) {
+        png_uint_32 x;
 
-            /* Each pixel in each row: */
-            for (x=0; x<image.width; ++x)
-               pixel(buffer + 4*(x + y*image.width), arg_list, nshapes, x, y);
-         }
+        /* Each pixel in each row: */
+        for (x = 0; x < image.width; ++x)
+          pixel(buffer + 4 * (x + y * image.width), arg_list, nshapes, x, y);
+      }
 
-         /* Write the result (to stdout) */
-         if (png_image_write_to_stdio(&image, stdout, convert_to_8bit,
-             buffer, 0/*row_stride*/, NULL/*colormap*/))
-         {
-            free(buffer);
-            return 0; /* success */
-         }
-
-         else
-            fprintf(stderr, "genpng: write stdout: %s\n", image.message);
-
-         free(buffer);
+      /* Write the result (to stdout) */
+      if (png_image_write_to_stdio(&image, stdout, convert_to_8bit, buffer,
+                                   0 /*row_stride*/, NULL /*colormap*/)) {
+        free(buffer);
+        return 0; /* success */
       }
 
       else
-         fprintf(stderr, "genpng: out of memory: %lu bytes\n",
-               (unsigned long)PNG_IMAGE_SIZE(image));
-   }
+        fprintf(stderr, "genpng: write stdout: %s\n", image.message);
 
-   else
-   {
-      /* Wrong number of arguments */
-      fprintf(stderr, "genpng: usage: genpng [--8bit] width height {shape}\n"
-         " Generate a transparent PNG in RGBA (truecolor+alpha) format\n"
-         " containing the given shape or shapes.  Shapes are defined:\n"
-         "\n"
-         "  shape ::= color width shape x1 y1 x2 y2\n"
-         "  color ::= black|white|red|green|yellow|blue\n"
-         "  color ::= brown|purple|pink|orange|gray|cyan\n"
-         "  width ::= filled|<number>\n"
-         "  shape ::= circle|square|line\n"
-         "  x1,x2 ::= <number>\n"
-         "  y1,y2 ::= <number>\n"
-         "\n"
-         " Numbers are floating point numbers describing points relative to\n"
-         " the top left of the output PNG as pixel coordinates.  The 'width'\n"
-         " parameter is either the width of the line (in output pixels) used\n"
-         " to draw the shape or 'filled' to indicate that the shape should\n"
-         " be filled with the color.\n"
-         "\n"
-         " Colors are interpreted loosely to give access to the eight full\n"
-         " intensity RGB values:\n"
-         "\n"
-         "  black, red, green, blue, yellow, cyan, purple, white,\n"
-         "\n"
-         " Cyan is full intensity blue+green; RGB(0,1,1), plus the following\n"
-         " lower intensity values:\n"
-         "\n"
-         "  brown:  red+orange:  RGB(0.5, 0.125, 0) (dark red+orange)\n"
-         "  pink:   red+white:   RGB(1.0, 0.5,   0.5)\n"
-         "  orange: red+yellow:  RGB(1.0, 0.5,   0)\n"
-         "  gray:   black+white: RGB(0.5, 0.5,   0.5)\n"
-         "\n"
-         " The RGB values are selected to make detection of aliasing errors\n"
-         " easy. The names are selected to make the description of errors\n"
-         " easy.\n"
-         "\n"
-         " The PNG is written to stdout, if --8bit is given a 32bpp RGBA sRGB\n"
-         " file is produced, otherwise a 64bpp RGBA linear encoded file is\n"
-         " written.\n");
-   }
+      free(buffer);
+    }
 
-   return 1;
+    else
+      fprintf(stderr, "genpng: out of memory: %lu bytes\n",
+              (unsigned long)PNG_IMAGE_SIZE(image));
+  }
+
+  else {
+    /* Wrong number of arguments */
+    fprintf(
+        stderr,
+        "genpng: usage: genpng [--8bit] width height {shape}\n"
+        " Generate a transparent PNG in RGBA (truecolor+alpha) format\n"
+        " containing the given shape or shapes.  Shapes are defined:\n"
+        "\n"
+        "  shape ::= color width shape x1 y1 x2 y2\n"
+        "  color ::= black|white|red|green|yellow|blue\n"
+        "  color ::= brown|purple|pink|orange|gray|cyan\n"
+        "  width ::= filled|<number>\n"
+        "  shape ::= circle|square|line\n"
+        "  x1,x2 ::= <number>\n"
+        "  y1,y2 ::= <number>\n"
+        "\n"
+        " Numbers are floating point numbers describing points relative to\n"
+        " the top left of the output PNG as pixel coordinates.  The 'width'\n"
+        " parameter is either the width of the line (in output pixels) used\n"
+        " to draw the shape or 'filled' to indicate that the shape should\n"
+        " be filled with the color.\n"
+        "\n"
+        " Colors are interpreted loosely to give access to the eight full\n"
+        " intensity RGB values:\n"
+        "\n"
+        "  black, red, green, blue, yellow, cyan, purple, white,\n"
+        "\n"
+        " Cyan is full intensity blue+green; RGB(0,1,1), plus the following\n"
+        " lower intensity values:\n"
+        "\n"
+        "  brown:  red+orange:  RGB(0.5, 0.125, 0) (dark red+orange)\n"
+        "  pink:   red+white:   RGB(1.0, 0.5,   0.5)\n"
+        "  orange: red+yellow:  RGB(1.0, 0.5,   0)\n"
+        "  gray:   black+white: RGB(0.5, 0.5,   0.5)\n"
+        "\n"
+        " The RGB values are selected to make detection of aliasing errors\n"
+        " easy. The names are selected to make the description of errors\n"
+        " easy.\n"
+        "\n"
+        " The PNG is written to stdout, if --8bit is given a 32bpp RGBA sRGB\n"
+        " file is produced, otherwise a 64bpp RGBA linear encoded file is\n"
+        " written.\n");
+  }
+
+  return 1;
 }
 #endif /* SIMPLIFIED_WRITE && STDIO */

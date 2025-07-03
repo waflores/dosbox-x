@@ -23,16 +23,16 @@
 #ifdef SDL_VIDEO_DRIVER_WINRT
 
 /* SDL includes */
+#include "SDL_system.h"
 #include "SDL_winrtevents_c.h"
 #include "SDL_winrtmouse_c.h"
 #include "SDL_winrtvideo_cpp.h"
-#include "SDL_system.h"
 
 extern "C" {
-#include "../SDL_sysvideo.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_touch_c.h"
+#include "../SDL_sysvideo.h"
 }
 
 /* File-specific globals: */

@@ -18,34 +18,26 @@
 
 #include "config.h"
 
-#include "ethernet_nothing.h"
 #include "dosbox.h"
+#include "ethernet_nothing.h"
 #include "logging.h"
 #include "support.h" /* strcasecmp */
 
-NothingEthernetConnection::NothingEthernetConnection()
-      : EthernetConnection()
-{
+NothingEthernetConnection::NothingEthernetConnection() : EthernetConnection() {}
+
+NothingEthernetConnection::~NothingEthernetConnection() {}
+
+bool NothingEthernetConnection::Initialize(Section *config) {
+  (void)config;
+  return true;
 }
 
-NothingEthernetConnection::~NothingEthernetConnection()
-{
+void NothingEthernetConnection::SendPacket(const uint8_t *packet, int len) {
+  (void)packet;
+  (void)len;
 }
 
-bool NothingEthernetConnection::Initialize(Section* config)
-{
-	(void)config;
-	return true;
+void NothingEthernetConnection::GetPackets(
+    std::function<void(const uint8_t *, int)> callback) {
+  (void)callback;
 }
-
-void NothingEthernetConnection::SendPacket(const uint8_t* packet, int len)
-{
-	(void)packet;
-	(void)len;
-}
-
-void NothingEthernetConnection::GetPackets(std::function<void(const uint8_t*, int)> callback)
-{
-	(void)callback;
-}
-

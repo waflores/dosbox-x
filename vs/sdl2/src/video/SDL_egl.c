@@ -26,17 +26,17 @@
 #include "../core/windows/SDL_windows.h"
 #endif
 #ifdef SDL_VIDEO_DRIVER_ANDROID
-#include <android/native_window.h>
 #include "../video/android/SDL_androidvideo.h"
+#include <android/native_window.h>
 #endif
 #ifdef SDL_VIDEO_DRIVER_RPI
 #include <unistd.h>
 #endif
 
-#include "SDL_sysvideo.h"
 #include "SDL_egl_c.h"
-#include "SDL_loadso.h"
 #include "SDL_hints.h"
+#include "SDL_loadso.h"
+#include "SDL_sysvideo.h"
 
 #ifdef EGL_KHR_create_context
 /* EGL_OPENGL_ES3_BIT_KHR was added in version 13 of the extension. */
@@ -75,8 +75,8 @@
 
 #elif defined(SDL_VIDEO_DRIVER_WINDOWS) || defined(SDL_VIDEO_DRIVER_WINRT)
 /* EGL AND OpenGL ES support via ANGLE */
-#define DEFAULT_EGL "libEGL.dll"
-#define DEFAULT_OGL_ES2 "libGLESv2.dll"
+#define DEFAULT_EGL        "libEGL.dll"
+#define DEFAULT_OGL_ES2    "libGLESv2.dll"
 #define DEFAULT_OGL_ES_PVR "libGLES_CM.dll"
 #define DEFAULT_OGL_ES     "libGLESv1_CM.dll"
 

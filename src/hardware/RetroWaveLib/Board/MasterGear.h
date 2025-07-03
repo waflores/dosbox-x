@@ -25,13 +25,17 @@
 extern "C" {
 #endif
 
-extern void retrowave_mastergear_queue_ym2413(RetroWaveContext *ctx, uint8_t reg, uint8_t val);
+extern void retrowave_mastergear_queue_ym2413(RetroWaveContext *ctx,
+                                              uint8_t reg, uint8_t val);
 
 extern void retrowave_mastergear_reset_ym2413(RetroWaveContext *ctx);
 
-extern void retrowave_mastergear_queue_sn76489(RetroWaveContext *ctx, uint8_t val);
-extern void retrowave_mastergear_queue_sn76489_left(RetroWaveContext *ctx, uint8_t val);
-extern void retrowave_mastergear_queue_sn76489_right(RetroWaveContext *ctx, uint8_t val);
+extern void retrowave_mastergear_queue_sn76489(RetroWaveContext *ctx,
+                                               uint8_t val);
+extern void retrowave_mastergear_queue_sn76489_left(RetroWaveContext *ctx,
+                                                    uint8_t val);
+extern void retrowave_mastergear_queue_sn76489_right(RetroWaveContext *ctx,
+                                                     uint8_t val);
 
 extern void retrowave_mastergear_mute_sn76489(RetroWaveContext *ctx);
 

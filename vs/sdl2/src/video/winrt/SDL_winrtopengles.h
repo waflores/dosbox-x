@@ -25,12 +25,12 @@
 
 #if defined(SDL_VIDEO_DRIVER_WINRT) && defined(SDL_VIDEO_OPENGL_EGL)
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 /* OpenGLES functions */
-#define WINRT_GLES_GetAttribute SDL_EGL_GetAttribute
-#define WINRT_GLES_GetProcAddress SDL_EGL_GetProcAddress
+#define WINRT_GLES_GetAttribute    SDL_EGL_GetAttribute
+#define WINRT_GLES_GetProcAddress  SDL_EGL_GetProcAddress
 #define WINRT_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
 #define WINRT_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 #define WINRT_GLES_DeleteContext   SDL_EGL_DeleteContext

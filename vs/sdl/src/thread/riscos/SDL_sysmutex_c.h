@@ -26,9 +26,8 @@
 
 #if !SDL_THREADS_DISABLED
 struct SDL_mutex {
-	pthread_mutex_t id;
+  pthread_mutex_t id;
 };
 #endif
-
 
 #endif /* _SDL_mutex_c_h */

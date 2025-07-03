@@ -117,15 +117,15 @@ static int is_top_left(const SDL_Point *a, const SDL_Point *b, int is_clockwise)
 
 /* x = (y << FP_BITS) */
 /* prevent runtime error: left shift of negative value */
-#define PRECOMP(x, y)               \
-        val = y;                    \
-        if (val >= 0) {             \
-            x = val << FP_BITS;     \
-        } else {                    \
-            val *= -1;              \
-            x = val << FP_BITS;     \
-            x *= -1;                \
-        }
+#define PRECOMP(x, y)       \
+    val = y;                \
+    if (val >= 0) {         \
+        x = val << FP_BITS; \
+    } else {                \
+        val *= -1;          \
+        x = val << FP_BITS; \
+        x *= -1;            \
+    }
 
 void trianglepoint_2_fixedpoint(SDL_Point *a)
 {
@@ -698,10 +698,10 @@ int SDL_SW_BlitTriangle(
         tmp_info.dst = dst_ptr;
         tmp_info.dst_pitch = dst_pitch;
 
-#define CHECK_INT_RANGE(X) \
-    if ((X) < INT_MIN || (X) > INT_MAX) { \
+#define CHECK_INT_RANGE(X)                                                    \
+    if ((X) < INT_MIN || (X) > INT_MAX) {                                     \
         ret = SDL_SetError("integer overflow (%s = %" SDL_PRIs64 ")", #X, X); \
-        goto end; \
+        goto end;                                                             \
     }
         CHECK_INT_RANGE(area);
         CHECK_INT_RANGE(w0_row);
@@ -842,7 +842,7 @@ static void SDL_BlitTriangle_Slow(SDL_BlitInfo *info,
                 dstA = 0xFF;
             } else {
                 /* SDL_PIXELFORMAT_ARGB2101010 */
-                dstpixel = *((Uint32 *) (dst));
+                dstpixel = *((Uint32 *)(dst));
                 RGBA_FROM_ARGB2101010(dstpixel, dstR, dstG, dstB, dstA);
             }
         } else {

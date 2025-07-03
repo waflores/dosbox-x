@@ -20,8 +20,8 @@
 */
 #include "./SDL_internal.h"
 
-#include "SDL.h"
 #include "./SDL_dataqueue.h"
+#include "SDL.h"
 
 typedef struct SDL_DataQueuePacket
 {

@@ -9,4 +9,3 @@ void board118_bind(void);
 #ifdef __cplusplus
 }
 #endif
-

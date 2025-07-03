@@ -22,10 +22,10 @@
 
 #if (defined(__WIN32__) || defined(__GDK__)) && defined(HAVE_MMDEVICEAPI_H)
 
-#include "SDL_windows.h"
+#include "../../audio/SDL_sysaudio.h"
 #include "SDL_immdevice.h"
 #include "SDL_timer.h"
-#include "../../audio/SDL_sysaudio.h"
+#include "SDL_windows.h"
 #include <objbase.h> /* For CLSIDFromString */
 
 static const ERole SDL_IMMDevice_role = eConsole; /* !!! FIXME: should this be eMultimedia? Should be a hint? */
@@ -358,7 +358,7 @@ void SDL_IMMDevice_Quit(void)
 
 int SDL_IMMDevice_Get(LPCWSTR devid, IMMDevice **device, SDL_bool iscapture)
 {
-    const Uint64 timeout = SDL_GetTicks64() + 8000;  /* intel's audio drivers can fail for up to EIGHT SECONDS after a device is connected or we wake from sleep. */
+    const Uint64 timeout = SDL_GetTicks64() + 8000; /* intel's audio drivers can fail for up to EIGHT SECONDS after a device is connected or we wake from sleep. */
     HRESULT ret;
 
     SDL_assert(device != NULL);
@@ -379,7 +379,7 @@ int SDL_IMMDevice_Get(LPCWSTR devid, IMMDevice **device, SDL_bool iscapture)
             const Uint64 now = SDL_GetTicks64();
             if (timeout > now) {
                 const Uint64 ticksleft = timeout - now;
-                SDL_Delay((Uint32)SDL_min(ticksleft, 300));   /* wait awhile and try again. */
+                SDL_Delay((Uint32)SDL_min(ticksleft, 300)); /* wait awhile and try again. */
                 continue;
             }
         }

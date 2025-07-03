@@ -36,8 +36,7 @@
 // of kHz. This calls for a sampling frequency of several MHz, which is far
 // too high for practical use.
 // ----------------------------------------------------------------------------
-class ExternalFilter
-{
+class ExternalFilter {
 public:
   ExternalFilter();
 
@@ -51,8 +50,8 @@ public:
   // Audio output (20 bits).
   RESID_INLINE sound_sample output();
 
-	void SaveState( std::ostream& stream );
-	void LoadState( std::istream& stream );
+  void SaveState(std::ostream &stream);
+  void LoadState(std::istream &stream);
 
 protected:
   // Filter enabled.
@@ -70,9 +69,8 @@ protected:
   sound_sample w0lp;
   sound_sample w0hp;
 
-friend class SID2;
+  friend class SID2;
 };
-
 
 // ----------------------------------------------------------------------------
 // Inline functions.
@@ -86,8 +84,7 @@ friend class SID2;
 // SID clocking - 1 cycle.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void ExternalFilter::clock(sound_sample Vi)
-{
+void ExternalFilter::clock(sound_sample Vi) {
   // This is handy for testing.
   if (!enabled) {
     // Remove maximum DC level since there is no filter to do it.
@@ -104,8 +101,8 @@ void ExternalFilter::clock(sound_sample Vi)
   // Vlp = Vlp + w0lp*(Vi - Vlp)*delta_t;
   // Vhp = Vhp + w0hp*(Vlp - Vhp)*delta_t;
 
-  sound_sample dVlp = (w0lp >> 8)*(Vi - Vlp) >> 12;
-  sound_sample dVhp = w0hp*(Vlp - Vhp) >> 20;
+  sound_sample dVlp = (w0lp >> 8) * (Vi - Vlp) >> 12;
+  sound_sample dVhp = w0hp * (Vlp - Vhp) >> 20;
   Vo = Vlp - Vhp;
   Vlp += dVlp;
   Vhp += dVhp;
@@ -115,9 +112,7 @@ void ExternalFilter::clock(sound_sample Vi)
 // SID clocking - delta_t cycles.
 // ----------------------------------------------------------------------------
 RESID_INLINE
-void ExternalFilter::clock(cycle_count delta_t,
-			   sound_sample Vi)
-{
+void ExternalFilter::clock(cycle_count delta_t, sound_sample Vi) {
   // This is handy for testing.
   if (!enabled) {
     // Remove maximum DC level since there is no filter to do it.
@@ -143,8 +138,8 @@ void ExternalFilter::clock(cycle_count delta_t,
     // Vlp = Vlp + w0lp*(Vi - Vlp)*delta_t;
     // Vhp = Vhp + w0hp*(Vlp - Vhp)*delta_t;
 
-    sound_sample dVlp = (w0lp*delta_t_flt >> 8)*(Vi - Vlp) >> 12;
-    sound_sample dVhp = w0hp*delta_t_flt*(Vlp - Vhp) >> 20;
+    sound_sample dVlp = (w0lp * delta_t_flt >> 8) * (Vi - Vlp) >> 12;
+    sound_sample dVhp = w0hp * delta_t_flt * (Vlp - Vhp) >> 20;
     Vo = Vlp - Vhp;
     Vlp += dVlp;
     Vhp += dVhp;
@@ -153,15 +148,11 @@ void ExternalFilter::clock(cycle_count delta_t,
   }
 }
 
-
 // ----------------------------------------------------------------------------
 // Audio output (19.5 bits).
 // ----------------------------------------------------------------------------
 RESID_INLINE
-sound_sample ExternalFilter::output()
-{
-  return Vo;
-}
+sound_sample ExternalFilter::output() { return Vo; }
 
 #endif // RESID_INLINING || defined(__EXTFILT_CC__)
 

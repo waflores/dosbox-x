@@ -63,18 +63,18 @@
 #ifndef _MACH_VM_SYNC_H_
 #define _MACH_VM_SYNC_H_
 
-typedef unsigned                vm_sync_t;
+typedef unsigned vm_sync_t;
 
 /*
  *	Synchronization flags, defined as bits within the vm_sync_t type
  */
 
-#define VM_SYNC_ASYNCHRONOUS    ((vm_sync_t) 0x01)
-#define VM_SYNC_SYNCHRONOUS     ((vm_sync_t) 0x02)
-#define VM_SYNC_INVALIDATE      ((vm_sync_t) 0x04)
-#define VM_SYNC_KILLPAGES       ((vm_sync_t) 0x08)
-#define VM_SYNC_DEACTIVATE      ((vm_sync_t) 0x10)
-#define VM_SYNC_CONTIGUOUS      ((vm_sync_t) 0x20)
-#define VM_SYNC_REUSABLEPAGES   ((vm_sync_t) 0x40)
+#define VM_SYNC_ASYNCHRONOUS ((vm_sync_t)0x01)
+#define VM_SYNC_SYNCHRONOUS ((vm_sync_t)0x02)
+#define VM_SYNC_INVALIDATE ((vm_sync_t)0x04)
+#define VM_SYNC_KILLPAGES ((vm_sync_t)0x08)
+#define VM_SYNC_DEACTIVATE ((vm_sync_t)0x10)
+#define VM_SYNC_CONTIGUOUS ((vm_sync_t)0x20)
+#define VM_SYNC_REUSABLEPAGES ((vm_sync_t)0x40)
 
-#endif  /* _MACH_VM_SYNC_H_ */
+#endif /* _MACH_VM_SYNC_H_ */

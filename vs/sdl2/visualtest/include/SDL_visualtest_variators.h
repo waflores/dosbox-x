@@ -38,8 +38,8 @@ typedef struct SDLVisualTest_Variator
  *
  * \return 1 on success, 0 on failure
  */
-int SDLVisualTest_InitVariator(SDLVisualTest_Variator* variator,
-                               SDLVisualTest_SUTConfig* config,
+int SDLVisualTest_InitVariator(SDLVisualTest_Variator *variator,
+                               SDLVisualTest_SUTConfig *config,
                                SDLVisualTest_VariatorType type,
                                Uint64 seed);
 
@@ -49,12 +49,12 @@ int SDLVisualTest_InitVariator(SDLVisualTest_Variator* variator,
  * \return The arguments string representing the variation on success, and
  *         NULL on failure. The pointer returned should not be freed.
  */
-char* SDLVisualTest_GetNextVariation(SDLVisualTest_Variator* variator);
+char *SDLVisualTest_GetNextVariation(SDLVisualTest_Variator *variator);
 
 /**
  * Frees any resources associated with the variator.
  */
-void SDLVisualTest_FreeVariator(SDLVisualTest_Variator* variator);
+void SDLVisualTest_FreeVariator(SDLVisualTest_Variator *variator);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

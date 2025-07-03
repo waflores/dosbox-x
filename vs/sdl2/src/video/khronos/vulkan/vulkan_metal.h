@@ -12,12 +12,9 @@
 **
 */
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
 
 // VK_EXT_metal_surface is a preprocessor guard. Do not pass it to API calls.
 #define VK_EXT_metal_surface 1
@@ -35,26 +32,26 @@ typedef void CAMetalLayer;
 #endif
 #endif
 
-#define VK_EXT_METAL_SURFACE_SPEC_VERSION 1
+#define VK_EXT_METAL_SURFACE_SPEC_VERSION   1
 #define VK_EXT_METAL_SURFACE_EXTENSION_NAME "VK_EXT_metal_surface"
 typedef VkFlags VkMetalSurfaceCreateFlagsEXT;
-typedef struct VkMetalSurfaceCreateInfoEXT {
-    VkStructureType                 sType;
-    const void*                     pNext;
-    VkMetalSurfaceCreateFlagsEXT    flags;
+typedef struct VkMetalSurfaceCreateInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkMetalSurfaceCreateFlagsEXT flags;
     const CAMetalLayer SDL_UNSAFE_UNRETAINED *pLayer;
 } VkMetalSurfaceCreateInfoEXT;
 
-typedef VkResult (VKAPI_PTR *PFN_vkCreateMetalSurfaceEXT)(VkInstance instance, const VkMetalSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+typedef VkResult(VKAPI_PTR *PFN_vkCreateMetalSurfaceEXT)(VkInstance instance, const VkMetalSurfaceCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *pSurface);
 
 #ifndef VK_NO_PROTOTYPES
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMetalSurfaceEXT(
-    VkInstance                                  instance,
-    const VkMetalSurfaceCreateInfoEXT*          pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface);
+    VkInstance instance,
+    const VkMetalSurfaceCreateInfoEXT *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator,
+    VkSurfaceKHR *pSurface);
 #endif
-
 
 // VK_EXT_metal_objects is a preprocessor guard. Do not pass it to API calls.
 #define VK_EXT_metal_objects 1
@@ -62,42 +59,43 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateMetalSurfaceEXT(
 @protocol MTLDevice;
 typedef id<MTLDevice> MTLDevice_id;
 #else
-typedef void* MTLDevice_id;
+typedef void *MTLDevice_id;
 #endif
 
 #ifdef __OBJC__
 @protocol MTLCommandQueue;
 typedef id<MTLCommandQueue> MTLCommandQueue_id;
 #else
-typedef void* MTLCommandQueue_id;
+typedef void *MTLCommandQueue_id;
 #endif
 
 #ifdef __OBJC__
 @protocol MTLBuffer;
 typedef id<MTLBuffer> MTLBuffer_id;
 #else
-typedef void* MTLBuffer_id;
+typedef void *MTLBuffer_id;
 #endif
 
 #ifdef __OBJC__
 @protocol MTLTexture;
 typedef id<MTLTexture> MTLTexture_id;
 #else
-typedef void* MTLTexture_id;
+typedef void *MTLTexture_id;
 #endif
 
-typedef struct __IOSurface* IOSurfaceRef;
+typedef struct __IOSurface *IOSurfaceRef;
 #ifdef __OBJC__
 @protocol MTLSharedEvent;
 typedef id<MTLSharedEvent> MTLSharedEvent_id;
 #else
-typedef void* MTLSharedEvent_id;
+typedef void *MTLSharedEvent_id;
 #endif
 
-#define VK_EXT_METAL_OBJECTS_SPEC_VERSION 1
+#define VK_EXT_METAL_OBJECTS_SPEC_VERSION   1
 #define VK_EXT_METAL_OBJECTS_EXTENSION_NAME "VK_EXT_metal_objects"
 
-typedef enum VkExportMetalObjectTypeFlagBitsEXT {
+typedef enum VkExportMetalObjectTypeFlagBitsEXT
+{
     VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT = 0x00000001,
     VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT = 0x00000002,
     VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT = 0x00000004,
@@ -107,93 +105,105 @@ typedef enum VkExportMetalObjectTypeFlagBitsEXT {
     VK_EXPORT_METAL_OBJECT_TYPE_FLAG_BITS_MAX_ENUM_EXT = 0x7FFFFFFF
 } VkExportMetalObjectTypeFlagBitsEXT;
 typedef VkFlags VkExportMetalObjectTypeFlagsEXT;
-typedef struct VkExportMetalObjectCreateInfoEXT {
-    VkStructureType                       sType;
-    const void*                           pNext;
-    VkExportMetalObjectTypeFlagBitsEXT    exportObjectType;
+typedef struct VkExportMetalObjectCreateInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType;
 } VkExportMetalObjectCreateInfoEXT;
 
-typedef struct VkExportMetalObjectsInfoEXT {
-    VkStructureType    sType;
-    const void*        pNext;
+typedef struct VkExportMetalObjectsInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
 } VkExportMetalObjectsInfoEXT;
 
-typedef struct VkExportMetalDeviceInfoEXT {
-    VkStructureType    sType;
-    const void*        pNext;
+typedef struct VkExportMetalDeviceInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
     MTLDevice_id SDL_UNSAFE_UNRETAINED mtlDevice;
 } VkExportMetalDeviceInfoEXT;
 
-typedef struct VkExportMetalCommandQueueInfoEXT {
-    VkStructureType       sType;
-    const void*           pNext;
-    VkQueue               queue;
+typedef struct VkExportMetalCommandQueueInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkQueue queue;
     MTLCommandQueue_id SDL_UNSAFE_UNRETAINED mtlCommandQueue;
 } VkExportMetalCommandQueueInfoEXT;
 
-typedef struct VkExportMetalBufferInfoEXT {
-    VkStructureType    sType;
-    const void*        pNext;
-    VkDeviceMemory     memory;
+typedef struct VkExportMetalBufferInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkDeviceMemory memory;
     MTLBuffer_id SDL_UNSAFE_UNRETAINED mtlBuffer;
 } VkExportMetalBufferInfoEXT;
 
-typedef struct VkImportMetalBufferInfoEXT {
-    VkStructureType    sType;
-    const void*        pNext;
+typedef struct VkImportMetalBufferInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
     MTLBuffer_id SDL_UNSAFE_UNRETAINED mtlBuffer;
 } VkImportMetalBufferInfoEXT;
 
-typedef struct VkExportMetalTextureInfoEXT {
-    VkStructureType          sType;
-    const void*              pNext;
-    VkImage                  image;
-    VkImageView              imageView;
-    VkBufferView             bufferView;
-    VkImageAspectFlagBits    plane;
+typedef struct VkExportMetalTextureInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkImage image;
+    VkImageView imageView;
+    VkBufferView bufferView;
+    VkImageAspectFlagBits plane;
     MTLTexture_id SDL_UNSAFE_UNRETAINED mtlTexture;
 } VkExportMetalTextureInfoEXT;
 
-typedef struct VkImportMetalTextureInfoEXT {
-    VkStructureType          sType;
-    const void*              pNext;
-    VkImageAspectFlagBits    plane;
+typedef struct VkImportMetalTextureInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkImageAspectFlagBits plane;
     MTLTexture_id SDL_UNSAFE_UNRETAINED mtlTexture;
 } VkImportMetalTextureInfoEXT;
 
-typedef struct VkExportMetalIOSurfaceInfoEXT {
-    VkStructureType    sType;
-    const void*        pNext;
-    VkImage            image;
-    IOSurfaceRef       ioSurface;
+typedef struct VkExportMetalIOSurfaceInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkImage image;
+    IOSurfaceRef ioSurface;
 } VkExportMetalIOSurfaceInfoEXT;
 
-typedef struct VkImportMetalIOSurfaceInfoEXT {
-    VkStructureType    sType;
-    const void*        pNext;
-    IOSurfaceRef       ioSurface;
+typedef struct VkImportMetalIOSurfaceInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    IOSurfaceRef ioSurface;
 } VkImportMetalIOSurfaceInfoEXT;
 
-typedef struct VkExportMetalSharedEventInfoEXT {
-    VkStructureType      sType;
-    const void*          pNext;
-    VkSemaphore          semaphore;
-    VkEvent              event;
+typedef struct VkExportMetalSharedEventInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
+    VkSemaphore semaphore;
+    VkEvent event;
     MTLSharedEvent_id SDL_UNSAFE_UNRETAINED mtlSharedEvent;
 } VkExportMetalSharedEventInfoEXT;
 
-typedef struct VkImportMetalSharedEventInfoEXT {
-    VkStructureType      sType;
-    const void*          pNext;
+typedef struct VkImportMetalSharedEventInfoEXT
+{
+    VkStructureType sType;
+    const void *pNext;
     MTLSharedEvent_id SDL_UNSAFE_UNRETAINED mtlSharedEvent;
 } VkImportMetalSharedEventInfoEXT;
 
-typedef void (VKAPI_PTR *PFN_vkExportMetalObjectsEXT)(VkDevice device, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo);
+typedef void(VKAPI_PTR *PFN_vkExportMetalObjectsEXT)(VkDevice device, VkExportMetalObjectsInfoEXT *pMetalObjectsInfo);
 
 #ifndef VK_NO_PROTOTYPES
 VKAPI_ATTR void VKAPI_CALL vkExportMetalObjectsEXT(
-    VkDevice                                    device,
-    VkExportMetalObjectsInfoEXT*                pMetalObjectsInfo);
+    VkDevice device,
+    VkExportMetalObjectsInfoEXT *pMetalObjectsInfo);
 #endif
 
 #ifdef __cplusplus

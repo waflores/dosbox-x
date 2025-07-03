@@ -22,14 +22,14 @@
 
 #ifdef SDL_VIDEO_DRIVER_DIRECTFB
 
-#include "SDL_DirectFB_video.h"
 #include "SDL_DirectFB_dyn.h"
+#include "SDL_DirectFB_video.h"
 
 #ifdef SDL_VIDEO_DRIVER_DIRECTFB_DYNAMIC
-#include "SDL_name.h"
 #include "SDL_loadso.h"
+#include "SDL_name.h"
 
-#define DFB_SYM(ret, name, args, al, func) ret (*name) args;
+#define DFB_SYM(ret, name, args, al, func) ret(*name) args;
 static struct _SDL_DirectFB_Symbols
 {
     DFB_SYMS
@@ -39,7 +39,8 @@ static struct _SDL_DirectFB_Symbols
 } SDL_DirectFB_Symbols;
 #undef DFB_SYM
 
-#define DFB_SYM(ret, name, args, al, func) ret name args { func SDL_DirectFB_Symbols.name al  ; }
+#define DFB_SYM(ret, name, args, al, func) \
+    ret name args { func SDL_DirectFB_Symbols.name al; }
 DFB_SYMS
 #undef DFB_SYM
 
@@ -53,20 +54,19 @@ int SDL_DirectFB_LoadLibrary(void)
         handle = SDL_LoadObject(SDL_VIDEO_DRIVER_DIRECTFB_DYNAMIC);
         if (handle != NULL) {
             retval = 1;
-#define DFB_SYM(ret, name, args, al, func) if (!(SDL_DirectFB_Symbols.name = SDL_LoadFunction(handle, # name))) retval = 0;
+#define DFB_SYM(ret, name, args, al, func)                              \
+    if (!(SDL_DirectFB_Symbols.name = SDL_LoadFunction(handle, #name))) \
+        retval = 0;
             DFB_SYMS
 #undef DFB_SYM
-            if (!
-                    (SDL_DirectFB_Symbols.directfb_major_version =
-                     SDL_LoadFunction(handle, "directfb_major_version")))
+            if (!(SDL_DirectFB_Symbols.directfb_major_version =
+                      SDL_LoadFunction(handle, "directfb_major_version")))
                 retval = 0;
-            if (!
-                (SDL_DirectFB_Symbols.directfb_minor_version =
-                 SDL_LoadFunction(handle, "directfb_minor_version")))
+            if (!(SDL_DirectFB_Symbols.directfb_minor_version =
+                      SDL_LoadFunction(handle, "directfb_minor_version")))
                 retval = 0;
-            if (!
-                (SDL_DirectFB_Symbols.directfb_micro_version =
-                 SDL_LoadFunction(handle, "directfb_micro_version")))
+            if (!(SDL_DirectFB_Symbols.directfb_micro_version =
+                      SDL_LoadFunction(handle, "directfb_micro_version")))
                 retval = 0;
         }
     }

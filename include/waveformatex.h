@@ -2,10 +2,10 @@
 #ifndef __ISP_UTILS_V4_WIN_WAVEFORMATEX_H
 #define __ISP_UTILS_V4_WIN_WAVEFORMATEX_H
 
-#include "guid.h"	/* <- need windows_GUID definition below */
+#include "guid.h" /* <- need windows_GUID definition below */
 
 #if defined(_MSC_VER)
-# pragma pack(push,1)
+#pragma pack(push, 1)
 #endif
 
 /* [doc] windows_WAVEFORMATOLD
@@ -22,13 +22,13 @@
  * also cause the various multimedia components in Windows 98 to
  * crash!
  */
-typedef struct {						/* (sizeof) (offset hex) (offset dec) */
-	uint16_t _Little_Endian_	wFormatTag;		/* (2)  +0x00 +0 */
-	uint16_t _Little_Endian_	nChannels;		/* (2)  +0x02 +2 */
-	uint32_t _Little_Endian_	nSamplesPerSec;		/* (4)  +0x04 +4 */
-	uint32_t _Little_Endian_	nAvgBytesPerSec;	/* (4)  +0x08 +8 */
-	uint16_t _Little_Endian_	nBlockAlign;		/* (2)  +0x0C +12 */
-} GCC_ATTRIBUTE(packed) windows_WAVEFORMATOLD;		/* (14) =0x0E =14 */
+typedef struct {                       /* (sizeof) (offset hex) (offset dec) */
+  uint16_t _Little_Endian_ wFormatTag; /* (2)  +0x00 +0 */
+  uint16_t _Little_Endian_ nChannels;  /* (2)  +0x02 +2 */
+  uint32_t _Little_Endian_ nSamplesPerSec;     /* (4)  +0x04 +4 */
+  uint32_t _Little_Endian_ nAvgBytesPerSec;    /* (4)  +0x08 +8 */
+  uint16_t _Little_Endian_ nBlockAlign;        /* (2)  +0x0C +12 */
+} GCC_ATTRIBUTE(packed) windows_WAVEFORMATOLD; /* (14) =0x0E =14 */
 #define windows_WAVEFORMATOLD_size (14)
 
 /* [doc] windows_WAVEFORMAT
@@ -39,14 +39,14 @@ typedef struct {						/* (sizeof) (offset hex) (offset dec) */
  * this is the format you would write into the 'fmt' chunk. Essentially
  * WAVEFORMATEX without the cbSize.
  */
-typedef struct {						/* (sizeof) (offset hex) (offset dec) */
-	uint16_t _Little_Endian_	wFormatTag;		/* (2)  +0x00 +0 */
-	uint16_t _Little_Endian_	nChannels;		/* (2)  +0x02 +2 */
-	uint32_t _Little_Endian_	nSamplesPerSec;		/* (4)  +0x04 +4 */
-	uint32_t _Little_Endian_	nAvgBytesPerSec;	/* (4)  +0x08 +8 */
-	uint16_t _Little_Endian_	nBlockAlign;		/* (2)  +0x0C +12 */
-	uint16_t _Little_Endian_	wBitsPerSample;		/* (2)  +0x0E +14 */
-} GCC_ATTRIBUTE(packed) windows_WAVEFORMAT;			/* (16) +0x10 +16 */
+typedef struct {                       /* (sizeof) (offset hex) (offset dec) */
+  uint16_t _Little_Endian_ wFormatTag; /* (2)  +0x00 +0 */
+  uint16_t _Little_Endian_ nChannels;  /* (2)  +0x02 +2 */
+  uint32_t _Little_Endian_ nSamplesPerSec;  /* (4)  +0x04 +4 */
+  uint32_t _Little_Endian_ nAvgBytesPerSec; /* (4)  +0x08 +8 */
+  uint16_t _Little_Endian_ nBlockAlign;     /* (2)  +0x0C +12 */
+  uint16_t _Little_Endian_ wBitsPerSample;  /* (2)  +0x0E +14 */
+} GCC_ATTRIBUTE(packed) windows_WAVEFORMAT; /* (16) +0x10 +16 */
 #define windows_WAVEFORMAT_size (16)
 
 /* [doc] windows_WAVEFORMATEX
@@ -56,26 +56,19 @@ typedef struct {						/* (sizeof) (offset hex) (offset dec) */
  * almost every non-PCM WAVE codec. WAVEFORMATEXTENSIBLE builds on this
  * for additional codecs that don't have a 16-bit wFormatTag registered.
  */
-typedef struct {						/* (sizeof) (offset hex) (offset dec) */
-	uint16_t _Little_Endian_	wFormatTag;		/* (2)  +0x00 +0 */
-	uint16_t _Little_Endian_	nChannels;		/* (2)  +0x02 +2 */
-	uint32_t _Little_Endian_	nSamplesPerSec;		/* (4)  +0x04 +4 */
-	uint32_t _Little_Endian_	nAvgBytesPerSec;	/* (4)  +0x08 +8 */
-	uint16_t _Little_Endian_	nBlockAlign;		/* (2)  +0x0C +12 */
-	uint16_t _Little_Endian_	wBitsPerSample;		/* (2)  +0x0E +14 */
-	uint16_t _Little_Endian_	cbSize;			/* (2)  +0x10 +16 */
-} GCC_ATTRIBUTE(packed) windows_WAVEFORMATEX;			/* (18) =0x12 =18 */
+typedef struct {                       /* (sizeof) (offset hex) (offset dec) */
+  uint16_t _Little_Endian_ wFormatTag; /* (2)  +0x00 +0 */
+  uint16_t _Little_Endian_ nChannels;  /* (2)  +0x02 +2 */
+  uint32_t _Little_Endian_ nSamplesPerSec;    /* (4)  +0x04 +4 */
+  uint32_t _Little_Endian_ nAvgBytesPerSec;   /* (4)  +0x08 +8 */
+  uint16_t _Little_Endian_ nBlockAlign;       /* (2)  +0x0C +12 */
+  uint16_t _Little_Endian_ wBitsPerSample;    /* (2)  +0x0E +14 */
+  uint16_t _Little_Endian_ cbSize;            /* (2)  +0x10 +16 */
+} GCC_ATTRIBUTE(packed) windows_WAVEFORMATEX; /* (18) =0x12 =18 */
 #define windows_WAVEFORMATEX_size (18)
 
-static const windows_WAVEFORMATEX WINDOWS_WAVEFORMATEX_INIT = {
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0
-};
+static const windows_WAVEFORMATEX WINDOWS_WAVEFORMATEX_INIT = {0, 0, 0, 0,
+                                                               0, 0, 0};
 
 /* [doc] windows_ADPCMWAVEFORMAT
  *
@@ -85,42 +78,46 @@ static const windows_WAVEFORMATEX WINDOWS_WAVEFORMATEX_INIT = {
  * aCoef[]. However, every MS ADPCM WAV I've ever found or made has
  * wNumCoef == 7, so it's defined that way here.
  */
-typedef struct {						/* (sizeof) (offset hex) (offset dec) */
-	windows_WAVEFORMATEX		wfx;			/* (18) +0x00 +0 */
-	uint16_t _Little_Endian_	wSamplesPerBlock;	/* (2)  +0x12 +18 */
-	uint16_t _Little_Endian_	wNumCoef;		/* (2)  +0x14 +20 */
-	uint16_t _Little_Endian_	aCoef[7*2];		/* (28) +0x16 +22 */ /* NTS: This array is wNumCoef*2 large, for MS-ADPCM wNumCoef == 7 */
-} GCC_ATTRIBUTE(packed) windows_ADPCMWAVEFORMAT;		/* (50) =0x42 =50 */
+typedef struct {            /* (sizeof) (offset hex) (offset dec) */
+  windows_WAVEFORMATEX wfx; /* (18) +0x00 +0 */
+  uint16_t _Little_Endian_ wSamplesPerBlock; /* (2)  +0x12 +18 */
+  uint16_t _Little_Endian_ wNumCoef;         /* (2)  +0x14 +20 */
+  uint16_t _Little_Endian_ aCoef[7 * 2];
+      /* (28) +0x16 +22 */ /* NTS: This array is wNumCoef*2 large, for MS-ADPCM
+                              wNumCoef == 7 */
+} GCC_ATTRIBUTE(packed) windows_ADPCMWAVEFORMAT; /* (50) =0x42 =50 */
 #define windows_ADPCMWAVEFORMAT_size (50)
 
 /* [doc] windows_IMAADPCMWAVEFORMAT
  *
  * Microsoft's implementation of IMA-ADPCM 4-bit compression
  */
-typedef struct ima_adpcmwaveformat_tag {			/* (sizeof) (offset hex) (offset dec) */
-	windows_WAVEFORMATEX		wfx;			/* (18) +0x00 +0 */
-	uint16_t _Little_Endian_	wSamplesPerBlock;	/* (2)  +0x12 +18 */
-} GCC_ATTRIBUTE(packed) windows_IMAADPCMWAVEFORMAT;		/* (20) =0x14 +20 */
+typedef struct ima_adpcmwaveformat_tag { /* (sizeof) (offset hex) (offset dec)
+                                          */
+  windows_WAVEFORMATEX wfx;              /* (18) +0x00 +0 */
+  uint16_t _Little_Endian_ wSamplesPerBlock;        /* (2)  +0x12 +18 */
+} GCC_ATTRIBUTE(packed) windows_IMAADPCMWAVEFORMAT; /* (20) =0x14 +20 */
 #define windows_IMAADPCMWAVEFORMAT_size (20)
 
 /* [doc] windows_TRUESPEECHWAVEFORMAT
  *
  */
-typedef struct truespeechwaveformat_tag {			/* (sizeof) (offset hex) (offset dec) */
-	windows_WAVEFORMATEX		wfx;			/* (18) +0x00 +0 */
-	uint16_t _Little_Endian_	wRevision;		/* (2)  +0x12 +18 */
-	uint16_t _Little_Endian_	nSamplesPerBlock;	/* (2)  +0x14 +20 */
-	uint8_t				abReserved[28];		/* (28) +0x16 +22 */
-} GCC_ATTRIBUTE(packed) windows_TRUESPEECHWAVEFORMAT;		/* (50) =0x42 =50 */
+typedef struct truespeechwaveformat_tag { /* (sizeof) (offset hex) (offset dec)
+                                           */
+  windows_WAVEFORMATEX wfx;               /* (18) +0x00 +0 */
+  uint16_t _Little_Endian_ wRevision;     /* (2)  +0x12 +18 */
+  uint16_t _Little_Endian_ nSamplesPerBlock;          /* (2)  +0x14 +20 */
+  uint8_t abReserved[28];                             /* (28) +0x16 +22 */
+} GCC_ATTRIBUTE(packed) windows_TRUESPEECHWAVEFORMAT; /* (50) =0x42 =50 */
 #define windows_TRUESPEECHWAVEFORMAT_size (50)
 
 /* [doc] windows_GSM610WAVEFORMAT
  *
  */
-typedef struct gsm610waveformat_tag {				/* (sizeof) (offset hex) (offset dec) */
-	windows_WAVEFORMATEX		wfx;			/* (18) +0x00 +0 */
-	uint16_t _Little_Endian_	wSamplesPerBlock;	/* (2)  +0x12 +18 */
-} GCC_ATTRIBUTE(packed) windows_GSM610WAVEFORMAT;		/* (20) =0x14 =20 */
+typedef struct gsm610waveformat_tag { /* (sizeof) (offset hex) (offset dec) */
+  windows_WAVEFORMATEX wfx;           /* (18) +0x00 +0 */
+  uint16_t _Little_Endian_ wSamplesPerBlock;      /* (2)  +0x12 +18 */
+} GCC_ATTRIBUTE(packed) windows_GSM610WAVEFORMAT; /* (20) =0x14 =20 */
 #define windows_GSM610WAVEFORMAT_size (20)
 
 /* [doc] windows_WAVEFORMATEXTENSIBLE
@@ -133,20 +130,21 @@ typedef struct gsm610waveformat_tag {				/* (sizeof) (offset hex) (offset dec) *
  * 24-bit and 32-bit PCM even though you *can* define WAVEFORMAT structures
  * for 24/32-bit as well (most will play it except Windows Media Player).
  */
-typedef struct {							/* (sizeof) (offset hex) (offset dec) */
-	windows_WAVEFORMATEX			Format;			/* (18) +0x00 +0 */
-	union { /* Ooookay Microsoft how do I derive meaning from THIS now? */
-		uint16_t _Little_Endian_	wValidBitsPerSample;	/* <- if it's PCM */
-		uint16_t _Little_Endian_	wSamplesPerBlock;	/* <- if it's not PCM, and compressed */
-		uint16_t _Little_Endian_	wReserved;		/* <- if ??? */
-	} Samples;							/* (2)  +0x12 +18 */
-	uint32_t _Little_Endian_		dwChannelMask;		/* (4)  +0x14 +20 */
-	windows_GUID				SubFormat;		/* (16) +0x18 +24 */
-} GCC_ATTRIBUTE(packed) windows_WAVEFORMATEXTENSIBLE;			/* (40) =0x28 =40 */
+typedef struct {               /* (sizeof) (offset hex) (offset dec) */
+  windows_WAVEFORMATEX Format; /* (18) +0x00 +0 */
+  union { /* Ooookay Microsoft how do I derive meaning from THIS now? */
+    uint16_t _Little_Endian_ wValidBitsPerSample; /* <- if it's PCM */
+    uint16_t _Little_Endian_
+        wSamplesPerBlock;               /* <- if it's not PCM, and compressed */
+    uint16_t _Little_Endian_ wReserved; /* <- if ??? */
+  } Samples;                            /* (2)  +0x12 +18 */
+  uint32_t _Little_Endian_ dwChannelMask;             /* (4)  +0x14 +20 */
+  windows_GUID SubFormat;                             /* (16) +0x18 +24 */
+} GCC_ATTRIBUTE(packed) windows_WAVEFORMATEXTENSIBLE; /* (40) =0x28 =40 */
 #define windows_WAVEFORMATEXTENSIBLE_size (40)
 
 #if defined(_MSC_VER)
-# pragma pack(pop)
+#pragma pack(pop)
 #endif
 
 #endif /* __ISP_UTILS_V4_WIN_WAVEFORMATEX_H */

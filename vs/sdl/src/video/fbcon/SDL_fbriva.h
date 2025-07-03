@@ -26,10 +26,10 @@
 #include "SDL_fbvideo.h"
 
 #ifndef FB_ACCEL_NV3
-#define FB_ACCEL_NV3	27
+#define FB_ACCEL_NV3 27
 #endif
 #ifndef FB_ACCEL_NV4
-#define FB_ACCEL_NV4	28
+#define FB_ACCEL_NV4 28
 #endif
 
 /* Set up the driver for Riva acceleration */

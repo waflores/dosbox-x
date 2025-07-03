@@ -23,22 +23,23 @@
 #define INCL_WIN
 #define INCL_GPI
 #include <os2.h>
-#define  _MEERROR_H_
+#define _MEERROR_H_
 #include <mmioos2.h>
 #include <os2me.h>
 #define INCL_MM_OS2
+#include "SDL_os2output.h"
 #include <dive.h>
 #include <fourcc.h>
-#include "SDL_os2output.h"
 
-typedef struct _VODATA {
-  HDIVE    hDive;
-  PVOID    pBuffer;
-  ULONG    ulDIVEBufNum;
-  FOURCC   fccColorEncoding;
-  ULONG    ulWidth;
-  ULONG    ulHeight;
-  BOOL     fBlitterReady;
+typedef struct _VODATA
+{
+    HDIVE hDive;
+    PVOID pBuffer;
+    ULONG ulDIVEBufNum;
+    FOURCC fccColorEncoding;
+    ULONG ulWidth;
+    ULONG ulHeight;
+    BOOL fBlitterReady;
 } VODATA;
 
 static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo);
@@ -64,7 +65,6 @@ OS2VIDEOOUTPUT voDive = {
     voUpdate
 };
 
-
 static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo)
 {
     DIVE_CAPS sDiveCaps;
@@ -73,9 +73,9 @@ static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo)
     /* Query information about display hardware from DIVE. */
     SDL_zeroa(fccFormats);
     SDL_zero(sDiveCaps);
-    sDiveCaps.pFormatData    = fccFormats;
+    sDiveCaps.pFormatData = fccFormats;
     sDiveCaps.ulFormatLength = 100;
-    sDiveCaps.ulStructLen    = sizeof(DIVE_CAPS);
+    sDiveCaps.ulStructLen = sizeof(DIVE_CAPS);
 
     if (DiveQueryCaps(&sDiveCaps, DIVE_BUFFER_SCREEN)) {
         debug_os2("DiveQueryCaps() failed.");
@@ -88,11 +88,11 @@ static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo)
         return FALSE;
     }
 
-    pInfo->ulBPP             = sDiveCaps.ulDepth;
-    pInfo->fccColorEncoding  = sDiveCaps.fccColorEncoding;
-    pInfo->ulScanLineSize    = sDiveCaps.ulScanLineBytes;
+    pInfo->ulBPP = sDiveCaps.ulDepth;
+    pInfo->fccColorEncoding = sDiveCaps.fccColorEncoding;
+    pInfo->ulScanLineSize = sDiveCaps.ulScanLineBytes;
     pInfo->ulHorizResolution = sDiveCaps.ulHorizontalResolution;
-    pInfo->ulVertResolution  = sDiveCaps.ulVerticalResolution;
+    pInfo->ulVertResolution = sDiveCaps.ulVerticalResolution;
 
     return TRUE;
 }
@@ -126,11 +126,11 @@ static BOOL voSetVisibleRegion(PVODATA pVOData, HWND hwnd,
                                SDL_DisplayMode *pSDLDisplayMode,
                                HRGN hrgnShape, BOOL fVisible)
 {
-    HPS     hps;
-    HRGN    hrgn;
+    HPS hps;
+    HRGN hrgn;
     RGNRECT rgnCtl;
-    PRECTL  prectl = NULL;
-    ULONG   ulRC;
+    PRECTL prectl = NULL;
+    ULONG ulRC;
 
     if (!fVisible) {
         if (pVOData->fBlitterReady) {
@@ -152,16 +152,16 @@ static BOOL voSetVisibleRegion(PVODATA pVOData, HWND hwnd,
         if (hrgnShape != NULLHANDLE)
             GpiCombineRegion(hps, hrgn, hrgn, hrgnShape, CRGN_AND);
 
-        rgnCtl.ircStart     = 1;
-        rgnCtl.crc          = 0;
-        rgnCtl.ulDirection  = 1;
+        rgnCtl.ircStart = 1;
+        rgnCtl.crc = 0;
+        rgnCtl.ulDirection = 1;
         GpiQueryRegionRects(hps, hrgn, NULL, &rgnCtl, NULL);
         if (rgnCtl.crcReturned != 0) {
             prectl = SDL_malloc(rgnCtl.crcReturned * sizeof(RECTL));
             if (prectl != NULL) {
-                rgnCtl.ircStart     = 1;
-                rgnCtl.crc          = rgnCtl.crcReturned;
-                rgnCtl.ulDirection  = 1;
+                rgnCtl.ircStart = 1;
+                rgnCtl.crc = rgnCtl.crcReturned;
+                rgnCtl.ulDirection = 1;
                 GpiQueryRegionRects(hps, hrgn, NULL, &rgnCtl, prectl);
             } else {
                 SDL_OutOfMemory();
@@ -172,31 +172,31 @@ static BOOL voSetVisibleRegion(PVODATA pVOData, HWND hwnd,
 
         if (prectl != NULL) {
             /* Setup DIVE blitter. */
-            SETUP_BLITTER   sSetupBlitter;
-            SWP             swp;
-            POINTL          pointl = { 0,0 };
+            SETUP_BLITTER sSetupBlitter;
+            SWP swp;
+            POINTL pointl = { 0, 0 };
 
             WinQueryWindowPos(hwnd, &swp);
             WinMapWindowPoints(hwnd, HWND_DESKTOP, &pointl, 1);
 
-            sSetupBlitter.ulStructLen       = sizeof(SETUP_BLITTER);
+            sSetupBlitter.ulStructLen = sizeof(SETUP_BLITTER);
             sSetupBlitter.fccSrcColorFormat = pVOData->fccColorEncoding;
-            sSetupBlitter.fInvert           = FALSE;
-            sSetupBlitter.ulSrcWidth        = pVOData->ulWidth;
-            sSetupBlitter.ulSrcHeight       = pVOData->ulHeight;
-            sSetupBlitter.ulSrcPosX         = 0;
-            sSetupBlitter.ulSrcPosY         = 0;
-            sSetupBlitter.ulDitherType      = 0;
+            sSetupBlitter.fInvert = FALSE;
+            sSetupBlitter.ulSrcWidth = pVOData->ulWidth;
+            sSetupBlitter.ulSrcHeight = pVOData->ulHeight;
+            sSetupBlitter.ulSrcPosX = 0;
+            sSetupBlitter.ulSrcPosY = 0;
+            sSetupBlitter.ulDitherType = 0;
             sSetupBlitter.fccDstColorFormat = FOURCC_SCRN;
-            sSetupBlitter.ulDstWidth        = swp.cx;
-            sSetupBlitter.ulDstHeight       = swp.cy;
-            sSetupBlitter.lDstPosX          = 0;
-            sSetupBlitter.lDstPosY          = 0;
-            sSetupBlitter.lScreenPosX       = pointl.x;
-            sSetupBlitter.lScreenPosY       = pointl.y;
+            sSetupBlitter.ulDstWidth = swp.cx;
+            sSetupBlitter.ulDstHeight = swp.cy;
+            sSetupBlitter.lDstPosX = 0;
+            sSetupBlitter.lDstPosY = 0;
+            sSetupBlitter.lScreenPosX = pointl.x;
+            sSetupBlitter.lScreenPosY = pointl.y;
 
-            sSetupBlitter.ulNumDstRects     = rgnCtl.crcReturned;
-            sSetupBlitter.pVisDstRects      = prectl;
+            sSetupBlitter.ulNumDstRects = rgnCtl.crcReturned;
+            sSetupBlitter.pVisDstRects = prectl;
 
             ulRC = DiveSetupBlitter(pVOData->hDive, &sSetupBlitter);
             SDL_free(prectl);
@@ -221,8 +221,8 @@ static PVOID voVideoBufAlloc(PVODATA pVOData, ULONG ulWidth, ULONG ulHeight,
                              ULONG ulBPP, FOURCC fccColorEncoding,
                              PULONG pulScanLineSize)
 {
-    ULONG   ulRC;
-    ULONG   ulScanLineSize = ulWidth * (ulBPP >> 3);
+    ULONG ulRC;
+    ULONG ulScanLineSize = ulWidth * (ulBPP >> 3);
 
     /* Destroy previous buffer. */
     voVideoBufFree(pVOData);
@@ -231,7 +231,7 @@ static PVOID voVideoBufAlloc(PVODATA pVOData, ULONG ulWidth, ULONG ulHeight,
         return NULL;
 
     /* Bytes per line. */
-    ulScanLineSize  = (ulScanLineSize + 3) & ~3; /* 4-byte aligning */
+    ulScanLineSize = (ulScanLineSize + 3) & ~3; /* 4-byte aligning */
     *pulScanLineSize = ulScanLineSize;
 
     ulRC = DosAllocMem(&pVOData->pBuffer,
@@ -265,7 +265,7 @@ static PVOID voVideoBufAlloc(PVODATA pVOData, ULONG ulWidth, ULONG ulHeight,
 
 static VOID voVideoBufFree(PVODATA pVOData)
 {
-    ULONG   ulRC;
+    ULONG ulRC;
 
     if (pVOData->ulDIVEBufNum != 0) {
         ulRC = DiveFreeImageBuffer(pVOData->hDive, pVOData->ulDIVEBufNum);
@@ -289,7 +289,7 @@ static VOID voVideoBufFree(PVODATA pVOData)
 static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
                      ULONG cSDLRects)
 {
-    ULONG   ulRC;
+    ULONG ulRC;
 
     if (!pVOData->fBlitterReady || (pVOData->ulDIVEBufNum == 0)) {
         debug_os2("DIVE blitter is not ready");
@@ -297,7 +297,7 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
     }
 
     if (pSDLRects) {
-        PBYTE   pbLineMask;
+        PBYTE pbLineMask;
 
         pbLineMask = SDL_stack_alloc(BYTE, pVOData->ulHeight);
         if (!pbLineMask) {
@@ -306,7 +306,7 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
         }
         SDL_memset(pbLineMask, 0, pVOData->ulHeight);
 
-        for ( ; ((LONG)cSDLRects) > 0; cSDLRects--, pSDLRects++) {
+        for (; ((LONG)cSDLRects) > 0; cSDLRects--, pSDLRects++) {
             SDL_memset(&pbLineMask[pSDLRects->y], 1, pSDLRects->h);
         }
 

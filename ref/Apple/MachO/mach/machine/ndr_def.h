@@ -29,9 +29,9 @@
 #ifndef _MACH_MACHINE_NDR_DEF_H
 #define _MACH_MACHINE_NDR_DEF_H
 
-#if defined (__i386__) || defined(__x86_64__)
+#if defined(__i386__) || defined(__x86_64__)
 #include "mach/i386/ndr_def.h"
-#elif defined (__arm__) || defined (__arm64__)
+#elif defined(__arm__) || defined(__arm64__)
 #include "mach/arm/ndr_def.h"
 #else
 #error architecture not supported

@@ -32,13 +32,13 @@
 #ifndef _MACH_VM_TYPES_H_
 #define _MACH_VM_TYPES_H_
 
-#include <mach/port.h>
 #include <mach/machine/vm_types.h>
+#include <mach/port.h>
 
 #include <stdint.h>
 
-typedef vm_offset_t             pointer_t;
-typedef vm_offset_t             vm_address_t;
+typedef vm_offset_t pointer_t;
+typedef vm_offset_t vm_address_t;
 
 /*
  * We use addr64_t for 64-bit addresses that are used on both
@@ -46,7 +46,7 @@ typedef vm_offset_t             vm_address_t;
  * two adjacent 32-bit GPRs.  We use addr64_t in places where
  * common code must be useable both on 32 and 64-bit machines.
  */
-typedef uint64_t addr64_t;              /* Basic effective address */
+typedef uint64_t addr64_t; /* Basic effective address */
 
 /*
  * We use reg64_t for addresses that are 32 bits on a 32-bit
@@ -58,40 +58,33 @@ typedef uint64_t addr64_t;              /* Basic effective address */
  * type in prototypes of functions that are written in and called
  * from assembly language.  This type is basically a comment.
  */
-typedef uint32_t        reg64_t;
+typedef uint32_t reg64_t;
 
 /*
  * To minimize the use of 64-bit fields, we keep some physical
  * addresses (that are page aligned) as 32-bit page numbers.
  * This limits the physical address space to 16TB of RAM.
  */
-typedef uint32_t ppnum_t;               /* Physical page number */
+typedef uint32_t ppnum_t; /* Physical page number */
 #define PPNUM_MAX UINT32_MAX
 
+typedef mach_port_t vm_map_t, vm_map_read_t, vm_map_inspect_t;
 
-
-typedef mach_port_t             vm_map_t, vm_map_read_t, vm_map_inspect_t;
-
-
-#define VM_MAP_NULL             ((vm_map_t) 0)
-#define VM_MAP_INSPECT_NULL     ((vm_map_inspect_t) 0)
-#define VM_MAP_READ_NULL        ((vm_map_read_t) 0)
+#define VM_MAP_NULL ((vm_map_t)0)
+#define VM_MAP_INSPECT_NULL ((vm_map_inspect_t)0)
+#define VM_MAP_READ_NULL ((vm_map_read_t)0)
 
 /*
  * Evolving definitions, likely to change.
  */
 
-typedef uint64_t                vm_object_offset_t;
-typedef uint64_t                vm_object_size_t;
+typedef uint64_t vm_object_offset_t;
+typedef uint64_t vm_object_size_t;
 
+typedef mach_port_t upl_t;
+typedef mach_port_t vm_named_entry_t;
 
+#define UPL_NULL ((upl_t)0)
+#define VM_NAMED_ENTRY_NULL ((vm_named_entry_t)0)
 
-
-typedef mach_port_t             upl_t;
-typedef mach_port_t             vm_named_entry_t;
-
-
-#define UPL_NULL                ((upl_t) 0)
-#define VM_NAMED_ENTRY_NULL     ((vm_named_entry_t) 0)
-
-#endif  /* _MACH_VM_TYPES_H_ */
+#endif /* _MACH_VM_TYPES_H_ */

@@ -27,14 +27,15 @@ class Synth;
 
 class InternalResampler {
 public:
-	InternalResampler(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality);
-	~InternalResampler();
+  InternalResampler(Synth &synth, double targetSampleRate,
+                    SamplerateConversionQuality quality);
+  ~InternalResampler();
 
-	void getOutputSamples(float *buffer, unsigned int length);
+  void getOutputSamples(float *buffer, unsigned int length);
 
 private:
-	SRCTools::FloatSampleProvider &synthSource;
-	SRCTools::FloatSampleProvider &model;
+  SRCTools::FloatSampleProvider &synthSource;
+  SRCTools::FloatSampleProvider &model;
 };
 
 } // namespace MT32Emu

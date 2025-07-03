@@ -27,39 +27,43 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <vector>    // provides: vector
-#include <SDL.h>     // provides: SDL_RWops
 #include "archive.h" // provides: archive
+#include <SDL.h>     // provides: SDL_RWops
+#include <vector>    // provides: vector
 
 // Ensure we only get the API
 #ifdef DR_MP3_IMPLEMENTATION
-#  undef DR_MP3_IMPLEMENTATION
+#undef DR_MP3_IMPLEMENTATION
 #endif
 #include "dr_mp3.h" // provides: drmp3
 
-// Note: this C++ struct must match (in binary-form) the "drmp3_seek_point" struct
+// Note: this C++ struct must match (in binary-form) the "drmp3_seek_point"
+// struct
 //       defined in dr_mp3.h.  If that changes, then update this to match, along
-//       with adjusting the Serialize() template function that union's the values.
+//       with adjusting the Serialize() template function that union's the
+//       values.
 //
 struct drmp3_seek_point_serial {
-    drmp3_uint64 seekPosInBytes;      // Points to the first byte of an MP3 frame.
-    drmp3_uint64 pcmFrameIndex;       // The index of the PCM frame this seek point targets.
-    drmp3_uint16 mp3FramesToDiscard;  // The number of whole MP3 frames to be discarded before pcmFramesToDiscard.
-    drmp3_uint16 pcmFramesToDiscard;
-    template <class T> void Serialize(T& archive) {
-            archive & seekPosInBytes & pcmFrameIndex & mp3FramesToDiscard & pcmFramesToDiscard;
-    }
+  drmp3_uint64 seekPosInBytes; // Points to the first byte of an MP3 frame.
+  drmp3_uint64
+      pcmFrameIndex; // The index of the PCM frame this seek point targets.
+  drmp3_uint16 mp3FramesToDiscard; // The number of whole MP3 frames to be
+                                   // discarded before pcmFramesToDiscard.
+  drmp3_uint16 pcmFramesToDiscard;
+  template <class T> void Serialize(T &archive) {
+    archive & seekPosInBytes & pcmFrameIndex & mp3FramesToDiscard &
+        pcmFramesToDiscard;
+  }
 };
 
 // Our private-decoder structure where we hold:
 //   - a pointer to the working dr_mp3 instance
 //   - a template vector of seek_points (the serializable form)
 struct mp3_t {
-    drmp3* p_dr = nullptr;    // the actual drmp3 instance we open, read, and seek within
-    std::vector<drmp3_seek_point_serial> seek_points_vector = {};
+  drmp3 *p_dr =
+      nullptr; // the actual drmp3 instance we open, read, and seek within
+  std::vector<drmp3_seek_point_serial> seek_points_vector = {};
 };
 
-uint64_t populate_seek_points(struct SDL_RWops* const context,
-                              mp3_t* p_mp3,
-                              const char* seektable_filename,
-                              bool &result);
+uint64_t populate_seek_points(struct SDL_RWops *const context, mp3_t *p_mp3,
+                              const char *seektable_filename, bool &result);

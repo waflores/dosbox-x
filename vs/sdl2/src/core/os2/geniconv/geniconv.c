@@ -25,39 +25,40 @@
   Andrey Vasilkin, 2016.
 */
 
-#define INCL_DOSMODULEMGR   /* Module Manager */
-#define INCL_DOSERRORS      /* Error values   */
+#define INCL_DOSMODULEMGR /* Module Manager */
+#define INCL_DOSERRORS    /* Error values   */
 #include <os2.h>
 
 #include "geniconv.h"
 
 /*#define DEBUG*/
 #ifdef DEBUG
-# include <stdio.h>
-# define iconv_debug(s,...) printf(__func__"(): "##s"\n" ,##__VA_ARGS__)
+#include <stdio.h>
+#define iconv_debug(s, ...) printf(__func__ "(): "##s "\n", ##__VA_ARGS__)
 #else
-# define iconv_debug(s,...) do {} while (0)
+#define iconv_debug(s, ...) \
+    do {                    \
+    } while (0)
 #endif
 
 /* Exports from os2iconv.c */
-extern iconv_t _System os2_iconv_open  (const char* tocode, const char* fromcode);
-extern size_t  _System os2_iconv       (iconv_t cd,
-                                        char **inbuf,  size_t *inbytesleft,
-                                        char **outbuf, size_t *outbytesleft);
-extern int     _System os2_iconv_close (iconv_t cd);
+extern iconv_t _System os2_iconv_open(const char *tocode, const char *fromcode);
+extern size_t _System os2_iconv(iconv_t cd,
+                                char **inbuf, size_t *inbytesleft,
+                                char **outbuf, size_t *outbytesleft);
+extern int _System os2_iconv_close(iconv_t cd);
 
 /* Functions pointers */
-typedef iconv_t (_System *FNICONV_OPEN)(const char*, const char*);
-typedef size_t  (_System *FNICONV)     (iconv_t, char **, size_t *, char **, size_t *);
-typedef int     (_System *FNICONV_CLOSE)(iconv_t);
+typedef iconv_t(_System *FNICONV_OPEN)(const char *, const char *);
+typedef size_t(_System *FNICONV)(iconv_t, char **, size_t *, char **, size_t *);
+typedef int(_System *FNICONV_CLOSE)(iconv_t);
 
-static HMODULE         hmIconv = NULLHANDLE;
-static FNICONV_OPEN    fn_iconv_open  = os2_iconv_open;
-static FNICONV         fn_iconv       = os2_iconv;
-static FNICONV_CLOSE   fn_iconv_close = os2_iconv_close;
+static HMODULE hmIconv = NULLHANDLE;
+static FNICONV_OPEN fn_iconv_open = os2_iconv_open;
+static FNICONV fn_iconv = os2_iconv;
+static FNICONV_CLOSE fn_iconv_close = os2_iconv_close;
 
 static int geniconv_init = 0;
-
 
 static BOOL _loadDLL(const char *dllname,
                      const char *sym_iconvopen,
@@ -65,7 +66,7 @@ static BOOL _loadDLL(const char *dllname,
                      const char *sym_iconvclose)
 {
     ULONG rc;
-    char  error[256];
+    char error[256];
 
     rc = DosLoadModule(error, sizeof(error), dllname, &hmIconv);
     if (rc != NO_ERROR) {
@@ -94,7 +95,7 @@ static BOOL _loadDLL(const char *dllname,
     iconv_debug("DLL %s used", dllname);
     return TRUE;
 
-    fail:
+fail:
     DosFreeModule(hmIconv);
     hmIconv = NULLHANDLE;
     return FALSE;
@@ -111,15 +112,14 @@ static void _init(void)
     /* Try to load kiconv.dll, iconv2.dll or iconv.dll */
     if (!_loadDLL("KICONV", "_libiconv_open", "_libiconv", "_libiconv_close") &&
         !_loadDLL("ICONV2", "_libiconv_open", "_libiconv", "_libiconv_close") &&
-        !_loadDLL("ICONV",  "_iconv_open",    "_iconv",    "_iconv_close") ) {
+        !_loadDLL("ICONV", "_iconv_open", "_iconv", "_iconv_close")) {
         /* No DLL was loaded - use OS/2 conversion objects API */
         iconv_debug("Uni*() API used");
-        fn_iconv_open  = os2_iconv_open;
-        fn_iconv       = os2_iconv;
+        fn_iconv_open = os2_iconv_open;
+        fn_iconv = os2_iconv;
         fn_iconv_close = os2_iconv_close;
     }
 }
-
 
 /* Public routines.
  * ----------------
@@ -131,8 +131,8 @@ void libiconv_clean(void)
     geniconv_init = 0;
 
     /* reset the function pointers. */
-    fn_iconv_open  = os2_iconv_open;
-    fn_iconv       = os2_iconv;
+    fn_iconv_open = os2_iconv_open;
+    fn_iconv = os2_iconv;
     fn_iconv_close = os2_iconv_close;
 
     if (hmIconv != NULLHANDLE) {
@@ -141,14 +141,14 @@ void libiconv_clean(void)
     }
 }
 
-iconv_t libiconv_open(const char* tocode, const char* fromcode)
+iconv_t libiconv_open(const char *tocode, const char *fromcode)
 {
     _init();
     return fn_iconv_open(tocode, fromcode);
 }
 
-size_t libiconv(iconv_t cd, char* * inbuf, size_t *inbytesleft,
-                char* * outbuf, size_t *outbytesleft)
+size_t libiconv(iconv_t cd, char **inbuf, size_t *inbytesleft,
+                char **outbuf, size_t *outbytesleft)
 {
     return fn_iconv(cd, inbuf, inbytesleft, outbuf, outbytesleft);
 }

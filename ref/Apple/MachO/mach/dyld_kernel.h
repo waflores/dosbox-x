@@ -32,8 +32,8 @@
 #include <mach/boolean.h>
 #include <stdint.h>
 #include <sys/_types/_fsid_t.h>
-#include <sys/_types/_u_int32_t.h>
 #include <sys/_types/_fsobj_id_t.h>
+#include <sys/_types/_u_int32_t.h>
 #include <sys/_types/_uuid_t.h>
 
 /* These definitions must be kept in sync with the ones in
@@ -41,20 +41,22 @@
  */
 
 struct dyld_kernel_image_info {
-	uuid_t uuid;
-	fsobj_id_t fsobjid;
-	fsid_t fsid;
-	uint64_t load_addr;
+  uuid_t uuid;
+  fsobj_id_t fsobjid;
+  fsid_t fsid;
+  uint64_t load_addr;
 };
 
 struct dyld_kernel_process_info {
-	struct dyld_kernel_image_info cache_image_info;
-	uint64_t timestamp;         // mach_absolute_time of last time dyld change to image list
-	uint32_t imageCount;        // number of images currently loaded into process
-	uint32_t initialImageCount; // number of images statically loaded into process (before any dlopen() calls)
-	uint8_t dyldState;          // one of dyld_process_state_* values
-	boolean_t no_cache;         // process is running without a dyld cache
-	boolean_t private_cache;    // process is using a private copy of its dyld cache
+  struct dyld_kernel_image_info cache_image_info;
+  uint64_t
+      timestamp; // mach_absolute_time of last time dyld change to image list
+  uint32_t imageCount;        // number of images currently loaded into process
+  uint32_t initialImageCount; // number of images statically loaded into process
+                              // (before any dlopen() calls)
+  uint8_t dyldState;          // one of dyld_process_state_* values
+  boolean_t no_cache;         // process is running without a dyld cache
+  boolean_t private_cache; // process is using a private copy of its dyld cache
 };
 
 /* typedefs so our MIG is sane */

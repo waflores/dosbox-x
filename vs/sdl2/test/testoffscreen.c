@@ -12,8 +12,8 @@
 
 /* Simple program: picks the offscreen backend and renders each frame to a bmp */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #ifdef __EMSCRIPTEN__
@@ -21,8 +21,8 @@
 #endif
 
 #include "SDL.h"
-#include "SDL_stdinc.h"
 #include "SDL_opengl.h"
+#include "SDL_stdinc.h"
 
 static SDL_Renderer *renderer = NULL;
 static SDL_Window *window = NULL;
@@ -62,7 +62,7 @@ void save_surface_to_bmp(void)
     SDL_PixelFormatEnumToMasks(pixel_format, &bbp, &r_mask, &g_mask, &b_mask, &a_mask);
 
     surface = SDL_CreateRGBSurface(0, width, height, bbp, r_mask, g_mask, b_mask, a_mask);
-    SDL_RenderReadPixels(renderer, NULL, pixel_format, (void*)surface->pixels, surface->pitch);
+    SDL_RenderReadPixels(renderer, NULL, pixel_format, (void *)surface->pixels, surface->pitch);
 
     SDL_snprintf(file, sizeof(file), "SDL_window%" SDL_PRIs32 "-%8.8d.bmp",
                  SDL_GetWindowID(window), ++frame_number);

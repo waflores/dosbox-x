@@ -18,89 +18,103 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #pragma once
 
-#include <string>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <string>
 
-#define SAFE_RELEASE(p)		{ if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_RELEASE(p)                                                        \
+  {                                                                            \
+    if (p) {                                                                   \
+      (p)->Release();                                                          \
+      (p) = NULL;                                                              \
+    }                                                                          \
+  }
 
-class ScalingEffect
-{
-    float				m_scale;
-    float				m_iDim[2];
-    float               m_oDim[2];
-    BOOL				m_forceupdate;
-    LPCSTR				m_strName;
-    std::string				m_strErrors;
-    LPDIRECT3DDEVICE9			m_pd3dDevice;
+class ScalingEffect {
+  float m_scale;
+  float m_iDim[2];
+  float m_oDim[2];
+  BOOL m_forceupdate;
+  LPCSTR m_strName;
+  std::string m_strErrors;
+  LPDIRECT3DDEVICE9 m_pd3dDevice;
 
-    LPD3DXEFFECT			m_pEffect;
-    D3DXEFFECT_DESC			m_EffectDesc;
+  LPD3DXEFFECT m_pEffect;
+  D3DXEFFECT_DESC m_EffectDesc;
 
-    // Matrix Handles
-    D3DXHANDLE m_MatWorldEffectHandle;
-    D3DXHANDLE m_MatViewEffectHandle;
-    D3DXHANDLE m_MatProjEffectHandle;
-    D3DXHANDLE m_MatWorldViewEffectHandle;
-    D3DXHANDLE m_MatViewProjEffectHandle;
-    D3DXHANDLE m_MatWorldViewProjEffectHandle;
+  // Matrix Handles
+  D3DXHANDLE m_MatWorldEffectHandle;
+  D3DXHANDLE m_MatViewEffectHandle;
+  D3DXHANDLE m_MatProjEffectHandle;
+  D3DXHANDLE m_MatWorldViewEffectHandle;
+  D3DXHANDLE m_MatViewProjEffectHandle;
+  D3DXHANDLE m_MatWorldViewProjEffectHandle;
 
-    // Texture Handles
-    D3DXHANDLE m_SourceDimsEffectHandle;
-    D3DXHANDLE m_TexelSizeEffectHandle;
-    D3DXHANDLE m_SourceTextureEffectHandle;
-    D3DXHANDLE m_WorkingTexture1EffectHandle;
-    D3DXHANDLE m_WorkingTexture2EffectHandle;
-    D3DXHANDLE m_Hq2xLookupTextureHandle;
+  // Texture Handles
+  D3DXHANDLE m_SourceDimsEffectHandle;
+  D3DXHANDLE m_TexelSizeEffectHandle;
+  D3DXHANDLE m_SourceTextureEffectHandle;
+  D3DXHANDLE m_WorkingTexture1EffectHandle;
+  D3DXHANDLE m_WorkingTexture2EffectHandle;
+  D3DXHANDLE m_Hq2xLookupTextureHandle;
 
-    // Technique stuff
-    D3DXHANDLE	m_PreprocessTechnique1EffectHandle;
-    D3DXHANDLE	m_PreprocessTechnique2EffectHandle;
-    D3DXHANDLE	m_CombineTechniqueEffectHandle;
+  // Technique stuff
+  D3DXHANDLE m_PreprocessTechnique1EffectHandle;
+  D3DXHANDLE m_PreprocessTechnique2EffectHandle;
+  D3DXHANDLE m_CombineTechniqueEffectHandle;
 
 public:
-    enum Pass { Preprocess1, Preprocess2, Combine };
+  enum Pass { Preprocess1, Preprocess2, Combine };
 
-    ScalingEffect(LPDIRECT3DDEVICE9 pd3dDevice);
-    ~ScalingEffect(void);
+  ScalingEffect(LPDIRECT3DDEVICE9 pd3dDevice);
+  ~ScalingEffect(void);
 
-    void KillThis();
+  void KillThis();
 
-    HRESULT LoadEffect(const TCHAR *filename);
+  HRESULT LoadEffect(const TCHAR *filename);
 
-    const char *getErrors() { return m_strErrors.c_str(); }
+  const char *getErrors() { return m_strErrors.c_str(); }
 
-    LPCSTR getName() { return m_strName; }
-    float getScale() { return m_scale; }
-    bool getForceUpdate() { return m_forceupdate != FALSE; }
-    void setinputDim(float w, float h) { m_iDim[0] = w; m_iDim[1] = h; }
-    void setoutputDim(float w, float h) { m_oDim[0] = w; m_oDim[1] = h; }
+  LPCSTR getName() { return m_strName; }
+  float getScale() { return m_scale; }
+  bool getForceUpdate() { return m_forceupdate != FALSE; }
+  void setinputDim(float w, float h) {
+    m_iDim[0] = w;
+    m_iDim[1] = h;
+  }
+  void setoutputDim(float w, float h) {
+    m_oDim[0] = w;
+    m_oDim[1] = h;
+  }
 
-    // Does it have a preprocess step
-    BOOL hasPreprocess() { return m_PreprocessTechnique1EffectHandle!=0; }
-    BOOL hasPreprocess2() { return m_PreprocessTechnique2EffectHandle!=0; }
+  // Does it have a preprocess step
+  BOOL hasPreprocess() { return m_PreprocessTechnique1EffectHandle != 0; }
+  BOOL hasPreprocess2() { return m_PreprocessTechnique2EffectHandle != 0; }
 
-    // Set The Textures
-    HRESULT SetTextures( LPDIRECT3DTEXTURE9 lpSource, LPDIRECT3DTEXTURE9 lpWorking1,
-		LPDIRECT3DTEXTURE9 lpWorking2, LPDIRECT3DVOLUMETEXTURE9 lpHq2xLookupTexture );
+  // Set The Textures
+  HRESULT SetTextures(LPDIRECT3DTEXTURE9 lpSource,
+                      LPDIRECT3DTEXTURE9 lpWorking1,
+                      LPDIRECT3DTEXTURE9 lpWorking2,
+                      LPDIRECT3DVOLUMETEXTURE9 lpHq2xLookupTexture);
 
-    // Set the Matrices for this frame
-    HRESULT SetMatrices( D3DXMATRIX &matProj, D3DXMATRIX &matView, D3DXMATRIX &matWorld );
+  // Set the Matrices for this frame
+  HRESULT SetMatrices(D3DXMATRIX &matProj, D3DXMATRIX &matView,
+                      D3DXMATRIX &matWorld);
 
-    // Begin the technique
-    // Returns Number of passes for this technique
-    HRESULT Begin(Pass pass, UINT* pPasses);
+  // Begin the technique
+  // Returns Number of passes for this technique
+  HRESULT Begin(Pass pass, UINT *pPasses);
 
-    // Render Pass in technique
-    HRESULT BeginPass(UINT Pass);
-    HRESULT EndPass();
+  // Render Pass in technique
+  HRESULT BeginPass(UINT Pass);
+  HRESULT EndPass();
 
-    // End rendering of this technique
-    HRESULT End();
+  // End rendering of this technique
+  HRESULT End();
 
-    // Validates the effect
-    HRESULT Validate();
+  // Validates the effect
+  HRESULT Validate();
 
 private:
-    HRESULT ParseParameters(LPD3DXEFFECTCOMPILER lpEffectCompiler);
+  HRESULT ParseParameters(LPD3DXEFFECTCOMPILER lpEffectCompiler);
 };

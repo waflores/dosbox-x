@@ -35,7 +35,6 @@
 
 #include <windows.h>
 
-
 #include "MbcsBuffer.h"
 
 // ----------------------------------------------------------------------------
@@ -46,115 +45,98 @@ extern HMODULE g_hOleacc;
 // ----------------------------------------------------------------------------
 // Macros
 
-#define LOAD_FUNCTION(func, err)                                    \
-    static fp##func p##func = 0;                                    \
-    if (!p##func) {                                                 \
-        if (!g_hOleacc) {                                           \
-            g_hOleacc = ::LoadLibraryA("oleacc.dll");               \
-            if (!g_hOleacc) {                                       \
-                SetLastError(ERROR_CALL_NOT_IMPLEMENTED);           \
-                return err;                                         \
-            }                                                       \
-        }                                                           \
-        p##func = (fp##func) ::GetProcAddress(g_hOleacc, #func);    \
-        if (!p##func) {                                             \
-            SetLastError(ERROR_CALL_NOT_IMPLEMENTED);               \
-            return err;                                             \
-        }                                                           \
-    }
-
+#define LOAD_FUNCTION(func, err)                                               \
+  static fp##func p##func = 0;                                                 \
+  if (!p##func) {                                                              \
+    if (!g_hOleacc) {                                                          \
+      g_hOleacc = ::LoadLibraryA("oleacc.dll");                                \
+      if (!g_hOleacc) {                                                        \
+        SetLastError(ERROR_CALL_NOT_IMPLEMENTED);                              \
+        return err;                                                            \
+      }                                                                        \
+    }                                                                          \
+    p##func = (fp##func)::GetProcAddress(g_hOleacc, #func);                    \
+    if (!p##func) {                                                            \
+      SetLastError(ERROR_CALL_NOT_IMPLEMENTED);                                \
+      return err;                                                              \
+    }                                                                          \
+  }
 
 // ----------------------------------------------------------------------------
 // API
 
-typedef HRESULT (STDAPICALLTYPE *fpCreateStdAccessibleProxyA)(
-    HWND hwnd, 
-    LPCSTR pClassName, 
-    LONG idObject, 
-    REFIID riid, 
-    void** ppvObject);
+typedef HRESULT(STDAPICALLTYPE *fpCreateStdAccessibleProxyA)(
+    HWND hwnd, LPCSTR pClassName, LONG idObject, REFIID riid, void **ppvObject);
 
 EXTERN_C {
-OCOW_DEF(HRESULT, CreateStdAccessibleProxyW,
-    (HWND hwnd, 
-    LPCWSTR pClassName, 
-    LONG idObject, 
-    REFIID riid, 
-    void** ppvObject
-    ))
-{
+  OCOW_DEF(HRESULT, CreateStdAccessibleProxyW,
+           (HWND hwnd, LPCWSTR pClassName, LONG idObject, REFIID riid,
+            void **ppvObject)) {
     LOAD_FUNCTION(CreateStdAccessibleProxyA, E_NOTIMPL)
 
     CMbcsBuffer mbcsClassName;
     if (!mbcsClassName.FromUnicode(pClassName))
-        return FALSE;
+      return FALSE;
 
-    return pCreateStdAccessibleProxyA(hwnd, mbcsClassName, idObject, riid, ppvObject);
-}
+    return pCreateStdAccessibleProxyA(hwnd, mbcsClassName, idObject, riid,
+                                      ppvObject);
+  }
 
-typedef UINT (STDAPICALLTYPE *fpGetRoleTextA)(
-    DWORD lRole, 
-    LPSTR lpszRole, 
-    UINT cchRoleMax);
+  typedef UINT(STDAPICALLTYPE * fpGetRoleTextA)(DWORD lRole, LPSTR lpszRole,
+                                                UINT cchRoleMax);
 
-OCOW_DEF(UINT, GetRoleTextW,
-    (DWORD lRole, 
-    LPWSTR lpszRole, 
-    UINT cchRoleMax
-    ))
-{
+  OCOW_DEF(UINT, GetRoleTextW,
+           (DWORD lRole, LPWSTR lpszRole, UINT cchRoleMax)) {
     LOAD_FUNCTION(GetRoleTextA, 0)
 
     CMbcsBuffer mbcsRole;
     UINT uiLen = pGetRoleTextA(lRole, NULL, 0);
     if (!uiLen)
-        return 0;
-    if (!mbcsRole.SetCapacity((int) uiLen + 1))
-        return 0;
+      return 0;
+    if (!mbcsRole.SetCapacity((int)uiLen + 1))
+      return 0;
 
     uiLen = pGetRoleTextA(lRole, mbcsRole, mbcsRole.BufferSize());
-    int nRequiredLen = ::MultiByteToWideChar(CP_ACP, 0, mbcsRole, (int) uiLen + 1, 0, 0);
+    int nRequiredLen =
+        ::MultiByteToWideChar(CP_ACP, 0, mbcsRole, (int)uiLen + 1, 0, 0);
     if (!lpszRole)
-        return (UINT) (nRequiredLen - 1);
-    if (cchRoleMax < (UINT) nRequiredLen) {
-        SetLastError(ERROR_INSUFFICIENT_BUFFER);
-        return 0;
+      return (UINT)(nRequiredLen - 1);
+    if (cchRoleMax < (UINT)nRequiredLen) {
+      SetLastError(ERROR_INSUFFICIENT_BUFFER);
+      return 0;
     }
 
-    ::MultiByteToWideChar(CP_ACP, 0, mbcsRole, (int) uiLen + 1, lpszRole, cchRoleMax);
-    return (UINT) (nRequiredLen - 1);
-}
+    ::MultiByteToWideChar(CP_ACP, 0, mbcsRole, (int)uiLen + 1, lpszRole,
+                          cchRoleMax);
+    return (UINT)(nRequiredLen - 1);
+  }
 
-typedef UINT (STDAPICALLTYPE *fpGetStateTextA)(
-    DWORD lStateBit, 
-    LPSTR lpszState, 
-    UINT cchState);
+  typedef UINT(STDAPICALLTYPE * fpGetStateTextA)(
+      DWORD lStateBit, LPSTR lpszState, UINT cchState);
 
-OCOW_DEF(UINT, GetStateTextW,
-    (DWORD lStateBit, 
-    LPWSTR lpszState, 
-    UINT cchState
-    ))
-{
+  OCOW_DEF(UINT, GetStateTextW,
+           (DWORD lStateBit, LPWSTR lpszState, UINT cchState)) {
     LOAD_FUNCTION(GetStateTextA, 0)
 
     CMbcsBuffer mbcsState;
     UINT uiLen = pGetStateTextA(lStateBit, NULL, 0);
     if (!uiLen)
-        return 0;
-    if (!mbcsState.SetCapacity((int) uiLen + 1))
-        return 0;
+      return 0;
+    if (!mbcsState.SetCapacity((int)uiLen + 1))
+      return 0;
 
     uiLen = pGetStateTextA(lStateBit, mbcsState, mbcsState.BufferSize());
-    int nRequiredLen = ::MultiByteToWideChar(CP_ACP, 0, mbcsState, (int) uiLen + 1, 0, 0);
+    int nRequiredLen =
+        ::MultiByteToWideChar(CP_ACP, 0, mbcsState, (int)uiLen + 1, 0, 0);
     if (!lpszState)
-        return (UINT) (nRequiredLen - 1);
-    if (cchState < (UINT) nRequiredLen) {
-        SetLastError(ERROR_INSUFFICIENT_BUFFER);
-        return 0;
+      return (UINT)(nRequiredLen - 1);
+    if (cchState < (UINT)nRequiredLen) {
+      SetLastError(ERROR_INSUFFICIENT_BUFFER);
+      return 0;
     }
 
-    ::MultiByteToWideChar(CP_ACP, 0, mbcsState, (int) uiLen + 1, lpszState, cchState);
-    return (UINT) (nRequiredLen - 1);
-}
-}//EXTERN_C
+    ::MultiByteToWideChar(CP_ACP, 0, mbcsState, (int)uiLen + 1, lpszState,
+                          cchState);
+    return (UINT)(nRequiredLen - 1);
+  }
+} // EXTERN_C

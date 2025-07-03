@@ -21,8 +21,8 @@
 */
 #include "SDL_config.h"
 
-#include <signal.h>
 #include <be/kernel/OS.h>
+#include <signal.h>
 
 typedef thread_id SYS_ThreadHandle;
 

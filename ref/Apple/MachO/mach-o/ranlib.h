@@ -2,14 +2,14 @@
  * Copyright (c) 2016 Apple, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- * 
+ *
  * This file contains Original Code and/or Modifications of Original Code
  * as defined in and that are subject to the Apple Public Source License
  * Version 2.0 (the 'License'). You may not use this file except in
  * compliance with the License. Please obtain a copy of the License at
  * http://www.opensource.apple.com/apsl/ and read it before using this
  * file.
- * 
+ *
  * The Original Code and all software distributed under the License are
  * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -17,7 +17,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
  * Please see the License for the specific language governing rights and
  * limitations under the License.
- * 
+ *
  * @APPLE_LICENSE_HEADER_END@
  */
 /*	ranlib.h	4.1	83/05/03	*/
@@ -25,7 +25,7 @@
 #define _MACH_O_RANLIB_H_
 
 #include <stdint.h>
-#include <sys/types.h>		/* off_t */
+#include <sys/types.h> /* off_t */
 
 /*
  * There are two known orders of table of contents for archives.  The first is
@@ -44,8 +44,8 @@
  * determined the member name (ar(1) treats all blanks in the name as
  * significant and ranlib(1) only checks for the first one).
  */
-#define SYMDEF		"__.SYMDEF"
-#define SYMDEF_SORTED	"__.SYMDEF SORTED"
+#define SYMDEF "__.SYMDEF"
+#define SYMDEF_SORTED "__.SYMDEF SORTED"
 
 /*
  * Structure of the __.SYMDEF table of contents for an archive.
@@ -55,18 +55,18 @@
  * follow and then the strings themselves.  The ran_strx fields index the
  * string table whose first byte is numbered 0.
  */
-struct	ranlib {
-    union {
-	uint32_t	ran_strx;	/* string table index of */
+struct ranlib {
+  union {
+    uint32_t ran_strx; /* string table index of */
 #ifndef __LP64__
-	char		*ran_name;	/* symbol defined by */
+    char *ran_name; /* symbol defined by */
 #endif
-    } ran_un;
-    uint32_t		ran_off;	/* library member at this offset */
+  } ran_un;
+  uint32_t ran_off; /* library member at this offset */
 };
 
-#define SYMDEF_64		"__.SYMDEF_64"
-#define SYMDEF_64_SORTED	"__.SYMDEF_64 SORTED"
+#define SYMDEF_64 "__.SYMDEF_64"
+#define SYMDEF_64_SORTED "__.SYMDEF_64 SORTED"
 
 /*
  * The support for the 64-bit table of contents described here is a work in
@@ -81,10 +81,10 @@ struct	ranlib {
  * string table whose first byte is numbered 0.
  */
 
-struct	ranlib_64 {
-    union {
-	uint64_t	ran_strx;	/* string table index of */
-    } ran_un;
-    uint64_t		ran_off;	/* library member at this offset */
+struct ranlib_64 {
+  union {
+    uint64_t ran_strx; /* string table index of */
+  } ran_un;
+  uint64_t ran_off; /* library member at this offset */
 };
 #endif /* _MACH_O_RANLIB_H_ */

@@ -18,8 +18,7 @@
 #include "SDL_test_common.h"
 #include "testutils.h"
 
-#if defined(__IPHONEOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__NACL__) \
-    || defined(__WINDOWS__) || defined(__LINUX__)
+#if defined(__IPHONEOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__NACL__) || defined(__WINDOWS__) || defined(__LINUX__)
 #define HAVE_OPENGLES2
 #endif
 
@@ -29,7 +28,7 @@
 
 typedef struct GLES2_Context
 {
-#define SDL_PROC(ret, func, params) ret (APIENTRY *func) params;
+#define SDL_PROC(ret, func, params) ret(APIENTRY *func) params;
 #include "../src/render/opengles2/SDL_gles2funcs.h"
 #undef SDL_PROC
 } GLES2_Context;
@@ -52,7 +51,6 @@ typedef enum
     GLES2_UNIFORM_TEXTURE,
     GLES2_UNIFORM_COLOR,
 } GLES2_Uniform;
-
 
 GLint g_uniform_locations[16];
 
@@ -125,8 +123,7 @@ quit(int rc)
  * source: Passed-in shader source code.
  * shader_type: Passed to GL, e.g. GL_VERTEX_SHADER.
  */
-void
-process_shader(GLenum *shader, const char *source, GLenum shader_type)
+void process_shader(GLenum *shader, const char *source, GLenum shader_type)
 {
     GLint status = GL_FALSE;
     const char *shaders[1] = { NULL };
@@ -253,7 +250,7 @@ typedef struct shader_data
 } shader_data;
 
 static void
-Render(int width, int height, shader_data* data)
+Render(int width, int height, shader_data *data)
 {
     float *verts = g_verts;
     ctx.glViewport(0, 0, 640, 480);
@@ -273,8 +270,8 @@ Render(int width, int height, shader_data* data)
 void renderCopy_angle(float degree_angle)
 {
     const float radian_angle = (float)(3.141592 * degree_angle) / 180.0f;
-    const GLfloat s = (GLfloat) SDL_sin(radian_angle);
-    const GLfloat c = (GLfloat) SDL_cos(radian_angle) - 1.0f;
+    const GLfloat s = (GLfloat)SDL_sin(radian_angle);
+    const GLfloat c = (GLfloat)SDL_cos(radian_angle) - 1.0f;
     GLfloat *verts = g_verts + 16;
     *(verts++) = s;
     *(verts++) = c;
@@ -297,10 +294,10 @@ void renderCopy_position(SDL_Rect *srcrect, SDL_Rect *dstrect)
     maxx = (GLfloat)(dstrect->x + dstrect->w);
     maxy = (GLfloat)(dstrect->y + dstrect->h);
 
-    minu = (GLfloat) srcrect->x / (GLfloat)g_surf_sdf->w;
-    maxu = (GLfloat) (srcrect->x + srcrect->w) / (GLfloat)g_surf_sdf->w;
-    minv = (GLfloat) srcrect->y / (GLfloat)g_surf_sdf->h;
-    maxv = (GLfloat) (srcrect->y + srcrect->h) / (GLfloat)g_surf_sdf->h;
+    minu = (GLfloat)srcrect->x / (GLfloat)g_surf_sdf->w;
+    maxu = (GLfloat)(srcrect->x + srcrect->w) / (GLfloat)g_surf_sdf->w;
+    minv = (GLfloat)srcrect->y / (GLfloat)g_surf_sdf->h;
+    maxv = (GLfloat)(srcrect->y + srcrect->h) / (GLfloat)g_surf_sdf->h;
 
     *(verts++) = minx;
     *(verts++) = miny;
@@ -402,9 +399,14 @@ void loop(void)
 
         SDL_GL_GetDrawableSize(state->windows[0], &w, &h);
 
-        rs.x = 0; rs.y = 0; rs.w = g_surf_sdf->w; rs.h = g_surf_sdf->h;
-        rd.w = (int)((float)g_surf_sdf->w * g_val); rd.h = (int)((float)g_surf_sdf->h * g_val);
-        rd.x = (w - rd.w) / 2; rd.y = (h - rd.h) / 2;
+        rs.x = 0;
+        rs.y = 0;
+        rs.w = g_surf_sdf->w;
+        rs.h = g_surf_sdf->h;
+        rd.w = (int)((float)g_surf_sdf->w * g_val);
+        rd.h = (int)((float)g_surf_sdf->h * g_val);
+        rd.x = (w - rd.w) / 2;
+        rd.y = (h - rd.h) / 2;
         renderCopy_position(&rs, &rd);
     }
 

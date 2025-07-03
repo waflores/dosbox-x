@@ -26,4 +26,3 @@
 /* Functions to be exported */
 extern void GGI_InitOSKeymap(_THIS);
 extern void GGI_PumpEvents(_THIS);
-

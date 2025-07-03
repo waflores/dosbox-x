@@ -23,16 +23,12 @@
 // ----------------------------------------------------------------------------
 // Constructor.
 // ----------------------------------------------------------------------------
-Voice::Voice()
-{
-  set_chip_model(MOS6581);
-}
+Voice::Voice() { set_chip_model(MOS6581); }
 
 // ----------------------------------------------------------------------------
 // Set chip model.
 // ----------------------------------------------------------------------------
-void Voice::set_chip_model(chip_model model)
-{
+void Voice::set_chip_model(chip_model model) {
   wave.set_chip_model(model);
 
   if (model == MOS6581) {
@@ -65,7 +61,7 @@ void Voice::set_chip_model(chip_model model)
     //
     //	ldx #$00
     //	lda #$38	; Tweak this to find the "zero" level
-    //l	cmp $d41b
+    // l	cmp $d41b
     //	bne l
     //	stx $d40e	; Stop frequency counter - freeze waveform output
     //	brk
@@ -96,9 +92,8 @@ void Voice::set_chip_model(chip_model model)
     // The scaling of the voice amplitude is not symmetric about y = 0;
     // this follows from the DC level in the waveform output.
 
-    voice_DC = 0x800*0xff;
-  }
-  else {
+    voice_DC = 0x800 * 0xff;
+  } else {
     // No DC offsets in the MOS8580.
     wave_zero = 0x800;
     voice_DC = 0;
@@ -108,16 +103,14 @@ void Voice::set_chip_model(chip_model model)
 // ----------------------------------------------------------------------------
 // Set sync source.
 // ----------------------------------------------------------------------------
-void Voice::set_sync_source(Voice* source)
-{
+void Voice::set_sync_source(Voice *source) {
   wave.set_sync_source(&source->wave);
 }
 
 // ----------------------------------------------------------------------------
 // Register functions.
 // ----------------------------------------------------------------------------
-void Voice::writeCONTROL_REG(reg8 control)
-{
+void Voice::writeCONTROL_REG(reg8 control) {
   wave.writeCONTROL_REG(control);
   envelope.writeCONTROL_REG(control);
 }
@@ -125,9 +118,7 @@ void Voice::writeCONTROL_REG(reg8 control)
 // ----------------------------------------------------------------------------
 // SID reset.
 // ----------------------------------------------------------------------------
-void Voice::reset()
-{
+void Voice::reset() {
   wave.reset();
   envelope.reset();
 }
-

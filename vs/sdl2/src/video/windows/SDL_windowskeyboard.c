@@ -22,8 +22,8 @@
 
 #if defined(SDL_VIDEO_DRIVER_WINDOWS) && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
 
-#include "SDL_windowsvideo.h"
 #include "SDL_hints.h"
+#include "SDL_windowsvideo.h"
 
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/scancodes_windows.h"
@@ -39,7 +39,7 @@ static void IME_Quit(SDL_VideoData *videodata);
 static SDL_bool IME_IsTextInputShown(SDL_VideoData *videodata);
 static Uint32 end_ticks = 0;  // added for DOSBox-X
 static SDL_bool ime_incompos; // added for DOSBox-X
-#endif /* !SDL_DISABLE_WINDOWS_IME */
+#endif                        /* !SDL_DISABLE_WINDOWS_IME */
 
 #if 1 // Added for DOSBox-X
 SDL_bool SDL_IM_Composition(int more)
@@ -343,8 +343,8 @@ DEFINE_GUID(IID_ITfThreadMgrEx, 0x3E90ADE3, 0x7594, 0x4CB0, 0xBB, 0x58, 0x69, 0x
 #define LANG_CHS MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
 
 #define MAKEIMEVERSION(major, minor) ((DWORD)(((BYTE)(major) << 24) | ((BYTE)(minor) << 16)))
-#define IMEID_VER(id)                ((id)&0xffff0000)
-#define IMEID_LANG(id)               ((id)&0x0000ffff)
+#define IMEID_VER(id)                ((id) & 0xffff0000)
+#define IMEID_LANG(id)               ((id) & 0x0000ffff)
 
 #define CHT_HKL_DAYI          ((HKL)(UINT_PTR)0xE0060404)
 #define CHT_HKL_NEW_PHONETIC  ((HKL)(UINT_PTR)0xE0080404)

@@ -27,27 +27,28 @@
 #define INCL_WIN
 #define INCL_GPI
 #define INCL_GPIBITMAPS /* GPI bit map functions */
-#include <os2.h>
 #include "SDL_os2output.h"
 #include "SDL_os2video.h"
+#include <os2.h>
 
 #include "SDL_gradd.h"
 
-typedef struct _VODATA {
-  PVOID    pBuffer;
-  HRGN     hrgnVisible;
-  ULONG    ulBPP;
-  ULONG    ulScanLineSize;
-  ULONG    ulWidth;
-  ULONG    ulHeight;
-  ULONG    ulScreenHeight;
-  ULONG    ulScreenBytesPerLine;
-  RECTL    rectlWin;
+typedef struct _VODATA
+{
+    PVOID pBuffer;
+    HRGN hrgnVisible;
+    ULONG ulBPP;
+    ULONG ulScanLineSize;
+    ULONG ulWidth;
+    ULONG ulHeight;
+    ULONG ulScreenHeight;
+    ULONG ulScreenBytesPerLine;
+    RECTL rectlWin;
 
-  PRECTL   pRectl;
-  ULONG    cRectl;
-  PBLTRECT pBltRect;
-  ULONG    cBltRect;
+    PRECTL pRectl;
+    ULONG cRectl;
+    PBLTRECT pBltRect;
+    ULONG cBltRect;
 } VODATA;
 
 static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo);
@@ -73,10 +74,9 @@ OS2VIDEOOUTPUT voVMan = {
     voUpdate
 };
 
-
-static HMODULE  hmodVMan = NULLHANDLE;
+static HMODULE hmodVMan = NULLHANDLE;
 static FNVMIENTRY *pfnVMIEntry = NULL;
-static ULONG        ulVRAMAddress = 0;
+static ULONG ulVRAMAddress = 0;
 
 static VOID APIENTRY ExitVMan(VOID)
 {
@@ -90,8 +90,8 @@ static VOID APIENTRY ExitVMan(VOID)
 
 static BOOL _vmanInit(void)
 {
-    ULONG       ulRC;
-    CHAR        acBuf[256];
+    ULONG ulRC;
+    CHAR acBuf[256];
     INITPROCOUT stInitProcOut;
 
     if (hmodVMan != NULLHANDLE) /* already initialized */
@@ -137,7 +137,7 @@ static BOOL _vmanInit(void)
 
 static PRECTL _getRectlArray(PVODATA pVOData, ULONG cRects)
 {
-    PRECTL  pRectl;
+    PRECTL pRectl;
 
     if (pVOData->cRectl >= cRects)
         return pVOData->pRectl;
@@ -153,7 +153,7 @@ static PRECTL _getRectlArray(PVODATA pVOData, ULONG cRects)
 
 static PBLTRECT _getBltRectArray(PVODATA pVOData, ULONG cRects)
 {
-    PBLTRECT    pBltRect;
+    PBLTRECT pBltRect;
 
     if (pVOData->cBltRect >= cRects)
         return pVOData->pBltRect;
@@ -167,10 +167,9 @@ static PBLTRECT _getBltRectArray(PVODATA pVOData, ULONG cRects)
     return pBltRect;
 }
 
-
 static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo)
 {
-    ULONG       ulRC;
+    ULONG ulRC;
     GDDMODEINFO sCurModeInfo;
 
     if (!_vmanInit())
@@ -183,11 +182,11 @@ static BOOL voQueryInfo(VIDEOOUTPUTINFO *pInfo)
         return FALSE;
     }
 
-    pInfo->ulBPP             = sCurModeInfo.ulBpp;
+    pInfo->ulBPP = sCurModeInfo.ulBpp;
     pInfo->ulHorizResolution = sCurModeInfo.ulHorizResolution;
-    pInfo->ulVertResolution  = sCurModeInfo.ulVertResolution;
-    pInfo->ulScanLineSize    = sCurModeInfo.ulScanLineSize;
-    pInfo->fccColorEncoding  = sCurModeInfo.fccColorEncoding;
+    pInfo->ulVertResolution = sCurModeInfo.ulVertResolution;
+    pInfo->ulScanLineSize = sCurModeInfo.ulScanLineSize;
+    pInfo->fccColorEncoding = sCurModeInfo.fccColorEncoding;
 
     return TRUE;
 }
@@ -223,8 +222,8 @@ static BOOL voSetVisibleRegion(PVODATA pVOData, HWND hwnd,
                                SDL_DisplayMode *pSDLDisplayMode,
                                HRGN hrgnShape, BOOL fVisible)
 {
-    HPS   hps;
-    BOOL  fSuccess = FALSE;
+    HPS hps;
+    BOOL fSuccess = FALSE;
 
     hps = WinGetPS(hwnd);
 
@@ -256,7 +255,7 @@ static BOOL voSetVisibleRegion(PVODATA pVOData, HWND hwnd,
         if (pSDLDisplayMode) {
             pVOData->ulScreenHeight = pSDLDisplayMode->h;
             pVOData->ulScreenBytesPerLine =
-                     ((MODEDATA *)pSDLDisplayMode->driverdata)->ulScanLineBytes;
+                ((MODEDATA *)pSDLDisplayMode->driverdata)->ulScanLineBytes;
         }
     }
 
@@ -279,7 +278,7 @@ static PVOID voVideoBufAlloc(PVODATA pVOData, ULONG ulWidth, ULONG ulHeight,
         return NULL;
 
     /* Bytes per line */
-    ulScanLineSize  = (ulScanLineSize + 3) & ~3; /* 4-byte aligning */
+    ulScanLineSize = (ulScanLineSize + 3) & ~3; /* 4-byte aligning */
     *pulScanLineSize = ulScanLineSize;
 
     ulRC = DosAllocMem(&pVOData->pBuffer,
@@ -290,10 +289,10 @@ static PVOID voVideoBufAlloc(PVODATA pVOData, ULONG ulWidth, ULONG ulHeight,
         return NULL;
     }
 
-    pVOData->ulBPP          = ulBPP;
+    pVOData->ulBPP = ulBPP;
     pVOData->ulScanLineSize = ulScanLineSize;
-    pVOData->ulWidth        = ulWidth;
-    pVOData->ulHeight       = ulHeight;
+    pVOData->ulWidth = ulWidth;
+    pVOData->ulHeight = ulHeight;
 
     return pVOData->pBuffer;
 }
@@ -316,18 +315,18 @@ static VOID voVideoBufFree(PVODATA pVOData)
 static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
                      ULONG cSDLRects)
 {
-    PRECTL      prectlDst, prectlScan;
-    HPS         hps;
-    HRGN        hrgnUpdate;
-    RGNRECT     rgnCtl;
-    SDL_Rect    stSDLRectDef;
-    BMAPINFO    bmiSrc;
-    BMAPINFO    bmiDst;
-    PPOINTL     pptlSrcOrg;
-    PBLTRECT    pbrDst;
-    HWREQIN     sHWReqIn;
-    BITBLTINFO  sBitbltInfo;
-    ULONG       ulIdx;
+    PRECTL prectlDst, prectlScan;
+    HPS hps;
+    HRGN hrgnUpdate;
+    RGNRECT rgnCtl;
+    SDL_Rect stSDLRectDef;
+    BMAPINFO bmiSrc;
+    BMAPINFO bmiDst;
+    PPOINTL pptlSrcOrg;
+    PBLTRECT pbrDst;
+    HWREQIN sHWReqIn;
+    BITBLTINFO sBitbltInfo;
+    ULONG ulIdx;
 
     if (!pVOData->pBuffer)
         return FALSE;
@@ -372,9 +371,9 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
     }
     prectlScan = prectlDst;
     for (ulIdx = 0; ulIdx < cSDLRects; ulIdx++, pSDLRects++, prectlScan++) {
-        prectlScan->xLeft   = pSDLRects->x;
-        prectlScan->yTop    = pVOData->ulHeight - pSDLRects->y;
-        prectlScan->xRight  = prectlScan->xLeft + pSDLRects->w;
+        prectlScan->xLeft = pSDLRects->x;
+        prectlScan->yTop = pVOData->ulHeight - pSDLRects->y;
+        prectlScan->xRight = prectlScan->xLeft + pSDLRects->w;
         prectlScan->yBottom = prectlScan->yTop - pSDLRects->h;
     }
 
@@ -388,10 +387,10 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
     GpiCombineRegion(hps, hrgnUpdate, hrgnUpdate, pVOData->hrgnVisible, CRGN_AND);
 
     /* Get rectangles of the region to update */
-    rgnCtl.ircStart     = 1;
-    rgnCtl.crc          = 0;
-    rgnCtl.ulDirection  = 1;
-    rgnCtl.crcReturned  = 0;
+    rgnCtl.ircStart = 1;
+    rgnCtl.crc = 0;
+    rgnCtl.ulDirection = 1;
+    rgnCtl.crcReturned = 0;
     GpiQueryRegionRects(hps, hrgnUpdate, NULL, &rgnCtl, NULL);
     if (rgnCtl.crcReturned == 0) {
         GpiDestroyRegion(hps, hrgnUpdate);
@@ -406,9 +405,9 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
         WinReleasePS(hps);
         return FALSE;
     }
-    rgnCtl.ircStart     = 1;
-    rgnCtl.crc          = rgnCtl.crcReturned;
-    rgnCtl.ulDirection  = 1;
+    rgnCtl.ircStart = 1;
+    rgnCtl.crc = rgnCtl.crcReturned;
+    rgnCtl.ulDirection = 1;
     GpiQueryRegionRects(hps, hrgnUpdate, NULL, &rgnCtl, prectlDst);
     GpiDestroyRegion(hps, hrgnUpdate);
     WinReleasePS(hps);
@@ -428,7 +427,7 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
     for (ulIdx = 0; ulIdx < cSDLRects; ulIdx++, prectlScan++, pptlSrcOrg++) {
         pbrDst[ulIdx].ulXOrg = pVOData->rectlWin.xLeft + prectlScan->xLeft;
         pbrDst[ulIdx].ulYOrg = pVOData->ulScreenHeight -
-                              (pVOData->rectlWin.yBottom + prectlScan->yTop);
+                               (pVOData->rectlWin.yBottom + prectlScan->yTop);
         pbrDst[ulIdx].ulXExt = prectlScan->xRight - prectlScan->xLeft;
         pbrDst[ulIdx].ulYExt = prectlScan->yTop - prectlScan->yBottom;
         pptlSrcOrg->x = prectlScan->xLeft;
@@ -473,7 +472,7 @@ static BOOL voUpdate(PVODATA pVOData, HWND hwnd, SDL_Rect *pSDLRects,
         /* Release HW */
         sHWReqIn.ulFlags = 0;
         if (pfnVMIEntry(0, VMI_CMD_REQUESTHW, &sHWReqIn, NULL) != RC_SUCCESS) {
-          debug_os2("pfnVMIEntry(,VMI_CMD_REQUESTHW,,) failed");
+            debug_os2("pfnVMIEntry(,VMI_CMD_REQUESTHW,,) failed");
         }
     }
 

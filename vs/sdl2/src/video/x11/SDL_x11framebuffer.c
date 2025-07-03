@@ -22,8 +22,8 @@
 
 #ifdef SDL_VIDEO_DRIVER_X11
 
-#include "SDL_x11video.h"
 #include "SDL_x11framebuffer.h"
+#include "SDL_x11video.h"
 
 #ifndef NO_SHARED_MEMORY
 

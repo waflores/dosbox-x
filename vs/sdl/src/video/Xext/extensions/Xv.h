@@ -4,13 +4,13 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the names of Digital or MIT not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -21,16 +21,17 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/include/extensions/Xv.h,v 1.5 1999/12/11 19:28:48 mvojkovi Exp $ */
+/* $XFree86: xc/include/extensions/Xv.h,v 1.5 1999/12/11 19:28:48 mvojkovi Exp $
+ */
 
 #ifndef XV_H
 #define XV_H
 /*
-** File: 
+** File:
 **
 **   Xv.h --- Xv shared library and server header file
 **
-** Author: 
+** Author:
 **
 **   David Carver (Digital Workstation Engineering/Project Athena)
 **
@@ -57,32 +58,30 @@ typedef XID XvEncodingID;
 
 #define XvNone 0
 
-#define XvInput          0
-#define XvOutput         1
+#define XvInput 0
+#define XvOutput 1
 
-#define XvInputMask      (1L<<XvInput)
-#define XvOutputMask     (1L<<XvOutput)
-#define XvVideoMask	 0x00000004
-#define XvStillMask	 0x00000008
-#define XvImageMask	 0x00000010
+#define XvInputMask (1L << XvInput)
+#define XvOutputMask (1L << XvOutput)
+#define XvVideoMask 0x00000004
+#define XvStillMask 0x00000008
+#define XvImageMask 0x00000010
 
 /* These two are not client viewable */
-#define XvPixmapMask	 0x00010000
-#define XvWindowMask	 0x00020000
+#define XvPixmapMask 0x00010000
+#define XvWindowMask 0x00020000
 
+#define XvGettable 0x01
+#define XvSettable 0x02
 
-#define XvGettable	0x01
-#define XvSettable	0x02
+#define XvRGB 0
+#define XvYUV 1
 
-#define XvRGB		0
-#define XvYUV		1
+#define XvPacked 0
+#define XvPlanar 1
 
-#define XvPacked	0
-#define XvPlanar	1
-
-#define XvTopToBottom	0
-#define XvBottomToTop	1
-
+#define XvTopToBottom 0
+#define XvBottomToTop 1
 
 /* Events */
 
@@ -101,14 +100,14 @@ typedef XID XvEncodingID;
 
 #define XvNumReasons (XvLastReason + 1)
 
-#define XvStartedMask     (1L<<XvStarted)
-#define XvStoppedMask     (1L<<XvStopped)
-#define XvBusyMask        (1L<<XvBusy)
-#define XvPreemptedMask   (1L<<XvPreempted)
-#define XvHardErrorMask   (1L<<XvHardError)
+#define XvStartedMask (1L << XvStarted)
+#define XvStoppedMask (1L << XvStopped)
+#define XvBusyMask (1L << XvBusy)
+#define XvPreemptedMask (1L << XvPreempted)
+#define XvHardErrorMask (1L << XvHardError)
 
-#define XvAnyReasonMask   ((1L<<XvNumReasons) - 1)
-#define XvNoReasonMask    0
+#define XvAnyReasonMask ((1L << XvNumReasons) - 1)
+#define XvNoReasonMask 0
 
 /* Errors */
 
@@ -126,4 +125,3 @@ typedef XID XvEncodingID;
 #define XvBadAlloc 5
 
 #endif /* XV_H */
-

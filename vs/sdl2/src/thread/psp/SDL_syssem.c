@@ -30,8 +30,8 @@
 #include "SDL_error.h"
 #include "SDL_thread.h"
 
-#include <pspthreadman.h>
 #include <pspkerror.h>
+#include <pspthreadman.h>
 
 struct SDL_semaphore
 {

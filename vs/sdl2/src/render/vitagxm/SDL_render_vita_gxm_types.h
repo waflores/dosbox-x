@@ -24,16 +24,16 @@
 
 #include "../../SDL_internal.h"
 
-#include "SDL_hints.h"
 #include "../SDL_sysrender.h"
+#include "SDL_hints.h"
 
-#include <psp2/kernel/processmgr.h>
 #include <psp2/appmgr.h>
 #include <psp2/display.h>
 #include <psp2/gxm.h>
-#include <psp2/types.h>
-#include <psp2/kernel/sysmem.h>
 #include <psp2/kernel/clib.h>
+#include <psp2/kernel/processmgr.h>
+#include <psp2/kernel/sysmem.h>
+#include <psp2/types.h>
 
 #include <string.h>
 

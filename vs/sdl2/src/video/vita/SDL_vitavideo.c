@@ -24,22 +24,22 @@
 #ifdef SDL_VIDEO_DRIVER_VITA
 
 /* SDL internals */
-#include "../SDL_sysvideo.h"
-#include "SDL_version.h"
-#include "SDL_syswm.h"
-#include "SDL_loadso.h"
-#include "SDL_events.h"
-#include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_keyboard_c.h"
+#include "../../events/SDL_mouse_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_events.h"
+#include "SDL_loadso.h"
+#include "SDL_syswm.h"
+#include "SDL_version.h"
 
 /* VITA declarations */
-#include <psp2/kernel/processmgr.h>
-#include "SDL_vitavideo.h"
-#include "SDL_vitatouch.h"
-#include "SDL_vitakeyboard.h"
-#include "SDL_vitamouse_c.h"
 #include "SDL_vitaframebuffer.h"
+#include "SDL_vitakeyboard.h"
 #include "SDL_vitamessagebox.h"
+#include "SDL_vitamouse_c.h"
+#include "SDL_vitatouch.h"
+#include "SDL_vitavideo.h"
+#include <psp2/kernel/processmgr.h>
 
 #if defined(SDL_VIDEO_VITA_PIB)
 #include "SDL_vitagles_c.h"
@@ -48,11 +48,11 @@
 #if defined(SDL_VIDEO_VITA_PVR_OGL)
 #include "SDL_vitagl_pvr_c.h"
 #endif
-  #define VITA_GLES_GetProcAddress SDL_EGL_GetProcAddress
-  #define VITA_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
-  #define VITA_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
-  #define VITA_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
-  #define VITA_GLES_DeleteContext SDL_EGL_DeleteContext
+#define VITA_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define VITA_GLES_UnloadLibrary   SDL_EGL_UnloadLibrary
+#define VITA_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
+#define VITA_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
+#define VITA_GLES_DeleteContext   SDL_EGL_DeleteContext
 #endif
 
 SDL_Window *Vita_Window;
@@ -379,7 +379,7 @@ void VITA_DestroyWindow(_THIS, SDL_Window *window)
 /*****************************************************************************/
 /* SDL Window Manager function                                               */
 /*****************************************************************************/
-SDL_bool VITA_GetWindowWMInfo(_THIS, SDL_Window * window, struct SDL_SysWMinfo *info)
+SDL_bool VITA_GetWindowWMInfo(_THIS, SDL_Window *window, struct SDL_SysWMinfo *info)
 {
     if (info->version.major <= SDL_MAJOR_VERSION) {
         return SDL_TRUE;

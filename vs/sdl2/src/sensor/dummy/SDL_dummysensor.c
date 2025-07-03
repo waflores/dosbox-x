@@ -24,10 +24,10 @@
 
 #if defined(SDL_SENSOR_DUMMY) || defined(SDL_SENSOR_DISABLED)
 
+#include "../SDL_syssensor.h"
+#include "SDL_dummysensor.h"
 #include "SDL_error.h"
 #include "SDL_sensor.h"
-#include "SDL_dummysensor.h"
-#include "../SDL_syssensor.h"
 
 static int SDL_DUMMY_SensorInit(void)
 {

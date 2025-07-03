@@ -22,15 +22,15 @@
 
 #ifdef SDL_JOYSTICK_HIDAPI
 
+#include "../../SDL_hints_c.h"
+#include "../SDL_sysjoystick.h"
 #include "SDL_atomic.h"
 #include "SDL_endian.h"
-#include "SDL_hints.h"
-#include "SDL_timer.h"
-#include "SDL_joystick.h"
-#include "../SDL_sysjoystick.h"
-#include "SDL_hidapijoystick_c.h"
 #include "SDL_hidapi_rumble.h"
-#include "../../SDL_hints_c.h"
+#include "SDL_hidapijoystick_c.h"
+#include "SDL_hints.h"
+#include "SDL_joystick.h"
+#include "SDL_timer.h"
 
 #if defined(__WIN32__) || defined(__WINGDK__)
 #include "../windows/SDL_rawinputjoystick_c.h"
@@ -1115,7 +1115,7 @@ static void HIDAPI_UpdateDeviceList(void)
                     device->seen = SDL_TRUE;
 
                     /* Check to see if the serial number is available now */
-                    if(HIDAPI_SerialIsEmpty(device)) {
+                    if (HIDAPI_SerialIsEmpty(device)) {
                         HIDAPI_SetDeviceSerialW(device, info->serial_number);
                     }
                 } else {

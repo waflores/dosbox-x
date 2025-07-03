@@ -68,92 +68,79 @@ outopts
 
 **man-end****************************************************************/
 
-int clearok(WINDOW *win, bool bf)
-{
-    PDC_LOG(("clearok() - called\n"));
+int clearok(WINDOW *win, bool bf) {
+  PDC_LOG(("clearok() - called\n"));
 
-    if (!win)
-        return ERR;
+  if (!win)
+    return ERR;
 
-    win->_clear = bf;
+  win->_clear = bf;
+
+  return OK;
+}
+
+int idlok(WINDOW *win, bool bf) {
+  PDC_LOG(("idlok() - called\n"));
+
+  return OK;
+}
+
+void idcok(WINDOW *win, bool bf) { PDC_LOG(("idcok() - called\n")); }
+
+void immedok(WINDOW *win, bool bf) {
+  PDC_LOG(("immedok() - called\n"));
+
+  if (win)
+    win->_immed = bf;
+}
+
+int leaveok(WINDOW *win, bool bf) {
+  PDC_LOG(("leaveok() - called\n"));
+
+  if (!win)
+    return ERR;
+
+  win->_leaveit = bf;
+
+  curs_set(!bf);
+
+  return OK;
+}
+
+int setscrreg(int top, int bottom) {
+  PDC_LOG(("setscrreg() - called: top %d bottom %d\n", top, bottom));
+
+  return wsetscrreg(stdscr, top, bottom);
+}
+
+int wsetscrreg(WINDOW *win, int top, int bottom) {
+  PDC_LOG(("wsetscrreg() - called: top %d bottom %d\n", top, bottom));
+
+  if (win && 0 <= top && top <= win->_cury && win->_cury <= bottom &&
+      bottom < win->_maxy) {
+    win->_tmarg = top;
+    win->_bmarg = bottom;
 
     return OK;
+  } else
+    return ERR;
 }
 
-int idlok(WINDOW *win, bool bf)
-{
-    PDC_LOG(("idlok() - called\n"));
+int scrollok(WINDOW *win, bool bf) {
+  PDC_LOG(("scrollok() - called\n"));
 
-    return OK;
+  if (!win)
+    return ERR;
+
+  win->_scroll = bf;
+
+  return OK;
 }
 
-void idcok(WINDOW *win, bool bf)
-{
-    PDC_LOG(("idcok() - called\n"));
-}
+int raw_output(bool bf) {
+  PDC_LOG(("raw_output() - called\n"));
 
-void immedok(WINDOW *win, bool bf)
-{
-    PDC_LOG(("immedok() - called\n"));
+  SP->raw_out = bf;
 
-    if (win)
-        win->_immed = bf;
-}
-
-int leaveok(WINDOW *win, bool bf)
-{
-    PDC_LOG(("leaveok() - called\n"));
-
-    if (!win)
-        return ERR;
-
-    win->_leaveit = bf;
-
-    curs_set(!bf);
-
-    return OK;
-}
-
-int setscrreg(int top, int bottom)
-{
-    PDC_LOG(("setscrreg() - called: top %d bottom %d\n", top, bottom));
-
-    return wsetscrreg(stdscr, top, bottom);
-}
-
-int wsetscrreg(WINDOW *win, int top, int bottom)
-{
-    PDC_LOG(("wsetscrreg() - called: top %d bottom %d\n", top, bottom));
-
-    if (win && 0 <= top && top <= win->_cury &&
-        win->_cury <= bottom && bottom < win->_maxy)
-    {
-        win->_tmarg = top;
-        win->_bmarg = bottom;
-
-        return OK;
-    }
-    else
-        return ERR;
-}
-
-int scrollok(WINDOW *win, bool bf)
-{
-    PDC_LOG(("scrollok() - called\n"));
-
-    if (!win)
-        return ERR;
-
-    win->_scroll = bf;
-
-    return OK;
-}
-
-int raw_output(bool bf)
-{
-    PDC_LOG(("raw_output() - called\n"));
-
-    SP->raw_out = bf;
-
-    return OK;
+  return OK;
 }

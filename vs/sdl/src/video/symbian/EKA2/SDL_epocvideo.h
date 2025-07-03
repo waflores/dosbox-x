@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@devolution.com
@@ -23,29 +24,24 @@
 #ifndef EPOCVIDEO_H
 #define EPOCVIDEO_H
 
-#include<w32std.h>
+#include <w32std.h>
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *_this
-#define Private	_this->hidden
+#define _THIS SDL_VideoDevice *_this
+#define Private _this->hidden
 
 class CFbsBitmap;
 
 struct SDL_VideoDevice;
-void DisableKeyBlocking(SDL_VideoDevice*);
+void DisableKeyBlocking(SDL_VideoDevice *);
 
-struct SDL_PrivateVideoData 
-    {
-    TPoint					iScreenPos;
-    TBool                   iIsWindowFocused;
-    TSize                   iSwSurfaceSize;
-    TUint8*                 iSwSurface;
-    SDL_Rect				iRect; //same info in SDL format
-    SDL_Rect* 				iRectPtr;
-    };
-    
-#endif    
+struct SDL_PrivateVideoData {
+  TPoint iScreenPos;
+  TBool iIsWindowFocused;
+  TSize iSwSurfaceSize;
+  TUint8 *iSwSurface;
+  SDL_Rect iRect; // same info in SDL format
+  SDL_Rect *iRectPtr;
+};
 
-
-
-    
+#endif

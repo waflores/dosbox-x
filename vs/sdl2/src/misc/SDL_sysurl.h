@@ -20,8 +20,8 @@
 */
 
 #include "../SDL_internal.h"
-#include "SDL_misc.h"
 #include "SDL_error.h"
+#include "SDL_misc.h"
 
 #ifdef __cplusplus
 extern "C" {

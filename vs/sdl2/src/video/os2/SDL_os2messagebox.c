@@ -24,41 +24,43 @@
 
 /* Display a OS/2 message box */
 
-#include "SDL.h"
 #include "../../core/os2/SDL_os2.h"
+#include "SDL.h"
 #include "SDL_os2video.h"
 #define INCL_WIN
 #include <os2.h>
 
-#define IDD_TEXT_MESSAGE    1001
-#define IDD_BITMAP          1002
-#define IDD_PB_FIRST        1003
+#define IDD_TEXT_MESSAGE 1001
+#define IDD_BITMAP       1002
+#define IDD_PB_FIRST     1003
 
-typedef struct _MSGBOXDLGDATA {
-    USHORT      cb;
-    HWND        hwndUnder;
+typedef struct _MSGBOXDLGDATA
+{
+    USHORT cb;
+    HWND hwndUnder;
 } MSGBOXDLGDATA;
 
 static VOID _wmInitDlg(HWND hwnd, MSGBOXDLGDATA *pDlgData)
 {
-    HPS     hps = WinGetPS(hwnd);
-    POINTL  aptText[TXTBOX_COUNT];
-    HENUM   hEnum;
-    HWND    hWndNext;
-    CHAR    acBuf[256];
-    ULONG   cbBuf;
-    ULONG   cButtons = 0;
-    ULONG   ulButtonsCY = 0;
-    ULONG   ulButtonsCX = 0;
-    RECTL   rectl;
-    ULONG   ulX;
-    ULONG   ulIdx;
-    struct _BUTTON {
-      HWND  hwnd;   /* Button window handle. */
-      ULONG ulCX;   /* Button width in dialog coordinates. */
+    HPS hps = WinGetPS(hwnd);
+    POINTL aptText[TXTBOX_COUNT];
+    HENUM hEnum;
+    HWND hWndNext;
+    CHAR acBuf[256];
+    ULONG cbBuf;
+    ULONG cButtons = 0;
+    ULONG ulButtonsCY = 0;
+    ULONG ulButtonsCX = 0;
+    RECTL rectl;
+    ULONG ulX;
+    ULONG ulIdx;
+    struct _BUTTON
+    {
+        HWND hwnd;  /* Button window handle. */
+        ULONG ulCX; /* Button width in dialog coordinates. */
     } aButtons[32];
-    RECTL   rectlItem;
-    HAB     hab = WinQueryAnchorBlock(hwnd);
+    RECTL rectlItem;
+    HAB hab = WinQueryAnchorBlock(hwnd);
 
     /* --- Align the buttons to the right/bottom. --- */
 
@@ -83,7 +85,7 @@ static VOID _wmInitDlg(HWND hwnd, MSGBOXDLGDATA *pDlgData)
      * coordinates_. */
     hps = WinGetPS(hwnd);
 
-    for(ulIdx = 0; ulIdx < cButtons; ulIdx++) {
+    for (ulIdx = 0; ulIdx < cButtons; ulIdx++) {
         /* Query size of text in window coordinates. */
         cbBuf = WinQueryWindowText(aButtons[ulIdx].hwnd, sizeof(acBuf), acBuf);
         GpiQueryTextBox(hps, cbBuf, acBuf, TXTBOX_COUNT, aptText);
@@ -92,7 +94,7 @@ static VOID _wmInitDlg(HWND hwnd, MSGBOXDLGDATA *pDlgData)
         /* Convert text size to dialog coordinates. */
         WinMapDlgPoints(hwnd, &aptText[TXTBOX_TOPRIGHT], 1, FALSE);
         /* Add vertical and horizontal space for button's frame (dialog coord.). */
-        if (aptText[TXTBOX_TOPRIGHT].x < 30) {          /* Minimal button width. */
+        if (aptText[TXTBOX_TOPRIGHT].x < 30) { /* Minimal button width. */
             aptText[TXTBOX_TOPRIGHT].x = 30;
         } else {
             aptText[TXTBOX_TOPRIGHT].x += 4;
@@ -161,8 +163,8 @@ static VOID _wmInitDlg(HWND hwnd, MSGBOXDLGDATA *pDlgData)
     /* Set right bound of the text to right bound of the last button and
      * bottom bound of the text just above the buttons. */
 
-    aptText[2].x = 25;              /* Left bound of text in dlg coordinates.  */
-    aptText[2].y = ulButtonsCY + 3; /* Bottom bound of the text in dlg coords. */
+    aptText[2].x = 25;                           /* Left bound of text in dlg coordinates.  */
+    aptText[2].y = ulButtonsCY + 3;              /* Bottom bound of the text in dlg coords. */
     WinMapDlgPoints(hwnd, &aptText[2], 1, TRUE); /* Convert ^^^ to win. coords */
     hWndNext = WinWindowFromID(hwnd, IDD_TEXT_MESSAGE);
     WinQueryWindowRect(hWndNext, &rectlItem);
@@ -180,7 +182,7 @@ static MRESULT EXPENTRY DynDlgProc(HWND hwnd, USHORT message, MPARAM mp1, MPARAM
 {
     switch (message) {
     case WM_INITDLG:
-        _wmInitDlg(hwnd, (MSGBOXDLGDATA*)mp2);
+        _wmInitDlg(hwnd, (MSGBOXDLGDATA *)mp2);
         break;
 
     case WM_COMMAND:
@@ -193,7 +195,7 @@ static MRESULT EXPENTRY DynDlgProc(HWND hwnd, USHORT message, MPARAM mp1, MPARAM
         }
 
     default:
-        return(WinDefDlgProc(hwnd, message, mp1, mp2));
+        return (WinDefDlgProc(hwnd, message, mp1, mp2));
     }
 
     return FALSE;
@@ -201,54 +203,53 @@ static MRESULT EXPENTRY DynDlgProc(HWND hwnd, USHORT message, MPARAM mp1, MPARAM
 
 static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
 {
-    SDL_MessageBoxButtonData*
-        pSDLBtnData =  (SDL_MessageBoxButtonData *)messageboxdata->buttons;
-    ULONG               cSDLBtnData = messageboxdata->numbuttons;
+    SDL_MessageBoxButtonData *
+        pSDLBtnData = (SDL_MessageBoxButtonData *)messageboxdata->buttons;
+    ULONG cSDLBtnData = messageboxdata->numbuttons;
 
-    PSZ                 pszTitle = OS2_UTF8ToSys(messageboxdata->title);
-    ULONG               cbTitle  = (!pszTitle)? 1 : (SDL_strlen(pszTitle) + 1);
-    PSZ                 pszText  = OS2_UTF8ToSys(messageboxdata->message);
-    ULONG               cbText   = (!pszText)? 1 : (SDL_strlen(pszText) + 1);
+    PSZ pszTitle = OS2_UTF8ToSys(messageboxdata->title);
+    ULONG cbTitle = (!pszTitle) ? 1 : (SDL_strlen(pszTitle) + 1);
+    PSZ pszText = OS2_UTF8ToSys(messageboxdata->message);
+    ULONG cbText = (!pszText) ? 1 : (SDL_strlen(pszText) + 1);
 
-    PDLGTEMPLATE        pTemplate;
-    ULONG               cbTemplate;
-    ULONG               ulIdx;
-    PCHAR               pcDlgData;
-    PDLGTITEM           pDlgItem;
-    PSZ                 pszBtnText;
-    ULONG               cbBtnText;
-    HWND                hwnd;
+    PDLGTEMPLATE pTemplate;
+    ULONG cbTemplate;
+    ULONG ulIdx;
+    PCHAR pcDlgData;
+    PDLGTITEM pDlgItem;
+    PSZ pszBtnText;
+    ULONG cbBtnText;
+    HWND hwnd;
 
-    const SDL_MessageBoxColor* pSDLColors = (!messageboxdata->colorScheme)?
-                                       NULL : messageboxdata->colorScheme->colors;
-    const SDL_MessageBoxColor* pSDLColor;
+    const SDL_MessageBoxColor *pSDLColors = (!messageboxdata->colorScheme) ? NULL : messageboxdata->colorScheme->colors;
+    const SDL_MessageBoxColor *pSDLColor;
 
-    MSGBOXDLGDATA       stDlgData;
+    MSGBOXDLGDATA stDlgData;
 
     /* Build a dialog tamplate in memory */
 
     /* Size of template */
     cbTemplate = sizeof(DLGTEMPLATE) + ((2 + cSDLBtnData) * sizeof(DLGTITEM)) +
-                 sizeof(ULONG) +  /* First item data - frame control data. */
-                 cbTitle       +  /* First item data - frame title + ZERO. */
-                 cbText        +  /* Second item data - ststic text + ZERO.*/
-                 3;               /* Third item data - system icon Id.     */
+                 sizeof(ULONG) + /* First item data - frame control data. */
+                 cbTitle +       /* First item data - frame title + ZERO. */
+                 cbText +        /* Second item data - ststic text + ZERO.*/
+                 3;              /* Third item data - system icon Id.     */
 
     /* Button items datas - text for buttons. */
     for (ulIdx = 0; ulIdx < cSDLBtnData; ulIdx++) {
         pszBtnText = (PSZ)pSDLBtnData[ulIdx].text;
-        cbTemplate += (!pszBtnText)? 1 : (SDL_strlen(pszBtnText) + 1);
+        cbTemplate += (!pszBtnText) ? 1 : (SDL_strlen(pszBtnText) + 1);
     }
 
     /* Presentation parameter space. */
     if (pSDLColors) {
         cbTemplate += 26 /* PP for frame.       */ +
                       26 /* PP for static text. */ +
-                     (48 * cSDLBtnData); /* PP for buttons. */
+                      (48 * cSDLBtnData); /* PP for buttons. */
     }
 
     /* Allocate memory for the dialog template. */
-    pTemplate = (PDLGTEMPLATE) SDL_malloc(cbTemplate);
+    pTemplate = (PDLGTEMPLATE)SDL_malloc(cbTemplate);
     /* Pointer on data for dialog items in allocated memory. */
     pcDlgData = &((PCHAR)pTemplate)[sizeof(DLGTEMPLATE) +
                                     ((2 + cSDLBtnData) * sizeof(DLGTITEM))];
@@ -257,8 +258,8 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
     pTemplate->cbTemplate = cbTemplate; /* size of dialog template to pass to WinCreateDlg() */
     pTemplate->type = 0;                /* Currently always 0. */
     pTemplate->codepage = 0;
-    pTemplate->offadlgti = 14;          /* Offset to array of DLGTITEMs. */
-    pTemplate->fsTemplateStatus = 0;    /* Reserved field?  */
+    pTemplate->offadlgti = 14;       /* Offset to array of DLGTITEMs. */
+    pTemplate->fsTemplateStatus = 0; /* Reserved field?  */
 
     /* Index in array of dlg items of item to get focus,          */
     /* if 0 then focus goes to first control that can have focus. */
@@ -267,7 +268,7 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
 
     /* First item info - frame */
     pDlgItem = pTemplate->adlgti;
-    pDlgItem->fsItemStatus = 0;  /* Reserved? */
+    pDlgItem->fsItemStatus = 0; /* Reserved? */
     /* Number of dialog item child windows owned by this item. */
     pDlgItem->cChildren = 2 + cSDLBtnData; /* Ststic text + buttons. */
     /* Length of class name, if 0 then offClassname contains a WC_ value. */
@@ -286,8 +287,8 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
 
     pDlgItem->flStyle = WS_GROUP | WS_VISIBLE | WS_CLIPSIBLINGS |
                         FS_DLGBORDER | WS_SAVEBITS;
-    pDlgItem->x  = 100;
-    pDlgItem->y  = 100;
+    pDlgItem->x = 100;
+    pDlgItem->y = 100;
     pDlgItem->cx = 175;
     pDlgItem->cy = 65;
     pDlgItem->id = DID_OK; /* An ID value? */
@@ -329,7 +330,7 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
     pDlgItem->offClassName = (USHORT)WC_STATIC;
 
     pDlgItem->cchText = cbText;
-    pDlgItem->offText = pcDlgData - (PCHAR)pTemplate;   /* Offset to the text. */
+    pDlgItem->offText = pcDlgData - (PCHAR)pTemplate; /* Offset to the text. */
     /* Copy message text into the dialog template. */
     if (pszText != NULL) {
         SDL_memcpy(pcDlgData, pszText, cbText);
@@ -343,9 +344,9 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
     pDlgItem->x = 25;
     pDlgItem->y = 13;
     pDlgItem->cx = 147;
-    pDlgItem->cy = 62;  /* It will be used. */
+    pDlgItem->cy = 62; /* It will be used. */
 
-    pDlgItem->id = IDD_TEXT_MESSAGE;      /* an ID value */
+    pDlgItem->id = IDD_TEXT_MESSAGE; /* an ID value */
     if (!pSDLColors)
         pDlgItem->offPresParams = 0;
     else {
@@ -375,15 +376,13 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
     pDlgItem->cchClassName = 0;
     pDlgItem->offClassName = (USHORT)WC_STATIC;
 
-    pDlgItem->cchText = 3; /* 0xFF, low byte of the icon Id, high byte of icon Id. */
-    pDlgItem->offText = pcDlgData - (PCHAR)pTemplate;   /* Offset to the Id. */
+    pDlgItem->cchText = 3;                            /* 0xFF, low byte of the icon Id, high byte of icon Id. */
+    pDlgItem->offText = pcDlgData - (PCHAR)pTemplate; /* Offset to the Id. */
     /* Write system icon ID into dialog template. */
     *((PBYTE)pcDlgData) = 0xFF; /* First byte is 0xFF, next 2 are system pointer Id. */
     pcDlgData++;
-    *((PUSHORT)pcDlgData) = ((messageboxdata->flags & SDL_MESSAGEBOX_ERROR) != 0)?
-                              SPTR_ICONERROR :
-                                ((messageboxdata->flags & SDL_MESSAGEBOX_WARNING) != 0)?
-                                  SPTR_ICONWARNING : SPTR_ICONINFORMATION;
+    *((PUSHORT)pcDlgData) = ((messageboxdata->flags & SDL_MESSAGEBOX_ERROR) != 0) ? SPTR_ICONERROR : ((messageboxdata->flags & SDL_MESSAGEBOX_WARNING) != 0) ? SPTR_ICONWARNING
+                                                                                                                                                             : SPTR_ICONINFORMATION;
     pcDlgData += 2;
 
     pDlgItem->flStyle = SS_SYSICON | WS_VISIBLE;
@@ -402,12 +401,12 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
         pDlgItem++;
 
         pDlgItem->fsItemStatus = 0;
-        pDlgItem->cChildren = 0;     /* No children. */
-        pDlgItem->cchClassName = 0;  /* 0 - offClassname is WC_ constant. */
+        pDlgItem->cChildren = 0;    /* No children. */
+        pDlgItem->cchClassName = 0; /* 0 - offClassname is WC_ constant. */
         pDlgItem->offClassName = (USHORT)WC_BUTTON;
 
         pszBtnText = OS2_UTF8ToSys(pSDLBtnData[ulIdx].text);
-        cbBtnText = (!pszBtnText)? 1 : (SDL_strlen(pszBtnText) + 1);
+        cbBtnText = (!pszBtnText) ? 1 : (SDL_strlen(pszBtnText) + 1);
         pDlgItem->cchText = cbBtnText;
         pDlgItem->offText = pcDlgData - (PCHAR)pTemplate; /* Offset to the text. */
         /* Copy text for the button into the dialog template. */
@@ -434,7 +433,7 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
         pDlgItem->cx = 70;
         pDlgItem->cy = 15;
 
-        pDlgItem->id = IDD_PB_FIRST + ulIdx;  /* an ID value */
+        pDlgItem->id = IDD_PB_FIRST + ulIdx; /* an ID value */
         if (!pSDLColors)
             pDlgItem->offPresParams = 0;
         else {
@@ -473,8 +472,7 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
 
     /* Create the dialog from template. */
     stDlgData.cb = sizeof(MSGBOXDLGDATA);
-    stDlgData.hwndUnder = (messageboxdata->window && messageboxdata->window->driverdata)?
-                            ((WINDATA *)messageboxdata->window->driverdata)->hwnd : HWND_DESKTOP;
+    stDlgData.hwndUnder = (messageboxdata->window && messageboxdata->window->driverdata) ? ((WINDATA *)messageboxdata->window->driverdata)->hwnd : HWND_DESKTOP;
 
     hwnd = WinCreateDlg(HWND_DESKTOP, /* Parent is desktop. */
                         stDlgData.hwndUnder,
@@ -486,22 +484,21 @@ static HWND _makeDlg(const SDL_MessageBoxData *messageboxdata)
     return hwnd;
 }
 
-
 int OS2_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
 {
-    HWND    hwnd;
-    ULONG   ulRC;
+    HWND hwnd;
+    ULONG ulRC;
     SDL_MessageBoxButtonData
-            *pSDLBtnData = (SDL_MessageBoxButtonData *)messageboxdata->buttons;
-    ULONG   cSDLBtnData = messageboxdata->numbuttons;
-    BOOL    fVideoInitialized = SDL_WasInit(SDL_INIT_VIDEO);
-    HAB     hab;
-    HMQ     hmq;
-    BOOL    fSuccess = FALSE;
+        *pSDLBtnData = (SDL_MessageBoxButtonData *)messageboxdata->buttons;
+    ULONG cSDLBtnData = messageboxdata->numbuttons;
+    BOOL fVideoInitialized = SDL_WasInit(SDL_INIT_VIDEO);
+    HAB hab;
+    HMQ hmq;
+    BOOL fSuccess = FALSE;
 
     if (!fVideoInitialized) {
-        PTIB    tib;
-        PPIB    pib;
+        PTIB tib;
+        PPIB pib;
 
         DosGetInfoBlocks(&tib, &pib);
         if (pib->pib_ultype == 2 || pib->pib_ultype == 0) {
@@ -530,7 +527,7 @@ int OS2_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
 
     if (ulRC == DID_CANCEL) {
         /* Window closed by ESC, Alt+F4 or system menu. */
-        ULONG   ulIdx;
+        ULONG ulIdx;
 
         for (ulIdx = 0; ulIdx < cSDLBtnData; ulIdx++, pSDLBtnData++) {
             if (pSDLBtnData->flags == SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT) {
@@ -553,7 +550,7 @@ int OS2_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
         WinTerminate(hab);
     }
 
-    return (fSuccess)? 0 : -1;
+    return (fSuccess) ? 0 : -1;
 }
 
 #endif /* SDL_VIDEO_DRIVER_OS2 */

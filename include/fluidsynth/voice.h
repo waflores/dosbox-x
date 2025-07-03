@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -35,30 +35,32 @@ extern "C" {
  * such as the SoundFont loader's noteon method.
  */
 
-
-FLUIDSYNTH_API void fluid_voice_update_param(fluid_voice_t* voice, int gen); 
+FLUIDSYNTH_API void fluid_voice_update_param(fluid_voice_t *voice, int gen);
 
 /**
- * Enum used with fluid_voice_add_mod() to specify how to handle duplicate modulators.
+ * Enum used with fluid_voice_add_mod() to specify how to handle duplicate
+ * modulators.
  */
 enum fluid_voice_add_mod {
-  FLUID_VOICE_OVERWRITE,        /**< Overwrite any existing matching modulator */
-  FLUID_VOICE_ADD,              /**< Add (sum) modulator amounts */
-  FLUID_VOICE_DEFAULT           /**< For default modulators only, no need to check for duplicates */
+  FLUID_VOICE_OVERWRITE, /**< Overwrite any existing matching modulator */
+  FLUID_VOICE_ADD,       /**< Add (sum) modulator amounts */
+  FLUID_VOICE_DEFAULT    /**< For default modulators only, no need to check for
+                            duplicates */
 };
 
-FLUIDSYNTH_API void fluid_voice_add_mod(fluid_voice_t* voice, fluid_mod_t* mod, int mode);
-FLUIDSYNTH_API void fluid_voice_gen_set(fluid_voice_t* voice, int gen, float val);
-FLUIDSYNTH_API float fluid_voice_gen_get(fluid_voice_t* voice, int gen);
-FLUIDSYNTH_API void fluid_voice_gen_incr(fluid_voice_t* voice, int gen, float val);
+FLUIDSYNTH_API void fluid_voice_add_mod(fluid_voice_t *voice, fluid_mod_t *mod,
+                                        int mode);
+FLUIDSYNTH_API void fluid_voice_gen_set(fluid_voice_t *voice, int gen,
+                                        float val);
+FLUIDSYNTH_API float fluid_voice_gen_get(fluid_voice_t *voice, int gen);
+FLUIDSYNTH_API void fluid_voice_gen_incr(fluid_voice_t *voice, int gen,
+                                         float val);
 
-FLUIDSYNTH_API unsigned int fluid_voice_get_id(fluid_voice_t* voice);
-FLUIDSYNTH_API int fluid_voice_is_playing(fluid_voice_t* voice);
-FLUIDSYNTH_API int fluid_voice_optimize_sample(fluid_sample_t* s);       
-    
+FLUIDSYNTH_API unsigned int fluid_voice_get_id(fluid_voice_t *voice);
+FLUIDSYNTH_API int fluid_voice_is_playing(fluid_voice_t *voice);
+FLUIDSYNTH_API int fluid_voice_optimize_sample(fluid_sample_t *s);
 
 #ifdef __cplusplus
 }
 #endif
 #endif /* _FLUIDSYNTH_VOICE_H */
-

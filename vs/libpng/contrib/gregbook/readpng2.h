@@ -54,54 +54,54 @@
   ---------------------------------------------------------------------------*/
 
 #ifndef TRUE
-#  define TRUE 1
-#  define FALSE 0
+#define TRUE 1
+#define FALSE 0
 #endif
 
 #ifndef MAX
-#  define MAX(a,b)  ((a) > (b)? (a) : (b))
-#  define MIN(a,b)  ((a) < (b)? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 #ifdef DEBUG
-#  define Trace(x)  {fprintf x ; fflush(stderr); fflush(stdout);}
+#define Trace(x)                                                               \
+  {                                                                            \
+    fprintf x;                                                                 \
+    fflush(stderr);                                                            \
+    fflush(stdout);                                                            \
+  }
 #else
-#  define Trace(x)  ;
+#define Trace(x) ;
 #endif
 
-enum rpng2_states {
-    kPreInit = 0,
-    kWindowInit,
-    kDone
-};
+enum rpng2_states { kPreInit = 0, kWindowInit, kDone };
 
-typedef unsigned char   uch;
-typedef unsigned short  ush;
-typedef unsigned long   ulg;
+typedef unsigned char uch;
+typedef unsigned short ush;
+typedef unsigned long ulg;
 
 typedef struct _mainprog_info {
-    double display_exponent;
-    ulg width;
-    ulg height;
-    void *png_ptr;
-    void *info_ptr;
-    void (*mainprog_init)(void);
-    void (*mainprog_display_row)(ulg row_num);
-    void (*mainprog_finish_display)(void);
-    uch *image_data;
-    uch **row_pointers;
-    jmp_buf jmpbuf;
-    int passes;              /* not used */
-    int pass;
-    int rowbytes;
-    int channels;
-    int need_bgcolor;
-    int state;
-    uch bg_red;
-    uch bg_green;
-    uch bg_blue;
+  double display_exponent;
+  ulg width;
+  ulg height;
+  void *png_ptr;
+  void *info_ptr;
+  void (*mainprog_init)(void);
+  void (*mainprog_display_row)(ulg row_num);
+  void (*mainprog_finish_display)(void);
+  uch *image_data;
+  uch **row_pointers;
+  jmp_buf jmpbuf;
+  int passes; /* not used */
+  int pass;
+  int rowbytes;
+  int channels;
+  int need_bgcolor;
+  int state;
+  uch bg_red;
+  uch bg_green;
+  uch bg_blue;
 } mainprog_info;
-
 
 /* prototypes for public functions in readpng2.c */
 

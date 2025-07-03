@@ -27,12 +27,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SDL_error.h"
-#include "SDL_thread.h"
 #include "../SDL_systhread.h"
 #include "../SDL_thread_c.h"
-#include <psp2/types.h>
+#include "SDL_error.h"
+#include "SDL_thread.h"
 #include <psp2/kernel/threadmgr.h>
+#include <psp2/types.h>
 
 #define VITA_THREAD_STACK_SIZE_MIN     0x1000    // 4KiB
 #define VITA_THREAD_STACK_SIZE_MAX     0x2000000 // 32MiB

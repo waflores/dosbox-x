@@ -33,15 +33,14 @@
 #ifndef __FLTUSED__
 #define __FLTUSED__
 #ifdef __cplusplus
-   extern "C"
+extern "C"
 #endif
-	   __declspec(selectany) int _fltused=1;
+    __declspec(selectany) int _fltused = 1;
 #endif
 
 /* Float to long */
-void __declspec(naked) _ftol()
-{
-	__asm {
+void __declspec(naked) _ftol() {
+  __asm {
 		push        ebp
 		mov         ebp,esp
 		sub         esp,20h
@@ -83,17 +82,13 @@ integer_QnaN_or_zero:
 localexit:
 		leave
 		ret
-	}
+  }
 }
-void __declspec(naked) _ftol2_sse()
-{
-	_ftol();
-}
+void __declspec(naked) _ftol2_sse() { _ftol(); }
 
 /* 64-bit math operators for 32-bit systems */
-void __declspec(naked) _allmul()
-{
-	__asm {
+void __declspec(naked) _allmul() {
+  __asm {
 		push        ebp
 		mov         ebp,esp
 		push        edi
@@ -123,11 +118,10 @@ void __declspec(naked) _allmul()
 		pop         edi
 		pop         ebp
 		ret
-	}
+  }
 }
-void __declspec(naked) _alldiv()
-{
-	__asm {
+void __declspec(naked) _alldiv() {
+  __asm {
 		push        edi
 		push        esi
 		push        ebx
@@ -206,11 +200,10 @@ L8:
 		pop         esi
 		pop         edi
 		ret         10h
-	}
+  }
 }
-void __declspec(naked) _aulldiv()
-{
-	__asm {
+void __declspec(naked) _aulldiv() {
+  __asm {
 		push        ebx
 		push        esi
 		mov         eax,dword ptr [esp+18h]
@@ -259,11 +252,10 @@ L2:
 		pop         esi
 		pop         ebx
 		ret         10h
-	}
+  }
 }
-void __declspec(naked) _allrem()
-{
-	__asm {
+void __declspec(naked) _allrem() {
+  __asm {
 		push        ebx
 		push        edi
 		xor         edi,edi
@@ -341,11 +333,10 @@ L8:
 		pop         edi
 		pop         ebx
 		ret         10h
-	}
+  }
 }
-void __declspec(naked) _aullrem()
-{
-	__asm {
+void __declspec(naked) _aullrem() {
+  __asm {
 		push        ebx
 		mov         eax,dword ptr [esp+14h]
 		or          eax,eax
@@ -395,11 +386,10 @@ L5:
 L2:
 		pop         ebx
 		ret         10h
-	}
+  }
 }
-void __declspec(naked) _alldvrm()
-{
-	__asm {
+void __declspec(naked) _alldvrm() {
+  __asm {
 		push        edi
 		push        esi
 		push        ebp
@@ -500,11 +490,10 @@ L8:
 		pop         esi
 		pop         edi
 		ret         10h
-	}
+  }
 }
-void __declspec(naked) _aulldvrm()
-{
-	__asm {
+void __declspec(naked) _aulldvrm() {
+  __asm {
 		push        esi
 		mov         eax,dword ptr [esp+14h]
 		or          eax,eax
@@ -568,11 +557,10 @@ L2:
 		mov         eax,esi
 		pop         esi
 		ret         10h
-	}
+  }
 }
-void __declspec(naked) _allshl()
-{
-	__asm {
+void __declspec(naked) _allshl() {
+  __asm {
 		cmp         cl,40h
 		jae         RETZERO
 		cmp         cl,20h
@@ -590,11 +578,10 @@ RETZERO:
 		xor         eax,eax
 		xor         edx,edx
 		ret
-	}
+  }
 }
-void __declspec(naked) _aullshr()
-{
-	__asm {
+void __declspec(naked) _aullshr() {
+  __asm {
 		cmp         cl,40h
 		jae         RETZERO
 		cmp         cl,20h
@@ -612,7 +599,7 @@ RETZERO:
 		xor         eax,eax
 		xor         edx,edx
 		ret
-	}
+  }
 }
 
 #endif /* MSC_VER */

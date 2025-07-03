@@ -23,17 +23,18 @@
 
 #include "fluidsynth_priv.h"
 
-#define FLUID_CENTS_HZ_SIZE     1200
-#define FLUID_VEL_CB_SIZE       128
-#define FLUID_CB_AMP_SIZE       961
-#define FLUID_ATTEN_AMP_SIZE    1441
-#define FLUID_PAN_SIZE          1002
+#define FLUID_CENTS_HZ_SIZE 1200
+#define FLUID_VEL_CB_SIZE 128
+#define FLUID_CB_AMP_SIZE 961
+#define FLUID_ATTEN_AMP_SIZE 1441
+#define FLUID_PAN_SIZE 1002
 
 /* EMU 8k/10k don't follow spec in regards to volume attenuation.
- * This factor is used in the equation pow (10.0, cb / FLUID_ATTEN_POWER_FACTOR).
- * By the standard this should be -200.0. */
-/* 07/11/2008 modified by S. Christian Collins for increased velocity sensitivity.  Now it equals the response of EMU10K1 programming.*/
-#define FLUID_ATTEN_POWER_FACTOR  (-200.0)	/* was (-531.509)*/
+ * This factor is used in the equation pow (10.0, cb /
+ * FLUID_ATTEN_POWER_FACTOR). By the standard this should be -200.0. */
+/* 07/11/2008 modified by S. Christian Collins for increased velocity
+ * sensitivity.  Now it equals the response of EMU10K1 programming.*/
+#define FLUID_ATTEN_POWER_FACTOR (-200.0) /* was (-531.509)*/
 
 void fluid_conversion_config(void);
 
@@ -58,6 +59,5 @@ extern fluid_real_t fluid_posbp_tab[128];
 extern fluid_real_t fluid_concave_tab[128];
 extern fluid_real_t fluid_convex_tab[128];
 extern fluid_real_t fluid_pan_tab[FLUID_PAN_SIZE];
-
 
 #endif /* _FLUID_CONV_H */

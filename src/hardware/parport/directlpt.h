@@ -26,31 +26,31 @@
 
 class CDirectLPT : public CParallel {
 public:
-	CDirectLPT(Bitu nr, uint8_t initIrq, CommandLine* cmd);
-	virtual ~CDirectLPT();
+  CDirectLPT(Bitu nr, uint8_t initIrq, CommandLine *cmd);
+  virtual ~CDirectLPT();
 
-	bool InstallationSuccessful;        // check after constructing. If
-private:                                // something was wrong, delete it right away.
-	bool Putchar(uint8_t) override;
+  bool InstallationSuccessful; // check after constructing. If
+private:                       // something was wrong, delete it right away.
+  bool Putchar(uint8_t) override;
 
-	Bitu Read_PR() override;
-	Bitu Read_COM() override;
-	Bitu Read_SR() override;
+  Bitu Read_PR() override;
+  Bitu Read_COM() override;
+  Bitu Read_SR() override;
 
-	void Write_PR(Bitu) override;
-	void Write_CON(Bitu) override;
-	void Write_IOSEL(Bitu) override;
+  void Write_PR(Bitu) override;
+  void Write_CON(Bitu) override;
+  void Write_IOSEL(Bitu) override;
 
-	void handleUpperEvent(uint16_t type) override;
+  void handleUpperEvent(uint16_t type) override;
 
-	uint16_t realbaseaddress;
-	uint16_t ecraddress;
-	uint8_t originalecr;
-	bool isecp;
-	uint8_t controlreg;
+  uint16_t realbaseaddress;
+  uint16_t ecraddress;
+  uint8_t originalecr;
+  bool isecp;
+  uint8_t controlreg;
 #ifdef LINUX
-	bool useppdev;
-	int porthandle;
+  bool useppdev;
+  int porthandle;
 #endif
 };
 

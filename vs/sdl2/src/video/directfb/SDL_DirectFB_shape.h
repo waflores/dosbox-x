@@ -27,12 +27,13 @@
 #include "../SDL_sysvideo.h"
 #include "SDL_shape.h"
 
-typedef struct {
+typedef struct
+{
     IDirectFBSurface *surface;
 } SDL_ShapeData;
 
-extern SDL_WindowShaper* DirectFB_CreateShaper(SDL_Window* window);
-extern int DirectFB_ResizeWindowShape(SDL_Window* window);
-extern int DirectFB_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_WindowShapeMode *shapeMode);
+extern SDL_WindowShaper *DirectFB_CreateShaper(SDL_Window *window);
+extern int DirectFB_ResizeWindowShape(SDL_Window *window);
+extern int DirectFB_SetWindowShape(SDL_WindowShaper *shaper, SDL_Surface *shape, SDL_WindowShapeMode *shapeMode);
 
 #endif /* SDL_DirectFB_shape_h_ */

@@ -23,10 +23,10 @@
 
 #ifdef SDL_JOYSTICK_HIDAPI
 
-#include "SDL_joystick.h"
+#include "../SDL_sysjoystick.h"
 #include "SDL_gamecontroller.h"
 #include "SDL_hidapijoystick_c.h"
-#include "../SDL_sysjoystick.h"
+#include "SDL_joystick.h"
 
 static void HIDAPI_DriverCombined_RegisterHints(SDL_HintCallback callback, void *userdata)
 {

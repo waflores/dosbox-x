@@ -23,7 +23,7 @@
 
 #include "SDL_ndsvideo.h"
 
-/* Variables and functions exported by SDL_sysevents.c to other parts 
+/* Variables and functions exported by SDL_sysevents.c to other parts
    of the native video subsystem (SDL_sysvideo.c)
 */
 extern void NDS_InitOSKeymap(_THIS);
@@ -48,4 +48,3 @@ extern void NDS_PumpEvents(_THIS);
 #define NDS_KEYL (9)
 */
 /* end of SDL_NDSevents_c.h ... */
-

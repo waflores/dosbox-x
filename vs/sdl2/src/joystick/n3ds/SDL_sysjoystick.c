@@ -37,11 +37,11 @@
   This correction is applied to axis values
   so they fit better in SDL's value range.
 */
-static inline int Correct_Axis_X(int X) {
+static inline int Correct_Axis_X(int X)
+{
     if (X > 160) {
         return SDL_JOYSTICK_AXIS_MAX;
-    }
-    else if (X < -160) {
+    } else if (X < -160) {
         return -SDL_JOYSTICK_AXIS_MAX;
     }
     return (X * SDL_JOYSTICK_AXIS_MAX) / 160;
@@ -51,7 +51,8 @@ static inline int Correct_Axis_X(int X) {
   The Y axis needs to be flipped because SDL's "up"
   is reversed compared to libctru's "up"
 */
-static inline int Correct_Axis_Y(int Y) {
+static inline int Correct_Axis_Y(int Y)
+{
     return Correct_Axis_X(-Y);
 }
 

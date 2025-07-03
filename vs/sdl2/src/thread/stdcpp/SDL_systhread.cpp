@@ -23,14 +23,14 @@
 /* Thread management routines for SDL */
 
 extern "C" {
-#include "SDL_thread.h"
-#include "../SDL_thread_c.h"
 #include "../SDL_systhread.h"
+#include "../SDL_thread_c.h"
+#include "SDL_thread.h"
 }
 
 #include <mutex>
-#include <thread>
 #include <system_error>
+#include <thread>
 
 #ifdef __WINRT__
 #include <Windows.h>
@@ -159,26 +159,22 @@ SDL_SYS_DetachThread(SDL_Thread *thread)
 
 static thread_local SDL_TLSData *thread_local_storage;
 
-extern "C"
-void SDL_SYS_InitTLSData(void)
+extern "C" void SDL_SYS_InitTLSData(void)
 {
 }
 
-extern "C"
-SDL_TLSData * SDL_SYS_GetTLSData(void)
+extern "C" SDL_TLSData *SDL_SYS_GetTLSData(void)
 {
     return thread_local_storage;
 }
 
-extern "C"
-int SDL_SYS_SetTLSData(SDL_TLSData *data)
+extern "C" int SDL_SYS_SetTLSData(SDL_TLSData *data)
 {
     thread_local_storage = data;
     return 0;
 }
 
-extern "C"
-void SDL_SYS_QuitTLSData(void)
+extern "C" void SDL_SYS_QuitTLSData(void)
 {
 }
 

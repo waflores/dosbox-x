@@ -4,7 +4,6 @@
 #include "SDL.h"
 #include "SDL_test.h"
 
-
 static SDL_LogOutputFunction original_function;
 static void *original_userdata;
 
@@ -135,7 +134,6 @@ static int log_testHint(void *arg)
         DisableTestLog();
         SDLTest_AssertPass("SDL_LogMessage(SDL_LOG_CATEGORY_CUSTOM, SDL_LOG_PRIORITY_DEBUG, \"test\")");
         SDLTest_AssertCheck(count == 0, "Check result value, expected: 0, got: %d", count);
-
     }
 
     SDL_SetHint(SDL_HINT_LOGGING, "0=4,3=2,2=0,*=3");
@@ -182,7 +180,6 @@ static int log_testHint(void *arg)
         DisableTestLog();
         SDLTest_AssertPass("SDL_LogMessage(SDL_LOG_CATEGORY_CUSTOM, SDL_LOG_PRIORITY_DEBUG, \"test\")");
         SDLTest_AssertCheck(count == 0, "Check result value, expected: 0, got: %d", count);
-
     }
 
     return TEST_COMPLETED;

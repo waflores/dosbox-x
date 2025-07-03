@@ -56,7 +56,7 @@
  */
 
 #ifndef _MACH_INIT_
-#define _MACH_INIT_     1
+#define _MACH_INIT_ 1
 
 #include <mach/mach_types.h>
 #include <mach/vm_page_size.h>
@@ -79,9 +79,9 @@ __API_AVAILABLE(macos(11.3), ios(14.5), tvos(14.5), watchos(7.3))
 extern boolean_t mach_task_is_self(task_name_t task);
 extern kern_return_t host_page_size(host_t, vm_size_t *);
 
-extern mach_port_t      mach_task_self_;
+extern mach_port_t mach_task_self_;
 #define mach_task_self() mach_task_self_
-#define current_task()  mach_task_self()
+#define current_task() mach_task_self()
 
 __END_DECLS
 #include <mach/mach_traps.h>
@@ -91,18 +91,18 @@ __BEGIN_DECLS
  *	Other important ports in the Mach user environment
  */
 
-extern  mach_port_t     bootstrap_port;
+extern mach_port_t bootstrap_port;
 
 /*
  *	Where these ports occur in the "mach_ports_register"
  *	collection... only servers or the runtime library need know.
  */
 
-#define NAME_SERVER_SLOT        0
-#define ENVIRONMENT_SLOT        1
-#define SERVICE_SLOT            2
+#define NAME_SERVER_SLOT 0
+#define ENVIRONMENT_SLOT 1
+#define SERVICE_SLOT 2
 
-#define MACH_PORTS_SLOTS_USED   3
+#define MACH_PORTS_SLOTS_USED 3
 
 /*
  *	fprintf_stderr uses vprintf_stderr_func to produce
@@ -113,4 +113,4 @@ extern int (*vprintf_stderr_func)(const char *format, va_list ap);
 
 __END_DECLS
 
-#endif  /* _MACH_INIT_ */
+#endif /* _MACH_INIT_ */

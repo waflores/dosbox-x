@@ -26,17 +26,17 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the audio functions */
-#define _THIS   SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
-#define NUM_BUFFERS 2           /* -- Don't lower this! */
+#define NUM_BUFFERS 2 /* -- Don't lower this! */
 
 struct SDL_PrivateAudioData
 {
     HWAVEOUT hout;
     HWAVEIN hin;
     HANDLE audio_sem;
-    Uint8 *mixbuf;              /* The raw allocated mixing buffer */
-    WAVEHDR wavebuf[NUM_BUFFERS];       /* Wave audio fragments */
+    Uint8 *mixbuf;                /* The raw allocated mixing buffer */
+    WAVEHDR wavebuf[NUM_BUFFERS]; /* Wave audio fragments */
     int next_buffer;
 };
 

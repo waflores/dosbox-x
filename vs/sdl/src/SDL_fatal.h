@@ -25,4 +25,3 @@
 
 extern void SDL_InstallParachute(void);
 extern void SDL_UninstallParachute(void);
-

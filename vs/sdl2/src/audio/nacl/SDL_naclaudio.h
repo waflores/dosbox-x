@@ -24,16 +24,17 @@
 #ifndef SDL_naclaudio_h_
 #define SDL_naclaudio_h_
 
-#include "SDL_audio.h"
 #include "../SDL_sysaudio.h"
+#include "SDL_audio.h"
 #include "SDL_mutex.h"
 
 #include "ppapi/c/ppb_audio.h"
 
-#define _THIS  SDL_AudioDevice *_this
+#define _THIS   SDL_AudioDevice *_this
 #define private _this->hidden
 
-typedef struct SDL_PrivateAudioData {
+typedef struct SDL_PrivateAudioData
+{
     PP_Resource audio;
 } SDL_PrivateAudioData;
 

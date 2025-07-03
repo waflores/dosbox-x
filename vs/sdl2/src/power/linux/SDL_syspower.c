@@ -26,13 +26,13 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-#include "SDL_power.h"
 #include "../SDL_syspower.h"
+#include "SDL_power.h"
 
 #include "../../core/linux/SDL_dbus.h"
 
@@ -625,8 +625,8 @@ SDL_bool SDL_GetPowerInfo_Linux_org_freedesktop_upower(SDL_PowerState *state, in
     int i, numpaths = 0;
 
     if (!dbus || !SDL_DBus_CallMethodOnConnection(dbus->system_conn, UPOWER_DBUS_NODE, UPOWER_DBUS_PATH, UPOWER_DBUS_INTERFACE, "EnumerateDevices",
-                                                         DBUS_TYPE_INVALID,
-                                                         DBUS_TYPE_ARRAY, DBUS_TYPE_OBJECT_PATH, &paths, &numpaths, DBUS_TYPE_INVALID)) {
+                                                  DBUS_TYPE_INVALID,
+                                                  DBUS_TYPE_ARRAY, DBUS_TYPE_OBJECT_PATH, &paths, &numpaths, DBUS_TYPE_INVALID)) {
         return SDL_FALSE; /* try a different approach than UPower. */
     }
 

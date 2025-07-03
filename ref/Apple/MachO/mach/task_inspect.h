@@ -37,15 +37,15 @@
 typedef natural_t task_inspect_flavor_t;
 
 enum task_inspect_flavor {
-	TASK_INSPECT_BASIC_COUNTS = 1,
+  TASK_INSPECT_BASIC_COUNTS = 1,
 };
 
 struct task_inspect_basic_counts {
-	uint64_t instructions;
-	uint64_t cycles;
+  uint64_t instructions;
+  uint64_t cycles;
 };
-#define TASK_INSPECT_BASIC_COUNTS_COUNT \
-	(sizeof(struct task_inspect_basic_counts) / sizeof(natural_t))
+#define TASK_INSPECT_BASIC_COUNTS_COUNT                                        \
+  (sizeof(struct task_inspect_basic_counts) / sizeof(natural_t))
 typedef struct task_inspect_basic_counts task_inspect_basic_counts_data_t;
 typedef struct task_inspect_basic_counts *task_inspect_basic_counts_t;
 

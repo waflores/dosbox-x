@@ -22,8 +22,8 @@
 
 #if SDL_VIDEO_RENDER_SW
 
-#include "SDL_draw.h"
 #include "SDL_blendpoint.h"
+#include "SDL_draw.h"
 
 static int SDL_BlendPoint_RGB555(SDL_Surface *dst, int x, int y, SDL_BlendMode blendMode, Uint8 r,
                                  Uint8 g, Uint8 b, Uint8 a)
@@ -273,7 +273,7 @@ int SDL_BlendPoints(SDL_Surface *dst, const SDL_Point *points, int count,
     int maxx, maxy;
     int i;
     int x, y;
-    int (*func)(SDL_Surface * dst, int x, int y,
+    int (*func)(SDL_Surface *dst, int x, int y,
                 SDL_BlendMode blendMode, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = NULL;
     int status = 0;
 

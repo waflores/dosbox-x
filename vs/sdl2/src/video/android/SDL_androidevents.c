@@ -22,13 +22,13 @@
 
 #ifdef SDL_VIDEO_DRIVER_ANDROID
 
+#include "../../events/SDL_events_c.h"
+#include "../SDL_sysvideo.h"
 #include "SDL_androidevents.h"
-#include "SDL_events.h"
-#include "SDL_hints.h"
 #include "SDL_androidkeyboard.h"
 #include "SDL_androidwindow.h"
-#include "../SDL_sysvideo.h"
-#include "../../events/SDL_events_c.h"
+#include "SDL_events.h"
+#include "SDL_hints.h"
 
 /* Can't include sysaudio "../../audio/android/SDL_androidaudio.h"
  * because of THIS redefinition */

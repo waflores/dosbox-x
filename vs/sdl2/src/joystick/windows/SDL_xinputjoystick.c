@@ -24,12 +24,12 @@
 
 #ifdef SDL_JOYSTICK_XINPUT
 
+#include "../hidapi/SDL_hidapijoystick_c.h"
 #include "SDL_hints.h"
+#include "SDL_rawinputjoystick_c.h"
 #include "SDL_timer.h"
 #include "SDL_windowsjoystick_c.h"
 #include "SDL_xinputjoystick_c.h"
-#include "SDL_rawinputjoystick_c.h"
-#include "../hidapi/SDL_hidapijoystick_c.h"
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus

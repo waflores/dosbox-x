@@ -28,87 +28,89 @@
 
 class device_LPT : public DOS_Device {
 public:
-	// Creates a LPT device that communicates with the num-th parallel port, i.e. is LPTnum
-	device_LPT(uint8_t num, class CParallel* pp);
-	virtual ~device_LPT();
-	bool Read(uint8_t * data,uint16_t * size) override;
-	bool Write(const uint8_t * data,uint16_t * size) override;
-	bool Seek(uint32_t * pos,uint32_t type) override;
-	bool Close() override;
-	uint16_t GetInformation(void) override;
+  // Creates a LPT device that communicates with the num-th parallel port, i.e.
+  // is LPTnum
+  device_LPT(uint8_t num, class CParallel *pp);
+  virtual ~device_LPT();
+  bool Read(uint8_t *data, uint16_t *size) override;
+  bool Write(const uint8_t *data, uint16_t *size) override;
+  bool Seek(uint32_t *pos, uint32_t type) override;
+  bool Close() override;
+  uint16_t GetInformation(void) override;
+
 private:
-	CParallel* pportclass;
-	uint8_t num; // This device is LPTnum
+  CParallel *pportclass;
+  uint8_t num; // This device is LPTnum
 };
 
 enum ParallelTypesE {
-	PARALLEL_TYPE_DISABLED = 0,
+  PARALLEL_TYPE_DISABLED = 0,
 #if HAS_CDIRECTLPT
-	PARALLEL_TYPE_REALLPT,
+  PARALLEL_TYPE_REALLPT,
 #endif
-	PARALLEL_TYPE_FILE,
+  PARALLEL_TYPE_FILE,
 #if C_PRINTER
-	PARALLEL_TYPE_PRINTER,
+  PARALLEL_TYPE_PRINTER,
 #endif
-	PARALLEL_TYPE_DISNEY,
-	PARALLEL_TYPE_COUNT
+  PARALLEL_TYPE_DISNEY,
+  PARALLEL_TYPE_COUNT
 };
 
 class CParallel {
 public:
 #if PARALLEL_DEBUG
-	FILE * debugfp;
-	bool dbg_data;
-	bool dbg_putchar;
-	bool dbg_cregs;
-	bool dbg_plainputchar;
-	bool dbg_plaindr;
-	void log_par(bool active, char const* format,...);
+  FILE *debugfp;
+  bool dbg_data;
+  bool dbg_putchar;
+  bool dbg_cregs;
+  bool dbg_plainputchar;
+  bool dbg_plaindr;
+  void log_par(bool active, char const *format, ...);
 #endif
 
-	// Constructor
-	CParallel(CommandLine* cmd, Bitu portnr, uint8_t initirq);
+  // Constructor
+  CParallel(CommandLine *cmd, Bitu portnr, uint8_t initirq);
 
-	virtual ~CParallel();
+  virtual ~CParallel();
 
-	IO_ReadHandleObject ReadHandler[3];
-	IO_WriteHandleObject WriteHandler[3];
+  IO_ReadHandleObject ReadHandler[3];
+  IO_WriteHandleObject WriteHandler[3];
 
-	void setEvent(uint16_t type, float duration);
-	void removeEvent(uint16_t type);
-	void handleEvent(uint16_t type);
-	virtual void handleUpperEvent(uint16_t type)=0;
+  void setEvent(uint16_t type, float duration);
+  void removeEvent(uint16_t type);
+  void handleEvent(uint16_t type);
+  virtual void handleUpperEvent(uint16_t type) = 0;
 
-	void registerDOSDevice();
-	void unregisterDOSDevice();
+  void registerDOSDevice();
+  void unregisterDOSDevice();
 
-	Bitu port_nr;
-	Bitu base;
-	Bitu irq;
+  Bitu port_nr;
+  Bitu base;
+  Bitu irq;
 
-	// read data line register
-	virtual Bitu Read_PR()=0;
-	virtual Bitu Read_COM()=0;
-	virtual Bitu Read_SR()=0;
+  // read data line register
+  virtual Bitu Read_PR() = 0;
+  virtual Bitu Read_COM() = 0;
+  virtual Bitu Read_SR() = 0;
 
-	virtual void Write_PR(Bitu)=0;
-	virtual void Write_CON(Bitu)=0;
-	virtual void Write_IOSEL(Bitu)=0;
+  virtual void Write_PR(Bitu) = 0;
+  virtual void Write_CON(Bitu) = 0;
+  virtual void Write_IOSEL(Bitu) = 0;
 
-	virtual bool Putchar(uint8_t)=0;
-	uint8_t getPrinterStatus();
-	void initialize();
+  virtual bool Putchar(uint8_t) = 0;
+  uint8_t getPrinterStatus();
+  void initialize();
 
-	// What type of port is this?
-	ParallelTypesE parallelType = PARALLEL_TYPE_DISABLED;
+  // What type of port is this?
+  ParallelTypesE parallelType = PARALLEL_TYPE_DISABLED;
 
-	// How was it created?
-	std::string commandLineString = "";
+  // How was it created?
+  std::string commandLineString = "";
 
-	DOS_Device* mydosdevice;
+  DOS_Device *mydosdevice;
 };
 
-extern CParallel* parallelPortObjects[];
+extern CParallel *parallelPortObjects[];
 extern uint16_t parallel_baseaddr[9];
 
 #endif

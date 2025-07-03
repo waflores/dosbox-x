@@ -19,37 +19,38 @@
 
 #pragma once
 
-#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 #include <errno.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <unistd.h>
 
-#include <sys/ioctl.h>
 #include <sys/file.h>
+#include <sys/ioctl.h>
 
 #ifdef __APPLE__
 #include <IOKit/serial/ioss.h>
 #endif
 
-#include "../RetroWave.h"
 #include "../Protocol/Serial.h"
+#include "../RetroWave.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct {
-	int fd_tty;
+  int fd_tty;
 } RetroWavePlatform_POSIXSerialPort;
 
-extern int retrowave_init_posix_serialport(RetroWaveContext *ctx, const char *tty_path);
+extern int retrowave_init_posix_serialport(RetroWaveContext *ctx,
+                                           const char *tty_path);
 extern void retrowave_deinit_posix_serialport(RetroWaveContext *ctx);
 
 #ifdef __cplusplus

@@ -15,27 +15,23 @@
  *
  */
 
-
 #ifndef WOFF2TAGS_H
 #define WOFF2TAGS_H
 
-
-#include <freetype/internal/ftobjs.h>
 #include <freetype/internal/compiler-macros.h>
-
+#include <freetype/internal/ftobjs.h>
 
 FT_BEGIN_HEADER
 
 #ifdef FT_CONFIG_OPTION_USE_BROTLI
 
-  FT_LOCAL( FT_Tag )
-  woff2_known_tags( FT_Byte  index );
+FT_LOCAL( FT_Tag )
+woff2_known_tags( FT_Byte index );
 
 #endif
 
 FT_END_HEADER
 
 #endif /* WOFF2TAGS_H */
-
 
 /* END */

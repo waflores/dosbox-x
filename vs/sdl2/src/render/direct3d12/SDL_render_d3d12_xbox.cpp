@@ -21,8 +21,8 @@
 
 #include "../../SDL_internal.h"
 #if SDL_VIDEO_RENDER_D3D12 && (defined(__XBOXONE__) || defined(__XBOXSERIES__))
-#include "SDL_render_d3d12_xbox.h"
 #include "../../core/windows/SDL_windows.h"
+#include "SDL_render_d3d12_xbox.h"
 #include <XGameRuntime.h>
 
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -51,13 +51,13 @@ D3D12_XBOX_CreateDevice(ID3D12Device **device, SDL_bool createDebug)
     params.GraphicsScratchMemorySizeBytes = D3D12XBOX_DEFAULT_SIZE_BYTES;
     params.ComputeScratchMemorySizeBytes = D3D12XBOX_DEFAULT_SIZE_BYTES;
 
-    result = D3D12XboxCreateDevice(NULL, &params, SDL_IID_ID3D12Device1, (void **) device);
+    result = D3D12XboxCreateDevice(NULL, &params, SDL_IID_ID3D12Device1, (void **)device);
     if (FAILED(result)) {
         WIN_SetErrorFromHRESULT(SDL_COMPOSE_ERROR("[xbox] D3D12XboxCreateDevice"), result);
         goto done;
     }
 
-    result = (*device)->QueryInterface(SDL_IID_IDXGIDevice1, (void **) &dxgiDevice);
+    result = (*device)->QueryInterface(SDL_IID_IDXGIDevice1, (void **)&dxgiDevice);
     if (FAILED(result)) {
         WIN_SetErrorFromHRESULT(SDL_COMPOSE_ERROR("[xbox] ID3D12Device to IDXGIDevice1"), result);
         goto done;
@@ -74,7 +74,7 @@ D3D12_XBOX_CreateDevice(ID3D12Device **device, SDL_bool createDebug)
         WIN_SetErrorFromHRESULT(SDL_COMPOSE_ERROR("[xbox] dxgiAdapter->EnumOutputs"), result);
         goto done;
     }
-    
+
     /* Set frame interval */
     result = (*device)->SetFrameIntervalX(dxgiOutput, D3D12XBOX_FRAME_INTERVAL_60_HZ, 1, D3D12XBOX_FRAME_INTERVAL_FLAG_NONE);
     if (FAILED(result)) {
@@ -120,13 +120,12 @@ D3D12_XBOX_CreateBackBufferTarget(ID3D12Device1 *device, int width, int height, 
     resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
     return device->CreateCommittedResource(&heapProps,
-        D3D12_HEAP_FLAG_ALLOW_DISPLAY,
-        &resourceDesc,
-        D3D12_RESOURCE_STATE_PRESENT,
-        NULL,
-        SDL_IID_ID3D12Resource,
-        resource
-        );
+                                           D3D12_HEAP_FLAG_ALLOW_DISPLAY,
+                                           &resourceDesc,
+                                           D3D12_RESOURCE_STATE_PRESENT,
+                                           NULL,
+                                           SDL_IID_ID3D12Resource,
+                                           resource);
 }
 
 extern "C" HRESULT

@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -21,11 +21,9 @@
 #ifndef _FLUIDSYNTH_LOG_H
 #define _FLUIDSYNTH_LOG_H
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * @file log.h
@@ -52,12 +50,12 @@ extern "C" {
 /**
  * FluidSynth log levels.
  */
-enum fluid_log_level { 
-  FLUID_PANIC,   /**< The synth can't function correctly any more */
-  FLUID_ERR,     /**< Serious error occurred */
-  FLUID_WARN,    /**< Warning */
-  FLUID_INFO,    /**< Verbose informational messages */
-  FLUID_DBG,     /**< Debugging messages */
+enum fluid_log_level {
+  FLUID_PANIC, /**< The synth can't function correctly any more */
+  FLUID_ERR,   /**< Serious error occurred */
+  FLUID_WARN,  /**< Warning */
+  FLUID_INFO,  /**< Verbose informational messages */
+  FLUID_DBG,   /**< Debugging messages */
   LAST_LOG_LEVEL
 };
 
@@ -67,15 +65,16 @@ enum fluid_log_level {
  * @param message Log message text
  * @param data User data pointer supplied to fluid_set_log_function().
  */
-typedef void (*fluid_log_function_t)(int level, char* message, void* data);
+typedef void (*fluid_log_function_t)(int level, char *message, void *data);
 
-FLUIDSYNTH_API 
-fluid_log_function_t fluid_set_log_function(int level, fluid_log_function_t fun, void* data);
+FLUIDSYNTH_API
+fluid_log_function_t fluid_set_log_function(int level, fluid_log_function_t fun,
+                                            void *data);
 
-FLUIDSYNTH_API void fluid_default_log_function(int level, char* message, void* data);
+FLUIDSYNTH_API void fluid_default_log_function(int level, char *message,
+                                               void *data);
 
 FLUIDSYNTH_API int fluid_log(int level, const char *fmt, ...);
-
 
 #ifdef __cplusplus
 }

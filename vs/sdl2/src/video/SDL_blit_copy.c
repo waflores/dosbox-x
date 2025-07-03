@@ -20,9 +20,9 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_video.h"
 #include "SDL_blit.h"
 #include "SDL_blit_copy.h"
+#include "SDL_video.h"
 
 #ifdef __SSE__
 /* This assumes 16-byte aligned src and dst */

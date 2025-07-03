@@ -27,18 +27,11 @@
 
 #include "SDL_config.h"
 
-#include "../../events/SDL_sysevents.h"
 #include "../../events/SDL_events_c.h"
-#include "SDL_ps3video.h"
+#include "../../events/SDL_sysevents.h"
 #include "SDL_ps3events_c.h"
+#include "SDL_ps3video.h"
 
-void PS3_PumpEvents(_THIS)
-{
-	return;
-}
+void PS3_PumpEvents(_THIS) { return; }
 
-void PS3_InitOSKeymap(_THIS)
-{
-        return;
-}
-
+void PS3_InitOSKeymap(_THIS) { return; }

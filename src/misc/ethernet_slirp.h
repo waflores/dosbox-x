@@ -24,9 +24,9 @@
 #if C_SLIRP
 
 #include "ethernet.h"
-#include <slirp/libslirp.h>
 #include <list>
 #include <map>
+#include <slirp/libslirp.h>
 
 /*
  * libslirp really wants a poll() API, so we'll use that when we're
@@ -47,9 +47,9 @@
  * time is right.
  */
 struct slirp_timer {
-	int64_t expires; /*!< When to fire the callback, in nanoseconds */
-	SlirpTimerCb cb; /*!< The callback to fire */
-	void* cb_opaque; /*!< Data libslirp wants us to pass to the callback */
+  int64_t expires; /*!< When to fire the callback, in nanoseconds */
+  SlirpTimerCb cb; /*!< The callback to fire */
+  void *cb_opaque; /*!< Data libslirp wants us to pass to the callback */
 };
 
 /** A libslirp-based Ethernet connection
@@ -58,67 +58,69 @@ struct slirp_timer {
  * connections during routing and passes them to sockets created in the host.
  */
 class SlirpEthernetConnection : public EthernetConnection {
-	public:
-		/* Boilerplate EthernetConnection interface */
-		SlirpEthernetConnection();
-		~SlirpEthernetConnection();
-		bool Initialize(Section* config) override;
-		void SendPacket(const uint8_t* packet, int len) override;
-		void GetPackets(std::function<void(const uint8_t*, int)> callback) override;
+public:
+  /* Boilerplate EthernetConnection interface */
+  SlirpEthernetConnection();
+  ~SlirpEthernetConnection();
+  bool Initialize(Section *config) override;
+  void SendPacket(const uint8_t *packet, int len) override;
+  void GetPackets(std::function<void(const uint8_t *, int)> callback) override;
 
-		/* Called by libslirp when it has a packet for us */
-		void ReceivePacket(const uint8_t* packet, int len);
+  /* Called by libslirp when it has a packet for us */
+  void ReceivePacket(const uint8_t *packet, int len);
 
-                /* Called by libslirp to create, free and modify timers */
-		struct slirp_timer* TimerNew(SlirpTimerCb cb, void *cb_opaque);
-		void TimerFree(struct slirp_timer* timer);
-		void TimerMod(struct slirp_timer* timer, int64_t expire_time);
+  /* Called by libslirp to create, free and modify timers */
+  struct slirp_timer *TimerNew(SlirpTimerCb cb, void *cb_opaque);
+  void TimerFree(struct slirp_timer *timer);
+  void TimerMod(struct slirp_timer *timer, int64_t expire_time);
 
-                /* Called by libslirp to interact with our polling system */
-		int PollAdd(int fd, int slirp_events);
-		int PollGetSlirpRevents(int idx);
-		void PollRegister(int fd);
-		void PollUnregister(int fd);
+  /* Called by libslirp to interact with our polling system */
+  int PollAdd(int fd, int slirp_events);
+  int PollGetSlirpRevents(int idx);
+  void PollRegister(int fd);
+  void PollUnregister(int fd);
 
-	private:
-		/* Runs and clears all the timers */
-		void TimersRun();
-		void TimersClear();
+private:
+  /* Runs and clears all the timers */
+  void TimersRun();
+  void TimersClear();
 
-		void ClearPortForwards(const bool is_udp, std::map<int, int> &existing_port_forwards);
-		std::map<int, int> SetupPortForwards(const bool is_udp, const std::string &port_forward_rules);
+  void ClearPortForwards(const bool is_udp,
+                         std::map<int, int> &existing_port_forwards);
+  std::map<int, int> SetupPortForwards(const bool is_udp,
+                                       const std::string &port_forward_rules);
 
-		/* Builds a list of descriptors and polls them */
-		void PollsAddRegistered();
-		void PollsClear();
-		bool PollsPoll(uint32_t timeout_ms);
+  /* Builds a list of descriptors and polls them */
+  void PollsAddRegistered();
+  void PollsClear();
+  bool PollsPoll(uint32_t timeout_ms);
 
-		Slirp* slirp = nullptr; /*!< Handle to libslirp */
-		SlirpConfig config = { 0 }; /*!< Configuration passed to libslirp */
-		SlirpCb slirp_callbacks = { nullptr }; /*!< Callbacks used by libslirp */
-		std::list<struct slirp_timer*> timers; /*!< Stored timers */
+  Slirp *slirp = nullptr;              /*!< Handle to libslirp */
+  SlirpConfig config = {0};            /*!< Configuration passed to libslirp */
+  SlirpCb slirp_callbacks = {nullptr}; /*!< Callbacks used by libslirp */
+  std::list<struct slirp_timer *> timers; /*!< Stored timers */
 
-		/** The GetPacket callback
-		 * When libslirp has a new packet for us it calls ReceivePacket,
-		 * but the EthernetConnection interface requires users to poll
-		 * for new packets using GetPackets. We temporarily store the
-		 * callback from GetPackets here for ReceivePacket.
-		 * This might seem racy, but keep in mind we control when
-		 * libslirp sends us packets via our polling system.
-		 */
-		std::function<void(const uint8_t*, int)> get_packet_callback;
+  /** The GetPacket callback
+   * When libslirp has a new packet for us it calls ReceivePacket,
+   * but the EthernetConnection interface requires users to poll
+   * for new packets using GetPackets. We temporarily store the
+   * callback from GetPackets here for ReceivePacket.
+   * This might seem racy, but keep in mind we control when
+   * libslirp sends us packets via our polling system.
+   */
+  std::function<void(const uint8_t *, int)> get_packet_callback;
 
-		std::list<int> registered_fds; /*!< File descriptors to watch */
+  std::list<int> registered_fds; /*!< File descriptors to watch */
 
-		// keep track of the ports forwarded
-		std::map<int, int> forwarded_tcp_ports = {};
-		std::map<int, int> forwarded_udp_ports = {};
+  // keep track of the ports forwarded
+  std::map<int, int> forwarded_tcp_ports = {};
+  std::map<int, int> forwarded_udp_ports = {};
 #ifndef WIN32
-		std::vector<struct pollfd> polls; /*!< Descriptors for poll() */
+  std::vector<struct pollfd> polls; /*!< Descriptors for poll() */
 #else
-		fd_set readfds; /*!< Read descriptors for select() */
-		fd_set writefds; /*!< Write descriptors for select() */
-		fd_set exceptfds; /*!< Exceptional descriptors for select() */
+  fd_set readfds;   /*!< Read descriptors for select() */
+  fd_set writefds;  /*!< Write descriptors for select() */
+  fd_set exceptfds; /*!< Exceptional descriptors for select() */
 #endif
 };
 

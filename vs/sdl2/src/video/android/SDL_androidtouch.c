@@ -24,12 +24,12 @@
 
 #include <android/log.h>
 
-#include "SDL_hints.h"
-#include "SDL_events.h"
-#include "SDL_androidtouch.h"
+#include "../../core/android/SDL_android.h"
 #include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_touch_c.h"
-#include "../../core/android/SDL_android.h"
+#include "SDL_androidtouch.h"
+#include "SDL_events.h"
+#include "SDL_hints.h"
 
 #define ACTION_DOWN 0
 #define ACTION_UP   1

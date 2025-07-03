@@ -35,8 +35,8 @@ typedef struct SDLVisualTest_ExhaustiveVariator
  *
  * \return 1 on success, 0 on failure
  */
-int SDLVisualTest_InitExhaustiveVariator(SDLVisualTest_ExhaustiveVariator* variator,
-                                         SDLVisualTest_SUTConfig* config);
+int SDLVisualTest_InitExhaustiveVariator(SDLVisualTest_ExhaustiveVariator *variator,
+                                         SDLVisualTest_SUTConfig *config);
 
 /**
  * Gets the arguments string for the next variation using the variator and updates
@@ -47,12 +47,12 @@ int SDLVisualTest_InitExhaustiveVariator(SDLVisualTest_ExhaustiveVariator* varia
  *         In the latter case subsequent calls will start the variations again from
  *         the very beginning. The pointer returned should not be freed.
  */
-char* SDLVisualTest_GetNextExhaustiveVariation(SDLVisualTest_ExhaustiveVariator* variator);
+char *SDLVisualTest_GetNextExhaustiveVariation(SDLVisualTest_ExhaustiveVariator *variator);
 
 /**
  * Frees any resources associated with the variator.
  */
-void SDLVisualTest_FreeExhaustiveVariator(SDLVisualTest_ExhaustiveVariator* variator);
+void SDLVisualTest_FreeExhaustiveVariator(SDLVisualTest_ExhaustiveVariator *variator);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

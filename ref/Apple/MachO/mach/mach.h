@@ -62,19 +62,19 @@
 #define __MACH30__
 #define MACH_IPC_FLAVOR UNTYPED
 
-#include <mach/std_types.h>
-#include <mach/mach_types.h>
+#include <mach/mach_host.h>
+#include <mach/mach_init.h>
 #include <mach/mach_interface.h>
 #include <mach/mach_port.h>
-#include <mach/mach_init.h>
-#include <mach/mach_host.h>
+#include <mach/mach_types.h>
+#include <mach/std_types.h>
 #include <mach/thread_switch.h>
 
-#include <mach/rpc.h>           /* for compatibility only */
 #include <mach/mig.h>
+#include <mach/rpc.h> /* for compatibility only */
 
-#include <mach/mig_errors.h>
 #include <mach/mach_error.h>
+#include <mach/mig_errors.h>
 
 #include <sys/cdefs.h>
 
@@ -82,66 +82,47 @@ __BEGIN_DECLS
 /*
  * Standard prototypes
  */
-extern void                     panic_init(mach_port_t);
-extern void                     panic(const char *, ...);
+extern void panic_init(mach_port_t);
+extern void panic(const char *, ...);
 
-extern void                     safe_gets(char *,
-    char *,
-    int);
+extern void safe_gets(char *, char *, int);
 
-extern void                     slot_name(cpu_type_t,
-    cpu_subtype_t,
-    char **,
-    char **);
+extern void slot_name(cpu_type_t, cpu_subtype_t, char **, char **);
 
-extern void                     mig_reply_setup(mach_msg_header_t *,
-    mach_msg_header_t *);
+extern void mig_reply_setup(mach_msg_header_t *, mach_msg_header_t *);
 
-__WATCHOS_PROHIBITED __TVOS_PROHIBITED
-extern void                     mach_msg_destroy(mach_msg_header_t *);
+__WATCHOS_PROHIBITED __TVOS_PROHIBITED extern void
+mach_msg_destroy(mach_msg_header_t *);
 
-__WATCHOS_PROHIBITED __TVOS_PROHIBITED
-extern mach_msg_return_t        mach_msg_receive(mach_msg_header_t *);
+__WATCHOS_PROHIBITED __TVOS_PROHIBITED extern mach_msg_return_t
+mach_msg_receive(mach_msg_header_t *);
 
-__WATCHOS_PROHIBITED __TVOS_PROHIBITED
-extern mach_msg_return_t        mach_msg_send(mach_msg_header_t *);
+__WATCHOS_PROHIBITED __TVOS_PROHIBITED extern mach_msg_return_t
+mach_msg_send(mach_msg_header_t *);
 
-__WATCHOS_PROHIBITED __TVOS_PROHIBITED
-extern mach_msg_return_t        mach_msg_server_once(boolean_t (*)
-    (mach_msg_header_t *,
-    mach_msg_header_t *),
-    mach_msg_size_t,
-    mach_port_t,
-    mach_msg_options_t);
+__WATCHOS_PROHIBITED __TVOS_PROHIBITED extern mach_msg_return_t
+    mach_msg_server_once(boolean_t (*)(mach_msg_header_t *,
+                                       mach_msg_header_t *),
+                         mach_msg_size_t, mach_port_t, mach_msg_options_t);
 
-__WATCHOS_PROHIBITED __TVOS_PROHIBITED
-extern mach_msg_return_t        mach_msg_server(boolean_t (*)
-    (mach_msg_header_t *,
-    mach_msg_header_t *),
-    mach_msg_size_t,
-    mach_port_t,
-    mach_msg_options_t);
+__WATCHOS_PROHIBITED __TVOS_PROHIBITED extern mach_msg_return_t
+    mach_msg_server(boolean_t (*)(mach_msg_header_t *, mach_msg_header_t *),
+                    mach_msg_size_t, mach_port_t, mach_msg_options_t);
 
-__WATCHOS_PROHIBITED __TVOS_PROHIBITED
-extern mach_msg_return_t        mach_msg_server_importance(boolean_t (*)
-    (mach_msg_header_t *,
-    mach_msg_header_t *),
-    mach_msg_size_t,
-    mach_port_t,
-    mach_msg_options_t);
+__WATCHOS_PROHIBITED __TVOS_PROHIBITED extern mach_msg_return_t
+    mach_msg_server_importance(boolean_t (*)(mach_msg_header_t *,
+                                             mach_msg_header_t *),
+                               mach_msg_size_t, mach_port_t,
+                               mach_msg_options_t);
 
 /*
  * Prototypes for compatibility
  */
-extern kern_return_t    clock_get_res(mach_port_t,
-    clock_res_t *);
-extern kern_return_t    clock_set_res(mach_port_t,
-    clock_res_t);
+extern kern_return_t clock_get_res(mach_port_t, clock_res_t *);
+extern kern_return_t clock_set_res(mach_port_t, clock_res_t);
 
-extern kern_return_t    clock_sleep(mach_port_t,
-    int,
-    mach_timespec_t,
-    mach_timespec_t *);
+extern kern_return_t clock_sleep(mach_port_t, int, mach_timespec_t,
+                                 mach_timespec_t *);
 
 /*!
  * @group voucher_mach_msg Prototypes
@@ -242,4 +223,4 @@ extern void voucher_mach_msg_revert(voucher_mach_msg_state_t state);
 
 __END_DECLS
 
-#endif  /* _MACH_H_ */
+#endif /* _MACH_H_ */

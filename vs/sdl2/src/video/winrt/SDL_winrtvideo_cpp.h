@@ -26,8 +26,8 @@
 #endif
 
 /* SDL includes: */
-#include "SDL_video.h"
 #include "SDL_events.h"
+#include "SDL_video.h"
 
 #if NTDDI_VERSION >= NTDDI_WINBLUE /* ApplicationView's functionality only becomes \
                                       useful for SDL in Win[Phone] 8.1 and up.     \
@@ -36,8 +36,8 @@
 #endif
 
 extern "C" {
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 }
 
 /* Private display data */
@@ -89,7 +89,7 @@ extern "C" Uint32 WINRT_DetectWindowFlags(SDL_Window *window); /* detects flags 
 
 /* Converts DIPS to/from physical pixels */
 #define WINRT_DIPS_TO_PHYSICAL_PIXELS(DIPS)    ((int)(0.5f + (((float)(DIPS) * (float)WINRT_DISPLAY_PROPERTY(LogicalDpi)) / 96.f)))
-#define WINRT_PHYSICAL_PIXELS_TO_DIPS(PHYSPIX) (((float)(PHYSPIX)*96.f) / WINRT_DISPLAY_PROPERTY(LogicalDpi))
+#define WINRT_PHYSICAL_PIXELS_TO_DIPS(PHYSPIX) (((float)(PHYSPIX) * 96.f) / WINRT_DISPLAY_PROPERTY(LogicalDpi))
 
 /* Internal window data */
 struct SDL_WindowData

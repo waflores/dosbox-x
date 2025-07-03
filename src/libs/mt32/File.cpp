@@ -25,53 +25,51 @@
 namespace MT32Emu {
 
 AbstractFile::AbstractFile() : sha1DigestCalculated(false) {
-	sha1Digest[0] = 0;
+  sha1Digest[0] = 0;
 
-	reserved = NULL;
+  reserved = NULL;
 }
 
-AbstractFile::AbstractFile(const SHA1Digest &useSHA1Digest) : sha1DigestCalculated(true) {
-	memcpy(sha1Digest, useSHA1Digest, sizeof(SHA1Digest) - 1);
-	sha1Digest[sizeof(SHA1Digest) - 1] = 0; // Ensure terminator char.
+AbstractFile::AbstractFile(const SHA1Digest &useSHA1Digest)
+    : sha1DigestCalculated(true) {
+  memcpy(sha1Digest, useSHA1Digest, sizeof(SHA1Digest) - 1);
+  sha1Digest[sizeof(SHA1Digest) - 1] = 0; // Ensure terminator char.
 
-	reserved = NULL;
+  reserved = NULL;
 }
 
 const File::SHA1Digest &AbstractFile::getSHA1() {
-	if (sha1DigestCalculated) {
-		return sha1Digest;
-	}
-	sha1DigestCalculated = true;
+  if (sha1DigestCalculated) {
+    return sha1Digest;
+  }
+  sha1DigestCalculated = true;
 
-	size_t size = getSize();
-	if (size == 0) {
-		return sha1Digest;
-	}
+  size_t size = getSize();
+  if (size == 0) {
+    return sha1Digest;
+  }
 
-	const Bit8u *data = getData();
-	if (data == NULL) {
-		return sha1Digest;
-	}
+  const Bit8u *data = getData();
+  if (data == NULL) {
+    return sha1Digest;
+  }
 
-	unsigned char fileDigest[20];
+  unsigned char fileDigest[20];
 
-	sha1::calc(data, int(size), fileDigest);
-	sha1::toHexString(fileDigest, sha1Digest);
-	return sha1Digest;
+  sha1::calc(data, int(size), fileDigest);
+  sha1::toHexString(fileDigest, sha1Digest);
+  return sha1Digest;
 }
 
-ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize) : data(useData), size(useSize)
-{}
+ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize)
+    : data(useData), size(useSize) {}
 
-ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize, const SHA1Digest &useSHA1Digest) : AbstractFile(useSHA1Digest), data(useData), size(useSize)
-{}
+ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize,
+                     const SHA1Digest &useSHA1Digest)
+    : AbstractFile(useSHA1Digest), data(useData), size(useSize) {}
 
-size_t ArrayFile::getSize() {
-	return size;
-}
+size_t ArrayFile::getSize() { return size; }
 
-const Bit8u *ArrayFile::getData() {
-	return data;
-}
+const Bit8u *ArrayFile::getData() { return data; }
 
 } // namespace MT32Emu

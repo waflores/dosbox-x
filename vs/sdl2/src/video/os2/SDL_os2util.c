@@ -26,30 +26,30 @@
 
 HPOINTER utilCreatePointer(SDL_Surface *surface, ULONG ulHotX, ULONG ulHotY)
 {
-    HBITMAP             hbm;
-    BITMAPINFOHEADER2   bmih;
-    BITMAPINFO          bmi;
-    HPS                 hps;
-    PULONG              pulBitmap;
-    PULONG              pulDst, pulSrc, pulDstMask;
-    ULONG               ulY, ulX;
-    HPOINTER            hptr = NULLHANDLE;
+    HBITMAP hbm;
+    BITMAPINFOHEADER2 bmih;
+    BITMAPINFO bmi;
+    HPS hps;
+    PULONG pulBitmap;
+    PULONG pulDst, pulSrc, pulDstMask;
+    ULONG ulY, ulX;
+    HPOINTER hptr = NULLHANDLE;
 
     if (surface->format->format != SDL_PIXELFORMAT_ARGB8888) {
         debug_os2("Image format should be SDL_PIXELFORMAT_ARGB8888");
         return NULLHANDLE;
     }
 
-    pulBitmap = (PULONG) SDL_malloc(surface->h * surface->w * 2 * sizeof(ULONG));
+    pulBitmap = (PULONG)SDL_malloc(surface->h * surface->w * 2 * sizeof(ULONG));
     if (!pulBitmap) {
         SDL_OutOfMemory();
         return NULLHANDLE;
     }
 
     /* pulDst - last line of surface (image) part of the result bitmap */
-    pulDst = &pulBitmap[ (surface->h - 1) * surface->w ];
+    pulDst = &pulBitmap[(surface->h - 1) * surface->w];
     /* pulDstMask - last line of mask part of the result bitmap */
-    pulDstMask = &pulBitmap[ (2 * surface->h - 1) * surface->w ];
+    pulDstMask = &pulBitmap[(2 * surface->h - 1) * surface->w];
     /* pulSrc - first line of source image */
     pulSrc = (PULONG)surface->pixels;
 
@@ -68,26 +68,26 @@ HPOINTER utilCreatePointer(SDL_Surface *surface, ULONG ulHotX, ULONG ulHotY)
         pulDst -= surface->w;
         pulDstMask -= surface->w;
         /* Set source image pointer to the next line */
-        pulSrc = (PULONG) (((PCHAR)pulSrc) + surface->pitch);
+        pulSrc = (PULONG)(((PCHAR)pulSrc) + surface->pitch);
     }
 
     /* Create system bitmap object. */
     SDL_zero(bmih);
     SDL_zero(bmi);
 
-    bmih.cbFix          = sizeof(BITMAPINFOHEADER2);
-    bmih.cx             = surface->w;
-    bmih.cy             = 2 * surface->h;
-    bmih.cPlanes        = 1;
-    bmih.cBitCount      = 32;
-    bmih.ulCompression  = BCA_UNCOMP;
-    bmih.cbImage        = bmih.cx * bmih.cy * 4;
+    bmih.cbFix = sizeof(BITMAPINFOHEADER2);
+    bmih.cx = surface->w;
+    bmih.cy = 2 * surface->h;
+    bmih.cPlanes = 1;
+    bmih.cBitCount = 32;
+    bmih.ulCompression = BCA_UNCOMP;
+    bmih.cbImage = bmih.cx * bmih.cy * 4;
 
-    bmi.cbFix           = sizeof(BITMAPINFOHEADER);
-    bmi.cx              = bmih.cx;
-    bmi.cy              = bmih.cy;
-    bmi.cPlanes         = 1;
-    bmi.cBitCount       = 32;
+    bmi.cbFix = sizeof(BITMAPINFOHEADER);
+    bmi.cx = bmih.cx;
+    bmi.cy = bmih.cy;
+    bmi.cPlanes = 1;
+    bmi.cBitCount = 32;
 
     hps = WinGetPS(HWND_DESKTOP);
     hbm = GpiCreateBitmap(hps, (PBITMAPINFOHEADER2)&bmih, CBM_INIT,

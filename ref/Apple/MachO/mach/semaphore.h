@@ -29,9 +29,9 @@
 #ifndef _MACH_SEMAPHORE_H_
 #define _MACH_SEMAPHORE_H_
 
-#include <mach/port.h>
-#include <mach/mach_types.h>
 #include <mach/kern_return.h>
+#include <mach/mach_types.h>
+#include <mach/port.h>
 #include <mach/sync_policy.h>
 
 /*
@@ -52,27 +52,24 @@
 #include <sys/cdefs.h>
 __BEGIN_DECLS
 
-extern  kern_return_t   semaphore_signal(semaphore_t semaphore);
-extern  kern_return_t   semaphore_signal_all(semaphore_t semaphore);
+extern kern_return_t semaphore_signal(semaphore_t semaphore);
+extern kern_return_t semaphore_signal_all(semaphore_t semaphore);
 
-extern  kern_return_t   semaphore_wait(semaphore_t semaphore);
+extern kern_return_t semaphore_wait(semaphore_t semaphore);
 
+extern kern_return_t semaphore_timedwait(semaphore_t semaphore,
+                                         mach_timespec_t wait_time);
 
-extern  kern_return_t   semaphore_timedwait(semaphore_t semaphore,
-    mach_timespec_t wait_time);
+extern kern_return_t semaphore_timedwait_signal(semaphore_t wait_semaphore,
+                                                semaphore_t signal_semaphore,
+                                                mach_timespec_t wait_time);
 
-extern  kern_return_t   semaphore_timedwait_signal(semaphore_t wait_semaphore,
-    semaphore_t signal_semaphore,
-    mach_timespec_t wait_time);
+extern kern_return_t semaphore_wait_signal(semaphore_t wait_semaphore,
+                                           semaphore_t signal_semaphore);
 
-extern  kern_return_t   semaphore_wait_signal(semaphore_t wait_semaphore,
-    semaphore_t signal_semaphore);
-
-extern  kern_return_t   semaphore_signal_thread(semaphore_t semaphore,
-    thread_t thread);
-
+extern kern_return_t semaphore_signal_thread(semaphore_t semaphore,
+                                             thread_t thread);
 
 __END_DECLS
 
-
-#endif  /* _MACH_SEMAPHORE_H_ */
+#endif /* _MACH_SEMAPHORE_H_ */

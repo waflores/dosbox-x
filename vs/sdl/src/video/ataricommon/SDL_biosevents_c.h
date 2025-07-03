@@ -33,7 +33,7 @@
 #include "../SDL_sysvideo.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
 extern void AtariBios_InitOSKeymap(_THIS);
 extern void AtariBios_PumpEvents(_THIS);

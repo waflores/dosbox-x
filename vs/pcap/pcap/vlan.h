@@ -30,17 +30,18 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @(#) $Header: /tcpdump/master/libpcap/pcap/vlan.h,v 1.1.2.2 2008-08-06 07:45:59 guy Exp $
+ * @(#) $Header: /tcpdump/master/libpcap/pcap/vlan.h,v 1.1.2.2 2008-08-06
+ *07:45:59 guy Exp $
  */
 
 #ifndef lib_pcap_vlan_h
 #define lib_pcap_vlan_h
 
 struct vlan_tag {
-	u_int16_t	vlan_tpid;		/* ETH_P_8021Q */
-	u_int16_t	vlan_tci;		/* VLAN TCI */
+  u_int16_t vlan_tpid; /* ETH_P_8021Q */
+  u_int16_t vlan_tci;  /* VLAN TCI */
 };
 
-#define VLAN_TAG_LEN	4
+#define VLAN_TAG_LEN 4
 
 #endif

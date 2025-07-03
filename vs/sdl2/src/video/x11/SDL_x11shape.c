@@ -22,10 +22,10 @@
 
 #ifdef SDL_VIDEO_DRIVER_X11
 
-#include "SDL_x11video.h"
-#include "SDL_x11shape.h"
-#include "SDL_x11window.h"
 #include "../SDL_shape_internals.h"
+#include "SDL_x11shape.h"
+#include "SDL_x11video.h"
+#include "SDL_x11window.h"
 
 SDL_WindowShaper *X11_CreateShaper(SDL_Window *window)
 {

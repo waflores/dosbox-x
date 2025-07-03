@@ -31,7 +31,6 @@
 #include "SDL_filesystem.h"
 #include "SDL_system.h"
 
-
 char *SDL_GetBasePath(void)
 {
     /* The current working directory is / on Android */

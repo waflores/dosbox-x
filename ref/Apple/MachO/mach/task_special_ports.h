@@ -67,33 +67,33 @@
 #ifndef _MACH_TASK_SPECIAL_PORTS_H_
 #define _MACH_TASK_SPECIAL_PORTS_H_
 
-typedef int     task_special_port_t;
+typedef int task_special_port_t;
 
-#define TASK_KERNEL_PORT        1       /* The full task port for task. */
+#define TASK_KERNEL_PORT 1 /* The full task port for task. */
 
-#define TASK_HOST_PORT          2       /* The host (priv) port for task.  */
+#define TASK_HOST_PORT 2 /* The host (priv) port for task.  */
 
-#define TASK_NAME_PORT          3       /* The name port for task. */
+#define TASK_NAME_PORT 3 /* The name port for task. */
 
-#define TASK_BOOTSTRAP_PORT     4       /* Bootstrap environment for task. */
+#define TASK_BOOTSTRAP_PORT 4 /* Bootstrap environment for task. */
 
-#define TASK_INSPECT_PORT       5       /* The inspect port for task. */
+#define TASK_INSPECT_PORT 5 /* The inspect port for task. */
 
-#define TASK_READ_PORT          6       /* The read port for task. */
+#define TASK_READ_PORT 6 /* The read port for task. */
 
 /*
  * Evolving and likely to change.
  */
 
-#define TASK_SEATBELT_PORT      7       /* Seatbelt compiler/DEM port for task. */
+#define TASK_SEATBELT_PORT 7 /* Seatbelt compiler/DEM port for task. */
 
 /* PORT 8 was the GSSD TASK PORT which transformed to a host port */
 
-#define TASK_ACCESS_PORT        9       /* Permission check for task_for_pid. */
+#define TASK_ACCESS_PORT 9 /* Permission check for task_for_pid. */
 
-#define TASK_DEBUG_CONTROL_PORT 10      /* debug control port */
+#define TASK_DEBUG_CONTROL_PORT 10 /* debug control port */
 
-#define TASK_RESOURCE_NOTIFY_PORT   11  /* overrides host special RN port */
+#define TASK_RESOURCE_NOTIFY_PORT 11 /* overrides host special RN port */
 
 #define TASK_MAX_SPECIAL_PORT TASK_RESOURCE_NOTIFY_PORT
 
@@ -101,35 +101,34 @@ typedef int     task_special_port_t;
  *	Definitions for ease of use
  */
 
-#define task_get_kernel_port(task, port)        \
-	        (task_get_special_port((task), TASK_KERNEL_PORT, (port)))
+#define task_get_kernel_port(task, port)                                       \
+  (task_get_special_port((task), TASK_KERNEL_PORT, (port)))
 
-#define task_set_kernel_port(task, port)        \
-	        (task_set_special_port((task), TASK_KERNEL_PORT, (port)))
+#define task_set_kernel_port(task, port)                                       \
+  (task_set_special_port((task), TASK_KERNEL_PORT, (port)))
 
-#define task_get_host_port(task, port)          \
-	        (task_get_special_port((task), TASK_HOST_PORT, (port)))
+#define task_get_host_port(task, port)                                         \
+  (task_get_special_port((task), TASK_HOST_PORT, (port)))
 
-#define task_set_host_port(task, port)  \
-	        (task_set_special_port((task), TASK_HOST_PORT, (port)))
+#define task_set_host_port(task, port)                                         \
+  (task_set_special_port((task), TASK_HOST_PORT, (port)))
 
-#define task_get_bootstrap_port(task, port)     \
-	        (task_get_special_port((task), TASK_BOOTSTRAP_PORT, (port)))
+#define task_get_bootstrap_port(task, port)                                    \
+  (task_get_special_port((task), TASK_BOOTSTRAP_PORT, (port)))
 
-#define task_get_debug_control_port(task, port) \
-	        (task_get_special_port((task), TASK_DEBUG_CONTROL_PORT, (port)))
+#define task_get_debug_control_port(task, port)                                \
+  (task_get_special_port((task), TASK_DEBUG_CONTROL_PORT, (port)))
 
-#define task_set_bootstrap_port(task, port)     \
-	        (task_set_special_port((task), TASK_BOOTSTRAP_PORT, (port)))
+#define task_set_bootstrap_port(task, port)                                    \
+  (task_set_special_port((task), TASK_BOOTSTRAP_PORT, (port)))
 
-#define task_get_task_access_port(task, port)   \
-	        (task_get_special_port((task), TASK_ACCESS_PORT, (port)))
+#define task_get_task_access_port(task, port)                                  \
+  (task_get_special_port((task), TASK_ACCESS_PORT, (port)))
 
-#define task_set_task_access_port(task, port)   \
-	        (task_set_special_port((task), TASK_ACCESS_PORT, (port)))
+#define task_set_task_access_port(task, port)                                  \
+  (task_set_special_port((task), TASK_ACCESS_PORT, (port)))
 
-#define task_set_task_debug_control_port(task, port) \
-	        (task_set_special_port((task), TASK_DEBUG_CONTROL_PORT, (port)))
+#define task_set_task_debug_control_port(task, port)                           \
+  (task_set_special_port((task), TASK_DEBUG_CONTROL_PORT, (port)))
 
-
-#endif  /* _MACH_TASK_SPECIAL_PORTS_H_ */
+#endif /* _MACH_TASK_SPECIAL_PORTS_H_ */

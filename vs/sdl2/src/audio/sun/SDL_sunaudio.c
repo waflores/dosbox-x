@@ -24,11 +24,11 @@
 
 /* Allow access to a raw mixing buffer */
 
-#include <fcntl.h>
 #include <errno.h>
+#include <fcntl.h>
 #ifdef __NETBSD__
-#include <sys/ioctl.h>
 #include <sys/audioio.h>
+#include <sys/ioctl.h>
 #endif
 #ifdef __SVR4
 #include <sys/audioio.h>
@@ -38,12 +38,12 @@
 #endif
 #include <unistd.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../../core/unix/SDL_poll.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_audiodev_c.h"
+#include "SDL_audio.h"
 #include "SDL_sunaudio.h"
+#include "SDL_timer.h"
 
 /* Open the audio device for playback, and don't block if busy */
 
@@ -57,7 +57,7 @@ static Uint8 snd2au(int sample);
 /* Audio driver bootstrap functions */
 static void SUNAUDIO_DetectDevices(void)
 {
-    SDL_EnumUnixAudioDevices(1, (int (*)(int)) NULL);
+    SDL_EnumUnixAudioDevices(1, (int (*)(int))NULL);
 }
 
 #ifdef DEBUG_AUDIO
@@ -79,7 +79,7 @@ void CheckUnderflow(_THIS)
 static void SUNAUDIO_WaitDevice(_THIS)
 {
 #ifdef AUDIO_GETBUFINFO
-#define SLEEP_FUDGE 10      /* 10 ms scheduling fudge factor */
+#define SLEEP_FUDGE 10 /* 10 ms scheduling fudge factor */
     audio_info_t info;
     Sint32 left;
 
@@ -112,43 +112,41 @@ static void SUNAUDIO_PlayDevice(_THIS)
         aubuf = this->hidden->ulaw_buf;
         switch (this->hidden->audio_fmt & 0xFF) {
         case 8:
-            {
-                Uint8 *sndbuf;
+        {
+            Uint8 *sndbuf;
 
-                sndbuf = this->hidden->mixbuf;
-                for (pos = 0; pos < this->hidden->fragsize; ++pos) {
-                    *aubuf = snd2au((0x80 - *sndbuf) * 64);
-                    accum += incr;
-                    while (accum > 0) {
-                        accum -= 1000;
-                        sndbuf += 1;
-                    }
-                    aubuf += 1;
+            sndbuf = this->hidden->mixbuf;
+            for (pos = 0; pos < this->hidden->fragsize; ++pos) {
+                *aubuf = snd2au((0x80 - *sndbuf) * 64);
+                accum += incr;
+                while (accum > 0) {
+                    accum -= 1000;
+                    sndbuf += 1;
                 }
+                aubuf += 1;
             }
-            break;
+        } break;
         case 16:
-            {
-                Sint16 *sndbuf;
+        {
+            Sint16 *sndbuf;
 
-                sndbuf = (Sint16 *) this->hidden->mixbuf;
-                for (pos = 0; pos < this->hidden->fragsize; ++pos) {
-                    *aubuf = snd2au(*sndbuf / 4);
-                    accum += incr;
-                    while (accum > 0) {
-                        accum -= 1000;
-                        sndbuf += 1;
-                    }
-                    aubuf += 1;
+            sndbuf = (Sint16 *)this->hidden->mixbuf;
+            for (pos = 0; pos < this->hidden->fragsize; ++pos) {
+                *aubuf = snd2au(*sndbuf / 4);
+                accum += incr;
+                while (accum > 0) {
+                    accum -= 1000;
+                    sndbuf += 1;
                 }
+                aubuf += 1;
             }
-            break;
+        } break;
         }
 #ifdef DEBUG_AUDIO
         CheckUnderflow(this);
 #endif
         if (write(this->hidden->audio_fd, this->hidden->ulaw_buf,
-            this->hidden->fragsize) < 0) {
+                  this->hidden->fragsize) < 0) {
             /* Assume fatal error, for now */
             SDL_OpenedAudioDeviceDisconnected(this);
         }
@@ -158,7 +156,7 @@ static void SUNAUDIO_PlayDevice(_THIS)
         CheckUnderflow(this);
 #endif
         if (write(this->hidden->audio_fd, this->hidden->mixbuf,
-            this->spec.size) < 0) {
+                  this->spec.size) < 0) {
             /* Assume fatal error, for now */
             SDL_OpenedAudioDeviceDisconnected(this);
         }
@@ -220,42 +218,41 @@ static int SUNAUDIO_OpenDevice(_THIS, const char *devname)
     switch (SDL_AUDIO_BITSIZE(this->spec.format)) {
 
     case 8:
-        {                       /* Unsigned 8 bit audio data */
-            this->spec.format = AUDIO_U8;
+    { /* Unsigned 8 bit audio data */
+        this->spec.format = AUDIO_U8;
 #ifdef AUDIO_SETINFO
-            enc = AUDIO_ENCODING_LINEAR8;
+        enc = AUDIO_ENCODING_LINEAR8;
 #endif
-        }
-        break;
+    } break;
 
     case 16:
-        {                       /* Signed 16 bit audio data */
-            this->spec.format = AUDIO_S16SYS;
+    { /* Signed 16 bit audio data */
+        this->spec.format = AUDIO_S16SYS;
 #ifdef AUDIO_SETINFO
-            enc = AUDIO_ENCODING_LINEAR;
+        enc = AUDIO_ENCODING_LINEAR;
 #endif
-        }
-        break;
+    } break;
 
     default:
-        {
-            /* !!! FIXME: fallback to conversion on unsupported types! */
-            return SDL_SetError("Unsupported audio format");
-        }
+    {
+        /* !!! FIXME: fallback to conversion on unsupported types! */
+        return SDL_SetError("Unsupported audio format");
+    }
     }
     this->hidden->audio_fmt = this->spec.format;
 
-    this->hidden->ulaw_only = 0;    /* modern Suns do support linear audio */
+    this->hidden->ulaw_only = 0; /* modern Suns do support linear audio */
 #ifdef AUDIO_SETINFO
     for (;;) {
         audio_info_t info;
-        AUDIO_INITINFO(&info);  /* init all fields to "no change" */
+        AUDIO_INITINFO(&info); /* init all fields to "no change" */
 
         /* Try to set the requested settings */
         info.play.sample_rate = this->spec.freq;
         info.play.channels = this->spec.channels;
         info.play.precision = (enc == AUDIO_ENCODING_ULAW)
-            ? 8 : this->spec.format & 0xff;
+                                  ? 8
+                                  : this->spec.format & 0xff;
         info.play.encoding = enc;
         if (ioctl(this->hidden->audio_fd, AUDIO_SETINFO, &info) == 0) {
 
@@ -264,9 +261,7 @@ static int SUNAUDIO_OpenDevice(_THIS, const char *devname)
                 return SDL_SetError("Error getting audio parameters: %s",
                                     strerror(errno));
             }
-            if (info.play.encoding == enc
-                && info.play.precision == (this->spec.format & 0xff)
-                && info.play.channels == this->spec.channels) {
+            if (info.play.encoding == enc && info.play.precision == (this->spec.format & 0xff) && info.play.channels == this->spec.channels) {
                 /* Yow! All seems to be well! */
                 this->spec.freq = info.play.sample_rate;
                 break;
@@ -278,7 +273,7 @@ static int SUNAUDIO_OpenDevice(_THIS, const char *devname)
             /* unsigned 8bit apparently not supported here */
             enc = AUDIO_ENCODING_LINEAR;
             this->spec.format = AUDIO_S16SYS;
-            break;              /* try again */
+            break; /* try again */
 
         case AUDIO_ENCODING_LINEAR:
             /* linear 16bit didn't work either, resort to �-law */
@@ -302,9 +297,9 @@ static int SUNAUDIO_OpenDevice(_THIS, const char *devname)
     if (this->hidden->ulaw_only) {
         this->spec.freq = desired_freq;
         this->hidden->fragsize = (this->spec.samples * 1000) /
-            (this->spec.freq / 8);
+                                 (this->spec.freq / 8);
         this->hidden->frequency = 8;
-        this->hidden->ulaw_buf = (Uint8 *) SDL_malloc(this->hidden->fragsize);
+        this->hidden->ulaw_buf = (Uint8 *)SDL_malloc(this->hidden->fragsize);
         if (!this->hidden->ulaw_buf) {
             return SDL_OutOfMemory();
         }
@@ -324,7 +319,7 @@ static int SUNAUDIO_OpenDevice(_THIS, const char *devname)
     SDL_CalculateAudioSpec(&this->spec);
 
     /* Allocate mixing buffer */
-    this->hidden->mixbuf = (Uint8 *) SDL_malloc(this->spec.size);
+    this->hidden->mixbuf = (Uint8 *)SDL_malloc(this->spec.size);
     if (!this->hidden->mixbuf) {
         return SDL_OutOfMemory();
     }
@@ -386,7 +381,7 @@ static Uint8 snd2au(int sample)
     return (mask & sample);
 }
 
-static SDL_bool SUNAUDIO_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool SUNAUDIO_Init(SDL_AudioDriverImpl *impl)
 {
     /* Set the function pointers */
     impl->DetectDevices = SUNAUDIO_DetectDevices;

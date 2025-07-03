@@ -32,16 +32,16 @@ using Windows::UI::Core::CoreCursor;
 /*
  * SDL includes:
  */
-#include "SDL_winrtevents_c.h"
 #include "../../core/winrt/SDL_winrtapp_common.h"
 #include "../../core/winrt/SDL_winrtapp_direct3d.h"
 #include "../../core/winrt/SDL_winrtapp_xaml.h"
 #include "SDL_system.h"
+#include "SDL_winrtevents_c.h"
 
 extern "C" {
+#include "../../events/SDL_events_c.h"
 #include "../../thread/SDL_systhread.h"
 #include "../SDL_sysvideo.h"
-#include "../../events/SDL_events_c.h"
 }
 
 /* Forward declarations */

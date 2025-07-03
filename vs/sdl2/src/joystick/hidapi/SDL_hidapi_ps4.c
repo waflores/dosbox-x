@@ -25,14 +25,14 @@
 
 #ifdef SDL_JOYSTICK_HIDAPI
 
-#include "SDL_events.h"
-#include "SDL_timer.h"
-#include "SDL_joystick.h"
-#include "SDL_gamecontroller.h"
 #include "../../SDL_hints_c.h"
 #include "../SDL_sysjoystick.h"
-#include "SDL_hidapijoystick_c.h"
+#include "SDL_events.h"
+#include "SDL_gamecontroller.h"
 #include "SDL_hidapi_rumble.h"
+#include "SDL_hidapijoystick_c.h"
+#include "SDL_joystick.h"
+#include "SDL_timer.h"
 
 #ifdef SDL_JOYSTICK_HIDAPI_PS4
 
@@ -562,7 +562,7 @@ static SDL_bool HIDAPI_DriverPS4_LoadOfficialCalibrationData(SDL_HIDAPI_Device *
 
         sRange2g = sAccXPlus - sAccXMinus;
         ctx->calibration[3].bias = sAccXPlus - sRange2g / 2;
-        ctx->calibration[3].scale = (2.0f * ctx->accel_denominator  / ctx->accel_numerator) / sRange2g;
+        ctx->calibration[3].scale = (2.0f * ctx->accel_denominator / ctx->accel_numerator) / sRange2g;
 
         sRange2g = sAccYPlus - sAccYMinus;
         ctx->calibration[4].bias = sAccYPlus - sRange2g / 2;
@@ -612,11 +612,11 @@ static void HIDAPI_DriverPS4_LoadCalibrationData(SDL_HIDAPI_Device *device)
         if (i < 3) {
             scale *= ((double)ctx->gyro_numerator / ctx->gyro_denominator) * M_PI / 180.0;
 
-             if (device->vendor_id == USB_VENDOR_SONY &&
-                 device->product_id == USB_PRODUCT_SONY_DS4_STRIKEPAD) {
-                 /* The Armor-X Pro seems to only deliver half the rotation it should */
-                 scale *= 2.0;
-             }
+            if (device->vendor_id == USB_VENDOR_SONY &&
+                device->product_id == USB_PRODUCT_SONY_DS4_STRIKEPAD) {
+                /* The Armor-X Pro seems to only deliver half the rotation it should */
+                scale *= 2.0;
+            }
         } else {
             scale *= ((double)ctx->accel_numerator / ctx->accel_denominator) * SDL_STANDARD_GRAVITY;
 
@@ -684,8 +684,8 @@ static void HIDAPI_DriverPS4_TickleBluetooth(SDL_HIDAPI_Device *device)
             SDL_HIDAPI_SendRumbleAndUnlock(device, data, sizeof(data));
         }
     } else {
-#if 0 /* The 8BitDo Zero 2 has perfect emulation of a PS4 controllers, except it
-       * only sends reports when the state changes, so we can't disconnect here.
+#if 0 /* The 8BitDo Zero 2 has perfect emulation of a PS4 controllers, except it \
+       * only sends reports when the state changes, so we can't disconnect here. \
        */
         /* We can't even send an invalid effects packet, or it will put the controller in enhanced mode */
         if (device->num_joysticks > 0) {

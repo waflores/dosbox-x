@@ -59,4 +59,4 @@
 
 #include <mach/exception_types.h>
 
-#endif  /* _MACH_EXCEPTION_H_ */
+#endif /* _MACH_EXCEPTION_H_ */

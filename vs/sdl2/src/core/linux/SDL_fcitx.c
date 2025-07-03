@@ -22,14 +22,14 @@
 
 #include <unistd.h>
 
-#include "SDL_fcitx.h"
-#include "SDL_keycode.h"
-#include "SDL_keyboard.h"
 #include "../../events/SDL_keyboard_c.h"
 #include "SDL_dbus.h"
+#include "SDL_fcitx.h"
+#include "SDL_keyboard.h"
+#include "SDL_keycode.h"
 #include "SDL_syswm.h"
 #ifdef SDL_VIDEO_DRIVER_X11
-#  include "../../video/x11/SDL_x11video.h"
+#include "../../video/x11/SDL_x11video.h"
 #endif
 #include "SDL_hints.h"
 
@@ -84,10 +84,10 @@ static char *GetAppName(void)
 }
 
 static size_t Fcitx_GetPreeditString(SDL_DBusContext *dbus,
-                       DBusMessage *msg,
-                       char **ret,
-                       Sint32 *start_pos,
-                       Sint32 *end_pos)
+                                     DBusMessage *msg,
+                                     char **ret,
+                                     Sint32 *start_pos,
+                                     Sint32 *end_pos)
 {
     char *text = NULL, *subtext;
     size_t text_bytes = 0;
@@ -451,7 +451,7 @@ void SDL_Fcitx_UpdateTextRect(const SDL_Rect *rect)
 
 #ifdef SDL_VIDEO_DRIVER_X11
     if (info.subsystem == SDL_SYSWM_X11) {
-        SDL_DisplayData *displaydata = (SDL_DisplayData *) SDL_GetDisplayForWindow(focused_win)->driverdata;
+        SDL_DisplayData *displaydata = (SDL_DisplayData *)SDL_GetDisplayForWindow(focused_win)->driverdata;
 
         Display *x_disp = info.info.x11.display;
         Window x_win = info.info.x11.window;

@@ -29,7 +29,6 @@
 #include "fluid_ringbuffer.h"
 #include "fluidsynth_priv.h"
 
-
 /**
  * Create a lock free queue with a fixed maximum count and size of elements.
  * @param count Count of elements in queue (fixed max number of queued elements)
@@ -41,32 +40,28 @@
  * contention which could stall the high priority thread.  Note that there may
  * only be one producer thread and one consumer thread.
  */
-fluid_ringbuffer_t *
-new_fluid_ringbuffer (int count, int elementsize)
-{
+fluid_ringbuffer_t *new_fluid_ringbuffer(int count, int elementsize) {
   fluid_ringbuffer_t *queue;
 
-  fluid_return_val_if_fail (count > 0, NULL);
+  fluid_return_val_if_fail(count > 0, NULL);
 
-  queue = FLUID_NEW (fluid_ringbuffer_t);
+  queue = FLUID_NEW(fluid_ringbuffer_t);
 
-  if (!queue)
-  {
-    FLUID_LOG (FLUID_ERR, "Out of memory");
+  if (!queue) {
+    FLUID_LOG(FLUID_ERR, "Out of memory");
     return NULL;
   }
 
-  queue->array = FLUID_MALLOC (elementsize * count);
+  queue->array = FLUID_MALLOC(elementsize * count);
 
-  if (!queue->array)
-  {
-    FLUID_FREE (queue);
-    FLUID_LOG (FLUID_ERR, "Out of memory");
+  if (!queue->array) {
+    FLUID_FREE(queue);
+    FLUID_LOG(FLUID_ERR, "Out of memory");
     return NULL;
   }
 
   /* Clear array, in case dynamic pointer reclaiming is being done */
-  FLUID_MEMSET (queue->array, 0, elementsize * count);
+  FLUID_MEMSET(queue->array, 0, elementsize * count);
 
   queue->totalcount = count;
   queue->elementsize = elementsize;
@@ -84,10 +79,8 @@ new_fluid_ringbuffer (int count, int elementsize)
  * Care must be taken when freeing a queue, to ensure that the consumer and
  * producer threads will no longer access it.
  */
-void
-delete_fluid_ringbuffer (fluid_ringbuffer_t *queue)
-{
-  FLUID_FREE (queue->array);
-  FLUID_FREE (queue);
+void delete_fluid_ringbuffer(fluid_ringbuffer_t *queue) {
+  FLUID_FREE(queue->array);
+  FLUID_FREE(queue);
 }
 #endif

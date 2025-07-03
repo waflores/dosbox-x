@@ -20,25 +20,25 @@
 
 #include <fstream>
 
-#include "globals.h"
-#include "Types.h"
 #include "File.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
 class FileStream : public AbstractFile {
 public:
-	MT32EMU_EXPORT FileStream();
-	MT32EMU_EXPORT ~FileStream();
-	MT32EMU_EXPORT size_t getSize() override;
-	MT32EMU_EXPORT const Bit8u *getData() override;
-	MT32EMU_EXPORT bool open(const char *filename);
-	MT32EMU_EXPORT void close() override;
+  MT32EMU_EXPORT FileStream();
+  MT32EMU_EXPORT ~FileStream();
+  MT32EMU_EXPORT size_t getSize() override;
+  MT32EMU_EXPORT const Bit8u *getData() override;
+  MT32EMU_EXPORT bool open(const char *filename);
+  MT32EMU_EXPORT void close() override;
 
 private:
-	std::ifstream &ifsp;
-	const Bit8u *data;
-	size_t size;
+  std::ifstream &ifsp;
+  const Bit8u *data;
+  size_t size;
 };
 
 } // namespace MT32Emu

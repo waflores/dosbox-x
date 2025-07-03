@@ -30,18 +30,18 @@
 #include <limits.h>
 /* Visual Studio 2008 doesn't have stdint.h */
 #if defined(_MSC_VER) && _MSC_VER <= 1500
-#define UINT8_MAX   _UI8_MAX
-#define UINT16_MAX  _UI16_MAX
-#define UINT32_MAX  _UI32_MAX
-#define INT64_MIN    _I64_MIN
-#define INT64_MAX    _I64_MAX
-#define UINT64_MAX  _UI64_MAX
+#define UINT8_MAX  _UI8_MAX
+#define UINT16_MAX _UI16_MAX
+#define UINT32_MAX _UI32_MAX
+#define INT64_MIN  _I64_MIN
+#define INT64_MAX  _I64_MAX
+#define UINT64_MAX _UI64_MAX
 #else
 #include <stdint.h>
 #endif
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <float.h>
 
 #include "SDL_test.h"
 
@@ -164,10 +164,10 @@ Sint32 SDLTest_RandomIntegerInRange(Sint32 pMin, Sint32 pMax)
 
     range = (Sint64)max - (Sint64)min;
     if (range < SDL_MAX_SINT32) {
-        return (Sint32) (min + (Sint32) (SDLTest_RandomUint32() % (range + 1)));
+        return (Sint32)(min + (Sint32)(SDLTest_RandomUint32() % (range + 1)));
     } else {
         const Uint64 add = SDLTest_RandomUint32() | SDLTest_RandomUint32();
-        return (Sint32) (min + (Sint64) (add % (range + 1)));
+        return (Sint32)(min + (Sint64)(add % (range + 1)));
     }
 }
 

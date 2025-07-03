@@ -5,32 +5,31 @@
  */
 
 #include "SDL.h"
-#include <math.h>
 #include "common.h"
+#include <math.h>
 
-#define DAMPING 0.5f;           /* after bouncing off a wall, damping coefficient determines final speed */
-#define FRICTION 0.0008f        /* coefficient of acceleration that opposes direction of motion */
-#define GRAVITY_CONSTANT 0.004f /* how sensitive the ship is to the accelerometer */
+#define DAMPING          0.5f;   /* after bouncing off a wall, damping coefficient determines final speed */
+#define FRICTION         0.0008f /* coefficient of acceleration that opposes direction of motion */
+#define GRAVITY_CONSTANT 0.004f  /* how sensitive the ship is to the accelerometer */
 
 /*  If we aren't on an iPhone, then this definition ought to yield reasonable behavior */
 #ifndef SDL_IPHONE_MAX_GFORCE
 #define SDL_IPHONE_MAX_GFORCE 5.0f
 #endif
 
-static SDL_Joystick *accelerometer;     /* used for controlling the ship */
+static SDL_Joystick *accelerometer; /* used for controlling the ship */
 
 static struct
 {
-    float x, y;                 /* position of ship */
-    float vx, vy;               /* velocity of ship (in pixels per millesecond) */
-    SDL_Rect rect;              /* (drawn) position and size of ship */
+    float x, y;    /* position of ship */
+    float vx, vy;  /* velocity of ship (in pixels per millesecond) */
+    SDL_Rect rect; /* (drawn) position and size of ship */
 } shipData;
 
-static SDL_Texture *ship = 0;        /* texture for spaceship */
-static SDL_Texture *space = 0;       /* texture for space (background */
+static SDL_Texture *ship = 0;  /* texture for spaceship */
+static SDL_Texture *space = 0; /* texture for space (background */
 
-void
-render(SDL_Renderer *renderer, int w, int h, double deltaTime)
+void render(SDL_Renderer *renderer, int w, int h, double deltaTime)
 {
     double deltaMilliseconds = deltaTime * 1000;
     float speed;
@@ -62,8 +61,8 @@ render(SDL_Renderer *renderer, int w, int h, double deltaTime)
 
     if (speed > 0) {
         /* compensate for friction */
-        float dirx = shipData.vx / speed;   /* normalized x velocity */
-        float diry = shipData.vy / speed;   /* normalized y velocity */
+        float dirx = shipData.vx / speed; /* normalized x velocity */
+        float diry = shipData.vy / speed; /* normalized y velocity */
 
         /* update velocity due to friction */
         if (speed - FRICTION * deltaMilliseconds > 0) {
@@ -107,11 +106,9 @@ render(SDL_Renderer *renderer, int w, int h, double deltaTime)
 
     /* update screen */
     SDL_RenderPresent(renderer);
-
 }
 
-void
-initializeTextures(SDL_Renderer *renderer)
+void initializeTextures(SDL_Renderer *renderer)
 {
 
     SDL_Surface *bmp_surface;
@@ -149,18 +146,14 @@ initializeTextures(SDL_Renderer *renderer)
         fatalError("could not create space texture");
     }
     SDL_FreeSurface(bmp_surface);
-
 }
 
-
-
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 
-    SDL_Window *window;         /* main window */
+    SDL_Window *window; /* main window */
     SDL_Renderer *renderer;
-    int done;                   /* should we clean up and exit? */
+    int done; /* should we clean up and exit? */
     int w, h;
 
     /* initialize SDL */
@@ -171,7 +164,7 @@ main(int argc, char *argv[])
     /* create main window and renderer */
     window = SDL_CreateWindow(NULL, 0, 0, 320, 480, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
     renderer = SDL_CreateRenderer(window, 0, 0);
-    
+
     SDL_GetWindowSize(window, &w, &h);
     SDL_RenderSetLogicalSize(renderer, w, h);
 
@@ -222,5 +215,4 @@ main(int argc, char *argv[])
     SDL_Quit();
 
     return 0;
-
 }

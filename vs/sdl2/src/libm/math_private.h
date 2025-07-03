@@ -49,9 +49,9 @@ typedef unsigned int u_int32_t;
 #define tan             SDL_uclibc_tan
 
 /* The original fdlibm code used statements like:
-	n0 = ((*(int*)&one)>>29)^1;		* index of high word *
-	ix0 = *(n0+(int*)&x);			* high word of x *
-	ix1 = *((1-n0)+(int*)&x);		* low word of x *
+        n0 = ((*(int*)&one)>>29)^1;		* index of high word *
+        ix0 = *(n0+(int*)&x);			* high word of x *
+        ix1 = *((1-n0)+(int*)&x);		* low word of x *
    to dig two 32 bit words out of the 64 bit IEEE floating point
    value.  That is non-ANSI, and, moreover, the gcc instruction
    scheduler gets it wrong.  We instead use the following macros.
@@ -97,61 +97,61 @@ typedef union
 
 /* Get two 32 bit ints from a double.  */
 
-#define EXTRACT_WORDS(ix0,ix1,d)				\
-do {								\
-  ieee_double_shape_type ew_u;					\
-  ew_u.value = (d);						\
-  (ix0) = ew_u.parts.msw;					\
-  (ix1) = ew_u.parts.lsw;					\
-} while (0)
+#define EXTRACT_WORDS(ix0, ix1, d)   \
+    do {                             \
+        ieee_double_shape_type ew_u; \
+        ew_u.value = (d);            \
+        (ix0) = ew_u.parts.msw;      \
+        (ix1) = ew_u.parts.lsw;      \
+    } while (0)
 
 /* Get the more significant 32 bit int from a double.  */
 
-#define GET_HIGH_WORD(i,d)					\
-do {								\
-  ieee_double_shape_type gh_u;					\
-  gh_u.value = (d);						\
-  (i) = gh_u.parts.msw;						\
-} while (0)
+#define GET_HIGH_WORD(i, d)          \
+    do {                             \
+        ieee_double_shape_type gh_u; \
+        gh_u.value = (d);            \
+        (i) = gh_u.parts.msw;        \
+    } while (0)
 
 /* Get the less significant 32 bit int from a double.  */
 
-#define GET_LOW_WORD(i,d)					\
-do {								\
-  ieee_double_shape_type gl_u;					\
-  gl_u.value = (d);						\
-  (i) = gl_u.parts.lsw;						\
-} while (0)
+#define GET_LOW_WORD(i, d)           \
+    do {                             \
+        ieee_double_shape_type gl_u; \
+        gl_u.value = (d);            \
+        (i) = gl_u.parts.lsw;        \
+    } while (0)
 
 /* Set a double from two 32 bit ints.  */
 
-#define INSERT_WORDS(d,ix0,ix1)					\
-do {								\
-  ieee_double_shape_type iw_u;					\
-  iw_u.parts.msw = (ix0);					\
-  iw_u.parts.lsw = (ix1);					\
-  (d) = iw_u.value;						\
-} while (0)
+#define INSERT_WORDS(d, ix0, ix1)    \
+    do {                             \
+        ieee_double_shape_type iw_u; \
+        iw_u.parts.msw = (ix0);      \
+        iw_u.parts.lsw = (ix1);      \
+        (d) = iw_u.value;            \
+    } while (0)
 
 /* Set the more significant 32 bits of a double from an int.  */
 
-#define SET_HIGH_WORD(d,v)					\
-do {								\
-  ieee_double_shape_type sh_u;					\
-  sh_u.value = (d);						\
-  sh_u.parts.msw = (v);						\
-  (d) = sh_u.value;						\
-} while (0)
+#define SET_HIGH_WORD(d, v)          \
+    do {                             \
+        ieee_double_shape_type sh_u; \
+        sh_u.value = (d);            \
+        sh_u.parts.msw = (v);        \
+        (d) = sh_u.value;            \
+    } while (0)
 
 /* Set the less significant 32 bits of a double from an int.  */
 
-#define SET_LOW_WORD(d,v)					\
-do {								\
-  ieee_double_shape_type sl_u;					\
-  sl_u.value = (d);						\
-  sl_u.parts.lsw = (v);						\
-  (d) = sl_u.value;						\
-} while (0)
+#define SET_LOW_WORD(d, v)           \
+    do {                             \
+        ieee_double_shape_type sl_u; \
+        sl_u.value = (d);            \
+        sl_u.parts.lsw = (v);        \
+        (d) = sl_u.value;            \
+    } while (0)
 
 /* A union which permits us to convert between a float and a 32 bit
    int.  */
@@ -164,65 +164,65 @@ typedef union
 
 /* Get a 32 bit int from a float.  */
 
-#define GET_FLOAT_WORD(i,d)					\
-do {								\
-  ieee_float_shape_type gf_u;					\
-  gf_u.value = (d);						\
-  (i) = gf_u.word;						\
-} while (0)
+#define GET_FLOAT_WORD(i, d)        \
+    do {                            \
+        ieee_float_shape_type gf_u; \
+        gf_u.value = (d);           \
+        (i) = gf_u.word;            \
+    } while (0)
 
 /* Set a float from a 32 bit int.  */
 
-#define SET_FLOAT_WORD(d,i)					\
-do {								\
-  ieee_float_shape_type sf_u;					\
-  sf_u.word = (i);						\
-  (d) = sf_u.value;						\
-} while (0)
+#define SET_FLOAT_WORD(d, i)        \
+    do {                            \
+        ieee_float_shape_type sf_u; \
+        sf_u.word = (i);            \
+        (d) = sf_u.value;           \
+    } while (0)
 
 /* ieee style elementary functions */
 extern double
 __ieee754_sqrt(double)
     attribute_hidden;
-     extern double __ieee754_acos(double) attribute_hidden;
-     extern double __ieee754_acosh(double) attribute_hidden;
-     extern double __ieee754_log(double) attribute_hidden;
-     extern double __ieee754_atanh(double) attribute_hidden;
-     extern double __ieee754_asin(double) attribute_hidden;
-     extern double __ieee754_atan2(double, double) attribute_hidden;
-     extern double __ieee754_exp(double) attribute_hidden;
-     extern double __ieee754_cosh(double) attribute_hidden;
-     extern double __ieee754_fmod(double, double) attribute_hidden;
-     extern double __ieee754_pow(double, double) attribute_hidden;
-     extern double __ieee754_lgamma_r(double, int *) attribute_hidden;
-     extern double __ieee754_gamma_r(double, int *) attribute_hidden;
-     extern double __ieee754_lgamma(double) attribute_hidden;
-     extern double __ieee754_gamma(double) attribute_hidden;
-     extern double __ieee754_log10(double) attribute_hidden;
-     extern double __ieee754_sinh(double) attribute_hidden;
-     extern double __ieee754_hypot(double, double) attribute_hidden;
-     extern double __ieee754_j0(double) attribute_hidden;
-     extern double __ieee754_j1(double) attribute_hidden;
-     extern double __ieee754_y0(double) attribute_hidden;
-     extern double __ieee754_y1(double) attribute_hidden;
-     extern double __ieee754_jn(int, double) attribute_hidden;
-     extern double __ieee754_yn(int, double) attribute_hidden;
-     extern double __ieee754_remainder(double, double) attribute_hidden;
-     extern int32_t __ieee754_rem_pio2(double, double *) attribute_hidden;
+extern double __ieee754_acos(double) attribute_hidden;
+extern double __ieee754_acosh(double) attribute_hidden;
+extern double __ieee754_log(double) attribute_hidden;
+extern double __ieee754_atanh(double) attribute_hidden;
+extern double __ieee754_asin(double) attribute_hidden;
+extern double __ieee754_atan2(double, double) attribute_hidden;
+extern double __ieee754_exp(double) attribute_hidden;
+extern double __ieee754_cosh(double) attribute_hidden;
+extern double __ieee754_fmod(double, double) attribute_hidden;
+extern double __ieee754_pow(double, double) attribute_hidden;
+extern double __ieee754_lgamma_r(double, int *) attribute_hidden;
+extern double __ieee754_gamma_r(double, int *) attribute_hidden;
+extern double __ieee754_lgamma(double) attribute_hidden;
+extern double __ieee754_gamma(double) attribute_hidden;
+extern double __ieee754_log10(double) attribute_hidden;
+extern double __ieee754_sinh(double) attribute_hidden;
+extern double __ieee754_hypot(double, double) attribute_hidden;
+extern double __ieee754_j0(double) attribute_hidden;
+extern double __ieee754_j1(double) attribute_hidden;
+extern double __ieee754_y0(double) attribute_hidden;
+extern double __ieee754_y1(double) attribute_hidden;
+extern double __ieee754_jn(int, double) attribute_hidden;
+extern double __ieee754_yn(int, double) attribute_hidden;
+extern double __ieee754_remainder(double, double) attribute_hidden;
+extern int32_t __ieee754_rem_pio2(double, double *) attribute_hidden;
 #if defined(_SCALB_INT)
-     extern double __ieee754_scalb(double, int) attribute_hidden;
+extern double __ieee754_scalb(double, int) attribute_hidden;
 #else
-     extern double __ieee754_scalb(double, double) attribute_hidden;
+extern double __ieee754_scalb(double, double) attribute_hidden;
 #endif
 
 /* fdlibm kernel function */
 #ifndef _IEEE_LIBM
-     extern double __kernel_standard(double, double, int) attribute_hidden;
+extern double __kernel_standard(double, double, int) attribute_hidden;
 #endif
-     extern double __kernel_sin(double, double, int) attribute_hidden;
-     extern double __kernel_cos(double, double) attribute_hidden;
-     extern double __kernel_tan(double, double, int) attribute_hidden;
-     extern int32_t __kernel_rem_pio2(const double *, double *, int, int, const unsigned int,
-                                  const int32_t *) attribute_hidden;
+extern double __kernel_sin(double, double, int) attribute_hidden;
+extern double __kernel_cos(double, double) attribute_hidden;
+extern double __kernel_tan(double, double, int) attribute_hidden;
+extern int32_t __kernel_rem_pio2(const double *, double *, int, int, const unsigned int,
+                                 const int32_t *) attribute_hidden;
 
 #endif /* _MATH_PRIVATE_H_ */

@@ -64,11 +64,11 @@
  */
 
 struct time_value {
-	integer_t seconds;
-	integer_t microseconds;
+  integer_t seconds;
+  integer_t microseconds;
 };
 
-typedef struct time_value       time_value_t;
+typedef struct time_value time_value_t;
 
 /*
  *	Macros to manipulate time values.  Assume that time values
@@ -76,21 +76,22 @@ typedef struct time_value       time_value_t;
  */
 #define TIME_MICROS_MAX (1000000)
 
-#define time_value_add_usec(val, micros)        {       \
-	if (((val)->microseconds += (micros))           \
-	        >= TIME_MICROS_MAX) {                   \
-	    (val)->microseconds -= TIME_MICROS_MAX;     \
-	    (val)->seconds++;                           \
-	}                                               \
-}
+#define time_value_add_usec(val, micros)                                       \
+  {                                                                            \
+    if (((val)->microseconds += (micros)) >= TIME_MICROS_MAX) {                \
+      (val)->microseconds -= TIME_MICROS_MAX;                                  \
+      (val)->seconds++;                                                        \
+    }                                                                          \
+  }
 
-#define time_value_add(result, addend)          {               \
-	(result)->microseconds += (addend)->microseconds;       \
-	(result)->seconds += (addend)->seconds;                 \
-	if ((result)->microseconds >= TIME_MICROS_MAX) {        \
-	    (result)->microseconds -= TIME_MICROS_MAX;          \
-	    (result)->seconds++;                                \
-	}                                                       \
-}
+#define time_value_add(result, addend)                                         \
+  {                                                                            \
+    (result)->microseconds += (addend)->microseconds;                          \
+    (result)->seconds += (addend)->seconds;                                    \
+    if ((result)->microseconds >= TIME_MICROS_MAX) {                           \
+      (result)->microseconds -= TIME_MICROS_MAX;                               \
+      (result)->seconds++;                                                     \
+    }                                                                          \
+  }
 
-#endif  /* _MACH_TIME_VALUE_H_ */
+#endif /* _MACH_TIME_VALUE_H_ */

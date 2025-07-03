@@ -37,63 +37,54 @@ pdcsetsc
 
 **man-end****************************************************************/
 
-int PDC_curs_set(int visibility)
-{
-    int ret_vis;
+int PDC_curs_set(int visibility) {
+  int ret_vis;
 
-    PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
+  PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
 
-    ret_vis = SP->visibility;
+  ret_vis = SP->visibility;
 
-    SP->visibility = visibility;
+  SP->visibility = visibility;
 
-    PDC_gotoyx(SP->cursrow, SP->curscol);
+  PDC_gotoyx(SP->cursrow, SP->curscol);
 
-    return ret_vis;
+  return ret_vis;
 }
 
-void PDC_set_title(const char *title)
-{
-    PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
+void PDC_set_title(const char *title) {
+  PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
 
-    SDL_SetWindowTitle(pdc_window, title);
+  SDL_SetWindowTitle(pdc_window, title);
 }
 
-int PDC_set_blink(bool blinkon)
-{
-    if (pdc_color_started)
-        COLORS = 256;
+int PDC_set_blink(bool blinkon) {
+  if (pdc_color_started)
+    COLORS = 256;
 
-    if (blinkon)
-    {
-        if (!(SP->termattrs & A_BLINK))
-        {
-            SP->termattrs |= A_BLINK;
-            PDC_blink_text();
-        }
+  if (blinkon) {
+    if (!(SP->termattrs & A_BLINK)) {
+      SP->termattrs |= A_BLINK;
+      PDC_blink_text();
     }
-    else
-    {
-        if (SP->termattrs & A_BLINK)
-        {
-            SP->termattrs &= ~A_BLINK;
-            PDC_blink_text();
-        }
+  } else {
+    if (SP->termattrs & A_BLINK) {
+      SP->termattrs &= ~A_BLINK;
+      PDC_blink_text();
     }
+  }
 
-    return OK;
+  return OK;
 }
 
-int PDC_set_bold(bool boldon)
-{
+int PDC_set_bold(bool boldon) {
 #ifdef PDC_WIDE
-    if (boldon)
-        SP->termattrs |= A_BOLD;
-    else
-        SP->termattrs &= ~A_BOLD;
+  if (boldon)
+    SP->termattrs |= A_BOLD;
+  else
+    SP->termattrs &= ~A_BOLD;
 
-    return OK;
+  return OK;
 #else
-    return boldon ? ERR : OK;
+  return boldon ? ERR : OK;
 #endif
 }

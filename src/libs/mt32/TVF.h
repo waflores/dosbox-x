@@ -18,9 +18,9 @@
 #ifndef MT32EMU_TVF_H
 #define MT32EMU_TVF_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -29,31 +29,31 @@ class Partial;
 
 class TVF {
 private:
-	const Partial * const partial;
-	LA32Ramp *cutoffModifierRamp;
-	const TimbreParam::PartialParam *partialParam;
+  const Partial *const partial;
+  LA32Ramp *cutoffModifierRamp;
+  const TimbreParam::PartialParam *partialParam;
 
-	Bit8u baseCutoff;
-	int keyTimeSubtraction;
-	unsigned int levelMult;
+  Bit8u baseCutoff;
+  int keyTimeSubtraction;
+  unsigned int levelMult;
 
-	Bit8u target;
-	unsigned int phase;
+  Bit8u target;
+  unsigned int phase;
 
-	void startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase);
-	void nextPhase();
+  void startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase);
+  void nextPhase();
 
 public:
-	TVF(const Partial *partial, LA32Ramp *cutoffModifierRamp);
-	void reset(const TimbreParam::PartialParam *partialParam, Bit32u basePitch);
-	// Returns the base cutoff (without envelope modification).
-	// The base cutoff is calculated when reset() is called and remains static
-	// for the lifetime of the partial.
-	// Barring bugs, the number returned is confirmed accurate
-	// (based on specs from Mok).
-	Bit8u getBaseCutoff() const;
-	void handleInterrupt();
-	void startDecay();
+  TVF(const Partial *partial, LA32Ramp *cutoffModifierRamp);
+  void reset(const TimbreParam::PartialParam *partialParam, Bit32u basePitch);
+  // Returns the base cutoff (without envelope modification).
+  // The base cutoff is calculated when reset() is called and remains static
+  // for the lifetime of the partial.
+  // Barring bugs, the number returned is confirmed accurate
+  // (based on specs from Mok).
+  Bit8u getBaseCutoff() const;
+  void handleInterrupt();
+  void startDecay();
 }; // class TVF
 
 } // namespace MT32Emu

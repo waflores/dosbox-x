@@ -24,9 +24,9 @@
 #ifdef SDL_VIDEO_DRIVER_X11
 
 #include "SDL.h"
-#include "SDL_x11video.h"
 #include "SDL_x11dyn.h"
 #include "SDL_x11messagebox.h"
+#include "SDL_x11video.h"
 
 #include <X11/keysym.h>
 #include <locale.h>
@@ -35,10 +35,10 @@
 #define SDL_SET_LOCALE      1
 
 #if SDL_FORK_MESSAGEBOX
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <errno.h>
 #endif
 
 #define MAX_BUTTONS       8   /* Maximum number of buttons supported */

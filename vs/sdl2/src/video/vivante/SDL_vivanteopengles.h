@@ -25,13 +25,13 @@
 
 #if defined(SDL_VIDEO_DRIVER_VIVANTE) && defined(SDL_VIDEO_OPENGL_EGL)
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 /* OpenGLES functions */
-#define VIVANTE_GLES_GetAttribute SDL_EGL_GetAttribute
-#define VIVANTE_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define VIVANTE_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
+#define VIVANTE_GLES_GetAttribute    SDL_EGL_GetAttribute
+#define VIVANTE_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define VIVANTE_GLES_UnloadLibrary   SDL_EGL_UnloadLibrary
 #define VIVANTE_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
 #define VIVANTE_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 #define VIVANTE_GLES_DeleteContext   SDL_EGL_DeleteContext

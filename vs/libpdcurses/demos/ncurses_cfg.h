@@ -43,11 +43,11 @@
 #define HAVE_WRESIZE 1
 
 #ifdef PDC_WIDE
-# define USE_WIDEC_SUPPORT 1
-# define HAVE_WCSRTOMBS 1
-# define HAVE_MBSRTOWCS 1
-# define HAVE_MBRTOWC 1
-# define HAVE_MBRLEN 1
+#define USE_WIDEC_SUPPORT 1
+#define HAVE_WCSRTOMBS 1
+#define HAVE_MBSRTOWCS 1
+#define HAVE_MBRTOWC 1
+#define HAVE_MBRLEN 1
 #endif
 
 /* Fool ncurses.c so it gives us all the tests, and doesn't redefine

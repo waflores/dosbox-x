@@ -40,12 +40,11 @@
 
 */
 
-
 /* Class record constants */
 
 extern WidgetClass scrollBoxWidgetClass;
 
 typedef struct _ScrollBoxClassRec *ScrollBoxWidgetClass;
-typedef struct _ScrollBoxRec      *ScrollBoxWidget;
+typedef struct _ScrollBoxRec *ScrollBoxWidget;
 
 #endif /* _XORAscrollBox_h */

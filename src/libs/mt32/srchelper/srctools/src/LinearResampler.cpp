@@ -18,30 +18,40 @@
 
 using namespace SRCTools;
 
-LinearResampler::LinearResampler(double sourceSampleRate, double targetSampleRate) :
-	inputToOutputRatio(sourceSampleRate / targetSampleRate),
-	position(1.0) // Preload delay line which effectively makes resampler zero phase
+LinearResampler::LinearResampler(double sourceSampleRate,
+                                 double targetSampleRate)
+    : inputToOutputRatio(sourceSampleRate / targetSampleRate),
+      position(1.0) // Preload delay line which effectively makes resampler zero
+                    // phase
 {}
 
-void LinearResampler::process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) {
-	if (inLength == 0) return;
-	while (outLength > 0) {
-		while (1.0 <= position) {
-			position--;
-			inLength--;
-			for (unsigned int chIx = 0; chIx < LINEAR_RESAMPER_CHANNEL_COUNT; ++chIx) {
-				lastInputSamples[chIx] = *(inSamples++);
-			}
-			if (inLength == 0) return;
-		}
-		for (unsigned int chIx = 0; chIx < LINEAR_RESAMPER_CHANNEL_COUNT; chIx++) {
-			*(outSamples++) = FloatSample(lastInputSamples[chIx] + position * (inSamples[chIx] - lastInputSamples[chIx]));
-		}
-		outLength--;
-		position += inputToOutputRatio;
-	}
+void LinearResampler::process(const FloatSample *&inSamples,
+                              unsigned int &inLength, FloatSample *&outSamples,
+                              unsigned int &outLength) {
+  if (inLength == 0)
+    return;
+  while (outLength > 0) {
+    while (1.0 <= position) {
+      position--;
+      inLength--;
+      for (unsigned int chIx = 0; chIx < LINEAR_RESAMPER_CHANNEL_COUNT;
+           ++chIx) {
+        lastInputSamples[chIx] = *(inSamples++);
+      }
+      if (inLength == 0)
+        return;
+    }
+    for (unsigned int chIx = 0; chIx < LINEAR_RESAMPER_CHANNEL_COUNT; chIx++) {
+      *(outSamples++) =
+          FloatSample(lastInputSamples[chIx] +
+                      position * (inSamples[chIx] - lastInputSamples[chIx]));
+    }
+    outLength--;
+    position += inputToOutputRatio;
+  }
 }
 
-unsigned int LinearResampler::estimateInLength(const unsigned int outLength) const {
-	return static_cast<unsigned int>(outLength * inputToOutputRatio);
+unsigned int
+LinearResampler::estimateInLength(const unsigned int outLength) const {
+  return static_cast<unsigned int>(outLength * inputToOutputRatio);
 }

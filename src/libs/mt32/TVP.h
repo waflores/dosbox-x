@@ -18,9 +18,9 @@
 #ifndef MT32EMU_TVP_H
 #define MT32EMU_TVP_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -29,44 +29,47 @@ class Partial;
 
 class TVP {
 private:
-	const Partial * const partial;
-	const MemParams::System * const system; // FIXME: Only necessary because masterTune calculation is done in the wrong place atm.
+  const Partial *const partial;
+  const MemParams::System
+      *const system; // FIXME: Only necessary because masterTune calculation is
+                     // done in the wrong place atm.
 
-	const Part *part;
-	const TimbreParam::PartialParam *partialParam;
-	const MemParams::PatchTemp *patchTemp;
+  const Part *part;
+  const TimbreParam::PartialParam *partialParam;
+  const MemParams::PatchTemp *patchTemp;
 
-	const int processTimerTicksPerSampleX16;
-	int processTimerIncrement;
-	int counter;
-	Bit32u timeElapsed;
+  const int processTimerTicksPerSampleX16;
+  int processTimerIncrement;
+  int counter;
+  Bit32u timeElapsed;
 
-	int phase;
-	Bit32u basePitch;
-	Bit32s targetPitchOffsetWithoutLFO;
-	Bit32s currentPitchOffset;
+  int phase;
+  Bit32u basePitch;
+  Bit32s targetPitchOffsetWithoutLFO;
+  Bit32s currentPitchOffset;
 
-	Bit16s lfoPitchOffset;
-	// In range -12 - 36
-	Bit8s timeKeyfollowSubtraction;
+  Bit16s lfoPitchOffset;
+  // In range -12 - 36
+  Bit8s timeKeyfollowSubtraction;
 
-	Bit16s pitchOffsetChangePerBigTick;
-	Bit16u targetPitchOffsetReachedBigTick;
-	unsigned int shifts;
+  Bit16s pitchOffsetChangePerBigTick;
+  Bit16u targetPitchOffsetReachedBigTick;
+  unsigned int shifts;
 
-	Bit16u pitch;
+  Bit16u pitch;
 
-	void updatePitch();
-	void setupPitchChange(int targetPitchOffset, Bit8u changeDuration);
-	void targetPitchOffsetReached();
-	void nextPhase();
-	void process();
+  void updatePitch();
+  void setupPitchChange(int targetPitchOffset, Bit8u changeDuration);
+  void targetPitchOffsetReached();
+  void nextPhase();
+  void process();
+
 public:
-	TVP(const Partial *partial);
-	void reset(const Part *part, const TimbreParam::PartialParam *partialParam);
-	Bit32u getBasePitch() const;
-	Bit16u nextPitch();
-	void startDecay();
+  TVP(const Partial *partial);
+  void reset(const Part *part, const TimbreParam::PartialParam *partialParam);
+  Bit32u getBasePitch() const;
+  Bit16u nextPitch();
+  void startDecay();
 }; // class TVP
 
 } // namespace MT32Emu

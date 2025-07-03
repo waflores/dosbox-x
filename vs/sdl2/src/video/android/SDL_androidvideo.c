@@ -24,24 +24,24 @@
 
 /* Android SDL video driver implementation */
 
-#include "SDL_video.h"
-#include "SDL_mouse.h"
-#include "SDL_hints.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_windowevents_c.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_hints.h"
+#include "SDL_mouse.h"
+#include "SDL_video.h"
 
-#include "SDL_androidvideo.h"
-#include "SDL_androidgl.h"
 #include "SDL_androidclipboard.h"
 #include "SDL_androidevents.h"
+#include "SDL_androidgl.h"
 #include "SDL_androidkeyboard.h"
+#include "SDL_androidmessagebox.h"
 #include "SDL_androidmouse.h"
 #include "SDL_androidtouch.h"
-#include "SDL_androidwindow.h"
+#include "SDL_androidvideo.h"
 #include "SDL_androidvulkan.h"
-#include "SDL_androidmessagebox.h"
+#include "SDL_androidwindow.h"
 
 #define ANDROID_VID_DRIVER_NAME "Android"
 
@@ -51,8 +51,8 @@ static void Android_VideoQuit(_THIS);
 int Android_GetDisplayDPI(_THIS, SDL_VideoDisplay *display, float *ddpi, float *hdpi, float *vdpi);
 
 #include "../SDL_egl_c.h"
-#define Android_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define Android_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
+#define Android_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define Android_GLES_UnloadLibrary   SDL_EGL_UnloadLibrary
 #define Android_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
 #define Android_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 #define Android_GLES_DeleteContext   SDL_EGL_DeleteContext

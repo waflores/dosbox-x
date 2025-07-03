@@ -38,4 +38,3 @@ extern void PS3_PumpEvents(_THIS);
 extern void enable_cursor(int enable);
 
 #endif /* _SDL_ps3events_h */
-

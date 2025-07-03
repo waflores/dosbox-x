@@ -26,16 +26,15 @@
 
 #include <ggi/ggi.h>
 
-#include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 
 #define _THIS SDL_VideoDevice *this
 
 /* Private display data */
 
-struct SDL_PrivateVideoData
-{
-	ggi_visual_t *ggivis;
+struct SDL_PrivateVideoData {
+  ggi_visual_t *ggivis;
 };
 
 extern ggi_visual_t VIS; /* FIXME: use the private data struct */

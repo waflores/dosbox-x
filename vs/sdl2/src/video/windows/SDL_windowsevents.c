@@ -22,19 +22,18 @@
 
 #ifdef SDL_VIDEO_DRIVER_WINDOWS
 
-#include "SDL_windowsvideo.h"
-#include "SDL_windowsshape.h"
-#include "SDL_system.h"
-#include "SDL_syswm.h"
-#include "SDL_timer.h"
-#include "SDL_vkeys.h"
-#include "SDL_hints.h"
-#include "SDL_main.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_touch_c.h"
 #include "../../events/scancodes_windows.h"
 #include "SDL_hints.h"
 #include "SDL_log.h"
+#include "SDL_main.h"
+#include "SDL_system.h"
+#include "SDL_syswm.h"
+#include "SDL_timer.h"
+#include "SDL_vkeys.h"
+#include "SDL_windowsshape.h"
+#include "SDL_windowsvideo.h"
 
 /* Dropfile support */
 #include <shellapi.h>
@@ -49,8 +48,8 @@
 
 /* #define WMMSG_DEBUG */
 #ifdef WMMSG_DEBUG
-#include <stdio.h>
 #include "wmmsg.h"
+#include <stdio.h>
 #endif
 
 #ifdef __GDK__
@@ -585,7 +584,7 @@ static SDL_bool ShouldGenerateWindowCloseOnAltF4(void)
 /* We want to generate mouse events from mouse and pen, and touch events from touchscreens */
 #define MI_WP_SIGNATURE      0xFF515700
 #define MI_WP_SIGNATURE_MASK 0xFFFFFF00
-#define IsTouchEvent(dw)     ((dw)&MI_WP_SIGNATURE_MASK) == MI_WP_SIGNATURE
+#define IsTouchEvent(dw)     ((dw) & MI_WP_SIGNATURE_MASK) == MI_WP_SIGNATURE
 
 typedef enum
 {
@@ -643,8 +642,8 @@ WIN_KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
 
     if (hookData->scanCode == 0x21d) {
-	    /* Skip fake LCtrl when RAlt is pressed */
-	    return 1;
+        /* Skip fake LCtrl when RAlt is pressed */
+        return 1;
     }
 
     switch (hookData->vkCode) {
@@ -699,7 +698,6 @@ WIN_KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 }
 
 #endif /*!defined(__XBOXONE__) && !defined(__XBOXSERIES__)*/
-
 
 /* Return SDL_TRUE if spurious LCtrl is pressed. LCtrl is sent when RAltGR is pressed. */
 static SDL_bool SkipAltGrLeftControl(WPARAM wParam, LPARAM lParam)

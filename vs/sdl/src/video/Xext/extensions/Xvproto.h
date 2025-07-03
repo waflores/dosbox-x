@@ -4,13 +4,13 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the names of Digital or MIT not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -21,16 +21,17 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/include/extensions/Xvproto.h,v 1.6 2001/05/07 21:37:12 tsi Exp $ */
+/* $XFree86: xc/include/extensions/Xvproto.h,v 1.6 2001/05/07 21:37:12 tsi Exp $
+ */
 
 #ifndef XVPROTO_H
 #define XVPROTO_H
 /*
-** File: 
+** File:
 **
 **   Xvproto.h --- Xv protocol header file
 **
-** Author: 
+** Author:
 **
 **   David Carver (Digital Workstation Engineering/Project Athena)
 **
@@ -102,7 +103,7 @@ typedef struct {
   CARD32 flags B32;
   INT32 min B32;
   INT32 max B32;
-  CARD32 size  B32;
+  CARD32 size B32;
 } xvAttributeInfo;
 #define sz_xvAttributeInfo 16
 
@@ -126,7 +127,7 @@ typedef struct {
   CARD16 pad6 B16;
   CARD32 y_sample_bits B32;
   CARD32 u_sample_bits B32;
-  CARD32 v_sample_bits B32;   
+  CARD32 v_sample_bits B32;
   CARD32 horz_y_period B32;
   CARD32 horz_u_period B32;
   CARD32 horz_v_period B32;
@@ -142,32 +143,31 @@ typedef struct {
 } xvImageFormatInfo;
 #define sz_xvImageFormatInfo 128
 
-
 /* Requests */
 
-#define xv_QueryExtension                  0
-#define	xv_QueryAdaptors                   1
-#define	xv_QueryEncodings                  2
-#define xv_GrabPort                        3
-#define xv_UngrabPort                      4
-#define xv_PutVideo                        5
-#define xv_PutStill                        6
-#define xv_GetVideo                        7
-#define xv_GetStill                        8
-#define xv_StopVideo                       9
-#define xv_SelectVideoNotify              10
-#define xv_SelectPortNotify               11
-#define xv_QueryBestSize                  12
-#define xv_SetPortAttribute               13
-#define xv_GetPortAttribute               14
-#define xv_QueryPortAttributes            15
-#define xv_ListImageFormats               16
-#define xv_QueryImageAttributes           17
-#define xv_PutImage                       18
-#define xv_ShmPutImage                    19
-#define xv_LastRequest                    xv_ShmPutImage
+#define xv_QueryExtension 0
+#define xv_QueryAdaptors 1
+#define xv_QueryEncodings 2
+#define xv_GrabPort 3
+#define xv_UngrabPort 4
+#define xv_PutVideo 5
+#define xv_PutStill 6
+#define xv_GetVideo 7
+#define xv_GetStill 8
+#define xv_StopVideo 9
+#define xv_SelectVideoNotify 10
+#define xv_SelectPortNotify 11
+#define xv_QueryBestSize 12
+#define xv_SetPortAttribute 13
+#define xv_GetPortAttribute 14
+#define xv_QueryPortAttributes 15
+#define xv_ListImageFormats 16
+#define xv_QueryImageAttributes 17
+#define xv_PutImage 18
+#define xv_ShmPutImage 19
+#define xv_LastRequest xv_ShmPutImage
 
-#define xvNumRequests                     (xv_LastRequest + 1)
+#define xvNumRequests (xv_LastRequest + 1)
 
 typedef struct {
   CARD8 reqType;
@@ -421,11 +421,10 @@ typedef struct {
 } xvQueryImageAttributesReq;
 #define sz_xvQueryImageAttributesReq 16
 
-
 /* Replies */
 
 typedef struct _QueryExtensionReply {
-  BYTE type;   /* X_Reply */
+  BYTE type; /* X_Reply */
   CARD8 padb1;
   CARD16 sequenceNumber B16;
   CARD32 length B32;
@@ -440,7 +439,7 @@ typedef struct _QueryExtensionReply {
 #define sz_xvQueryExtensionReply 32
 
 typedef struct _QueryAdaptorsReply {
-  BYTE type;   /* X_Reply */
+  BYTE type; /* X_Reply */
   CARD8 padb1;
   CARD16 sequenceNumber B16;
   CARD32 length B32;
@@ -455,7 +454,7 @@ typedef struct _QueryAdaptorsReply {
 #define sz_xvQueryAdaptorsReply 32
 
 typedef struct _QueryEncodingsReply {
-  BYTE type;   /* X_Reply */
+  BYTE type; /* X_Reply */
   CARD8 padb1;
   CARD16 sequenceNumber B16;
   CARD32 length B32;
@@ -470,10 +469,10 @@ typedef struct _QueryEncodingsReply {
 #define sz_xvQueryEncodingsReply 32
 
 typedef struct {
-  BYTE type;  /* X_Reply */
+  BYTE type; /* X_Reply */
   BYTE result;
   CARD16 sequenceNumber B16;
-  CARD32 length B32;  /* 0 */
+  CARD32 length B32; /* 0 */
   CARD32 padl3 B32;
   CARD32 padl4 B32;
   CARD32 padl5 B32;
@@ -484,10 +483,10 @@ typedef struct {
 #define sz_xvGrabPortReply 32
 
 typedef struct {
-  BYTE type;  /* X_Reply */
+  BYTE type; /* X_Reply */
   BYTE padb1;
   CARD16 sequenceNumber B16;
-  CARD32 length B32;  /* 0 */
+  CARD32 length B32; /* 0 */
   INT32 value B32;
   CARD32 padl4 B32;
   CARD32 padl5 B32;
@@ -498,10 +497,10 @@ typedef struct {
 #define sz_xvGetPortAttributeReply 32
 
 typedef struct {
-  BYTE type;  /* X_Reply */
+  BYTE type; /* X_Reply */
   BYTE padb1;
   CARD16 sequenceNumber B16;
-  CARD32 length B32;  /* 0 */
+  CARD32 length B32; /* 0 */
   CARD16 actual_width B16;
   CARD16 actual_height B16;
   CARD32 padl4 B32;
@@ -513,11 +512,11 @@ typedef struct {
 #define sz_xvQueryBestSizeReply 32
 
 typedef struct {
-  BYTE type;  /* X_Reply */
+  BYTE type; /* X_Reply */
   BYTE padb1;
   CARD16 sequenceNumber B16;
-  CARD32 length B32;  /* 0 */
-  CARD32 num_attributes B32; 
+  CARD32 length B32; /* 0 */
+  CARD32 num_attributes B32;
   CARD32 text_size B32;
   CARD32 padl5 B32;
   CARD32 padl6 B32;
@@ -527,11 +526,11 @@ typedef struct {
 #define sz_xvQueryPortAttributesReply 32
 
 typedef struct {
-  BYTE type;  /* X_Reply */
+  BYTE type; /* X_Reply */
   BYTE padb1;
   CARD16 sequenceNumber B16;
   CARD32 length B32;
-  CARD32 num_formats B32; 
+  CARD32 num_formats B32;
   CARD32 padl4 B32;
   CARD32 padl5 B32;
   CARD32 padl6 B32;
@@ -541,11 +540,11 @@ typedef struct {
 #define sz_xvListImageFormatsReply 32
 
 typedef struct {
-  BYTE type;  /* X_Reply */
+  BYTE type; /* X_Reply */
   BYTE padb1;
   CARD16 sequenceNumber B16;
-  CARD32 length B32; 
-  CARD32 num_planes B32; 
+  CARD32 length B32;
+  CARD32 num_planes B32;
   CARD32 data_size B32;
   CARD16 width B16;
   CARD16 height B16;
@@ -601,4 +600,3 @@ typedef struct {
 #undef Atom
 
 #endif /* XVPROTO_H */
-

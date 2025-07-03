@@ -21,8 +21,8 @@
 */
 
 #ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: libsdl-1.2.11-libcaca.patch,v 1.1 2006/09/18 16:06:06 mr_bones_ Exp $";
+static char rcsid = "@(#) $Id: libsdl-1.2.11-libcaca.patch,v 1.1 2006/09/18 "
+                    "16:06:06 mr_bones_ Exp $";
 #endif
 
 #include "SDL_cacavideo.h"
@@ -32,4 +32,3 @@ static char rcsid =
 */
 extern void Caca_PumpEvents(_THIS);
 extern void Caca_InitOSKeymap(_THIS);
-

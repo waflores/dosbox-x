@@ -69,5 +69,4 @@
 
 #include <mach/machine/vm_param.h>
 
-
-#endif  /* _MACH_VM_PARAM_H_ */
+#endif /* _MACH_VM_PARAM_H_ */

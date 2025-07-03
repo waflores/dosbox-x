@@ -14,16 +14,16 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@devolution.com
 */
 
-
 #ifdef SAVE_RCSID
 static char rcsid =
- "@(#) $Id: SDL_epocaudio.h,v 1.1.2.2 2001/02/10 07:20:03 hercules Exp $";
+    "@(#) $Id: SDL_epocaudio.h,v 1.1.2.2 2001/02/10 07:20:03 hercules Exp $";
 #endif
 
 #ifndef _SDL_EPOCAUDIO_H
@@ -32,6 +32,5 @@ static char rcsid =
 extern "C" {
 #include "SDL_sysaudio.h"
 }
-
 
 #endif /* _SDL_EPOCAUDIO_H */

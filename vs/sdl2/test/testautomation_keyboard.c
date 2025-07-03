@@ -2,11 +2,11 @@
  * Keyboard test suite
  */
 
-#include <stdio.h>
 #include <limits.h>
+#include <stdio.h>
 
-#include "SDL_config.h"
 #include "SDL.h"
+#include "SDL_config.h"
 #include "SDL_test.h"
 
 /* ================= Test Case Implementation ================== */

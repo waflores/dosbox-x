@@ -23,20 +23,20 @@
 #ifdef SDL_JOYSTICK_VITA
 
 /* This is the PSVita implementation of the SDL joystick API */
-#include <psp2/types.h>
 #include <psp2/ctrl.h>
 #include <psp2/kernel/threadmgr.h>
+#include <psp2/types.h>
 
 #include <stdio.h> /* For the definition of NULL */
 #include <stdlib.h>
 
-#include "../SDL_sysjoystick.h"
 #include "../SDL_joystick_c.h"
+#include "../SDL_sysjoystick.h"
 
-#include "SDL_events.h"
 #include "SDL_error.h"
-#include "SDL_thread.h"
+#include "SDL_events.h"
 #include "SDL_mutex.h"
+#include "SDL_thread.h"
 #include "SDL_timer.h"
 
 /* Current pad state */

@@ -33,12 +33,12 @@
 #include <linux/input.h>
 #include <sys/stat.h>
 
+#include "../unix/SDL_poll.h"
 #include "SDL_assert.h"
 #include "SDL_evdev_capabilities.h"
+#include "SDL_hints.h"
 #include "SDL_loadso.h"
 #include "SDL_timer.h"
-#include "SDL_hints.h"
-#include "../unix/SDL_poll.h"
 
 static const char *SDL_UDEV_LIBS[] = { "libudev.so.1", "libudev.so.0" };
 
@@ -231,7 +231,7 @@ SDL_bool SDL_UDEV_GetProductInfo(const char *device_path, Uint16 *vendor, Uint16
     struct stat statbuf;
     char type;
     struct udev_device *dev;
-    const char* val;
+    const char *val;
     int class_temp;
 
     if (!_this) {
@@ -244,11 +244,9 @@ SDL_bool SDL_UDEV_GetProductInfo(const char *device_path, Uint16 *vendor, Uint16
 
     if (S_ISBLK(statbuf.st_mode)) {
         type = 'b';
-    }
-    else if (S_ISCHR(statbuf.st_mode)) {
+    } else if (S_ISCHR(statbuf.st_mode)) {
         type = 'c';
-    }
-    else {
+    } else {
         return SDL_FALSE;
     }
 
@@ -487,7 +485,7 @@ static void device_event(SDL_UDEV_deviceevent type, struct udev_device *dev)
 
     devclass = device_class(dev);
     if (!devclass) {
-         return;
+        return;
     }
 
     /* Process callbacks */

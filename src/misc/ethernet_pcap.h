@@ -29,8 +29,8 @@
 #define HAVE_REMOTE
 #endif
 
-#include "support.h" /* Prevents snprintf conflict with pcap on Windows */
 #include "pcap.h"
+#include "support.h" /* Prevents snprintf conflict with pcap on Windows */
 
 /** A PCAP-based Ethernet connection
  * This backend uses a physical Ethernet device. All types of traffic
@@ -39,15 +39,15 @@
  * network interface to support promiscuous operation.
  */
 class PcapEthernetConnection : public EthernetConnection {
-	public:
-		PcapEthernetConnection();
-		~PcapEthernetConnection();
-		bool Initialize(Section* config) override;
-		void SendPacket(const uint8_t* packet, int len) override;
-		void GetPackets(std::function<void(const uint8_t*, int)> callback) override;
+public:
+  PcapEthernetConnection();
+  ~PcapEthernetConnection();
+  bool Initialize(Section *config) override;
+  void SendPacket(const uint8_t *packet, int len) override;
+  void GetPackets(std::function<void(const uint8_t *, int)> callback) override;
 
-	private:
-		pcap_t* adhandle = nullptr; /*!< The pcap handle used for this device */
+private:
+  pcap_t *adhandle = nullptr; /*!< The pcap handle used for this device */
 };
 
 #endif

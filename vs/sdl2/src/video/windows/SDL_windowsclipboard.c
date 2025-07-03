@@ -22,10 +22,10 @@
 
 #if defined(SDL_VIDEO_DRIVER_WINDOWS) && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
 
+#include "../../events/SDL_clipboardevents_c.h"
+#include "SDL_timer.h"
 #include "SDL_windowsvideo.h"
 #include "SDL_windowswindow.h"
-#include "SDL_timer.h"
-#include "../../events/SDL_clipboardevents_c.h"
 
 #ifdef UNICODE
 #define TEXT_FORMAT CF_UNICODETEXT

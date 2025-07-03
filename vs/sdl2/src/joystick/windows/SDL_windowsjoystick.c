@@ -32,24 +32,24 @@
  * with polled devices, and it's fine to call IDirectInputDevice8_GetDeviceData and
  * let it return 0 events. */
 
+#include "../../core/windows/SDL_windows.h"
+#include "../../thread/SDL_systhread.h"
+#include "../SDL_sysjoystick.h"
 #include "SDL_error.h"
 #include "SDL_events.h"
 #include "SDL_hints.h"
-#include "SDL_timer.h"
-#include "SDL_mutex.h"
 #include "SDL_joystick.h"
-#include "../SDL_sysjoystick.h"
-#include "../../thread/SDL_systhread.h"
-#include "../../core/windows/SDL_windows.h"
+#include "SDL_mutex.h"
+#include "SDL_timer.h"
 #if !defined(__WINRT__) && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
 #include <dbt.h>
 #endif
 
 #define INITGUID /* Only set here, if set twice will cause mingw32 to break. */
-#include "SDL_windowsjoystick_c.h"
 #include "SDL_dinputjoystick_c.h"
-#include "SDL_xinputjoystick_c.h"
 #include "SDL_rawinputjoystick_c.h"
+#include "SDL_windowsjoystick_c.h"
+#include "SDL_xinputjoystick_c.h"
 
 #include "../../haptic/windows/SDL_dinputhaptic_c.h" /* For haptic hot plugging */
 #include "../../haptic/windows/SDL_xinputhaptic_c.h" /* For haptic hot plugging */

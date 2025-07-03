@@ -33,14 +33,14 @@
 
 /* Allow access to a raw mixing buffer */
 
-#include <sys/types.h>
 #include <signal.h> /* For kill() */
 #include <string.h>
+#include <sys/types.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_alsa_audio.h"
+#include "SDL_audio.h"
+#include "SDL_timer.h"
 
 #ifdef SDL_AUDIO_DRIVER_ALSA_DYNAMIC
 #include "SDL_loadso.h"

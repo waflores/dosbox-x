@@ -24,8 +24,8 @@
 
 #include "SDL.h"
 
-#include "testyuv_cvt.h"
 #include "testutils.h"
+#include "testyuv_cvt.h"
 
 #define MOOSEPIC_W 64
 #define MOOSEPIC_H 88

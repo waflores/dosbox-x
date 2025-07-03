@@ -19,18 +19,18 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "geniconv.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(void)
 {
-    char    acBuf[128];
-    char   *inbuf = "\xf4\xc5\xd3\xd4\x20\x2d\x20\xd0\xd2\xcf\xd7\xc5\xd2\xcb\xc1"; /* KOI8-R encoding of "Тест - проверка" */
-    size_t  inbytesleft = strlen(inbuf);
-    char   *outbuf = acBuf;
-    size_t  outbytesleft = sizeof(acBuf);
+    char acBuf[128];
+    char *inbuf = "\xf4\xc5\xd3\xd4\x20\x2d\x20\xd0\xd2\xcf\xd7\xc5\xd2\xcb\xc1"; /* KOI8-R encoding of "Тест - проверка" */
+    size_t inbytesleft = strlen(inbuf);
+    char *outbuf = acBuf;
+    size_t outbytesleft = sizeof(acBuf);
     iconv_t ic;
 
     /* KOI8 -> system cp */

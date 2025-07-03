@@ -26,8 +26,8 @@
 
 #include "SDL_error.h"
 #include "SDL_log.h"
-#include "SDL_vitavideo.h"
 #include "SDL_vitagles_c.h"
+#include "SDL_vitavideo.h"
 
 /*****************************************************************************/
 /* SDL OpenGL/OpenGL ES functions                                            */

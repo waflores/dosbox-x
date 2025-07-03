@@ -18,9 +18,9 @@
 #ifndef MT32EMU_TVA_H
 #define MT32EMU_TVA_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -28,70 +28,75 @@ class LA32Ramp;
 class Part;
 class Partial;
 
-// Note that when entering nextPhase(), newPhase is set to phase + 1, and the descriptions/names below refer to
-// newPhase's value.
+// Note that when entering nextPhase(), newPhase is set to phase + 1, and the
+// descriptions/names below refer to newPhase's value.
 enum {
-	// In this phase, the base amp (as calculated in calcBasicAmp()) is targeted with an instant time.
-	// This phase is entered by reset() only if time[0] != 0.
-	TVA_PHASE_BASIC = 0,
+  // In this phase, the base amp (as calculated in calcBasicAmp()) is targeted
+  // with an instant time. This phase is entered by reset() only if time[0] !=
+  // 0.
+  TVA_PHASE_BASIC = 0,
 
-	// In this phase, level[0] is targeted within time[0], and velocity potentially affects time
-	TVA_PHASE_ATTACK = 1,
+  // In this phase, level[0] is targeted within time[0], and velocity
+  // potentially affects time
+  TVA_PHASE_ATTACK = 1,
 
-	// In this phase, level[1] is targeted within time[1]
-	TVA_PHASE_2 = 2,
+  // In this phase, level[1] is targeted within time[1]
+  TVA_PHASE_2 = 2,
 
-	// In this phase, level[2] is targeted within time[2]
-	TVA_PHASE_3 = 3,
+  // In this phase, level[2] is targeted within time[2]
+  TVA_PHASE_3 = 3,
 
-	// In this phase, level[3] is targeted within time[3]
-	TVA_PHASE_4 = 4,
+  // In this phase, level[3] is targeted within time[3]
+  TVA_PHASE_4 = 4,
 
-	// In this phase, immediately goes to PHASE_RELEASE unless the poly is set to sustain.
-	// Aborts the partial if level[3] is 0.
-	// Otherwise level[3] is continued, no phase change will occur until some external influence (like pedal release)
-	TVA_PHASE_SUSTAIN = 5,
+  // In this phase, immediately goes to PHASE_RELEASE unless the poly is set to
+  // sustain. Aborts the partial if level[3] is 0. Otherwise level[3] is
+  // continued, no phase change will occur until some external influence (like
+  // pedal release)
+  TVA_PHASE_SUSTAIN = 5,
 
-	// In this phase, 0 is targeted within time[4] (the time calculation is quite different from the other phases)
-	TVA_PHASE_RELEASE = 6,
+  // In this phase, 0 is targeted within time[4] (the time calculation is quite
+  // different from the other phases)
+  TVA_PHASE_RELEASE = 6,
 
-	// It's PHASE_DEAD, Jim.
-	TVA_PHASE_DEAD = 7
+  // It's PHASE_DEAD, Jim.
+  TVA_PHASE_DEAD = 7
 };
 
 class TVA {
 private:
-	const Partial * const partial;
-	LA32Ramp *ampRamp;
-	const MemParams::System * const system;
+  const Partial *const partial;
+  LA32Ramp *ampRamp;
+  const MemParams::System *const system;
 
-	const Part *part;
-	const TimbreParam::PartialParam *partialParam;
-	const MemParams::RhythmTemp *rhythmTemp;
+  const Part *part;
+  const TimbreParam::PartialParam *partialParam;
+  const MemParams::RhythmTemp *rhythmTemp;
 
-	bool playing;
+  bool playing;
 
-	int biasAmpSubtraction;
-	int veloAmpSubtraction;
-	int keyTimeSubtraction;
+  int biasAmpSubtraction;
+  int veloAmpSubtraction;
+  int keyTimeSubtraction;
 
-	Bit8u target;
-	int phase;
+  Bit8u target;
+  int phase;
 
-	void startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase);
-	void end(int newPhase);
-	void nextPhase();
+  void startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase);
+  void end(int newPhase);
+  void nextPhase();
 
 public:
-	TVA(const Partial *partial, LA32Ramp *ampRamp);
-	void reset(const Part *part, const TimbreParam::PartialParam *partialParam, const MemParams::RhythmTemp *rhythmTemp);
-	void handleInterrupt();
-	void recalcSustain();
-	void startDecay();
-	void startAbort();
+  TVA(const Partial *partial, LA32Ramp *ampRamp);
+  void reset(const Part *part, const TimbreParam::PartialParam *partialParam,
+             const MemParams::RhythmTemp *rhythmTemp);
+  void handleInterrupt();
+  void recalcSustain();
+  void startDecay();
+  void startAbort();
 
-	bool isPlaying() const;
-	int getPhase() const;
+  bool isPlaying() const;
+  int getPhase() const;
 }; // class TVA
 
 } // namespace MT32Emu

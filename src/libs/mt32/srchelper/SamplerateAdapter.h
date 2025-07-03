@@ -27,20 +27,21 @@ class Synth;
 
 class SamplerateAdapter {
 public:
-	SamplerateAdapter(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality);
-	~SamplerateAdapter();
+  SamplerateAdapter(Synth &synth, double targetSampleRate,
+                    SamplerateConversionQuality quality);
+  ~SamplerateAdapter();
 
-	void getOutputSamples(float *outBuffer, unsigned int length);
+  void getOutputSamples(float *outBuffer, unsigned int length);
 
 private:
-	Synth &synth;
-	float * const inBuffer;
-	unsigned int inBufferSize;
-	const double inputToOutputRatio;
-	const double outputToInputRatio;
-	SRC_STATE *resampler;
+  Synth &synth;
+  float *const inBuffer;
+  unsigned int inBufferSize;
+  const double inputToOutputRatio;
+  const double outputToInputRatio;
+  SRC_STATE *resampler;
 
-	static long getInputSamples(void *cb_data, float **data);
+  static long getInputSamples(void *cb_data, float **data);
 };
 
 } // namespace MT32Emu

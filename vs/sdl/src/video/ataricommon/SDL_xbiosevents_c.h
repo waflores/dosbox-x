@@ -33,10 +33,10 @@
 #include "../SDL_sysvideo.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
-#define ATARI_XBIOS_MOUSEEVENTS (1<<0)
-#define ATARI_XBIOS_JOYSTICKEVENTS (1<<1)
+#define ATARI_XBIOS_MOUSEEVENTS (1 << 0)
+#define ATARI_XBIOS_JOYSTICKEVENTS (1 << 1)
 
 extern int SDL_AtariXbios_enabled;
 

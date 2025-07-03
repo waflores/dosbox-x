@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright (C) 2002-2021  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef DOSBOX_VOODOO_EMU_H
 #define DOSBOX_VOODOO_EMU_H
 
@@ -24,9 +23,8 @@
 
 #include "dosbox.h"
 
-#include "voodoo_types.h"
 #include "voodoo_data.h"
-
+#include "voodoo_types.h"
 
 extern voodoo_state *v;
 
@@ -44,13 +42,11 @@ void voodoo_set_window(void);
 void voodoo_vblank_flush(void);
 void voodoo_swap_buffers(voodoo_state *v);
 
-
 extern void Voodoo_UpdateScreenStart();
 extern void Voodoo_Output_Enable(bool enabled);
 extern bool Voodoo_GetRetrace();
 extern double Voodoo_GetVRetracePosition();
 extern double Voodoo_GetHRetracePosition();
-
 
 extern void CPU_Core_Dyn_X86_SaveDHFPUState(void);
 extern void CPU_Core_Dyn_X86_RestoreDHFPUState(void);

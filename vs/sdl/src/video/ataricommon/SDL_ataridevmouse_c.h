@@ -22,9 +22,9 @@
 #include "SDL_config.h"
 
 /*
-	MiNT /dev/mouse driver
+        MiNT /dev/mouse driver
 
-	Patrice Mandin
+        Patrice Mandin
 */
 
 #ifndef _SDL_ATARI_DEVMOUSE_H_
@@ -33,7 +33,7 @@
 #include "../SDL_sysvideo.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
 extern int SDL_AtariDevMouse_Open(void);
 extern void SDL_AtariDevMouse_Close(void);

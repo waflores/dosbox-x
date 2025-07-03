@@ -6,18 +6,18 @@
 
 #ifdef __PS2__
 
-#include "SDL_main.h"
 #include "SDL_error.h"
+#include "SDL_main.h"
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
-#include <kernel.h>
-#include <sifrpc.h>
 #include <iopcontrol.h>
-#include <sbv_patches.h>
+#include <kernel.h>
 #include <ps2_filesystem_driver.h>
+#include <sbv_patches.h>
+#include <sifrpc.h>
 
 #ifdef main
 #undef main
@@ -43,12 +43,12 @@ static void prepare_IOP(void)
 
 static void init_drivers(void)
 {
-	init_ps2_filesystem_driver();
+    init_ps2_filesystem_driver();
 }
 
 static void deinit_drivers(void)
 {
-	deinit_ps2_filesystem_driver();
+    deinit_ps2_filesystem_driver();
 }
 
 int main(int argc, char *argv[])

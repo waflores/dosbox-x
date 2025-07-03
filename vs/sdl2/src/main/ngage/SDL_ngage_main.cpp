@@ -6,15 +6,15 @@
 /* Include the SDL main definition header */
 #include "SDL_main.h"
 
-#include <e32std.h>
-#include <e32def.h>
-#include <e32svr.h>
-#include <e32base.h>
-#include <estlib.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <w32std.h>
 #include <apgtask.h>
+#include <e32base.h>
+#include <e32def.h>
+#include <e32std.h>
+#include <e32svr.h>
+#include <estlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <w32std.h>
 
 #include "SDL_error.h"
 

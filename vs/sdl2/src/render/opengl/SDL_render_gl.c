@@ -21,12 +21,12 @@
 #include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_OGL
-#include "SDL_hints.h"
-#include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
-#include "SDL_opengl.h"
-#include "../SDL_sysrender.h"
-#include "SDL_shaders_gl.h"
 #include "../../SDL_utils_c.h"
+#include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
+#include "../SDL_sysrender.h"
+#include "SDL_hints.h"
+#include "SDL_opengl.h"
+#include "SDL_shaders_gl.h"
 
 #ifdef __MACOSX__
 #include <OpenGL/OpenGL.h>
@@ -102,7 +102,7 @@ typedef struct
     GL_FBOList *framebuffers;
 
     /* OpenGL functions */
-#define SDL_PROC(ret, func, params) ret (APIENTRY *func) params;
+#define SDL_PROC(ret, func, params) ret(APIENTRY *func) params;
 #include "SDL_glfuncs.h"
 #undef SDL_PROC
 
@@ -457,7 +457,7 @@ static int GL_CreateTexture(SDL_Renderer *renderer, SDL_Texture *texture)
 
     GL_ActivateRenderer(renderer);
 
-    renderdata->drawstate.texture = NULL; /* we trash this state. */
+    renderdata->drawstate.texture = NULL;        /* we trash this state. */
     renderdata->drawstate.texturing = SDL_FALSE; /* we trash this state. */
 
     if (texture->access == SDL_TEXTUREACCESS_TARGET &&

@@ -25,10 +25,14 @@
 extern "C" {
 #endif
 
-extern void retrowave_opl3_queue_port0(RetroWaveContext *ctx, uint8_t reg, uint8_t val);
-extern void retrowave_opl3_queue_port1(RetroWaveContext *ctx, uint8_t reg, uint8_t val);
-extern void retrowave_opl3_emit_port0(RetroWaveContext *ctx, uint8_t reg, uint8_t val);
-extern void retrowave_opl3_emit_port1(RetroWaveContext *ctx, uint8_t reg, uint8_t val);
+extern void retrowave_opl3_queue_port0(RetroWaveContext *ctx, uint8_t reg,
+                                       uint8_t val);
+extern void retrowave_opl3_queue_port1(RetroWaveContext *ctx, uint8_t reg,
+                                       uint8_t val);
+extern void retrowave_opl3_emit_port0(RetroWaveContext *ctx, uint8_t reg,
+                                      uint8_t val);
+extern void retrowave_opl3_emit_port1(RetroWaveContext *ctx, uint8_t reg,
+                                      uint8_t val);
 
 extern void retrowave_opl3_reset(RetroWaveContext *ctx);
 extern void retrowave_opl3_mute(RetroWaveContext *ctx);

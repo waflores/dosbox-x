@@ -26,28 +26,27 @@
 /**
  * Lockless event queue instance.
  */
-struct _fluid_ringbuffer_t
-{
-  char *array;  /**< Queue array of arbitrary size elements */
-  int totalcount;       /**< Total count of elements in array */
-  int count;            /**< Current count of elements */
-  int in;               /**< Index in queue to store next pushed element */
-  int out;              /**< Index in queue of next popped element */
-  int elementsize;          /**< Size of each element */
-  void* userdata;     
+struct _fluid_ringbuffer_t {
+  char *array;     /**< Queue array of arbitrary size elements */
+  int totalcount;  /**< Total count of elements in array */
+  int count;       /**< Current count of elements */
+  int in;          /**< Index in queue to store next pushed element */
+  int out;         /**< Index in queue of next popped element */
+  int elementsize; /**< Size of each element */
+  void *userdata;
 };
 
 typedef struct _fluid_ringbuffer_t fluid_ringbuffer_t;
 
-
-fluid_ringbuffer_t *new_fluid_ringbuffer (int count, int elementsize);
-void delete_fluid_ringbuffer (fluid_ringbuffer_t *queue);
+fluid_ringbuffer_t *new_fluid_ringbuffer(int count, int elementsize);
+void delete_fluid_ringbuffer(fluid_ringbuffer_t *queue);
 
 /**
  * Get pointer to next input array element in queue.
  * @param queue Lockless queue instance
  * @param count Normally zero, or more if you need to push several items at once
- * @return Pointer to array element in queue to store data to or NULL if queue is full
+ * @return Pointer to array element in queue to store data to or NULL if queue
+ * is full
  *
  * This function along with fluid_ringbuffer_next_inptr() form a queue "push"
  * operation and is split into 2 functions to avoid an element copy.  Note that
@@ -55,11 +54,12 @@ void delete_fluid_ringbuffer (fluid_ringbuffer_t *queue);
  * if the queue has wrapped around.  This can be used to reclaim pointers to
  * allocated memory, etc.
  */
-static FLUID_INLINE void*
-fluid_ringbuffer_get_inptr (fluid_ringbuffer_t *queue, int offset)
-{
-  return fluid_atomic_int_get (&queue->count) + offset >= queue->totalcount ? NULL
-    : queue->array + queue->elementsize * ((queue->in + offset) % queue->totalcount);
+static FLUID_INLINE void *fluid_ringbuffer_get_inptr(fluid_ringbuffer_t *queue,
+                                                     int offset) {
+  return fluid_atomic_int_get(&queue->count) + offset >= queue->totalcount
+             ? NULL
+             : queue->array + queue->elementsize *
+                                  ((queue->in + offset) % queue->totalcount);
 }
 
 /**
@@ -70,10 +70,9 @@ fluid_ringbuffer_get_inptr (fluid_ringbuffer_t *queue, int offset)
  * This function along with fluid_ringbuffer_get_inptr() form a queue "push"
  * operation and is split into 2 functions to avoid element copy.
  */
-static FLUID_INLINE void
-fluid_ringbuffer_next_inptr (fluid_ringbuffer_t *queue, int count)
-{
-  fluid_atomic_int_add (&queue->count, count);
+static FLUID_INLINE void fluid_ringbuffer_next_inptr(fluid_ringbuffer_t *queue,
+                                                     int count) {
+  fluid_atomic_int_add(&queue->count, count);
 
   queue->in += count;
   if (queue->in >= queue->totalcount)
@@ -85,12 +84,9 @@ fluid_ringbuffer_next_inptr (fluid_ringbuffer_t *queue, int count)
  * @param queue Lockless queue instance
  * @return amount of items currently in queue
  */
-static FLUID_INLINE int
-fluid_ringbuffer_get_count (fluid_ringbuffer_t *queue)
-{
-  return fluid_atomic_int_get (&queue->count);
+static FLUID_INLINE int fluid_ringbuffer_get_count(fluid_ringbuffer_t *queue) {
+  return fluid_atomic_int_get(&queue->count);
 }
-
 
 /**
  * Get pointer to next output array element in queue.
@@ -101,13 +97,12 @@ fluid_ringbuffer_get_count (fluid_ringbuffer_t *queue)
  * This function along with fluid_ringbuffer_next_outptr() form a queue "pop"
  * operation and is split into 2 functions to avoid an element copy.
  */
-static FLUID_INLINE void*
-fluid_ringbuffer_get_outptr (fluid_ringbuffer_t *queue)
-{
-  return fluid_ringbuffer_get_count(queue) == 0 ? NULL
-    : queue->array + queue->elementsize * queue->out;
+static FLUID_INLINE void *
+fluid_ringbuffer_get_outptr(fluid_ringbuffer_t *queue) {
+  return fluid_ringbuffer_get_count(queue) == 0
+             ? NULL
+             : queue->array + queue->elementsize * queue->out;
 }
-
 
 /**
  * Advance the output queue index to complete a "pop" operation.
@@ -117,9 +112,8 @@ fluid_ringbuffer_get_outptr (fluid_ringbuffer_t *queue)
  * operation and is split into 2 functions to avoid an element copy.
  */
 static FLUID_INLINE void
-fluid_ringbuffer_next_outptr (fluid_ringbuffer_t *queue)
-{
-  fluid_atomic_int_add (&queue->count, -1);
+fluid_ringbuffer_next_outptr(fluid_ringbuffer_t *queue) {
+  fluid_atomic_int_add(&queue->count, -1);
 
   if (++queue->out == queue->totalcount)
     queue->out = 0;

@@ -24,23 +24,24 @@
 
 /* An implementation of mutexes for OS/2 */
 
-#include "SDL_thread.h"
-#include "SDL_systhread_c.h"
 #include "../../core/os2/SDL_os2.h"
+#include "SDL_systhread_c.h"
+#include "SDL_thread.h"
 
 #define INCL_DOSSEMAPHORES
 #define INCL_DOSERRORS
 #include <os2.h>
 
-struct SDL_mutex {
-    HMTX  _handle;
+struct SDL_mutex
+{
+    HMTX _handle;
 };
 
 /* Create a mutex */
 SDL_mutex *SDL_CreateMutex(void)
 {
     ULONG ulRC;
-    HMTX  hMtx;
+    HMTX hMtx;
 
     ulRC = DosCreateMutexSem(NULL, &hMtx, 0, FALSE);
     if (ulRC != NO_ERROR) {
@@ -52,9 +53,9 @@ SDL_mutex *SDL_CreateMutex(void)
 }
 
 /* Free the mutex */
-void SDL_DestroyMutex(SDL_mutex * mutex)
+void SDL_DestroyMutex(SDL_mutex *mutex)
 {
-    HMTX  hMtx = (HMTX)mutex;
+    HMTX hMtx = (HMTX)mutex;
     if (hMtx != NULLHANDLE) {
         const ULONG ulRC = DosCloseMutexSem(hMtx);
         if (ulRC != NO_ERROR) {
@@ -64,28 +65,28 @@ void SDL_DestroyMutex(SDL_mutex * mutex)
 }
 
 /* Lock the mutex */
-int SDL_LockMutex(SDL_mutex * mutex) SDL_NO_THREAD_SAFETY_ANALYSIS /* clang doesn't know about NULL mutexes */
+int SDL_LockMutex(SDL_mutex *mutex) SDL_NO_THREAD_SAFETY_ANALYSIS /* clang doesn't know about NULL mutexes */
 {
     ULONG ulRC;
-    HMTX  hMtx = (HMTX)mutex;
+    HMTX hMtx = (HMTX)mutex;
 
     if (hMtx == NULLHANDLE)
         return 0;
 
     ulRC = DosRequestMutexSem(hMtx, SEM_INDEFINITE_WAIT);
     if (ulRC != NO_ERROR) {
-      debug_os2("DosRequestMutexSem(), rc = %u", ulRC);
-      return -1;
+        debug_os2("DosRequestMutexSem(), rc = %u", ulRC);
+        return -1;
     }
 
     return 0;
 }
 
 /* try Lock the mutex */
-int SDL_TryLockMutex(SDL_mutex * mutex)
+int SDL_TryLockMutex(SDL_mutex *mutex)
 {
     ULONG ulRC;
-    HMTX  hMtx = (HMTX)mutex;
+    HMTX hMtx = (HMTX)mutex;
 
     if (hMtx == NULLHANDLE)
         return 0;
@@ -104,10 +105,10 @@ int SDL_TryLockMutex(SDL_mutex * mutex)
 }
 
 /* Unlock the mutex */
-int SDL_UnlockMutex(SDL_mutex * mutex) SDL_NO_THREAD_SAFETY_ANALYSIS /* clang doesn't know about NULL mutexes */
+int SDL_UnlockMutex(SDL_mutex *mutex) SDL_NO_THREAD_SAFETY_ANALYSIS /* clang doesn't know about NULL mutexes */
 {
     ULONG ulRC;
-    HMTX  hMtx = (HMTX)mutex;
+    HMTX hMtx = (HMTX)mutex;
 
     if (hMtx == NULLHANDLE)
         return 0;

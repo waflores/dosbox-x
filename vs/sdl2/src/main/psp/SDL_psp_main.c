@@ -5,10 +5,10 @@
 
 #ifdef __PSP__
 
+#include "../../events/SDL_events_c.h"
 #include "SDL_main.h"
 #include <pspkernel.h>
 #include <pspthreadman.h>
-#include "../../events/SDL_events_c.h"
 
 #ifdef main
 #undef main

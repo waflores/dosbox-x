@@ -22,15 +22,15 @@
 
 #ifdef SDL_VIDEO_DRIVER_VITA
 
-#include <psp2/kernel/processmgr.h>
 #include <psp2/ctrl.h>
 #include <psp2/hid.h>
+#include <psp2/kernel/processmgr.h>
 
+#include "../../events/SDL_keyboard_c.h"
 #include "SDL_events.h"
 #include "SDL_log.h"
-#include "SDL_vitavideo.h"
 #include "SDL_vitakeyboard.h"
-#include "../../events/SDL_keyboard_c.h"
+#include "SDL_vitavideo.h"
 
 SceHidKeyboardReport k_reports[SCE_HID_MAX_REPORT];
 int keyboard_hid_handle = 0;

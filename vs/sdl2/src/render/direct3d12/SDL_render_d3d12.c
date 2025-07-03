@@ -32,11 +32,11 @@
 
 #include "../../core/windows/SDL_windows.h"
 #include "../../video/windows/SDL_windowswindow.h"
+#include "../SDL_d3dmath.h"
+#include "../SDL_sysrender.h"
 #include "SDL_hints.h"
 #include "SDL_loadso.h"
 #include "SDL_syswm.h"
-#include "../SDL_sysrender.h"
-#include "../SDL_d3dmath.h"
 
 #if defined(__XBOXONE__) || defined(__XBOXSERIES__)
 #include "SDL_render_d3d12_xbox.h"
@@ -45,9 +45,9 @@
 #endif
 #else
 #include <d3d12.h>
+#include <d3d12sdklayers.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
-#include <d3d12sdklayers.h>
 #include <sdkddkver.h>
 #endif
 
@@ -93,25 +93,27 @@
  * This is fixed in SDKs since WDK_NTDDI_VERSION >= NTDDI_WIN10_FE (0x0A00000A)
  */
 
-#if !(defined(__MINGW32__) || defined(__XBOXONE__) || defined(__XBOXSERIES__)) \
-    && (WDK_NTDDI_VERSION < 0x0A00000A)
+#if !(defined(__MINGW32__) || defined(__XBOXONE__) || defined(__XBOXSERIES__)) && (WDK_NTDDI_VERSION < 0x0A00000A)
 
-#define D3D_CALL_RET_ID3D12DescriptorHeap_GetCPUDescriptorHandleForHeapStart(THIS, ...) do { \
-        void (STDMETHODCALLTYPE * func)(ID3D12DescriptorHeap * This, D3D12_CPU_DESCRIPTOR_HANDLE * Handle) = \
-            (void*)(THIS)->lpVtbl->GetCPUDescriptorHandleForHeapStart; \
-        func((THIS), ##__VA_ARGS__); \
+#define D3D_CALL_RET_ID3D12DescriptorHeap_GetCPUDescriptorHandleForHeapStart(THIS, ...)                     \
+    do {                                                                                                    \
+        void(STDMETHODCALLTYPE * func)(ID3D12DescriptorHeap * This, D3D12_CPU_DESCRIPTOR_HANDLE * Handle) = \
+            (void *)(THIS)->lpVtbl->GetCPUDescriptorHandleForHeapStart;                                     \
+        func((THIS), ##__VA_ARGS__);                                                                        \
     } while (0)
 
-#define D3D_CALL_RET_ID3D12DescriptorHeap_GetGPUDescriptorHandleForHeapStart(THIS, ...) do { \
-        void (STDMETHODCALLTYPE * func)(ID3D12DescriptorHeap * This, D3D12_GPU_DESCRIPTOR_HANDLE * Handle) = \
-            (void*)(THIS)->lpVtbl->GetGPUDescriptorHandleForHeapStart; \
-        func((THIS), ##__VA_ARGS__); \
+#define D3D_CALL_RET_ID3D12DescriptorHeap_GetGPUDescriptorHandleForHeapStart(THIS, ...)                     \
+    do {                                                                                                    \
+        void(STDMETHODCALLTYPE * func)(ID3D12DescriptorHeap * This, D3D12_GPU_DESCRIPTOR_HANDLE * Handle) = \
+            (void *)(THIS)->lpVtbl->GetGPUDescriptorHandleForHeapStart;                                     \
+        func((THIS), ##__VA_ARGS__);                                                                        \
     } while (0)
 
-#define D3D_CALL_RET_ID3D12Resource_GetDesc(THIS, ...) do { \
-        void (STDMETHODCALLTYPE * func)(ID3D12Resource * This, D3D12_RESOURCE_DESC * Desc) = \
-            (void*)(THIS)->lpVtbl->GetDesc; \
-        func((THIS), ##__VA_ARGS__); \
+#define D3D_CALL_RET_ID3D12Resource_GetDesc(THIS, ...)                                      \
+    do {                                                                                    \
+        void(STDMETHODCALLTYPE * func)(ID3D12Resource * This, D3D12_RESOURCE_DESC * Desc) = \
+            (void *)(THIS)->lpVtbl->GetDesc;                                                \
+        func((THIS), ##__VA_ARGS__);                                                        \
     } while (0)
 
 #else
@@ -1194,7 +1196,7 @@ static int D3D12_GetViewportAlignedD3DRect(SDL_Renderer *renderer, const SDL_Rec
 static HRESULT D3D12_CreateSwapChain(SDL_Renderer *renderer, int w, int h)
 {
     D3D12_RenderData *data = (D3D12_RenderData *)renderer->driverdata;
-    IDXGISwapChain1* swapChain = NULL;
+    IDXGISwapChain1 *swapChain = NULL;
     HRESULT result = S_OK;
     SDL_SysWMinfo windowinfo;
 
@@ -1220,8 +1222,7 @@ static HRESULT D3D12_CreateSwapChain(SDL_Renderer *renderer, int w, int h)
 
     SDL_VERSION(&windowinfo.version);
     if (!SDL_GetWindowWMInfo(renderer->window, &windowinfo) ||
-        windowinfo.subsystem != SDL_SYSWM_WINDOWS)
-    {
+        windowinfo.subsystem != SDL_SYSWM_WINDOWS) {
         SDL_SetError("Couldn't get window handle");
         result = E_FAIL;
         goto done;
@@ -2333,20 +2334,20 @@ static int D3D12_UpdateViewport(SDL_Renderer *renderer)
      * direction of the DXGI_MODE_ROTATION enumeration.
      */
     switch (rotation) {
-        case DXGI_MODE_ROTATION_IDENTITY:
-            projection = MatrixIdentity();
-            break;
-        case DXGI_MODE_ROTATION_ROTATE270:
-            projection = MatrixRotationZ(SDL_static_cast(float, M_PI * 0.5f));
-            break;
-        case DXGI_MODE_ROTATION_ROTATE180:
-            projection = MatrixRotationZ(SDL_static_cast(float, M_PI));
-            break;
-        case DXGI_MODE_ROTATION_ROTATE90:
-            projection = MatrixRotationZ(SDL_static_cast(float, -M_PI * 0.5f));
-            break;
-        default:
-            return SDL_SetError("An unknown DisplayOrientation is being used");
+    case DXGI_MODE_ROTATION_IDENTITY:
+        projection = MatrixIdentity();
+        break;
+    case DXGI_MODE_ROTATION_ROTATE270:
+        projection = MatrixRotationZ(SDL_static_cast(float, M_PI * 0.5f));
+        break;
+    case DXGI_MODE_ROTATION_ROTATE180:
+        projection = MatrixRotationZ(SDL_static_cast(float, M_PI));
+        break;
+    case DXGI_MODE_ROTATION_ROTATE90:
+        projection = MatrixRotationZ(SDL_static_cast(float, -M_PI * 0.5f));
+        break;
+    default:
+        return SDL_SetError("An unknown DisplayOrientation is being used");
     }
 
     /* Update the view matrix */

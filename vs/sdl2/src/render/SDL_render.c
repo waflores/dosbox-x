@@ -22,12 +22,12 @@
 
 /* The SDL 2D rendering system */
 
+#include "../video/SDL_pixels_c.h"
 #include "SDL_hints.h"
 #include "SDL_render.h"
-#include "SDL_timer.h"
 #include "SDL_sysrender.h"
+#include "SDL_timer.h"
 #include "software/SDL_render_sw_c.h"
-#include "../video/SDL_pixels_c.h"
 
 #if defined(__ANDROID__)
 #include "../core/android/SDL_android.h"
@@ -47,17 +47,17 @@ this should probably be removed at some point in the future.  --ryan. */
 
 #define SDL_WINDOWRENDERDATA "_SDL_WindowRenderData"
 
-#define CHECK_RENDERER_MAGIC_BUT_NOT_DESTROYED_FLAG(renderer, retval)             \
-    if (!renderer || renderer->magic != &renderer_magic) { \
-        SDL_InvalidParamError("renderer");                 \
-        return retval;                                     \
+#define CHECK_RENDERER_MAGIC_BUT_NOT_DESTROYED_FLAG(renderer, retval) \
+    if (!renderer || renderer->magic != &renderer_magic) {            \
+        SDL_InvalidParamError("renderer");                            \
+        return retval;                                                \
     }
 
-#define CHECK_RENDERER_MAGIC(renderer, retval)             \
-    CHECK_RENDERER_MAGIC_BUT_NOT_DESTROYED_FLAG(renderer, retval); \
-    if (renderer->destroyed) { \
+#define CHECK_RENDERER_MAGIC(renderer, retval)                                   \
+    CHECK_RENDERER_MAGIC_BUT_NOT_DESTROYED_FLAG(renderer, retval);               \
+    if (renderer->destroyed) {                                                   \
         SDL_SetError("Renderer's window has been destroyed, can't use further"); \
-        return retval;                                          \
+        return retval;                                                           \
     }
 
 #define CHECK_TEXTURE_MAGIC(texture, retval)            \
@@ -1011,7 +1011,7 @@ SDL_Renderer *SDL_CreateRenderer(SDL_Window *window, int index, Uint32 flags)
                     if (rc == 0) {
                         batching = SDL_FALSE;
                     } else {
-                        SDL_zerop(renderer);  /* make sure we don't leave function pointers from a previous CreateRenderer() in this struct. */
+                        SDL_zerop(renderer); /* make sure we don't leave function pointers from a previous CreateRenderer() in this struct. */
                         renderer->magic = &renderer_magic;
                     }
                     break;
@@ -1030,7 +1030,7 @@ SDL_Renderer *SDL_CreateRenderer(SDL_Window *window, int index, Uint32 flags)
                         /* Yay, we got one! */
                         break;
                     } else {
-                        SDL_zerop(renderer);  /* make sure we don't leave function pointers from a previous CreateRenderer() in this struct. */
+                        SDL_zerop(renderer); /* make sure we don't leave function pointers from a previous CreateRenderer() in this struct. */
                         renderer->magic = &renderer_magic;
                     }
                 }
@@ -1504,7 +1504,7 @@ SDL_Texture *SDL_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surface *s
          * Copy SDL_Surface palette to the texture */
         if (SDL_ISPIXELFORMAT_INDEXED(format)) {
             if (SDL_strcasecmp(renderer->info.name, "directfb") == 0) {
-                extern void DirectFB_SetTexturePalette(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Palette *pal);
+                extern void DirectFB_SetTexturePalette(SDL_Renderer * renderer, SDL_Texture * texture, SDL_Palette * pal);
                 DirectFB_SetTexturePalette(renderer, texture, surface->format->palette);
             }
         }
@@ -2865,8 +2865,8 @@ static int RenderDrawLineBresenham(SDL_Renderer *renderer, int x1, int y1, int x
        massive lines. */
     clip_rect.x = 0;
     clip_rect.y = 0;
-    clip_rect.w = (int) renderer->viewport.w;
-    clip_rect.h = (int) renderer->viewport.h;
+    clip_rect.w = (int)renderer->viewport.w;
+    clip_rect.h = (int)renderer->viewport.h;
     if (!SDL_IntersectRectAndLine(&clip_rect, &x1, &y1, &x2, &y2)) {
         return 0;
     }
@@ -4404,19 +4404,18 @@ void SDL_DestroyRendererWithoutFreeing(SDL_Renderer *renderer)
 
 void SDL_DestroyRenderer(SDL_Renderer *renderer)
 {
-    CHECK_RENDERER_MAGIC_BUT_NOT_DESTROYED_FLAG(renderer,);
+    CHECK_RENDERER_MAGIC_BUT_NOT_DESTROYED_FLAG(renderer, );
 
     /* if we've already destroyed the renderer through SDL_DestroyWindow, we just need
        to free the renderer pointer. This lets apps destroy the window and renderer
        in either order. */
     if (!renderer->destroyed) {
         SDL_DestroyRendererWithoutFreeing(renderer);
-        renderer->magic = NULL;     // It's no longer magical...
+        renderer->magic = NULL; // It's no longer magical...
     }
 
     SDL_free(renderer);
 }
-
 
 int SDL_GL_BindTexture(SDL_Texture *texture, float *texw, float *texh)
 {
@@ -4513,9 +4512,9 @@ static SDL_BlendMode SDL_GetLongBlendMode(SDL_BlendMode blendMode)
 }
 
 SDL_BlendMode SDL_ComposeCustomBlendMode(SDL_BlendFactor srcColorFactor, SDL_BlendFactor dstColorFactor,
-                           SDL_BlendOperation colorOperation,
-                           SDL_BlendFactor srcAlphaFactor, SDL_BlendFactor dstAlphaFactor,
-                           SDL_BlendOperation alphaOperation)
+                                         SDL_BlendOperation colorOperation,
+                                         SDL_BlendFactor srcAlphaFactor, SDL_BlendFactor dstAlphaFactor,
+                                         SDL_BlendOperation alphaOperation)
 {
     SDL_BlendMode blendMode = SDL_COMPOSE_BLENDMODE(srcColorFactor, dstColorFactor, colorOperation,
                                                     srcAlphaFactor, dstAlphaFactor, alphaOperation);

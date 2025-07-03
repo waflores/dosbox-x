@@ -25,29 +25,29 @@
 
 #include "../SDL_sysaudio.h"
 
-#define  INCL_OS2MM
-#define  INCL_PM
-#define  INCL_DOS
-#define  INCL_DOSERRORS
+#define INCL_OS2MM
+#define INCL_PM
+#define INCL_DOS
+#define INCL_DOSERRORS
 #include <os2.h>
 #include <os2me.h>
 
 /* Hidden "this" pointer for the audio functions */
-#define _THIS   SDL_AudioDevice *_this
+#define _THIS SDL_AudioDevice *_this
 
 #define NUM_BUFFERS 3
 
 typedef struct SDL_PrivateAudioData
 {
-    USHORT              usDeviceId;
-    BYTE                _pad[2];
-    MCI_MIXSETUP_PARMS  stMCIMixSetup;
-    HEV                 hevBuf;
-    PMCI_MIX_BUFFER     pFillBuffer;
-    PMCI_MIX_BUFFER     pDrainBuffer;
-    ULONG               ulState;
-    ULONG               cMixBuffers;
-    MCI_MIX_BUFFER      aMixBuffers[NUM_BUFFERS];
+    USHORT usDeviceId;
+    BYTE _pad[2];
+    MCI_MIXSETUP_PARMS stMCIMixSetup;
+    HEV hevBuf;
+    PMCI_MIX_BUFFER pFillBuffer;
+    PMCI_MIX_BUFFER pDrainBuffer;
+    ULONG ulState;
+    ULONG cMixBuffers;
+    MCI_MIX_BUFFER aMixBuffers[NUM_BUFFERS];
 } SDL_PrivateAudioData;
 
 #endif /* SDL_os2mm_h_ */

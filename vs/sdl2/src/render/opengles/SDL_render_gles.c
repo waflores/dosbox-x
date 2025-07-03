@@ -22,11 +22,11 @@
 
 #if SDL_VIDEO_RENDER_OGL_ES
 
-#include "SDL_hints.h"
-#include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
-#include "SDL_opengles.h"
-#include "../SDL_sysrender.h"
 #include "../../SDL_utils_c.h"
+#include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
+#include "../SDL_sysrender.h"
+#include "SDL_hints.h"
+#include "SDL_opengles.h"
 
 /* To prevent unnecessary window recreation,
  * these should match the defaults selected in SDL_GL_ResetAttributes
@@ -85,7 +85,7 @@ typedef struct
 {
     SDL_GLContext context;
 
-#define SDL_PROC(ret, func, params) ret (APIENTRY *func) params;
+#define SDL_PROC(ret, func, params) ret(APIENTRY *func) params;
 #define SDL_PROC_OES                SDL_PROC
 #include "SDL_glesfuncs.h"
 #undef SDL_PROC

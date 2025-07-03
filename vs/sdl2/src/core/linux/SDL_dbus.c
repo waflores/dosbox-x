@@ -18,12 +18,12 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "../../SDL_internal.h"
-#include "SDL_hints.h"
 #include "SDL_dbus.h"
-#include "SDL_atomic.h"
-#include "SDL_sandbox.h"
+#include "../../SDL_internal.h"
 #include "../../stdlib/SDL_vacopy.h"
+#include "SDL_atomic.h"
+#include "SDL_hints.h"
+#include "SDL_sandbox.h"
 
 #ifdef SDL_USE_LIBDBUS
 /* we never link directly to libdbus. */
@@ -36,7 +36,7 @@ static SDL_DBusContext dbus;
 
 static int LoadDBUSSyms(void)
 {
-#define SDL_DBUS_SYM2_OPTIONAL(x, y)                   \
+#define SDL_DBUS_SYM2_OPTIONAL(x, y) \
     dbus.x = SDL_LoadFunction(dbus_handle, #y)
 
 #define SDL_DBUS_SYM2(x, y)                            \
@@ -570,7 +570,7 @@ char **SDL_DBus_DocumentsPortalRetrieveFiles(const char *key, int *path_count)
      * The spec doesn't define any entries yet so it's empty. */
     dbus.message_iter_init_append(msg, &iter);
     if (!dbus.message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "{sv}", &iterDict) ||
-        !dbus.message_iter_close_container(&iter,  &iterDict)) {
+        !dbus.message_iter_close_container(&iter, &iterDict)) {
         SDL_OutOfMemory();
         dbus.message_unref(msg);
         goto failed;

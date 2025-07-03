@@ -20,13 +20,13 @@
 
 #ifdef __3DS__
 /* For mouse-based tests, we want to have the window on the touch screen */
-#define SCREEN_X 40
-#define SCREEN_Y 240
-#define SCREEN_WIDTH    320
-#define SCREEN_HEIGHT   240
+#define SCREEN_X      40
+#define SCREEN_Y      240
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 240
 #elif defined(__IPHONEOS__)
-#define SCREEN_WIDTH    320
-#define SCREEN_HEIGHT   480
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 480
 #else
 #define SCREEN_WIDTH  640
 #define SCREEN_HEIGHT 480

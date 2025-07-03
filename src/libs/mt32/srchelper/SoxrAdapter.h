@@ -27,17 +27,19 @@ class Synth;
 
 class SoxrAdapter {
 public:
-	SoxrAdapter(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality);
-	~SoxrAdapter();
+  SoxrAdapter(Synth &synth, double targetSampleRate,
+              SamplerateConversionQuality quality);
+  ~SoxrAdapter();
 
-	void getOutputSamples(float *buffer, unsigned int length);
+  void getOutputSamples(float *buffer, unsigned int length);
 
 private:
-	Synth &synth;
-	float * const inBuffer;
-	soxr_t resampler;
+  Synth &synth;
+  float *const inBuffer;
+  soxr_t resampler;
 
-	static size_t getInputSamples(void *input_fn_state, soxr_in_t *data, size_t requested_len);
+  static size_t getInputSamples(void *input_fn_state, soxr_in_t *data,
+                                size_t requested_len);
 };
 
 } // namespace MT32Emu

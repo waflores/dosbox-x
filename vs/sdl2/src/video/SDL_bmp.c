@@ -32,10 +32,10 @@
    This code currently supports Win32 DIBs in uncompressed 8 and 24 bpp.
 */
 
-#include "SDL_hints.h"
-#include "SDL_video.h"
 #include "SDL_endian.h"
+#include "SDL_hints.h"
 #include "SDL_pixels_c.h"
+#include "SDL_video.h"
 
 #define SAVE_32BIT_BMP
 

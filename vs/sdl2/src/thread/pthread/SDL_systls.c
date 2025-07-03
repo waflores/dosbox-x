@@ -19,13 +19,13 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 #include "../../SDL_internal.h"
-#include "SDL_thread.h"
 #include "../SDL_systhread.h"
 #include "../SDL_thread_c.h"
+#include "SDL_thread.h"
 
 #include <pthread.h>
 
-#define INVALID_PTHREAD_KEY ((pthread_key_t)-1)
+#define INVALID_PTHREAD_KEY ((pthread_key_t) - 1)
 
 static pthread_key_t thread_local_storage = INVALID_PTHREAD_KEY;
 static SDL_bool generic_local_storage = SDL_FALSE;

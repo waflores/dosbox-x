@@ -29,42 +29,43 @@ struct PatchCache;
 
 class Poly {
 private:
-	Part *part;
-	unsigned int key;
-	unsigned int velocity;
-	unsigned int activePartialCount;
-	bool sustain;
+  Part *part;
+  unsigned int key;
+  unsigned int velocity;
+  unsigned int activePartialCount;
+  bool sustain;
 
-	PolyState state;
+  PolyState state;
 
-	Partial *partials[4];
+  Partial *partials[4];
 
-	Poly *next;
+  Poly *next;
 
-	void setState(PolyState state);
+  void setState(PolyState state);
 
 public:
-	Poly();
-	void setPart(Part *usePart);
-	void reset(unsigned int key, unsigned int velocity, bool sustain, Partial **partials);
-	bool noteOff(bool pedalHeld);
-	bool stopPedalHold();
-	bool startDecay();
-	bool startAbort();
+  Poly();
+  void setPart(Part *usePart);
+  void reset(unsigned int key, unsigned int velocity, bool sustain,
+             Partial **partials);
+  bool noteOff(bool pedalHeld);
+  bool stopPedalHold();
+  bool startDecay();
+  bool startAbort();
 
-	void backupCacheToPartials(PatchCache cache[4]);
+  void backupCacheToPartials(PatchCache cache[4]);
 
-	unsigned int getKey() const;
-	unsigned int getVelocity() const;
-	bool canSustain() const;
-	PolyState getState() const;
-	unsigned int getActivePartialCount() const;
-	bool isActive() const;
+  unsigned int getKey() const;
+  unsigned int getVelocity() const;
+  bool canSustain() const;
+  PolyState getState() const;
+  unsigned int getActivePartialCount() const;
+  bool isActive() const;
 
-	void partialDeactivated(Partial *partial);
+  void partialDeactivated(Partial *partial);
 
-	Poly *getNext() const;
-	void setNext(Poly *poly);
+  Poly *getNext() const;
+  void setNext(Poly *poly);
 }; // class Poly
 
 } // namespace MT32Emu

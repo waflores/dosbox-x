@@ -297,7 +297,7 @@ int surface_testSurfaceConversion(void *arg)
     }
 
     /* Convert to 32 bit to compare. */
-    rface = SDL_ConvertSurface( face, testSurface->format, 0 );
+    rface = SDL_ConvertSurface(face, testSurface->format, 0);
     SDLTest_AssertPass("Call to SDL_ConvertSurface()");
     SDLTest_AssertCheck(rface != NULL, "Verify result from SDL_ConvertSurface is not NULL");
 
@@ -380,11 +380,11 @@ int surface_testCompleteSurfaceConversion(void *arg)
             cvt2 = SDL_ConvertSurface(cvt1, fmt2, 0);
             SDL_assert(cvt2 != NULL);
 
-            if ( fmt1->BytesPerPixel == face->format->BytesPerPixel &&
-                 fmt2->BytesPerPixel == face->format->BytesPerPixel &&
-                 (fmt1->Amask != 0) == (face->format->Amask != 0) &&
-                 (fmt2->Amask != 0) == (face->format->Amask != 0) ) {
-                final = SDL_ConvertSurface( cvt2, face->format, 0 );
+            if (fmt1->BytesPerPixel == face->format->BytesPerPixel &&
+                fmt2->BytesPerPixel == face->format->BytesPerPixel &&
+                (fmt1->Amask != 0) == (face->format->Amask != 0) &&
+                (fmt2->Amask != 0) == (face->format->Amask != 0)) {
+                final = SDL_ConvertSurface(cvt2, face->format, 0);
                 SDL_assert(final != NULL);
 
                 /* Compare surface. */

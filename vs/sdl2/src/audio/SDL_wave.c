@@ -33,10 +33,10 @@
 
 /* Microsoft WAVE file loading routines */
 
-#include "SDL_hints.h"
 #include "SDL_audio.h"
-#include "SDL_wave.h"
 #include "SDL_audio_c.h"
+#include "SDL_hints.h"
+#include "SDL_wave.h"
 
 /* Reads the value stored at the location of the f1 pointer, multiplies it
  * with the second argument and then stores the result to f1.
@@ -1711,7 +1711,7 @@ static int WaveCheckFormat(WaveFile *file, size_t datalength)
 
         /* All supported formats must have a proper block size. */
         if (format->blockalign == 0) {
-            format->blockalign = 1;  /* force it to 1 if it was unset. */
+            format->blockalign = 1; /* force it to 1 if it was unset. */
         }
 
         /* If the fact chunk is valid and the appropriate hint is set, the

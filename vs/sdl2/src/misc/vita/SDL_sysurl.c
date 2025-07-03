@@ -21,8 +21,8 @@
 
 #include "../SDL_sysurl.h"
 
-#include <string.h>
 #include <psp2/apputil.h>
+#include <string.h>
 
 int SDL_SYS_OpenURL(const char *url)
 {

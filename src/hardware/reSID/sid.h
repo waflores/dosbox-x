@@ -20,14 +20,13 @@
 #ifndef __SID_H__
 #define __SID_H__
 
+#include "extfilt.h"
+#include "filter.h"
+#include "pot.h"
 #include "siddefs.h"
 #include "voice.h"
-#include "filter.h"
-#include "extfilt.h"
-#include "pot.h"
 
-class SID2
-{
+class SID2 {
 public:
   SID2();
   ~SID2();
@@ -36,25 +35,24 @@ public:
   void enable_filter(bool enable);
   void enable_external_filter(bool enable);
   bool set_sampling_parameters(double clock_freq, sampling_method method,
-			       double sample_freq, double pass_freq /*= -1*/,
-			       double filter_scale /*= 0.97*/);
+                               double sample_freq, double pass_freq /*= -1*/,
+                               double filter_scale /*= 0.97*/);
   void adjust_sampling_frequency(double sample_freq);
 
-  void fc_default(const fc_point*& points, int& count);
+  void fc_default(const fc_point *&points, int &count);
   PointPlotter<sound_sample> fc_plotter();
 
   void clock();
   void clock(cycle_count delta_t);
-  int clock(cycle_count& delta_t, short* buf, int n, int interleave = 1);
+  int clock(cycle_count &delta_t, short *buf, int n, int interleave = 1);
   void reset();
-  
+
   // Read/write registers.
   reg8 read(reg8 offset);
   void write(reg8 offset, reg8 value);
 
   // Read/write state.
-  class State
-  {
+  class State {
   public:
     State();
 
@@ -72,10 +70,10 @@ public:
     reg8 envelope_counter[3] = {};
     EnvelopeGenerator::State envelope_state[3] = {};
     bool hold_zero[3] = {};
-	};
-    
+  };
+
   State read_state();
-  void write_state(const State& state);
+  void write_state(const State &state);
 
   // 16-bit input (EXT IN).
   void input(int sample);
@@ -85,19 +83,19 @@ public:
   // n-bit output.
   int output(int bits);
 
-	void SaveState( std::ostream& stream );
-	void LoadState( std::istream& stream );
+  void SaveState(std::ostream &stream);
+  void LoadState(std::istream &stream);
 
 protected:
   static double I0(double x);
-  RESID_INLINE int clock_fast(cycle_count& delta_t, short* buf, int n,
-			      int interleave);
-  RESID_INLINE int clock_interpolate(cycle_count& delta_t, short* buf, int n,
-				     int interleave);
-  RESID_INLINE int clock_resample_interpolate(cycle_count& delta_t, short* buf,
-					      int n, int interleave);
-  RESID_INLINE int clock_resample_fast(cycle_count& delta_t, short* buf,
-				       int n, int interleave);
+  RESID_INLINE int clock_fast(cycle_count &delta_t, short *buf, int n,
+                              int interleave);
+  RESID_INLINE int clock_interpolate(cycle_count &delta_t, short *buf, int n,
+                                     int interleave);
+  RESID_INLINE int clock_resample_interpolate(cycle_count &delta_t, short *buf,
+                                              int n, int interleave);
+  RESID_INLINE int clock_resample_fast(cycle_count &delta_t, short *buf, int n,
+                                       int interleave);
 
   Voice voice[3];
   Filter filter;
@@ -145,10 +143,10 @@ protected:
   int fir_RES;
 
   // Ring buffer with overflow for contiguous storage of RINGSIZE samples.
-  short* sample;
+  short *sample;
 
   // FIR_RES filter tables (FIR_N*FIR_RES).
-  short* fir;
+  short *fir;
 };
 
 #endif // not __SID_H__

@@ -80,228 +80,197 @@ util
 #include <stdlib.h>
 #include <string.h>
 
-char *unctrl(chtype c)
-{
-    static char strbuf[3] = {0, 0, 0};
+char *unctrl(chtype c) {
+  static char strbuf[3] = {0, 0, 0};
 
-    chtype ic;
+  chtype ic;
 
-    PDC_LOG(("unctrl() - called\n"));
+  PDC_LOG(("unctrl() - called\n"));
 
-    ic = c & A_CHARTEXT;
+  ic = c & A_CHARTEXT;
 
-    if (ic >= 0x20 && ic != 0x7f)       /* normal characters */
-    {
-        strbuf[0] = (char)ic;
-        strbuf[1] = '\0';
-        return strbuf;
-    }
-
-    strbuf[0] = '^';            /* '^' prefix */
-
-    if (ic == 0x7f)             /* 0x7f == DEL */
-        strbuf[1] = '?';
-    else                    /* other control */
-        strbuf[1] = (char)(ic + '@');
-
+  if (ic >= 0x20 && ic != 0x7f) /* normal characters */
+  {
+    strbuf[0] = (char)ic;
+    strbuf[1] = '\0';
     return strbuf;
+  }
+
+  strbuf[0] = '^'; /* '^' prefix */
+
+  if (ic == 0x7f) /* 0x7f == DEL */
+    strbuf[1] = '?';
+  else /* other control */
+    strbuf[1] = (char)(ic + '@');
+
+  return strbuf;
 }
 
-void filter(void)
-{
-    PDC_LOG(("filter() - called\n"));
-}
+void filter(void) { PDC_LOG(("filter() - called\n")); }
 
-void use_env(bool x)
-{
-    PDC_LOG(("use_env() - called: x %d\n", x));
-}
+void use_env(bool x) { PDC_LOG(("use_env() - called: x %d\n", x)); }
 
-int delay_output(int ms)
-{
-    PDC_LOG(("delay_output() - called: ms %d\n", ms));
+int delay_output(int ms) {
+  PDC_LOG(("delay_output() - called: ms %d\n", ms));
 
-    return napms(ms);
+  return napms(ms);
 }
 
 #ifdef PDC_WIDE
 int getcchar(const cchar_t *wcval, wchar_t *wch, attr_t *attrs,
-             short *color_pair, void *opts)
-{
-    if (!wcval)
-        return ERR;
+             short *color_pair, void *opts) {
+  if (!wcval)
+    return ERR;
 
-    if (wch)
-    {
-        if (!attrs || !color_pair)
-            return ERR;
+  if (wch) {
+    if (!attrs || !color_pair)
+      return ERR;
 
-        *wch = (*wcval & A_CHARTEXT);
-        *attrs = (*wcval & (A_ATTRIBUTES & ~A_COLOR));
-        *color_pair = PAIR_NUMBER(*wcval & A_COLOR);
+    *wch = (*wcval & A_CHARTEXT);
+    *attrs = (*wcval & (A_ATTRIBUTES & ~A_COLOR));
+    *color_pair = PAIR_NUMBER(*wcval & A_COLOR);
 
-        if (*wch)
-            *++wch = L'\0';
+    if (*wch)
+      *++wch = L'\0';
 
-        return OK;
-    }
-    else
-        return ((*wcval & A_CHARTEXT) != L'\0');
+    return OK;
+  } else
+    return ((*wcval & A_CHARTEXT) != L'\0');
 }
 
 int setcchar(cchar_t *wcval, const wchar_t *wch, const attr_t attrs,
-             short color_pair, const void *opts)
-{
-    if (!wcval || !wch)
-        return ERR;
+             short color_pair, const void *opts) {
+  if (!wcval || !wch)
+    return ERR;
 
-    *wcval = *wch | attrs | COLOR_PAIR(color_pair);
+  *wcval = *wch | attrs | COLOR_PAIR(color_pair);
 
-    return OK;
+  return OK;
 }
 
-wchar_t *wunctrl(cchar_t *wc)
-{
-    static wchar_t strbuf[3] = {0, 0, 0};
+wchar_t *wunctrl(cchar_t *wc) {
+  static wchar_t strbuf[3] = {0, 0, 0};
 
-    cchar_t ic;
+  cchar_t ic;
 
-    PDC_LOG(("wunctrl() - called\n"));
+  PDC_LOG(("wunctrl() - called\n"));
 
-    ic = *wc & A_CHARTEXT;
+  ic = *wc & A_CHARTEXT;
 
-    if (ic >= 0x20 && ic != 0x7f)       /* normal characters */
-    {
-        strbuf[0] = (wchar_t)ic;
-        strbuf[1] = L'\0';
-        return strbuf;
-    }
-
-    strbuf[0] = '^';            /* '^' prefix */
-
-    if (ic == 0x7f)             /* 0x7f == DEL */
-        strbuf[1] = '?';
-    else                    /* other control */
-        strbuf[1] = (wchar_t)(ic + '@');
-
+  if (ic >= 0x20 && ic != 0x7f) /* normal characters */
+  {
+    strbuf[0] = (wchar_t)ic;
+    strbuf[1] = L'\0';
     return strbuf;
+  }
+
+  strbuf[0] = '^'; /* '^' prefix */
+
+  if (ic == 0x7f) /* 0x7f == DEL */
+    strbuf[1] = '?';
+  else /* other control */
+    strbuf[1] = (wchar_t)(ic + '@');
+
+  return strbuf;
 }
 
-int PDC_mbtowc(wchar_t *pwc, const char *s, size_t n)
-{
-# ifdef PDC_FORCE_UTF8
-    wchar_t key;
-    int i = -1;
-    const unsigned char *string;
+int PDC_mbtowc(wchar_t *pwc, const char *s, size_t n) {
+#ifdef PDC_FORCE_UTF8
+  wchar_t key;
+  int i = -1;
+  const unsigned char *string;
 
-    if (!s || (n < 1))
-        return -1;
+  if (!s || (n < 1))
+    return -1;
 
-    if (!*s)
-        return 0;
+  if (!*s)
+    return 0;
 
-    string = (const unsigned char *)s;
+  string = (const unsigned char *)s;
 
-    key = string[0];
+  key = string[0];
 
-    /* Simplistic UTF-8 decoder -- only does the BMP, minimal validation */
+  /* Simplistic UTF-8 decoder -- only does the BMP, minimal validation */
 
-    if (key & 0x80)
-    {
-        if ((key & 0xe0) == 0xc0)
-        {
-            if (1 < n)
-            {
-                key = ((key & 0x1f) << 6) | (string[1] & 0x3f);
-                i = 2;
-            }
-        }
-        else if ((key & 0xe0) == 0xe0)
-        {
-            if (2 < n)
-            {
-                key = ((key & 0x0f) << 12) | ((string[1] & 0x3f) << 6) |
-                      (string[2] & 0x3f);
-                i = 3;
-            }
-        }
+  if (key & 0x80) {
+    if ((key & 0xe0) == 0xc0) {
+      if (1 < n) {
+        key = ((key & 0x1f) << 6) | (string[1] & 0x3f);
+        i = 2;
+      }
+    } else if ((key & 0xe0) == 0xe0) {
+      if (2 < n) {
+        key = ((key & 0x0f) << 12) | ((string[1] & 0x3f) << 6) |
+              (string[2] & 0x3f);
+        i = 3;
+      }
     }
-    else
-        i = 1;
+  } else
+    i = 1;
 
-    if (i)
-        *pwc = key;
+  if (i)
+    *pwc = key;
 
-    return i;
-# else
-    return mbtowc(pwc, s, n);
-# endif
+  return i;
+#else
+  return mbtowc(pwc, s, n);
+#endif
 }
 
-size_t PDC_mbstowcs(wchar_t *dest, const char *src, size_t n)
-{
-# ifdef PDC_FORCE_UTF8
-    size_t i = 0, len;
+size_t PDC_mbstowcs(wchar_t *dest, const char *src, size_t n) {
+#ifdef PDC_FORCE_UTF8
+  size_t i = 0, len;
 
-    if (!src || !dest)
-        return 0;
+  if (!src || !dest)
+    return 0;
 
-    len = strlen(src);
+  len = strlen(src);
 
-    while (*src && i < n)
-    {
-        int retval = PDC_mbtowc(dest + i, src, len);
+  while (*src && i < n) {
+    int retval = PDC_mbtowc(dest + i, src, len);
 
-        if (retval < 1)
-            return -1;
+    if (retval < 1)
+      return -1;
 
-        src += retval;
-        len -= retval;
-        i++;
-    }
-# else
-    size_t i = mbstowcs(dest, src, n);
-# endif
-    dest[i] = 0;
-    return i;
+    src += retval;
+    len -= retval;
+    i++;
+  }
+#else
+  size_t i = mbstowcs(dest, src, n);
+#endif
+  dest[i] = 0;
+  return i;
 }
 
-size_t PDC_wcstombs(char *dest, const wchar_t *src, size_t n)
-{
-# ifdef PDC_FORCE_UTF8
-    size_t i = 0;
+size_t PDC_wcstombs(char *dest, const wchar_t *src, size_t n) {
+#ifdef PDC_FORCE_UTF8
+  size_t i = 0;
 
-    if (!src || !dest)
-        return 0;
+  if (!src || !dest)
+    return 0;
 
-    while (*src && i < n)
-    {
-        chtype code = *src++;
+  while (*src && i < n) {
+    chtype code = *src++;
 
-        if (code < 0x80)
-        {
-            dest[i] = code;
-            i++;
-        }
-        else
-            if (code < 0x800)
-            {
-                dest[i] = ((code & 0x07c0) >> 6) | 0xc0;
-                dest[i + 1] = (code & 0x003f) | 0x80;
-                i += 2;
-            }
-            else
-            {
-                dest[i] = ((code & 0xf000) >> 12) | 0xe0;
-                dest[i + 1] = ((code & 0x0fc0) >> 6) | 0x80;
-                dest[i + 2] = (code & 0x003f) | 0x80;
-                i += 3;
-            }
+    if (code < 0x80) {
+      dest[i] = code;
+      i++;
+    } else if (code < 0x800) {
+      dest[i] = ((code & 0x07c0) >> 6) | 0xc0;
+      dest[i + 1] = (code & 0x003f) | 0x80;
+      i += 2;
+    } else {
+      dest[i] = ((code & 0xf000) >> 12) | 0xe0;
+      dest[i + 1] = ((code & 0x0fc0) >> 6) | 0x80;
+      dest[i + 2] = (code & 0x003f) | 0x80;
+      i += 3;
     }
-# else
-    size_t i = wcstombs(dest, src, n);
-# endif
-    dest[i] = '\0';
-    return i;
+  }
+#else
+  size_t i = wcstombs(dest, src, n);
+#endif
+  dest[i] = '\0';
+  return i;
 }
 #endif

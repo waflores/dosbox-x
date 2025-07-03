@@ -24,20 +24,20 @@
 
 #include <unistd.h> /* For getpid() and readlink() */
 
-#include "SDL_video.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_hints.h"
 #include "SDL_mouse.h"
 #include "SDL_timer.h"
-#include "SDL_hints.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
+#include "SDL_video.h"
 
-#include "SDL_x11video.h"
 #include "SDL_x11framebuffer.h"
+#include "SDL_x11messagebox.h"
 #include "SDL_x11shape.h"
 #include "SDL_x11touch.h"
-#include "SDL_x11xinput2.h"
+#include "SDL_x11video.h"
 #include "SDL_x11xfixes.h"
-#include "SDL_x11messagebox.h"
+#include "SDL_x11xinput2.h"
 
 #ifdef SDL_VIDEO_OPENGL_EGL
 #include "SDL_x11opengles.h"

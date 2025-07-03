@@ -28,8 +28,8 @@
 
 #ifdef SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC
 
-#include "SDL_name.h"
 #include "SDL_loadso.h"
+#include "SDL_name.h"
 
 typedef struct
 {

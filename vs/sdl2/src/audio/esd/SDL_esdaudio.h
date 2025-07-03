@@ -26,7 +26,7 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the audio functions */
-#define _THIS   SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
 struct SDL_PrivateAudioData
 {
@@ -44,7 +44,7 @@ struct SDL_PrivateAudioData
     float frame_ticks;
     float next_frame;
 };
-#define FUDGE_TICKS 10      /* The scheduler overhead ticks per frame */
+#define FUDGE_TICKS 10 /* The scheduler overhead ticks per frame */
 
 #endif /* SDL_esdaudio_h_ */
 

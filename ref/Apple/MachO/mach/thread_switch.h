@@ -59,19 +59,19 @@
 #ifndef _MACH_THREAD_SWITCH_H_
 #define _MACH_THREAD_SWITCH_H_
 
-#include <mach/mach_types.h>
 #include <mach/kern_return.h>
-#include <mach/message.h>
 #include <mach/mach_traps.h>
+#include <mach/mach_types.h>
+#include <mach/message.h>
 
 /*
  *	Constant definitions for thread_switch trap.
  */
 
-#define SWITCH_OPTION_NONE                      0
-#define SWITCH_OPTION_DEPRESS           1
-#define SWITCH_OPTION_WAIT                      2
+#define SWITCH_OPTION_NONE 0
+#define SWITCH_OPTION_DEPRESS 1
+#define SWITCH_OPTION_WAIT 2
 
-#define valid_switch_option(opt)        (0 <= (opt) && (opt) <= 5)
+#define valid_switch_option(opt) (0 <= (opt) && (opt) <= 5)
 
-#endif  /* _MACH_THREAD_SWITCH_H_ */
+#endif /* _MACH_THREAD_SWITCH_H_ */

@@ -16,7 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef INCLUDEGUARD_SERIALFILE_H
 #define INCLUDEGUARD_SERIALFILE_H
 
@@ -24,31 +23,31 @@
 
 #include "serialport.h"
 
-//#define CHECKIT_TESTPLUG
+// #define CHECKIT_TESTPLUG
 
 class CSerialFile : public CSerial {
 public:
-	CSerialFile(Bitu id, CommandLine* cmd, bool sq = false);
-	virtual ~CSerialFile();
+  CSerialFile(Bitu id, CommandLine *cmd, bool sq = false);
+  virtual ~CSerialFile();
 
-	void setRTSDTR(bool rts, bool dtr) override;
-	void setRTS(bool val) override;
-	void setDTR(bool val) override;
+  void setRTSDTR(bool rts, bool dtr) override;
+  void setRTS(bool val) override;
+  void setDTR(bool val) override;
 
-	void updatePortConfig(uint16_t, uint8_t lcr) override;
-	void updateMSR() override;
-	void transmitByte(uint8_t val, bool first) override;
-	void setBreak(bool value) override;
-	void doAction();
-	void handleUpperEvent(uint16_t type) override;
+  void updatePortConfig(uint16_t, uint8_t lcr) override;
+  void updateMSR() override;
+  void transmitByte(uint8_t val, bool first) override;
+  void setBreak(bool value) override;
+  void doAction();
+  void handleUpperEvent(uint16_t type) override;
 
-	FILE* fp = NULL;
-	bool squote;
-	bool shellhide;
-	unsigned int timeout = 0;
-	Bitu lastUsedTick = 0;
-	std::string filename;
-	std::string actstd, acterr; // open with a program or batch script
+  FILE *fp = NULL;
+  bool squote;
+  bool shellhide;
+  unsigned int timeout = 0;
+  Bitu lastUsedTick = 0;
+  std::string filename;
+  std::string actstd, acterr; // open with a program or batch script
 };
 
 #endif // INCLUDEGUARD

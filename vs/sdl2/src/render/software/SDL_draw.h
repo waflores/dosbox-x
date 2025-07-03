@@ -36,7 +36,7 @@
 #define DRAW_FASTSETPIXEL4 DRAW_FASTSETPIXEL(Uint32)
 
 #define DRAW_FASTSETPIXELXY(x, y, type, bpp, color) \
-    *(type *)((Uint8 *)dst->pixels + (y)*dst->pitch + (x)*bpp) = (type)color
+    *(type *)((Uint8 *)dst->pixels + (y) * dst->pitch + (x) * bpp) = (type)color
 
 #define DRAW_FASTSETPIXELXY1(x, y) DRAW_FASTSETPIXELXY(x, y, Uint8, 1, color)
 #define DRAW_FASTSETPIXELXY2(x, y) DRAW_FASTSETPIXELXY(x, y, Uint16, 2, color)
@@ -105,10 +105,10 @@
         setpixel;                                  \
     } while (0)
 
-#define DRAW_SETPIXELXY(x, y, type, bpp, op)                                     \
-    do {                                                                         \
-        type *pixel = (type *)((Uint8 *)dst->pixels + (y)*dst->pitch + (x)*bpp); \
-        op;                                                                      \
+#define DRAW_SETPIXELXY(x, y, type, bpp, op)                                         \
+    do {                                                                             \
+        type *pixel = (type *)((Uint8 *)dst->pixels + (y) * dst->pitch + (x) * bpp); \
+        op;                                                                          \
     } while (0)
 
 /*

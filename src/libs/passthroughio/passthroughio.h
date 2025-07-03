@@ -29,8 +29,10 @@
   MinGW-w64 it is _mingw_mac.h. Do not rely on constants that may not be
   defined, depending on what was included before these lines.
 */
-#if (defined __i386__ || defined __x86_64__ || defined _M_IX86 || defined _M_X64) && \
-    (defined _WIN32 || defined BSD || defined LINUX || defined __CYGWIN__) // _WIN32 is not defined by default on Cygwin
+#if (defined __i386__ || defined __x86_64__ || defined _M_IX86 ||              \
+     defined _M_X64) &&                                                        \
+    (defined _WIN32 || defined BSD || defined LINUX ||                         \
+     defined __CYGWIN__) // _WIN32 is not defined by default on Cygwin
 bool initPassthroughIO(void);
 #if defined BSD || defined LINUX
 bool dropPrivileges(void);

@@ -24,8 +24,8 @@
 #ifdef SDL_POWER_MACOSX
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/ps/IOPowerSources.h>
 #include <IOKit/ps/IOPSKeys.h>
+#include <IOKit/ps/IOPowerSources.h>
 
 #include "SDL_power.h"
 
@@ -180,7 +180,7 @@ SDL_bool SDL_GetPowerInfo_MacOSX(SDL_PowerState *state, int *seconds, int *perce
         CFRelease(blob);
     }
 
-    return SDL_TRUE;            /* always the definitive answer on Mac OS X. */
+    return SDL_TRUE; /* always the definitive answer on Mac OS X. */
 }
 
 #endif /* SDL_POWER_MACOSX */

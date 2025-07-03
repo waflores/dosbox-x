@@ -12,8 +12,8 @@
 
 /* Simple program:  Test relative mouse motion */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "SDL_test_common.h"

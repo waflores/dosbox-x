@@ -26,31 +26,31 @@
 
 #include "../SDL_sysvideo.h"
 
+#include <EGL/egl.h>
 #include <fcntl.h>
+#include <gbm.h>
 #include <unistd.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
-#include <gbm.h>
-#include <EGL/egl.h>
 
 #ifndef DRM_FORMAT_MOD_INVALID
 #define DRM_FORMAT_MOD_INVALID 0x00ffffffffffffffULL
 #endif
 
 #ifndef DRM_MODE_FB_MODIFIERS
-#define DRM_MODE_FB_MODIFIERS	2
+#define DRM_MODE_FB_MODIFIERS 2
 #endif
 
 #ifndef DRM_MODE_PAGE_FLIP_ASYNC
-#define DRM_MODE_PAGE_FLIP_ASYNC    2
+#define DRM_MODE_PAGE_FLIP_ASYNC 2
 #endif
 
 #ifndef DRM_MODE_OBJECT_CONNECTOR
-#define DRM_MODE_OBJECT_CONNECTOR   0xc0c0c0c0
+#define DRM_MODE_OBJECT_CONNECTOR 0xc0c0c0c0
 #endif
 
 #ifndef DRM_MODE_OBJECT_CRTC
-#define DRM_MODE_OBJECT_CRTC        0xcccccccc
+#define DRM_MODE_OBJECT_CRTC 0xcccccccc
 #endif
 
 #ifndef DRM_CAP_ASYNC_PAGE_FLIP
@@ -58,15 +58,15 @@
 #endif
 
 #ifndef DRM_CAP_CURSOR_WIDTH
-#define DRM_CAP_CURSOR_WIDTH    8
+#define DRM_CAP_CURSOR_WIDTH 8
 #endif
 
 #ifndef DRM_CAP_CURSOR_HEIGHT
-#define DRM_CAP_CURSOR_HEIGHT   9
+#define DRM_CAP_CURSOR_HEIGHT 9
 #endif
 
 #ifndef GBM_FORMAT_ARGB8888
-#define GBM_FORMAT_ARGB8888  ((uint32_t)('A') | ((uint32_t)('R') << 8) | ((uint32_t)('2') << 16) | ((uint32_t)('4') << 24))
+#define GBM_FORMAT_ARGB8888 ((uint32_t)('A') | ((uint32_t)('R') << 8) | ((uint32_t)('2') << 16) | ((uint32_t)('4') << 24))
 #define GBM_BO_USE_CURSOR   (1 << 1)
 #define GBM_BO_USE_WRITE    (1 << 3)
 #define GBM_BO_USE_LINEAR   (1 << 4)
@@ -158,28 +158,28 @@ SDL_bool KMSDRM_WaitPageflip(_THIS, SDL_WindowData *windata);
 /* Display and window functions */
 int KMSDRM_VideoInit(_THIS);
 void KMSDRM_VideoQuit(_THIS);
-void KMSDRM_GetDisplayModes(_THIS, SDL_VideoDisplay * display);
-int KMSDRM_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
-int KMSDRM_CreateWindow(_THIS, SDL_Window * window);
-int KMSDRM_CreateWindowFrom(_THIS, SDL_Window * window, const void *data);
-void KMSDRM_SetWindowTitle(_THIS, SDL_Window * window);
-void KMSDRM_SetWindowIcon(_THIS, SDL_Window * window, SDL_Surface * icon);
-void KMSDRM_SetWindowPosition(_THIS, SDL_Window * window);
-void KMSDRM_SetWindowSize(_THIS, SDL_Window * window);
-void KMSDRM_SetWindowFullscreen(_THIS, SDL_Window * window, SDL_VideoDisplay * _display, SDL_bool fullscreen);
-int KMSDRM_SetWindowGammaRamp(_THIS, SDL_Window * window, const Uint16 * ramp);
-int KMSDRM_GetWindowGammaRamp(_THIS, SDL_Window * window, Uint16 * ramp);
-void KMSDRM_ShowWindow(_THIS, SDL_Window * window);
-void KMSDRM_HideWindow(_THIS, SDL_Window * window);
-void KMSDRM_RaiseWindow(_THIS, SDL_Window * window);
-void KMSDRM_MaximizeWindow(_THIS, SDL_Window * window);
-void KMSDRM_MinimizeWindow(_THIS, SDL_Window * window);
-void KMSDRM_RestoreWindow(_THIS, SDL_Window * window);
-void KMSDRM_DestroyWindow(_THIS, SDL_Window * window);
+void KMSDRM_GetDisplayModes(_THIS, SDL_VideoDisplay *display);
+int KMSDRM_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode);
+int KMSDRM_CreateWindow(_THIS, SDL_Window *window);
+int KMSDRM_CreateWindowFrom(_THIS, SDL_Window *window, const void *data);
+void KMSDRM_SetWindowTitle(_THIS, SDL_Window *window);
+void KMSDRM_SetWindowIcon(_THIS, SDL_Window *window, SDL_Surface *icon);
+void KMSDRM_SetWindowPosition(_THIS, SDL_Window *window);
+void KMSDRM_SetWindowSize(_THIS, SDL_Window *window);
+void KMSDRM_SetWindowFullscreen(_THIS, SDL_Window *window, SDL_VideoDisplay *_display, SDL_bool fullscreen);
+int KMSDRM_SetWindowGammaRamp(_THIS, SDL_Window *window, const Uint16 *ramp);
+int KMSDRM_GetWindowGammaRamp(_THIS, SDL_Window *window, Uint16 *ramp);
+void KMSDRM_ShowWindow(_THIS, SDL_Window *window);
+void KMSDRM_HideWindow(_THIS, SDL_Window *window);
+void KMSDRM_RaiseWindow(_THIS, SDL_Window *window);
+void KMSDRM_MaximizeWindow(_THIS, SDL_Window *window);
+void KMSDRM_MinimizeWindow(_THIS, SDL_Window *window);
+void KMSDRM_RestoreWindow(_THIS, SDL_Window *window);
+void KMSDRM_DestroyWindow(_THIS, SDL_Window *window);
 
 /* Window manager function */
-SDL_bool KMSDRM_GetWindowWMInfo(_THIS, SDL_Window * window,
-                             struct SDL_SysWMinfo *info);
+SDL_bool KMSDRM_GetWindowWMInfo(_THIS, SDL_Window *window,
+                                struct SDL_SysWMinfo *info);
 
 /* OpenGL/OpenGL ES functions */
 int KMSDRM_GLES_LoadLibrary(_THIS, const char *path);

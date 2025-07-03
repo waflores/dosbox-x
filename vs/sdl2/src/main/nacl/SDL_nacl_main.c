@@ -25,10 +25,10 @@
 /* Include the SDL main definition header */
 #include "SDL_main.h"
 
-#include "ppapi_simple/ps_main.h"
+#include "nacl_io/nacl_io.h"
 #include "ppapi_simple/ps_event.h"
 #include "ppapi_simple/ps_interface.h"
-#include "nacl_io/nacl_io.h"
+#include "ppapi_simple/ps_main.h"
 #include "sys/mount.h"
 
 extern void NACL_SetScreenResolution(int width, int height, Uint32 format);
@@ -36,7 +36,7 @@ extern void NACL_SetScreenResolution(int width, int height, Uint32 format);
 int nacl_main(int argc, char *argv[])
 {
     int status;
-    PSEvent* ps_event;
+    PSEvent *ps_event;
     PP_Resource event;
     struct PP_Rect rect;
     int ready = 0;
@@ -51,15 +51,15 @@ int nacl_main(int argc, char *argv[])
         /* Process all waiting events without blocking */
         while (!ready && (ps_event = PSEventWaitAcquire()) != NULL) {
             event = ps_event->as_resource;
-            switch(ps_event->type) {
-                /* From DidChangeView, contains a view resource */
-                case PSE_INSTANCE_DIDCHANGEVIEW:
-                    ppb_view->GetRect(event, &rect);
-                    NACL_SetScreenResolution(rect.size.width, rect.size.height, 0);
-                    ready = 1;
-                    break;
-                default:
-                    break;
+            switch (ps_event->type) {
+            /* From DidChangeView, contains a view resource */
+            case PSE_INSTANCE_DIDCHANGEVIEW:
+                ppb_view->GetRect(event, &rect);
+                NACL_SetScreenResolution(rect.size.width, rect.size.height, 0);
+                ready = 1;
+                break;
+            default:
+                break;
             }
             PSEventRelease(ps_event);
         }
@@ -73,11 +73,11 @@ int nacl_main(int argc, char *argv[])
 
     umount("/");
     mount(
-        "",  /* source */
-        "/",  /* target */
-        "httpfs",  /* filesystemtype */
-        0,  /* mountflags */
-        "");  /* data specific to the html5fs type */
+        "",       /* source */
+        "/",      /* target */
+        "httpfs", /* filesystemtype */
+        0,        /* mountflags */
+        "");      /* data specific to the html5fs type */
 
     /* Everything is ready, start the user main function */
     SDL_SetMainReady();

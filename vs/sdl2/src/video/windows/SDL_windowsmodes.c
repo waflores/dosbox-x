@@ -22,8 +22,8 @@
 
 #if defined(SDL_VIDEO_DRIVER_WINDOWS) && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
 
-#include "SDL_windowsvideo.h"
 #include "../../events/SDL_displayevents_c.h"
+#include "SDL_windowsvideo.h"
 
 /* Windows CE compatibility */
 #ifndef CDS_FULLSCREEN

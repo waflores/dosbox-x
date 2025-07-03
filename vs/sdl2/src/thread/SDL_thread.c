@@ -22,11 +22,11 @@
 
 /* System independent thread management routines for SDL */
 
+#include "../SDL_error_c.h"
+#include "SDL_hints.h"
+#include "SDL_systhread.h"
 #include "SDL_thread.h"
 #include "SDL_thread_c.h"
-#include "SDL_systhread.h"
-#include "SDL_hints.h"
-#include "../SDL_error_c.h"
 
 /* The storage is local to the thread, but the IDs are global for the process */
 
@@ -217,7 +217,7 @@ void SDL_Generic_QuitTLSData(void)
     SDL_assert(!SDL_generic_TLS);
     if (SDL_generic_TLS) {
         SDL_LockMutex(SDL_generic_TLS_mutex);
-        for (entry = SDL_generic_TLS; entry; ) {
+        for (entry = SDL_generic_TLS; entry;) {
             SDL_TLSEntry *next = entry->next;
             SDL_free(entry->storage);
             SDL_free(entry);
@@ -358,12 +358,12 @@ void SDL_RunThread(SDL_Thread *thread)
 
 #ifdef SDL_PASSED_BEGINTHREAD_ENDTHREAD
 SDL_Thread *SDL_CreateThreadWithStackSize(int(SDLCALL *fn)(void *),
-                              const char *name, const size_t stacksize, void *data,
-                              pfnSDL_CurrentBeginThread pfnBeginThread,
-                              pfnSDL_CurrentEndThread pfnEndThread)
+                                          const char *name, const size_t stacksize, void *data,
+                                          pfnSDL_CurrentBeginThread pfnBeginThread,
+                                          pfnSDL_CurrentEndThread pfnEndThread)
 #else
 SDL_Thread *SDL_CreateThreadWithStackSize(int(SDLCALL *fn)(void *),
-                              const char *name, const size_t stacksize, void *data)
+                                          const char *name, const size_t stacksize, void *data)
 #endif
 {
     SDL_Thread *thread;
@@ -413,12 +413,12 @@ SDL_Thread *SDL_CreateThreadWithStackSize(int(SDLCALL *fn)(void *),
 
 #ifdef SDL_PASSED_BEGINTHREAD_ENDTHREAD
 DECLSPEC SDL_Thread *SDLCALL SDL_CreateThread(int(SDLCALL *fn)(void *),
-                 const char *name, void *data,
-                 pfnSDL_CurrentBeginThread pfnBeginThread,
-                 pfnSDL_CurrentEndThread pfnEndThread)
+                                              const char *name, void *data,
+                                              pfnSDL_CurrentBeginThread pfnBeginThread,
+                                              pfnSDL_CurrentEndThread pfnEndThread)
 #else
 DECLSPEC SDL_Thread *SDLCALL SDL_CreateThread(int(SDLCALL *fn)(void *),
-                 const char *name, void *data)
+                                              const char *name, void *data)
 #endif
 {
     /* !!! FIXME: in 2.1, just make stackhint part of the usual API. */
@@ -444,7 +444,7 @@ DECLSPEC SDL_Thread *SDLCALL SDL_CreateThread(int(SDLCALL *fn)(void *),
 }
 
 SDL_Thread *SDL_CreateThreadInternal(int(SDLCALL *fn)(void *), const char *name,
-                         const size_t stacksize, void *data)
+                                     const size_t stacksize, void *data)
 {
 #ifdef SDL_PASSED_BEGINTHREAD_ENDTHREAD
     return SDL_CreateThreadWithStackSize(fn, name, stacksize, data, NULL, NULL);

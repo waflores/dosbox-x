@@ -25,13 +25,13 @@
 
 #if defined(SDL_VIDEO_DRIVER_RPI) && defined(SDL_VIDEO_OPENGL_EGL)
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 /* OpenGLES functions */
-#define RPI_GLES_GetAttribute SDL_EGL_GetAttribute
-#define RPI_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define RPI_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
+#define RPI_GLES_GetAttribute    SDL_EGL_GetAttribute
+#define RPI_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define RPI_GLES_UnloadLibrary   SDL_EGL_UnloadLibrary
 #define RPI_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
 #define RPI_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 #define RPI_GLES_DeleteContext   SDL_EGL_DeleteContext

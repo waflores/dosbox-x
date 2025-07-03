@@ -10,8 +10,8 @@
   freely.
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "SDL_test_common.h"
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
         consumed = SDLTest_CommonArg(state, i);
         /* needed voodoo to allow app to launch via OS X Finder */
-        if (SDL_strncmp(argv[i], "-psn", 4)==0) {
+        if (SDL_strncmp(argv[i], "-psn", 4) == 0) {
             consumed = 1;
         }
         if (consumed == 0) {

@@ -31,20 +31,18 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
-struct SDL_PrivateAudioData
-{
-    /* Pointer to the (open) UMS audio device */
-    Environment*   ev;
-    UMSAudioDevice umsdev;
+struct SDL_PrivateAudioData {
+  /* Pointer to the (open) UMS audio device */
+  Environment *ev;
+  UMSAudioDevice umsdev;
 
-    /* Raw mixing buffer */
-    UMSAudioTypes_Buffer playbuf;
-    UMSAudioTypes_Buffer fillbuf;
+  /* Raw mixing buffer */
+  UMSAudioTypes_Buffer playbuf;
+  UMSAudioTypes_Buffer fillbuf;
 
-    long bytesPerSample;
+  long bytesPerSample;
 };
 
 #endif /* _SDL_UMSaudio_h */
-

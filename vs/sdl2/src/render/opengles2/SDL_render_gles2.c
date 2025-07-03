@@ -22,11 +22,11 @@
 
 #if SDL_VIDEO_RENDER_OGL_ES2
 
-#include "SDL_hints.h"
-#include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
-#include "SDL_opengles2.h"
-#include "../SDL_sysrender.h"
 #include "../../video/SDL_blit.h"
+#include "../../video/SDL_sysvideo.h" /* For SDL_GL_SwapWindowWithResult */
+#include "../SDL_sysrender.h"
+#include "SDL_hints.h"
+#include "SDL_opengles2.h"
 #include "SDL_shaders_gles2.h"
 
 /* WebGL doesn't offer client-side arrays, so use Vertex Buffer Objects
@@ -151,7 +151,7 @@ typedef struct GLES2_RenderData
 
     SDL_bool GL_EXT_blend_minmax_supported;
 
-#define SDL_PROC(ret, func, params) ret (APIENTRY *func) params;
+#define SDL_PROC(ret, func, params) ret(APIENTRY *func) params;
 #include "SDL_gles2funcs.h"
 #undef SDL_PROC
     GLES2_FBOList *framebuffers;

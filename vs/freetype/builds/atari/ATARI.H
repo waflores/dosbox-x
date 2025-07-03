@@ -1,11 +1,11 @@
 #if defined( GXVALID_H_ )
-#pragma warn -aus /* too many unevaluated variables in gxvalid */
+#pragma warn - aus /* too many unevaluated variables in gxvalid */
 #endif
 
 #ifndef ATARI_H
 #define ATARI_H
 
-#pragma warn -stu
+#pragma warn - stu
 
 /* PureC doesn't like 32bit enumerations */
 

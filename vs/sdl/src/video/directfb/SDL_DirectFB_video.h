@@ -26,20 +26,19 @@
 
 #include <directfb.h>
 
-#include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 
 #define _THIS SDL_VideoDevice *this
 
 /* Private display data */
 
-struct SDL_PrivateVideoData
-{
-  int                    initialized;
+struct SDL_PrivateVideoData {
+  int initialized;
 
-  IDirectFB             *dfb;
+  IDirectFB *dfb;
   IDirectFBDisplayLayer *layer;
-  IDirectFBEventBuffer  *eventbuffer;
+  IDirectFBEventBuffer *eventbuffer;
 
   int nummodes;
   SDL_Rect **modelist;
@@ -50,13 +49,13 @@ struct SDL_PrivateVideoData
   float mga_crtc2_stretch_overscan;
   IDirectFBDisplayLayer *c2layer;
   IDirectFBSurface *c2frame;
-  DFBRectangle c2ssize;	/* Real screen size */
-  DFBRectangle c2dsize;	/* Stretched screen size */
-  DFBRectangle c2framesize;    /* CRTC2 screen size */
+  DFBRectangle c2ssize;     /* Real screen size */
+  DFBRectangle c2dsize;     /* Stretched screen size */
+  DFBRectangle c2framesize; /* CRTC2 screen size */
 };
 
 #define HIDDEN (this->hidden)
 
-void SetDirectFBerror (const char *function, DFBResult code);
+void SetDirectFBerror(const char *function, DFBResult code);
 
 #endif /* _SDL_DirectFB_video_h */

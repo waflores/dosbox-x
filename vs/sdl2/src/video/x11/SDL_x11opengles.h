@@ -25,8 +25,8 @@
 
 #ifdef SDL_VIDEO_OPENGL_EGL
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 typedef struct SDL_PrivateGLESData
 {
@@ -36,18 +36,18 @@ typedef struct SDL_PrivateGLESData
 } SDL_PrivateGLESData;
 
 /* OpenGLES functions */
-#define X11_GLES_GetAttribute SDL_EGL_GetAttribute
-#define X11_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define X11_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
+#define X11_GLES_GetAttribute    SDL_EGL_GetAttribute
+#define X11_GLES_GetProcAddress  SDL_EGL_GetProcAddress
+#define X11_GLES_UnloadLibrary   SDL_EGL_UnloadLibrary
 #define X11_GLES_SetSwapInterval SDL_EGL_SetSwapInterval
 #define X11_GLES_GetSwapInterval SDL_EGL_GetSwapInterval
 #define X11_GLES_DeleteContext   SDL_EGL_DeleteContext
 
 extern int X11_GLES_LoadLibrary(_THIS, const char *path);
-extern XVisualInfo *X11_GLES_GetVisual(_THIS, Display * display, int screen);
-extern SDL_GLContext X11_GLES_CreateContext(_THIS, SDL_Window * window);
-extern int X11_GLES_SwapWindow(_THIS, SDL_Window * window);
-extern int X11_GLES_MakeCurrent(_THIS, SDL_Window * window, SDL_GLContext context);
+extern XVisualInfo *X11_GLES_GetVisual(_THIS, Display *display, int screen);
+extern SDL_GLContext X11_GLES_CreateContext(_THIS, SDL_Window *window);
+extern int X11_GLES_SwapWindow(_THIS, SDL_Window *window);
+extern int X11_GLES_MakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context);
 
 #endif /* SDL_VIDEO_OPENGL_EGL */
 

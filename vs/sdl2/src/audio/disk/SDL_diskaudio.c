@@ -28,11 +28,11 @@
 #include <stdio.h>
 #endif
 
+#include "../SDL_audio_c.h"
+#include "SDL_audio.h"
+#include "SDL_diskaudio.h"
 #include "SDL_rwops.h"
 #include "SDL_timer.h"
-#include "SDL_audio.h"
-#include "../SDL_audio_c.h"
-#include "SDL_diskaudio.h"
 
 /* !!! FIXME: these should be SDL hints, not environment variables. */
 /* environment variables and defaults. */

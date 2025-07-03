@@ -22,10 +22,10 @@
 
 #ifdef SDL_VIDEO_DRIVER_X11
 
-#include "SDL_x11video.h"
-#include "SDL_x11xinput2.h"
 #include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_touch_c.h"
+#include "SDL_x11video.h"
+#include "SDL_x11xinput2.h"
 
 #define MAX_AXIS 16
 

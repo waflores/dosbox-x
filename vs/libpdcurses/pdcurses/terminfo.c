@@ -52,166 +52,145 @@ terminfo
 
 TERMINAL *cur_term = NULL;
 
-int mvcur(int oldrow, int oldcol, int newrow, int newcol)
-{
-    PDC_LOG(("mvcur() - called: oldrow %d oldcol %d newrow %d newcol %d\n",
-             oldrow, oldcol, newrow, newcol));
+int mvcur(int oldrow, int oldcol, int newrow, int newcol) {
+  PDC_LOG(("mvcur() - called: oldrow %d oldcol %d newrow %d newcol %d\n",
+           oldrow, oldcol, newrow, newcol));
 
-    if ((newrow >= LINES) || (newcol >= COLS) || (newrow < 0) || (newcol < 0))
-        return ERR;
-
-    PDC_gotoyx(newrow, newcol);
-    SP->cursrow = newrow;
-    SP->curscol = newcol;
-
-    return OK;
-}
-
-int vidattr(chtype attr)
-{
-    PDC_LOG(("vidattr() - called: attr %d\n", attr));
-
+  if ((newrow >= LINES) || (newcol >= COLS) || (newrow < 0) || (newcol < 0))
     return ERR;
+
+  PDC_gotoyx(newrow, newcol);
+  SP->cursrow = newrow;
+  SP->curscol = newcol;
+
+  return OK;
 }
 
-int vid_attr(attr_t attr, short color_pair, void *opt)
-{
-    PDC_LOG(("vid_attr() - called\n"));
+int vidattr(chtype attr) {
+  PDC_LOG(("vidattr() - called: attr %d\n", attr));
 
-    return ERR;
+  return ERR;
 }
 
-int vidputs(chtype attr, int (*putfunc)(int))
-{
-    PDC_LOG(("vidputs() - called: attr %d\n", attr));
+int vid_attr(attr_t attr, short color_pair, void *opt) {
+  PDC_LOG(("vid_attr() - called\n"));
 
-    return ERR;
+  return ERR;
 }
 
-int vid_puts(attr_t attr, short color_pair, void *opt, int (*putfunc)(int))
-{
-    PDC_LOG(("vid_puts() - called\n"));
+int vidputs(chtype attr, int (*putfunc)(int)) {
+  PDC_LOG(("vidputs() - called: attr %d\n", attr));
 
-    return ERR;
+  return ERR;
 }
 
-int del_curterm(TERMINAL *oterm)
-{
-    PDC_LOG(("del_curterm() - called\n"));
+int vid_puts(attr_t attr, short color_pair, void *opt, int (*putfunc)(int)) {
+  PDC_LOG(("vid_puts() - called\n"));
 
-    return ERR;
+  return ERR;
 }
 
-int putp(const char *str)
-{
-    PDC_LOG(("putp() - called: str %s\n", str));
+int del_curterm(TERMINAL *oterm) {
+  PDC_LOG(("del_curterm() - called\n"));
 
-    return ERR;
+  return ERR;
 }
 
-int restartterm(const char *term, int filedes, int *errret)
-{
-    PDC_LOG(("restartterm() - called\n"));
+int putp(const char *str) {
+  PDC_LOG(("putp() - called: str %s\n", str));
 
-    if (errret)
-        *errret = -1;
-
-    return ERR;
+  return ERR;
 }
 
-TERMINAL *set_curterm(TERMINAL *nterm)
-{
-    PDC_LOG(("set_curterm() - called\n"));
+int restartterm(const char *term, int filedes, int *errret) {
+  PDC_LOG(("restartterm() - called\n"));
 
-    return (TERMINAL *)NULL;
+  if (errret)
+    *errret = -1;
+
+  return ERR;
 }
 
-int setterm(const char *term)
-{
-    PDC_LOG(("setterm() - called\n"));
+TERMINAL *set_curterm(TERMINAL *nterm) {
+  PDC_LOG(("set_curterm() - called\n"));
 
-    return ERR;
+  return (TERMINAL *)NULL;
 }
 
-int setupterm(const char *term, int filedes, int *errret)
-{
-    PDC_LOG(("setupterm() - called\n"));
+int setterm(const char *term) {
+  PDC_LOG(("setterm() - called\n"));
 
-    if (errret)
-        *errret = -1;
-    else
-        fprintf(stderr, "There is no terminfo database\n");
-
-    return ERR;
+  return ERR;
 }
 
-int tgetent(char *bp, const char *name)
-{
-    PDC_LOG(("tgetent() - called: name %s\n", name));
+int setupterm(const char *term, int filedes, int *errret) {
+  PDC_LOG(("setupterm() - called\n"));
 
-    return ERR;
+  if (errret)
+    *errret = -1;
+  else
+    fprintf(stderr, "There is no terminfo database\n");
+
+  return ERR;
 }
 
-int tgetflag(const char *id)
-{
-    PDC_LOG(("tgetflag() - called: id %s\n", id));
+int tgetent(char *bp, const char *name) {
+  PDC_LOG(("tgetent() - called: name %s\n", name));
 
-    return ERR;
+  return ERR;
 }
 
-int tgetnum(const char *id)
-{
-    PDC_LOG(("tgetnum() - called: id %s\n", id));
+int tgetflag(const char *id) {
+  PDC_LOG(("tgetflag() - called: id %s\n", id));
 
-    return ERR;
+  return ERR;
 }
 
-char *tgetstr(const char *id, char **area)
-{
-    PDC_LOG(("tgetstr() - called: id %s\n", id));
+int tgetnum(const char *id) {
+  PDC_LOG(("tgetnum() - called: id %s\n", id));
 
-    return (char *)NULL;
+  return ERR;
 }
 
-char *tgoto(const char *cap, int col, int row)
-{
-    PDC_LOG(("tgoto() - called\n"));
+char *tgetstr(const char *id, char **area) {
+  PDC_LOG(("tgetstr() - called: id %s\n", id));
 
-    return (char *)NULL;
+  return (char *)NULL;
 }
 
-int tigetflag(const char *capname)
-{
-    PDC_LOG(("tigetflag() - called: capname %s\n", capname));
+char *tgoto(const char *cap, int col, int row) {
+  PDC_LOG(("tgoto() - called\n"));
 
-    return -1;
+  return (char *)NULL;
 }
 
-int tigetnum(const char *capname)
-{
-    PDC_LOG(("tigetnum() - called: capname %s\n", capname));
+int tigetflag(const char *capname) {
+  PDC_LOG(("tigetflag() - called: capname %s\n", capname));
 
-    return -2;
+  return -1;
 }
 
-char *tigetstr(const char *capname)
-{
-    PDC_LOG(("tigetstr() - called: capname %s\n", capname));
+int tigetnum(const char *capname) {
+  PDC_LOG(("tigetnum() - called: capname %s\n", capname));
 
-    return (char *)(-1);
+  return -2;
 }
 
-char *tparm(const char *cap, long p1, long p2, long p3, long p4,
-            long p5, long p6, long p7, long p8, long p9)
-{
-    PDC_LOG(("tparm() - called: cap %s\n", cap));
+char *tigetstr(const char *capname) {
+  PDC_LOG(("tigetstr() - called: capname %s\n", capname));
 
-    return (char *)NULL;
+  return (char *)(-1);
 }
 
-int tputs(const char *str, int affcnt, int (*putfunc)(int))
-{
-    PDC_LOG(("tputs() - called\n"));
+char *tparm(const char *cap, long p1, long p2, long p3, long p4, long p5,
+            long p6, long p7, long p8, long p9) {
+  PDC_LOG(("tparm() - called: cap %s\n", cap));
 
-    return ERR;
+  return (char *)NULL;
+}
+
+int tputs(const char *str, int affcnt, int (*putfunc)(int)) {
+  PDC_LOG(("tputs() - called\n"));
+
+  return ERR;
 }

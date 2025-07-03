@@ -21,16 +21,20 @@
 
 namespace SRCTools {
 
-/** Interface defines an abstract source of samples. It can either define a single channel stream or a stream with interleaved channels. */
+/** Interface defines an abstract source of samples. It can either define a
+ * single channel stream or a stream with interleaved channels. */
 class ResamplerStage {
 public:
-	virtual ~ResamplerStage() {}
+  virtual ~ResamplerStage() {}
 
-	/** Returns a lower estimation of required number of input samples to produce the specified number of output samples. */
-	virtual unsigned int estimateInLength(const unsigned int outLength) const = 0;
+  /** Returns a lower estimation of required number of input samples to produce
+   * the specified number of output samples. */
+  virtual unsigned int estimateInLength(const unsigned int outLength) const = 0;
 
-	/** Generates output samples. The arguments are adjusted in accordance with the number of samples processed. */
-	virtual void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) = 0;
+  /** Generates output samples. The arguments are adjusted in accordance with
+   * the number of samples processed. */
+  virtual void process(const FloatSample *&inSamples, unsigned int &inLength,
+                       FloatSample *&outSamples, unsigned int &outLength) = 0;
 };
 
 } // namespace SRCTools

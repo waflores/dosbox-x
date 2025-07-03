@@ -17,13 +17,11 @@
  *
  */
 
-
 #define FT_MAKE_OPTION_SINGLE_OBJECT
 
-#include "ftsdfrend.c"
-#include "ftsdfcommon.c"
 #include "ftbsdf.c"
 #include "ftsdf.c"
-
+#include "ftsdfcommon.c"
+#include "ftsdfrend.c"
 
 /* END */

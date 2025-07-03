@@ -43,8 +43,8 @@
 #ifndef SDL_loadso_h_
 #define SDL_loadso_h_
 
-#include "SDL_stdinc.h"
 #include "SDL_error.h"
+#include "SDL_stdinc.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */

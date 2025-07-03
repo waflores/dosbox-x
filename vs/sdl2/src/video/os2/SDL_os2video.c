@@ -23,55 +23,54 @@
 
 #ifdef SDL_VIDEO_DRIVER_OS2
 
-#include "SDL_video.h"
-#include "SDL_mouse.h"
+#include "../../events/SDL_events_c.h"
 #include "../SDL_pixels_c.h"
 #include "../SDL_shape_internals.h"
-#include "../../events/SDL_events_c.h"
+#include "SDL_mouse.h"
+#include "SDL_os2messagebox.h"
+#include "SDL_os2util.h"
 #include "SDL_os2video.h"
 #include "SDL_syswm.h"
-#include "SDL_os2util.h"
-#include "SDL_os2messagebox.h"
+#include "SDL_video.h"
 
 #define __MEERROR_H__
-#define  _MEERROR_H_
-#include <mmioos2.h>
+#define _MEERROR_H_
 #include <fourcc.h>
+#include <mmioos2.h>
 #ifndef FOURCC_R666
-#define FOURCC_R666 mmioFOURCC('R','6','6','6')
+#define FOURCC_R666 mmioFOURCC('R', '6', '6', '6')
 #endif
 
-#define WIN_CLIENT_CLASS        "SDL2"
-#define OS2DRIVER_NAME_DIVE     "DIVE"
-#define OS2DRIVER_NAME_VMAN     "VMAN"
-
+#define WIN_CLIENT_CLASS    "SDL2"
+#define OS2DRIVER_NAME_DIVE "DIVE"
+#define OS2DRIVER_NAME_VMAN "VMAN"
 
 static const SDL_Scancode aSDLScancode[] = {
-         /*   0                       1                           2                           3                           4                        5                                                       6                           7 */
-         /*   8                       9                           A                           B                           C                        D                                                       E                           F */
-         SDL_SCANCODE_UNKNOWN,        SDL_SCANCODE_ESCAPE,        SDL_SCANCODE_1,             SDL_SCANCODE_2,             SDL_SCANCODE_3,          SDL_SCANCODE_4,             SDL_SCANCODE_5,             SDL_SCANCODE_6,          /* 0 */
-         SDL_SCANCODE_7,              SDL_SCANCODE_8,             SDL_SCANCODE_9,             SDL_SCANCODE_0,             SDL_SCANCODE_MINUS,      SDL_SCANCODE_EQUALS,        SDL_SCANCODE_BACKSPACE,     SDL_SCANCODE_TAB,        /* 0 */
+    /*   0                       1                           2                           3                           4                        5                                                       6                           7 */
+    /*   8                       9                           A                           B                           C                        D                                                       E                           F */
+    SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_ESCAPE, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6,         /* 0 */
+    SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9, SDL_SCANCODE_0, SDL_SCANCODE_MINUS, SDL_SCANCODE_EQUALS, SDL_SCANCODE_BACKSPACE, SDL_SCANCODE_TAB, /* 0 */
 
-         SDL_SCANCODE_Q,              SDL_SCANCODE_W,             SDL_SCANCODE_E,             SDL_SCANCODE_R,             SDL_SCANCODE_T,          SDL_SCANCODE_Y,             SDL_SCANCODE_U,             SDL_SCANCODE_I,          /* 1 */
-         SDL_SCANCODE_O,              SDL_SCANCODE_P,             SDL_SCANCODE_LEFTBRACKET,   SDL_SCANCODE_RIGHTBRACKET,  SDL_SCANCODE_RETURN,     SDL_SCANCODE_LCTRL,         SDL_SCANCODE_A,             SDL_SCANCODE_S,          /* 1 */
+    SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_R, SDL_SCANCODE_T, SDL_SCANCODE_Y, SDL_SCANCODE_U, SDL_SCANCODE_I,                               /* 1 */
+    SDL_SCANCODE_O, SDL_SCANCODE_P, SDL_SCANCODE_LEFTBRACKET, SDL_SCANCODE_RIGHTBRACKET, SDL_SCANCODE_RETURN, SDL_SCANCODE_LCTRL, SDL_SCANCODE_A, SDL_SCANCODE_S, /* 1 */
 
-         SDL_SCANCODE_D,              SDL_SCANCODE_F,             SDL_SCANCODE_G,             SDL_SCANCODE_H,             SDL_SCANCODE_J,          SDL_SCANCODE_K,             SDL_SCANCODE_L,             SDL_SCANCODE_SEMICOLON,  /* 2 */
-         SDL_SCANCODE_APOSTROPHE,     SDL_SCANCODE_GRAVE,         SDL_SCANCODE_LSHIFT,        SDL_SCANCODE_BACKSLASH,     SDL_SCANCODE_Z,          SDL_SCANCODE_X,             SDL_SCANCODE_C,             SDL_SCANCODE_V,          /* 2 */
+    SDL_SCANCODE_D, SDL_SCANCODE_F, SDL_SCANCODE_G, SDL_SCANCODE_H, SDL_SCANCODE_J, SDL_SCANCODE_K, SDL_SCANCODE_L, SDL_SCANCODE_SEMICOLON,                   /* 2 */
+    SDL_SCANCODE_APOSTROPHE, SDL_SCANCODE_GRAVE, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_BACKSLASH, SDL_SCANCODE_Z, SDL_SCANCODE_X, SDL_SCANCODE_C, SDL_SCANCODE_V, /* 2 */
 
-         SDL_SCANCODE_B,              SDL_SCANCODE_N,             SDL_SCANCODE_M,             SDL_SCANCODE_COMMA,         SDL_SCANCODE_PERIOD,     SDL_SCANCODE_SLASH,         SDL_SCANCODE_RSHIFT,  /*55*/SDL_SCANCODE_KP_MULTIPLY,/* 3 */
-         SDL_SCANCODE_LALT,           SDL_SCANCODE_SPACE,         SDL_SCANCODE_CAPSLOCK,      SDL_SCANCODE_F1,            SDL_SCANCODE_F2,         SDL_SCANCODE_F3,            SDL_SCANCODE_F4,            SDL_SCANCODE_F5,         /* 3 */
+    SDL_SCANCODE_B, SDL_SCANCODE_N, SDL_SCANCODE_M, SDL_SCANCODE_COMMA, SDL_SCANCODE_PERIOD, SDL_SCANCODE_SLASH, SDL_SCANCODE_RSHIFT, /*55*/ SDL_SCANCODE_KP_MULTIPLY, /* 3 */
+    SDL_SCANCODE_LALT, SDL_SCANCODE_SPACE, SDL_SCANCODE_CAPSLOCK, SDL_SCANCODE_F1, SDL_SCANCODE_F2, SDL_SCANCODE_F3, SDL_SCANCODE_F4, SDL_SCANCODE_F5,                 /* 3 */
 
-         SDL_SCANCODE_F6,             SDL_SCANCODE_F7,            SDL_SCANCODE_F8,            SDL_SCANCODE_F9,            SDL_SCANCODE_F10,        SDL_SCANCODE_NUMLOCKCLEAR,  SDL_SCANCODE_SCROLLLOCK,    SDL_SCANCODE_KP_7,       /* 4 */
- /*72*/  SDL_SCANCODE_KP_8,     /*73*/SDL_SCANCODE_KP_9,          SDL_SCANCODE_KP_MINUS,/*75*/SDL_SCANCODE_KP_4,    /*76*/SDL_SCANCODE_KP_5, /*77*/SDL_SCANCODE_KP_6,    /*78*/SDL_SCANCODE_KP_PLUS, /*79*/SDL_SCANCODE_KP_1,       /* 4 */
+    SDL_SCANCODE_F6, SDL_SCANCODE_F7, SDL_SCANCODE_F8, SDL_SCANCODE_F9, SDL_SCANCODE_F10, SDL_SCANCODE_NUMLOCKCLEAR, SDL_SCANCODE_SCROLLLOCK, SDL_SCANCODE_KP_7,                                                    /* 4 */
+    /*72*/ SDL_SCANCODE_KP_8, /*73*/ SDL_SCANCODE_KP_9, SDL_SCANCODE_KP_MINUS, /*75*/ SDL_SCANCODE_KP_4, /*76*/ SDL_SCANCODE_KP_5, /*77*/ SDL_SCANCODE_KP_6, /*78*/ SDL_SCANCODE_KP_PLUS, /*79*/ SDL_SCANCODE_KP_1, /* 4 */
 
- /*80*/  SDL_SCANCODE_KP_2,     /*81*/SDL_SCANCODE_KP_3,          SDL_SCANCODE_KP_0,    /*83*/SDL_SCANCODE_KP_PERIOD,     SDL_SCANCODE_UNKNOWN,    SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_NONUSBACKSLASH,SDL_SCANCODE_F11,        /* 5 */
- /*88*/  SDL_SCANCODE_F12,      /*89*/SDL_SCANCODE_PAUSE,   /*90*/SDL_SCANCODE_KP_ENTER,/*91*/SDL_SCANCODE_RCTRL,   /*92*/SDL_SCANCODE_KP_DIVIDE,  SDL_SCANCODE_APPLICATION,   SDL_SCANCODE_RALT,    /*95*/SDL_SCANCODE_UNKNOWN,    /* 5 */
+    /*80*/ SDL_SCANCODE_KP_2, /*81*/ SDL_SCANCODE_KP_3, SDL_SCANCODE_KP_0, /*83*/ SDL_SCANCODE_KP_PERIOD, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_NONUSBACKSLASH, SDL_SCANCODE_F11,                      /* 5 */
+    /*88*/ SDL_SCANCODE_F12, /*89*/ SDL_SCANCODE_PAUSE, /*90*/ SDL_SCANCODE_KP_ENTER, /*91*/ SDL_SCANCODE_RCTRL, /*92*/ SDL_SCANCODE_KP_DIVIDE, SDL_SCANCODE_APPLICATION, SDL_SCANCODE_RALT, /*95*/ SDL_SCANCODE_UNKNOWN, /* 5 */
 
- /*96*/  SDL_SCANCODE_HOME,     /*97*/SDL_SCANCODE_UP,      /*98*/SDL_SCANCODE_PAGEUP,        SDL_SCANCODE_LEFT,   /*100*/SDL_SCANCODE_RIGHT,      SDL_SCANCODE_END,    /*102*/SDL_SCANCODE_DOWN,   /*103*/SDL_SCANCODE_PAGEDOWN,   /* 6 */
-/*104*/  SDL_SCANCODE_F17,     /*105*/SDL_SCANCODE_DELETE,        SDL_SCANCODE_F19,           SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_UNKNOWN,    SDL_SCANCODE_UNKNOWN,/*110*/SDL_SCANCODE_UNKNOWN,/*111*/SDL_SCANCODE_UNKNOWN,    /* 6 */
+    /*96*/ SDL_SCANCODE_HOME, /*97*/ SDL_SCANCODE_UP, /*98*/ SDL_SCANCODE_PAGEUP, SDL_SCANCODE_LEFT, /*100*/ SDL_SCANCODE_RIGHT, SDL_SCANCODE_END, /*102*/ SDL_SCANCODE_DOWN, /*103*/ SDL_SCANCODE_PAGEDOWN, /* 6 */
+    /*104*/ SDL_SCANCODE_F17, /*105*/ SDL_SCANCODE_DELETE, SDL_SCANCODE_F19, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN, /*110*/ SDL_SCANCODE_UNKNOWN, /*111*/ SDL_SCANCODE_UNKNOWN,   /* 6 */
 
-/*112*/  SDL_SCANCODE_INTERNATIONAL2, SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_INTERNATIONAL1,SDL_SCANCODE_UNKNOWN,    SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_UNKNOWN,    /* 7 */
-/*120*/  SDL_SCANCODE_UNKNOWN,        SDL_SCANCODE_INTERNATIONAL4,SDL_SCANCODE_UNKNOWN,       SDL_SCANCODE_INTERNATIONAL5,SDL_SCANCODE_APPLICATION,SDL_SCANCODE_INTERNATIONAL3,SDL_SCANCODE_LGUI,          SDL_SCANCODE_RGUI        /* 7 */
+    /*112*/ SDL_SCANCODE_INTERNATIONAL2, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_INTERNATIONAL1, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_UNKNOWN,     /* 7 */
+    /*120*/ SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_INTERNATIONAL4, SDL_SCANCODE_UNKNOWN, SDL_SCANCODE_INTERNATIONAL5, SDL_SCANCODE_APPLICATION, SDL_SCANCODE_INTERNATIONAL3, SDL_SCANCODE_LGUI, SDL_SCANCODE_RGUI /* 7 */
 };
 
 /*  Utilites.
@@ -80,60 +79,102 @@ static const SDL_Scancode aSDLScancode[] = {
 static BOOL _getSDLPixelFormatData(SDL_PixelFormat *pSDLPixelFormat,
                                    ULONG ulBPP, ULONG fccColorEncoding)
 {
-    ULONG   ulRshift, ulGshift, ulBshift;
-    ULONG   ulRmask, ulGmask, ulBmask;
-    ULONG   ulRloss, ulGloss, ulBloss;
+    ULONG ulRshift, ulGshift, ulBshift;
+    ULONG ulRmask, ulGmask, ulBmask;
+    ULONG ulRloss, ulGloss, ulBloss;
 
     pSDLPixelFormat->BitsPerPixel = ulBPP;
     pSDLPixelFormat->BytesPerPixel = (pSDLPixelFormat->BitsPerPixel + 7) / 8;
 
     switch (fccColorEncoding) {
     case FOURCC_LUT8:
-        ulRshift = 0; ulGshift = 0; ulBshift = 0;
-        ulRmask = 0; ulGmask = 0; ulBmask = 0;
-        ulRloss = 8; ulGloss = 8; ulBloss = 8;
+        ulRshift = 0;
+        ulGshift = 0;
+        ulBshift = 0;
+        ulRmask = 0;
+        ulGmask = 0;
+        ulBmask = 0;
+        ulRloss = 8;
+        ulGloss = 8;
+        ulBloss = 8;
         break;
 
     case FOURCC_R555:
-        ulRshift = 10; ulGshift = 5; ulBshift = 0;
-        ulRmask = 0x7C00; ulGmask = 0x03E0; ulBmask = 0x001F;
-        ulRloss = 3; ulGloss = 3; ulBloss = 3;
+        ulRshift = 10;
+        ulGshift = 5;
+        ulBshift = 0;
+        ulRmask = 0x7C00;
+        ulGmask = 0x03E0;
+        ulBmask = 0x001F;
+        ulRloss = 3;
+        ulGloss = 3;
+        ulBloss = 3;
         break;
 
     case FOURCC_R565:
-        ulRshift = 11; ulGshift = 5; ulBshift = 0;
-        ulRmask = 0xF800; ulGmask = 0x07E0; ulBmask = 0x001F;
-        ulRloss = 3; ulGloss = 2; ulBloss = 3;
+        ulRshift = 11;
+        ulGshift = 5;
+        ulBshift = 0;
+        ulRmask = 0xF800;
+        ulGmask = 0x07E0;
+        ulBmask = 0x001F;
+        ulRloss = 3;
+        ulGloss = 2;
+        ulBloss = 3;
         break;
 
     case FOURCC_R664:
-        ulRshift = 10; ulGshift = 4; ulBshift = 0;
-        ulRmask = 0xFC00; ulGmask = 0x03F0; ulBmask = 0x000F;
-        ulRloss = 2; ulGloss = 4; ulBloss = 3;
+        ulRshift = 10;
+        ulGshift = 4;
+        ulBshift = 0;
+        ulRmask = 0xFC00;
+        ulGmask = 0x03F0;
+        ulBmask = 0x000F;
+        ulRloss = 2;
+        ulGloss = 4;
+        ulBloss = 3;
         break;
 
     case FOURCC_R666:
-        ulRshift = 12; ulGshift = 6; ulBshift = 0;
-        ulRmask = 0x03F000; ulGmask = 0x000FC0; ulBmask = 0x00003F;
-        ulRloss = 2; ulGloss = 2; ulBloss = 2;
+        ulRshift = 12;
+        ulGshift = 6;
+        ulBshift = 0;
+        ulRmask = 0x03F000;
+        ulGmask = 0x000FC0;
+        ulBmask = 0x00003F;
+        ulRloss = 2;
+        ulGloss = 2;
+        ulBloss = 2;
         break;
 
     case FOURCC_RGB3:
     case FOURCC_RGB4:
-        ulRshift = 0; ulGshift = 8; ulBshift = 16;
-        ulRmask = 0x0000FF; ulGmask = 0x00FF00; ulBmask = 0xFF0000;
-        ulRloss = 0x00; ulGloss = 0x00; ulBloss = 0x00;
+        ulRshift = 0;
+        ulGshift = 8;
+        ulBshift = 16;
+        ulRmask = 0x0000FF;
+        ulGmask = 0x00FF00;
+        ulBmask = 0xFF0000;
+        ulRloss = 0x00;
+        ulGloss = 0x00;
+        ulBloss = 0x00;
         break;
 
     case FOURCC_BGR3:
     case FOURCC_BGR4:
-        ulRshift = 16; ulGshift = 8; ulBshift = 0;
-        ulRmask = 0xFF0000; ulGmask = 0x00FF00; ulBmask = 0x0000FF;
-        ulRloss = 0; ulGloss = 0; ulBloss = 0;
+        ulRshift = 16;
+        ulGshift = 8;
+        ulBshift = 0;
+        ulRmask = 0xFF0000;
+        ulGmask = 0x00FF00;
+        ulBmask = 0x0000FF;
+        ulRloss = 0;
+        ulGloss = 0;
+        ulBloss = 0;
         break;
 
     default:
-/*      printf("Unknown color encoding: %.4s\n", fccColorEncoding);*/
+        /*      printf("Unknown color encoding: %.4s\n", fccColorEncoding);*/
         SDL_memset(pSDLPixelFormat, 0, sizeof(SDL_PixelFormat));
         return FALSE;
     }
@@ -141,16 +182,16 @@ static BOOL _getSDLPixelFormatData(SDL_PixelFormat *pSDLPixelFormat,
     pSDLPixelFormat->Rshift = ulRshift;
     pSDLPixelFormat->Gshift = ulGshift;
     pSDLPixelFormat->Bshift = ulBshift;
-    pSDLPixelFormat->Rmask  = ulRmask;
-    pSDLPixelFormat->Gmask  = ulGmask;
-    pSDLPixelFormat->Bmask  = ulBmask;
-    pSDLPixelFormat->Rloss  = ulRloss;
-    pSDLPixelFormat->Gloss  = ulGloss;
-    pSDLPixelFormat->Bloss  = ulBloss;
+    pSDLPixelFormat->Rmask = ulRmask;
+    pSDLPixelFormat->Gmask = ulGmask;
+    pSDLPixelFormat->Bmask = ulBmask;
+    pSDLPixelFormat->Rloss = ulRloss;
+    pSDLPixelFormat->Gloss = ulGloss;
+    pSDLPixelFormat->Bloss = ulBloss;
 
     pSDLPixelFormat->Ashift = 0x00;
-    pSDLPixelFormat->Amask  = 0x00;
-    pSDLPixelFormat->Aloss  = 0x00;
+    pSDLPixelFormat->Amask = 0x00;
+    pSDLPixelFormat->Aloss = 0x00;
 
     return TRUE;
 }
@@ -158,7 +199,7 @@ static BOOL _getSDLPixelFormatData(SDL_PixelFormat *pSDLPixelFormat,
 static Uint32 _getSDLPixelFormat(ULONG ulBPP, FOURCC fccColorEncoding)
 {
     SDL_PixelFormat stSDLPixelFormat;
-    Uint32          uiResult = SDL_PIXELFORMAT_UNKNOWN;
+    Uint32 uiResult = SDL_PIXELFORMAT_UNKNOWN;
 
     if (_getSDLPixelFormatData(&stSDLPixelFormat, ulBPP, fccColorEncoding))
         uiResult = SDL_MasksToPixelFormatEnum(ulBPP, stSDLPixelFormat.Rmask,
@@ -192,7 +233,6 @@ static VOID _mouseCheck(WINDATA *pWinData)
     }
 }
 
-
 /*  PM window procedure.
  *  --------------------
  */
@@ -205,19 +245,18 @@ static VOID _setVisibleRegion(WINDATA *pWinData, BOOL fVisible)
     if (!pWinData->pVOData)
         return;
 
-     pSDLDisplay = (fVisible)? SDL_GetDisplayForWindow(pWinData->window) : NULL;
-     pWinData->pOutput->SetVisibleRegion(pWinData->pVOData, pWinData->hwnd,
-                                         (!pSDLDisplay) ?
-                                         NULL : &pSDLDisplay->current_mode,
-                                         pWinData->hrgnShape, fVisible);
+    pSDLDisplay = (fVisible) ? SDL_GetDisplayForWindow(pWinData->window) : NULL;
+    pWinData->pOutput->SetVisibleRegion(pWinData->pVOData, pWinData->hwnd,
+                                        (!pSDLDisplay) ? NULL : &pSDLDisplay->current_mode,
+                                        pWinData->hrgnShape, fVisible);
 }
 
 static VOID _wmPaint(WINDATA *pWinData, HWND hwnd)
 {
     if (!pWinData->pVOData ||
         !pWinData->pOutput->Update(pWinData->pVOData, hwnd, NULL, 0)) {
-        RECTL   rectl;
-        HPS     hps;
+        RECTL rectl;
+        HPS hps;
 
         hps = WinBeginPaint(hwnd, 0, &rectl);
         WinFillRect(hps, &rectl, CLR_BLACK);
@@ -228,8 +267,8 @@ static VOID _wmPaint(WINDATA *pWinData, HWND hwnd)
 static VOID _wmMouseMove(WINDATA *pWinData, SHORT lX, SHORT lY)
 {
     SDL_Mouse *pSDLMouse = SDL_GetMouse();
-    POINTL  pointl;
-    BOOL    fWinActive = (pWinData->window->flags & SDL_WINDOW_INPUT_FOCUS) != 0;
+    POINTL pointl;
+    BOOL fWinActive = (pWinData->window->flags & SDL_WINDOW_INPUT_FOCUS) != 0;
 
     if (!pSDLMouse->relative_mode || pSDLMouse->relative_mode_warp) {
         if (!pSDLMouse->relative_mode && fWinActive &&
@@ -278,8 +317,8 @@ static VOID _wmMouseMove(WINDATA *pWinData, SHORT lX, SHORT lY)
 
 static VOID _wmMouseButton(WINDATA *pWinData, ULONG ulButton, BOOL fDown)
 {
-    static ULONG  aBtnGROP2SDL[3] = { SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT,
-                                      SDL_BUTTON_MIDDLE };
+    static ULONG aBtnGROP2SDL[3] = { SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT,
+                                     SDL_BUTTON_MIDDLE };
     SDL_Mouse *pSDLMouse = SDL_GetMouse();
 
     if ((pSDLMouse->relative_mode || ((pWinData->window->flags & SDL_WINDOW_MOUSE_GRABBED) != 0)) &&
@@ -287,7 +326,7 @@ static VOID _wmMouseButton(WINDATA *pWinData, ULONG ulButton, BOOL fDown)
         (WinQueryCapture(HWND_DESKTOP) != pWinData->hwnd)) {
         /* Mouse should be captured. */
         if (pSDLMouse->relative_mode && !pSDLMouse->relative_mode_warp) {
-            POINTL  pointl;
+            POINTL pointl;
 
             pointl.x = pWinData->window->w / 2;
             pointl.y = pWinData->window->h / 2;
@@ -300,16 +339,16 @@ static VOID _wmMouseButton(WINDATA *pWinData, ULONG ulButton, BOOL fDown)
     }
 
     SDL_SendMouseButton(pWinData->window, 0,
-                        (fDown)? SDL_PRESSED : SDL_RELEASED,
+                        (fDown) ? SDL_PRESSED : SDL_RELEASED,
                         aBtnGROP2SDL[ulButton]);
 }
 
 static VOID _wmChar(WINDATA *pWinData, MPARAM mp1, MPARAM mp2)
 {
-    ULONG   ulFlags = SHORT1FROMMP(mp1);      /* WM_CHAR flags         */
-    ULONG   ulVirtualKey = SHORT2FROMMP(mp2); /* Virtual key code VK_* */
-    ULONG   ulCharCode = SHORT1FROMMP(mp2);   /* Character code        */
-    ULONG   ulScanCode = CHAR4FROMMP(mp1);    /* Scan code             */
+    ULONG ulFlags = SHORT1FROMMP(mp1);      /* WM_CHAR flags         */
+    ULONG ulVirtualKey = SHORT2FROMMP(mp2); /* Virtual key code VK_* */
+    ULONG ulCharCode = SHORT1FROMMP(mp2);   /* Character code        */
+    ULONG ulScanCode = CHAR4FROMMP(mp1);    /* Scan code             */
 
     if (((ulFlags & (KC_VIRTUALKEY | KC_KEYUP | KC_ALT)) == (KC_VIRTUALKEY | KC_ALT)) &&
         (ulVirtualKey == VK_F4)) {
@@ -317,7 +356,7 @@ static VOID _wmChar(WINDATA *pWinData, MPARAM mp1, MPARAM mp2)
     }
 
     if ((ulFlags & KC_SCANCODE) != 0) {
-        SDL_SendKeyboardKey(((ulFlags & KC_KEYUP) == 0)? SDL_PRESSED : SDL_RELEASED, aSDLScancode[ulScanCode]);
+        SDL_SendKeyboardKey(((ulFlags & KC_KEYUP) == 0) ? SDL_PRESSED : SDL_RELEASED, aSDLScancode[ulScanCode]);
     }
 
     if ((ulFlags & KC_CHAR) != 0) {
@@ -328,7 +367,7 @@ static VOID _wmChar(WINDATA *pWinData, MPARAM mp1, MPARAM mp2)
 #else
         char utf8[4];
         int rc = StrUTF8(1, utf8, sizeof(utf8), (char *)&ulCharCode, 1);
-        SDL_SendKeyboardText((rc > 0) ? utf8 : (char *) &ulCharCode);
+        SDL_SendKeyboardText((rc > 0) ? utf8 : (char *)&ulCharCode);
 #endif
     }
 }
@@ -336,23 +375,23 @@ static VOID _wmChar(WINDATA *pWinData, MPARAM mp1, MPARAM mp2)
 static VOID _wmMove(WINDATA *pWinData)
 {
     SDL_DisplayMode *pSDLDisplayMode = _getDisplayModeForSDLWindow(pWinData->window);
-    POINTL  pointl = { 0,0 };
-    RECTL   rectl;
+    POINTL pointl = { 0, 0 };
+    RECTL rectl;
 
     WinQueryWindowRect(pWinData->hwnd, &rectl);
     WinMapWindowPoints(pWinData->hwnd, HWND_DESKTOP, (PPOINTL)&rectl, 2);
 
     WinMapWindowPoints(pWinData->hwnd, HWND_DESKTOP, &pointl, 1);
     SDL_SendWindowEvent(pWinData->window, SDL_WINDOWEVENT_MOVED, rectl.xLeft,
-                       pSDLDisplayMode->h - rectl.yTop);
+                        pSDLDisplayMode->h - rectl.yTop);
 }
 
 static MRESULT _wmDragOver(WINDATA *pWinData, PDRAGINFO pDragInfo)
 {
-    ULONG       ulIdx;
-    PDRAGITEM   pDragItem;
-    USHORT      usDrag   = DOR_NEVERDROP;
-    USHORT      usDragOp = DO_UNKNOWN;
+    ULONG ulIdx;
+    PDRAGITEM pDragItem;
+    USHORT usDrag = DOR_NEVERDROP;
+    USHORT usDragOp = DO_UNKNOWN;
 
     if (!DrgAccessDraginfo(pDragInfo))
         return MRFROM2SHORT(DOR_NEVERDROP, DO_UNKNOWN);
@@ -362,22 +401,21 @@ static MRESULT _wmDragOver(WINDATA *pWinData, PDRAGINFO pDragInfo)
 
         /* We accept WPS files only. */
         if (!DrgVerifyRMF(pDragItem, "DRM_OS2FILE", NULL)) {
-            usDrag   = DOR_NEVERDROP;
+            usDrag = DOR_NEVERDROP;
             usDragOp = DO_UNKNOWN;
             break;
         }
 
         if (pDragInfo->usOperation == DO_DEFAULT &&
             (pDragItem->fsSupportedOps & DO_COPYABLE) != 0) {
-            usDrag   = DOR_DROP;
+            usDrag = DOR_DROP;
             usDragOp = DO_COPY;
-        } else
-        if (pDragInfo->usOperation == DO_LINK &&
-            (pDragItem->fsSupportedOps & DO_LINKABLE) != 0) {
-            usDrag   = DOR_DROP;
+        } else if (pDragInfo->usOperation == DO_LINK &&
+                   (pDragItem->fsSupportedOps & DO_LINKABLE) != 0) {
+            usDrag = DOR_DROP;
             usDragOp = DO_LINK;
         } else {
-            usDrag   = DOR_NODROPOP;
+            usDrag = DOR_NODROPOP;
             usDragOp = DO_UNKNOWN;
             break;
         }
@@ -393,10 +431,10 @@ static MRESULT _wmDragOver(WINDATA *pWinData, PDRAGINFO pDragInfo)
 
 static MRESULT _wmDrop(WINDATA *pWinData, PDRAGINFO pDragInfo)
 {
-    ULONG       ulIdx;
-    PDRAGITEM   pDragItem;
-    CHAR        acFName[CCHMAXPATH];
-    PCHAR       pcFName;
+    ULONG ulIdx;
+    PDRAGITEM pDragItem;
+    CHAR acFName[CCHMAXPATH];
+    PCHAR pcFName;
 
     if (!DrgAccessDraginfo(pDragInfo))
         return MRFROM2SHORT(DOR_NEVERDROP, 0);
@@ -436,8 +474,8 @@ static MRESULT _wmDrop(WINDATA *pWinData, PDRAGINFO pDragInfo)
 
 static MRESULT EXPENTRY wndFrameProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 {
-    HWND    hwndClient = WinQueryWindow(hwnd, QW_BOTTOM);
-    WINDATA * pWinData = (WINDATA *)WinQueryWindowULong(hwndClient, 0);
+    HWND hwndClient = WinQueryWindow(hwnd, QW_BOTTOM);
+    WINDATA *pWinData = (WINDATA *)WinQueryWindowULong(hwndClient, 0);
 
     if (!pWinData)
         return WinDefWindowProc(hwnd, msg, mp1, mp2);
@@ -500,9 +538,9 @@ static MRESULT EXPENTRY wndFrameProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp
                 break;
             }
             if ((SDL_GetWindowFlags(pWinData->window) & SDL_WINDOW_RESIZABLE) != 0) {
-                RECTL   rectl;
-                int     iMinW, iMinH, iMaxW, iMaxH;
-                int     iWinW, iWinH;
+                RECTL rectl;
+                int iMinW, iMinH, iMaxW, iMaxH;
+                int iWinW, iWinH;
 
                 rectl.xLeft = 0;
                 rectl.yBottom = 0;
@@ -575,9 +613,7 @@ static MRESULT EXPENTRY wndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
         break;
 
     case WM_SHOW:
-        SDL_SendWindowEvent(pWinData->window, (SHORT1FROMMP(mp1) == 0)?
-                                               SDL_WINDOWEVENT_HIDDEN :
-                                               SDL_WINDOWEVENT_SHOWN   ,
+        SDL_SendWindowEvent(pWinData->window, (SHORT1FROMMP(mp1) == 0) ? SDL_WINDOWEVENT_HIDDEN : SDL_WINDOWEVENT_SHOWN,
                             0, 0);
         break;
 
@@ -587,7 +623,7 @@ static MRESULT EXPENTRY wndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 
     case WM_ACTIVATE:
         if ((BOOL)mp1) {
-            POINTL  pointl;
+            POINTL pointl;
 
             if (SDL_GetKeyboardFocus() != pWinData->window)
                 SDL_SetKeyboardFocus(pWinData->window);
@@ -600,7 +636,7 @@ static MRESULT EXPENTRY wndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
             if (SDL_GetKeyboardFocus() == pWinData->window)
                 SDL_SetKeyboardFocus(NULL);
 
-            WinSetCapture(HWND_DESKTOP,  NULLHANDLE);
+            WinSetCapture(HWND_DESKTOP, NULLHANDLE);
         }
         break;
 
@@ -691,11 +727,8 @@ static MRESULT EXPENTRY wndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
         return _wmDrop(pWinData, (PDRAGINFO)PVOIDFROMMP(mp1));
     }
 
-    return (pWinData->fnUserWndProc)?
-            pWinData->fnUserWndProc(hwnd, msg, mp1, mp2) :
-            WinDefWindowProc(hwnd, msg, mp1, mp2);
+    return (pWinData->fnUserWndProc) ? pWinData->fnUserWndProc(hwnd, msg, mp1, mp2) : WinDefWindowProc(hwnd, msg, mp1, mp2);
 }
-
 
 /*  SDL routines.
  *  ------------
@@ -704,7 +737,7 @@ static MRESULT EXPENTRY wndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 static void OS2_PumpEvents(_THIS)
 {
     SDL_VideoData *pVData = (SDL_VideoData *)_this->driverdata;
-    QMSG  qmsg;
+    QMSG qmsg;
 
     if (WinPeekMsg(pVData->hab, &qmsg, NULLHANDLE, 0, 0, PM_REMOVE))
         WinDispatchMsg(pVData->hab, &qmsg);
@@ -714,12 +747,12 @@ static WINDATA *_setupWindow(_THIS, SDL_Window *window, HWND hwndFrame,
                              HWND hwnd)
 {
     SDL_VideoData *pVData = (SDL_VideoData *)_this->driverdata;
-    WINDATA       *pWinData = SDL_calloc(1, sizeof(WINDATA));
+    WINDATA *pWinData = SDL_calloc(1, sizeof(WINDATA));
 
     if (!pWinData) {
         SDL_OutOfMemory();
         return NULL;
-     }
+    }
     pWinData->hwnd = hwnd;
     pWinData->hwndFrame = hwndFrame;
     pWinData->window = window;
@@ -738,13 +771,13 @@ static WINDATA *_setupWindow(_THIS, SDL_Window *window, HWND hwndFrame,
 
 static int OS2_CreateWindow(_THIS, SDL_Window *window)
 {
-    RECTL            rectl;
-    HWND             hwndFrame, hwnd;
+    RECTL rectl;
+    HWND hwndFrame, hwnd;
     SDL_DisplayMode *pSDLDisplayMode = _getDisplayModeForSDLWindow(window);
-    ULONG            ulFrameFlags = FCF_TASKLIST  | FCF_TITLEBAR | FCF_SYSMENU |
-                                    FCF_MINBUTTON | FCF_SHELLPOSITION;
-    ULONG            ulSWPFlags   = SWP_SIZE | SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE;
-    WINDATA         *pWinData;
+    ULONG ulFrameFlags = FCF_TASKLIST | FCF_TITLEBAR | FCF_SYSMENU |
+                         FCF_MINBUTTON | FCF_SHELLPOSITION;
+    ULONG ulSWPFlags = SWP_SIZE | SWP_SHOW | SWP_ZORDER | SWP_ACTIVATE;
+    WINDATA *pWinData;
 
     if (!pSDLDisplayMode)
         return -1;
@@ -773,10 +806,10 @@ static int OS2_CreateWindow(_THIS, SDL_Window *window)
     }
 
     /* Show window */
-    rectl.xLeft   = 0;
+    rectl.xLeft = 0;
     rectl.yBottom = 0;
-    rectl.xRight  = window->w;
-    rectl.yTop    = window->h;
+    rectl.xRight = window->w;
+    rectl.yTop = window->h;
     WinCalcFrameRect(hwndFrame, &rectl, FALSE);
     pWinData->lSkipWMSize++;
     pWinData->lSkipWMMove++;
@@ -784,7 +817,7 @@ static int OS2_CreateWindow(_THIS, SDL_Window *window)
                     rectl.xRight - rectl.xLeft, rectl.yTop - rectl.yBottom,
                     ulSWPFlags);
 
-    rectl.xLeft   = 0;
+    rectl.xLeft = 0;
     rectl.yBottom = 0;
     WinMapWindowPoints(hwnd, HWND_DESKTOP, (PPOINTL)&rectl, 1);
     window->x = rectl.xLeft;
@@ -797,17 +830,17 @@ static int OS2_CreateWindow(_THIS, SDL_Window *window)
 
 static int OS2_CreateWindowFrom(_THIS, SDL_Window *window, const void *data)
 {
-    SDL_VideoData   *pVData = (SDL_VideoData *)_this->driverdata;
-    CHAR             acBuf[256];
-    CLASSINFO        stCI;
-    HWND             hwndUser = (HWND)data;
-    HWND             hwndFrame, hwnd;
-    ULONG            cbText;
-    PSZ              pszText;
-    WINDATA         *pWinData;
+    SDL_VideoData *pVData = (SDL_VideoData *)_this->driverdata;
+    CHAR acBuf[256];
+    CLASSINFO stCI;
+    HWND hwndUser = (HWND)data;
+    HWND hwndFrame, hwnd;
+    ULONG cbText;
+    PSZ pszText;
+    WINDATA *pWinData;
     SDL_DisplayMode *pSDLDisplayMode = _getDisplayModeForSDLWindow(window);
-    SWP              swp;
-    POINTL           pointl;
+    SWP swp;
+    POINTL pointl;
 
     debug_os2("Enter");
     if (!pSDLDisplayMode)
@@ -851,7 +884,7 @@ static int OS2_CreateWindowFrom(_THIS, SDL_Window *window, const void *data)
     pszText = SDL_stack_alloc(CHAR, cbText + 1);
 
     if (pszText != NULL)
-        cbText = (pszText != NULL)? WinQueryWindowText(hwndFrame, cbText, pszText) : 0;
+        cbText = (pszText != NULL) ? WinQueryWindowText(hwndFrame, cbText, pszText) : 0;
 
     if (cbText != 0)
         window->title = OS2_SysToUTF8(pszText);
@@ -861,8 +894,8 @@ static int OS2_CreateWindowFrom(_THIS, SDL_Window *window, const void *data)
     }
 
     /* Set SDL-window flags */
-    window->flags &= ~(SDL_WINDOW_SHOWN     | SDL_WINDOW_BORDERLESS |
-                       SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED  |
+    window->flags &= ~(SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS |
+                       SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED |
                        SDL_WINDOW_MINIMIZED | SDL_WINDOW_INPUT_FOCUS);
 
     if (WinIsWindowVisible(hwnd))
@@ -906,10 +939,10 @@ static int OS2_CreateWindowFrom(_THIS, SDL_Window *window, const void *data)
     return 0;
 }
 
-static void OS2_DestroyWindow(_THIS, SDL_Window * window)
+static void OS2_DestroyWindow(_THIS, SDL_Window *window)
 {
     SDL_VideoData *pVData = (SDL_VideoData *)_this->driverdata;
-    WINDATA       *pWinData = (WINDATA *)window->driverdata;
+    WINDATA *pWinData = (WINDATA *)window->driverdata;
 
     debug_os2("Enter");
     if (!pWinData)
@@ -950,7 +983,7 @@ static void OS2_DestroyWindow(_THIS, SDL_Window * window)
 
 static void OS2_SetWindowTitle(_THIS, SDL_Window *window)
 {
-    PSZ pszTitle = (!window->title)? NULL : OS2_UTF8ToSys(window->title);
+    PSZ pszTitle = (!window->title) ? NULL : OS2_UTF8ToSys(window->title);
 
     WinSetWindowText(((WINDATA *)window->driverdata)->hwndFrame, pszTitle);
     SDL_free(pszTitle);
@@ -958,8 +991,8 @@ static void OS2_SetWindowTitle(_THIS, SDL_Window *window)
 
 static void OS2_SetWindowIcon(_THIS, SDL_Window *window, SDL_Surface *icon)
 {
-    WINDATA  *pWinData = (WINDATA *)window->driverdata;
-    HPOINTER  hptr = utilCreatePointer(icon, 0, 0);
+    WINDATA *pWinData = (WINDATA *)window->driverdata;
+    HPOINTER hptr = utilCreatePointer(icon, 0, 0);
 
     if (hptr == NULLHANDLE)
         return;
@@ -977,9 +1010,9 @@ static void OS2_SetWindowIcon(_THIS, SDL_Window *window, SDL_Surface *icon)
 
 static void OS2_SetWindowPosition(_THIS, SDL_Window *window)
 {
-    WINDATA         *pWinData = (WINDATA *)window->driverdata;
-    RECTL            rectl;
-    ULONG            ulFlags;
+    WINDATA *pWinData = (WINDATA *)window->driverdata;
+    RECTL rectl;
+    ULONG ulFlags;
     SDL_DisplayMode *pSDLDisplayMode = _getDisplayModeForSDLWindow(window);
 
     debug_os2("Enter");
@@ -993,8 +1026,8 @@ static void OS2_SetWindowPosition(_THIS, SDL_Window *window)
     WinCalcFrameRect(pWinData->hwndFrame, &rectl, FALSE);
 
     if (SDL_ShouldAllowTopmost() &&
-        (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_INPUT_FOCUS)) ==
-                         (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_INPUT_FOCUS) )
+        (window->flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_INPUT_FOCUS)) ==
+            (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_INPUT_FOCUS))
         ulFlags = SWP_ZORDER | SWP_MOVE | SWP_SIZE;
     else
         ulFlags = SWP_MOVE | SWP_SIZE;
@@ -1060,12 +1093,12 @@ static void OS2_RestoreWindow(_THIS, SDL_Window *window)
     WinSetWindowPos(pWinData->hwndFrame, HWND_TOP, 0, 0, 0, 0, SWP_RESTORE);
 }
 
-static void OS2_SetWindowBordered(_THIS, SDL_Window * window,
+static void OS2_SetWindowBordered(_THIS, SDL_Window *window,
                                   SDL_bool bordered)
 {
     WINDATA *pWinData = (WINDATA *)window->driverdata;
-    ULONG    ulStyle = WinQueryWindowULong(pWinData->hwndFrame, QWL_STYLE);
-    RECTL    rectl;
+    ULONG ulStyle = WinQueryWindowULong(pWinData->hwndFrame, QWL_STYLE);
+    RECTL rectl;
 
     debug_os2("Enter");
 
@@ -1096,9 +1129,9 @@ static void OS2_SetWindowFullscreen(_THIS, SDL_Window *window,
                                     SDL_VideoDisplay *display,
                                     SDL_bool fullscreen)
 {
-    RECTL            rectl;
-    ULONG            ulFlags;
-    WINDATA         *pWinData = (WINDATA *)window->driverdata;
+    RECTL rectl;
+    ULONG ulFlags;
+    WINDATA *pWinData = (WINDATA *)window->driverdata;
     SDL_DisplayMode *pSDLDisplayMode = &display->current_mode;
 
     debug_os2("Enter, fullscreen: %u", fullscreen);
@@ -1107,7 +1140,7 @@ static void OS2_SetWindowFullscreen(_THIS, SDL_Window *window,
         return;
 
     if (SDL_ShouldAllowTopmost() &&
-        (window->flags & (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_INPUT_FOCUS)) == (SDL_WINDOW_FULLSCREEN|SDL_WINDOW_INPUT_FOCUS))
+        (window->flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_INPUT_FOCUS)) == (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_INPUT_FOCUS))
         ulFlags = SWP_SIZE | SWP_MOVE | SWP_ZORDER | SWP_NOADJUST;
     else
         ulFlags = SWP_SIZE | SWP_MOVE | SWP_NOADJUST;
@@ -1129,16 +1162,15 @@ static void OS2_SetWindowFullscreen(_THIS, SDL_Window *window,
 
     if (!WinCalcFrameRect(pWinData->hwndFrame, &rectl, FALSE)) {
         debug_os2("WinCalcFrameRect() failed");
-    }
-    else if (!WinSetWindowPos(pWinData->hwndFrame, HWND_TOP,
-                              rectl.xLeft, rectl.yBottom,
-                              rectl.xRight - rectl.xLeft, rectl.yTop - rectl.yBottom,
-                              ulFlags)) {
+    } else if (!WinSetWindowPos(pWinData->hwndFrame, HWND_TOP,
+                                rectl.xLeft, rectl.yBottom,
+                                rectl.xRight - rectl.xLeft, rectl.yTop - rectl.yBottom,
+                                ulFlags)) {
         debug_os2("WinSetWindowPos() failed");
     }
 }
 
-static SDL_bool OS2_GetWindowWMInfo(_THIS, SDL_Window * window,
+static SDL_bool OS2_GetWindowWMInfo(_THIS, SDL_Window *window,
                                     struct SDL_SysWMinfo *info)
 {
     WINDATA *pWinData = (WINDATA *)window->driverdata;
@@ -1155,14 +1187,14 @@ static SDL_bool OS2_GetWindowWMInfo(_THIS, SDL_Window * window,
     return SDL_FALSE;
 }
 
-static void OS2_OnWindowEnter(_THIS, SDL_Window * window)
+static void OS2_OnWindowEnter(_THIS, SDL_Window *window)
 {
 }
 
 static int OS2_SetWindowHitTest(SDL_Window *window, SDL_bool enabled)
 {
-  debug_os2("Enter");
-  return 0;
+    debug_os2("Enter");
+    return 0;
 }
 
 static void OS2_SetWindowMouseGrab(_THIS, SDL_Window *window, SDL_bool grabbed)
@@ -1173,19 +1205,19 @@ static void OS2_SetWindowMouseGrab(_THIS, SDL_Window *window, SDL_bool grabbed)
     _mouseCheck(pWinData);
 }
 
-
 /* Shaper
  */
-typedef struct _SHAPERECTS {
-  PRECTL     pRects;
-  ULONG      cRects;
-  ULONG      ulWinHeight;
+typedef struct _SHAPERECTS
+{
+    PRECTL pRects;
+    ULONG cRects;
+    ULONG ulWinHeight;
 } SHAPERECTS;
 
 static void _combineRectRegions(SDL_ShapeTree *node, void *closure)
 {
     SHAPERECTS *pShapeRects = (SHAPERECTS *)closure;
-    PRECTL      pRect;
+    PRECTL pRect;
 
     /* Expand rectangles list */
     if ((pShapeRects->cRects & 0x0F) == 0) {
@@ -1205,9 +1237,9 @@ static void _combineRectRegions(SDL_ShapeTree *node, void *closure)
     pRect->yBottom = pRect->yTop - node->data.shape.h;
 }
 
-static SDL_WindowShaper* OS2_CreateShaper(SDL_Window * window)
+static SDL_WindowShaper *OS2_CreateShaper(SDL_Window *window)
 {
-    SDL_WindowShaper* pSDLShaper = SDL_malloc(sizeof(SDL_WindowShaper));
+    SDL_WindowShaper *pSDLShaper = SDL_malloc(sizeof(SDL_WindowShaper));
 
     debug_os2("Enter");
     pSDLShaper->window = window;
@@ -1231,9 +1263,9 @@ static int OS2_SetWindowShape(SDL_WindowShaper *shaper, SDL_Surface *shape,
                               SDL_WindowShapeMode *shape_mode)
 {
     SDL_ShapeTree *pShapeTree;
-    WINDATA       *pWinData;
-    SHAPERECTS     stShapeRects;
-    HPS            hps;
+    WINDATA *pWinData;
+    SHAPERECTS stShapeRects;
+    HPS hps;
 
     debug_os2("Enter");
     if (!shaper || !shape ||
@@ -1258,8 +1290,7 @@ static int OS2_SetWindowShape(SDL_WindowShaper *shaper, SDL_Surface *shape,
     if (pWinData->hrgnShape != NULLHANDLE)
         GpiDestroyRegion(hps, pWinData->hrgnShape);
 
-    pWinData->hrgnShape = (!stShapeRects.pRects) ? NULLHANDLE :
-                                GpiCreateRegion(hps, stShapeRects.cRects, stShapeRects.pRects);
+    pWinData->hrgnShape = (!stShapeRects.pRects) ? NULLHANDLE : GpiCreateRegion(hps, stShapeRects.cRects, stShapeRects.pRects);
 
     WinReleasePS(hps);
     SDL_free(stShapeRects.pRects);
@@ -1288,7 +1319,6 @@ static int OS2_ResizeWindowShape(SDL_Window *window)
     return 0;
 }
 
-
 /* Frame buffer
  */
 static void OS2_DestroyWindowFramebuffer(_THIS, SDL_Window *window)
@@ -1304,11 +1334,11 @@ static int OS2_CreateWindowFramebuffer(_THIS, SDL_Window *window,
                                        Uint32 *format, void **pixels,
                                        int *pitch)
 {
-    WINDATA          *pWinData = (WINDATA *)window->driverdata;
+    WINDATA *pWinData = (WINDATA *)window->driverdata;
     SDL_VideoDisplay *pSDLDisplay = SDL_GetDisplayForWindow(window);
-    SDL_DisplayMode  *pSDLDisplayMode;
-    MODEDATA         *pModeData;
-    ULONG             ulWidth, ulHeight;
+    SDL_DisplayMode *pSDLDisplayMode;
+    MODEDATA *pModeData;
+    ULONG ulWidth, ulHeight;
 
     debug_os2("Enter");
     if (!pSDLDisplay) {
@@ -1325,8 +1355,8 @@ static int OS2_CreateWindowFramebuffer(_THIS, SDL_Window *window,
     debug_os2("Window size: %u x %u", ulWidth, ulHeight);
 
     *pixels = pWinData->pOutput->VideoBufAlloc(
-                        pWinData->pVOData, ulWidth, ulHeight, pModeData->ulDepth,
-                        pModeData->fccColorEncoding, (PULONG)pitch);
+        pWinData->pVOData, ulWidth, ulHeight, pModeData->ulDepth,
+        pModeData->fccColorEncoding, (PULONG)pitch);
     if (!*pixels)
         return -1;
 
@@ -1337,27 +1367,27 @@ static int OS2_CreateWindowFramebuffer(_THIS, SDL_Window *window,
     return 0;
 }
 
-static int OS2_UpdateWindowFramebuffer(_THIS, SDL_Window * window,
+static int OS2_UpdateWindowFramebuffer(_THIS, SDL_Window *window,
                                        const SDL_Rect *rects, int numrects)
 {
     WINDATA *pWinData = (WINDATA *)window->driverdata;
 
     return pWinData->pOutput->Update(pWinData->pVOData, pWinData->hwnd,
                                      (SDL_Rect *)rects, (ULONG)numrects)
-           ? 0 : -1;
+               ? 0
+               : -1;
 }
-
 
 /* Clipboard
  */
 static int OS2_SetClipboardText(_THIS, const char *text)
 {
     SDL_VideoData *pVData = (SDL_VideoData *)_this->driverdata;
-    PSZ   pszClipboard;
-    PSZ   pszText = (!text)? NULL : OS2_UTF8ToSys(text);
+    PSZ pszClipboard;
+    PSZ pszText = (!text) ? NULL : OS2_UTF8ToSys(text);
     ULONG cbText;
     ULONG ulRC;
-    BOOL  fSuccess;
+    BOOL fSuccess;
 
     debug_os2("Enter");
     if (!pszText)
@@ -1365,8 +1395,8 @@ static int OS2_SetClipboardText(_THIS, const char *text)
     cbText = SDL_strlen(pszText) + 1;
 
     ulRC = DosAllocSharedMem((PPVOID)&pszClipboard, 0, cbText,
-                              PAG_COMMIT | PAG_READ | PAG_WRITE |
-                              OBJ_GIVEABLE | OBJ_GETTABLE | OBJ_TILE);
+                             PAG_COMMIT | PAG_READ | PAG_WRITE |
+                                 OBJ_GIVEABLE | OBJ_GETTABLE | OBJ_TILE);
     if (ulRC != NO_ERROR) {
         debug_os2("DosAllocSharedMem() failed, rc = %u", ulRC);
         SDL_free(pszText);
@@ -1416,7 +1446,7 @@ static SDL_bool OS2_HasClipboardText(_THIS)
 {
     SDL_VideoData *pVData = (SDL_VideoData *)_this->driverdata;
     PSZ pszClipboard;
-    SDL_bool  result;
+    SDL_bool result;
 
     if (!WinOpenClipbrd(pVData->hab)) {
         debug_os2("WinOpenClipbrd() failed");
@@ -1430,12 +1460,11 @@ static SDL_bool OS2_HasClipboardText(_THIS)
     return result;
 }
 
-
 static int OS2_VideoInit(_THIS)
 {
     SDL_VideoData *pVData;
-    PTIB  tib;
-    PPIB  pib;
+    PTIB tib;
+    PPIB pib;
 
     /* Create SDL video driver private data */
     pVData = SDL_calloc(1, sizeof(SDL_VideoData));
@@ -1459,7 +1488,7 @@ static int OS2_VideoInit(_THIS)
 
     if (!WinRegisterClass(pVData->hab, WIN_CLIENT_CLASS, wndProc,
                           CS_SIZEREDRAW | CS_MOVENOTIFY | CS_SYNCPAINT,
-                          sizeof(SDL_VideoData*))) {
+                          sizeof(SDL_VideoData *))) {
         SDL_free(pVData);
         return SDL_SetError("Window class not successfully registered.");
     }
@@ -1473,18 +1502,19 @@ static int OS2_VideoInit(_THIS)
 
     /* Add display */
     {
-        SDL_VideoDisplay    stSDLDisplay;
-        SDL_DisplayMode     stSDLDisplayMode;
-        DISPLAYDATA        *pDisplayData;
-        MODEDATA           *pModeData;
-        VIDEOOUTPUTINFO     stVOInfo;
+        SDL_VideoDisplay stSDLDisplay;
+        SDL_DisplayMode stSDLDisplayMode;
+        DISPLAYDATA *pDisplayData;
+        MODEDATA *pModeData;
+        VIDEOOUTPUTINFO stVOInfo;
 
         if (!pVData->pOutput->QueryInfo(&stVOInfo)) {
             SDL_free(pVData);
             return SDL_SetError("Video mode query failed.");
         }
 
-        SDL_zero(stSDLDisplay); SDL_zero(stSDLDisplayMode);
+        SDL_zero(stSDLDisplay);
+        SDL_zero(stSDLDisplayMode);
 
         stSDLDisplayMode.format = _getSDLPixelFormat(stVOInfo.ulBPP,
                                                      stVOInfo.fccColorEncoding);
@@ -1515,15 +1545,15 @@ static int OS2_VideoInit(_THIS)
             /* May be we can use CAPS_HORIZONTAL_RESOLUTION and
              * CAPS_VERTICAL_RESOLUTION - pels per meter?  */
             DevQueryCaps(hdc, CAPS_HORIZONTAL_FONT_RES, 1,
-                          (PLONG)&pDisplayData->ulDPIHor);
+                         (PLONG)&pDisplayData->ulDPIHor);
             DevQueryCaps(hdc, CAPS_VERTICAL_FONT_RES, 1,
-                          (PLONG)&pDisplayData->ulDPIVer);
+                         (PLONG)&pDisplayData->ulDPIVer);
             WinReleasePS(hps);
 
             pDisplayData->ulDPIDiag = SDL_ComputeDiagonalDPI(
-                  stVOInfo.ulHorizResolution, stVOInfo.ulVertResolution,
-                  (float)stVOInfo.ulHorizResolution / pDisplayData->ulDPIHor,
-                  (float)stVOInfo.ulVertResolution / pDisplayData->ulDPIVer);
+                stVOInfo.ulHorizResolution, stVOInfo.ulVertResolution,
+                (float)stVOInfo.ulHorizResolution / pDisplayData->ulDPIHor,
+                (float)stVOInfo.ulVertResolution / pDisplayData->ulDPIVer);
 
             stSDLDisplayMode.driverdata = pDisplayData;
         }
@@ -1586,8 +1616,9 @@ static void OS2_GetDisplayModes(_THIS, SDL_VideoDisplay *display)
 
     debug_os2("Enter");
     SDL_copyp(&mode, &display->current_mode);
-    mode.driverdata = (MODEDATA *) SDL_malloc(sizeof(MODEDATA));
-    if (!mode.driverdata) return; /* yikes.. */
+    mode.driverdata = (MODEDATA *)SDL_malloc(sizeof(MODEDATA));
+    if (!mode.driverdata)
+        return; /* yikes.. */
     SDL_memcpy(mode.driverdata, display->current_mode.driverdata, sizeof(MODEDATA));
     SDL_AddDisplayMode(display, &mode);
 }
@@ -1598,7 +1629,6 @@ static int OS2_SetDisplayMode(_THIS, SDL_VideoDisplay *display,
     debug_os2("Enter");
     return -1;
 }
-
 
 static void OS2_DeleteDevice(SDL_VideoDevice *device)
 {
@@ -1673,22 +1703,19 @@ static SDL_VideoDevice *OS2VMAN_CreateDevice(void)
 {
     VIDEOOUTPUTINFO stVOInfo;
     if (!voVMan.QueryInfo(&stVOInfo)) {
-          return NULL;
+        return NULL;
     }
     return OS2_CreateDevice();
 }
 
-
 /* DIVE and VMAN bootstraps both call the same OS2_CreateDevice() function.
  * Video output system will be selected in OS2_VideoInit() by driver name.  */
-VideoBootStrap OS2DIVE_bootstrap =
-{
+VideoBootStrap OS2DIVE_bootstrap = {
     OS2DRIVER_NAME_DIVE, "OS/2 video driver",
     OS2DIVE_CreateDevice,
     OS2_ShowMessageBox
 };
-VideoBootStrap OS2VMAN_bootstrap =
-{
+VideoBootStrap OS2VMAN_bootstrap = {
     OS2DRIVER_NAME_VMAN, "OS/2 video driver",
     OS2VMAN_CreateDevice,
     OS2_ShowMessageBox

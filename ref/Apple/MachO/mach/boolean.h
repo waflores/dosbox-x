@@ -71,18 +71,18 @@
 
 #ifndef ASSEMBLER
 #include <mach/machine/boolean.h>
-#endif  /* ASSEMBLER */
+#endif /* ASSEMBLER */
 
 /*
  *	Define TRUE and FALSE if not defined.
  */
 
 #ifndef TRUE
-#define TRUE    1
-#endif  /* TRUE */
+#define TRUE 1
+#endif /* TRUE */
 
 #ifndef FALSE
-#define FALSE   0
-#endif  /* FALSE */
+#define FALSE 0
+#endif /* FALSE */
 
-#endif  /* _MACH_BOOLEAN_H_ */
+#endif /* _MACH_BOOLEAN_H_ */

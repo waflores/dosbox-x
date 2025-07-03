@@ -16,41 +16,38 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "dosbox.h"
 
-#include "setup.h"
 #include "serialdummy.h"
 #include "serialport.h"
+#include "setup.h"
 
-CSerialDummy::CSerialDummy(Bitu id,	CommandLine* cmd):CSerial(id, cmd) {
-	CSerial::Init_Registers();
-	setRI(false);
-	setDSR(false);
-	setCD(false);
-	setCTS(false);
-	InstallationSuccessful=true;
+CSerialDummy::CSerialDummy(Bitu id, CommandLine *cmd) : CSerial(id, cmd) {
+  CSerial::Init_Registers();
+  setRI(false);
+  setDSR(false);
+  setCD(false);
+  setCTS(false);
+  InstallationSuccessful = true;
 }
 
 CSerialDummy::~CSerialDummy() {
-	// clear events
-	removeEvent(SERIAL_TX_EVENT);
+  // clear events
+  removeEvent(SERIAL_TX_EVENT);
 }
 
 void CSerialDummy::handleUpperEvent(uint16_t type) {
-	if(type==SERIAL_TX_EVENT) {
-	//LOG_MSG("SERIAL_TX_EVENT");
+  if (type == SERIAL_TX_EVENT) {
+    // LOG_MSG("SERIAL_TX_EVENT");
 #ifdef CHECKIT_TESTPLUG
-		receiveByte(loopbackdata);
+    receiveByte(loopbackdata);
 #endif
-		ByteTransmitted(); // tx timeout
-	}
-	else if(type==SERIAL_THR_EVENT){
-		//LOG_MSG("SERIAL_THR_EVENT");
-		ByteTransmitting();
-		setEvent(SERIAL_TX_EVENT,bytetime);
-	}
-
+    ByteTransmitted(); // tx timeout
+  } else if (type == SERIAL_THR_EVENT) {
+    // LOG_MSG("SERIAL_THR_EVENT");
+    ByteTransmitting();
+    setEvent(SERIAL_TX_EVENT, bytetime);
+  }
 }
 
 /*****************************************************************************/
@@ -58,20 +55,22 @@ void CSerialDummy::handleUpperEvent(uint16_t type) {
 /* parameters baudrate, stopbits, number of databits, parity.               **/
 /*****************************************************************************/
 void CSerialDummy::updatePortConfig(uint16_t divider, uint8_t lcr) {
-    (void)divider;//UNUSED
-    (void)lcr;//UNUSED
-	//LOG_MSG("Serial port at 0x%x: Port params changed: %d Baud", base,dcb.BaudRate);
+  (void)divider; // UNUSED
+  (void)lcr;     // UNUSED
+             // LOG_MSG("Serial port at 0x%x: Port params changed: %d Baud",
+             // base,dcb.BaudRate);
 }
 
-void CSerialDummy::updateMSR() {
-}
+void CSerialDummy::updateMSR() {}
 void CSerialDummy::transmitByte(uint8_t val, bool first) {
-    (void)val;//POSSIBLY UNUSED
-	if(first) setEvent(SERIAL_THR_EVENT, bytetime/10); 
-	else setEvent(SERIAL_TX_EVENT, bytetime);
+  (void)val; // POSSIBLY UNUSED
+  if (first)
+    setEvent(SERIAL_THR_EVENT, bytetime / 10);
+  else
+    setEvent(SERIAL_TX_EVENT, bytetime);
 
 #ifdef CHECKIT_TESTPLUG
-	loopbackdata=val;
+  loopbackdata = val;
 #endif
 }
 
@@ -80,28 +79,28 @@ void CSerialDummy::transmitByte(uint8_t val, bool first) {
 /*****************************************************************************/
 
 void CSerialDummy::setBreak(bool value) {
-    (void)value;//UNUSED
-	//LOG_MSG("UART 0x%x: Break toggled: %d", base, value);
+  (void)value; // UNUSED
+               // LOG_MSG("UART 0x%x: Break toggled: %d", base, value);
 }
 
 /*****************************************************************************/
 /* setRTSDTR sets the modem control lines                                   **/
 /*****************************************************************************/
 void CSerialDummy::setRTSDTR(bool rts, bool dtr) {
-	setRTS(rts);
-	setDTR(dtr);
+  setRTS(rts);
+  setDTR(dtr);
 }
 void CSerialDummy::setRTS(bool val) {
-    (void)val;//UNUSED
+  (void)val; // UNUSED
 #ifdef CHECKIT_TESTPLUG
-	setCTS(val);
+  setCTS(val);
 #endif
 }
 void CSerialDummy::setDTR(bool val) {
-    (void)val;//UNUSED
+  (void)val; // UNUSED
 #ifdef CHECKIT_TESTPLUG
-	setDSR(val);
-	setRI(val);
-	setCD(val);
+  setDSR(val);
+  setRI(val);
+  setCD(val);
 #endif
 }

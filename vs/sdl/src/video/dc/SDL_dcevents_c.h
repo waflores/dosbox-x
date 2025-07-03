@@ -23,11 +23,10 @@
 
 #include "SDL_dcvideo.h"
 
-/* Variables and functions exported by SDL_sysevents.c to other parts 
+/* Variables and functions exported by SDL_sysevents.c to other parts
    of the native video subsystem (SDL_sysvideo.c)
 */
 extern void DC_InitOSKeymap(_THIS);
 extern void DC_PumpEvents(_THIS);
 
 /* end of SDL_dcevents_c.h ... */
-

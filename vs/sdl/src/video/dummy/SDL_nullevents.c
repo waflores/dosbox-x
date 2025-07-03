@@ -24,22 +24,15 @@
 /* Being a null driver, there's no event stream. We just define stubs for
    most of the API. */
 
-#include "SDL.h"
-#include "../../events/SDL_sysevents.h"
 #include "../../events/SDL_events_c.h"
+#include "../../events/SDL_sysevents.h"
+#include "SDL.h"
 
-#include "SDL_nullvideo.h"
 #include "SDL_nullevents_c.h"
+#include "SDL_nullvideo.h"
 
-void DUMMY_PumpEvents(_THIS)
-{
-	/* do nothing. */
-}
+void DUMMY_PumpEvents(_THIS) { /* do nothing. */ }
 
-void DUMMY_InitOSKeymap(_THIS)
-{
-	/* do nothing. */
-}
+void DUMMY_InitOSKeymap(_THIS) { /* do nothing. */ }
 
 /* end of SDL_nullevents.c ... */
-

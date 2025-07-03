@@ -23,36 +23,36 @@
 
 #include "serialport.h"
 
-//#define CHECKIT_TESTPLUG
+// #define CHECKIT_TESTPLUG
 
 class CSerialMouse : public CSerial {
 public:
-	CSerialMouse(Bitu id, CommandLine* cmd);
-	virtual ~CSerialMouse();
+  CSerialMouse(Bitu id, CommandLine *cmd);
+  virtual ~CSerialMouse();
 
-	void setRTSDTR(bool rts, bool dtr) override;
-	void setRTS(bool val) override;
-	void setDTR(bool val) override;
+  void setRTSDTR(bool rts, bool dtr) override;
+  void setRTS(bool val) override;
+  void setDTR(bool val) override;
 
-	void updatePortConfig(uint16_t, uint8_t lcr) override;
-	void updateMSR() override;
-	void transmitByte(uint8_t val, bool first) override;
-	void setBreak(bool value) override;
-	void handleUpperEvent(uint16_t type) override;
-	void onMouseReset();
-	void on_mouse_event(int delta_x,int delta_y,uint8_t buttonstate);
-	void start_packet();
+  void updatePortConfig(uint16_t, uint8_t lcr) override;
+  void updateMSR() override;
+  void transmitByte(uint8_t val, bool first) override;
+  void setBreak(bool value) override;
+  void handleUpperEvent(uint16_t type) override;
+  void onMouseReset();
+  void on_mouse_event(int delta_x, int delta_y, uint8_t buttonstate);
+  void start_packet();
 
-	uint8_t send_ack;
-    uint8_t packet[3] = {};
-	uint8_t packet_xmit;
-	uint8_t mouse_buttons;	/* bit 0 = left   bit 1 = right     becomes bits 5 (L) and 4 (R) in packet[0] */
-	uint8_t xmit_another_packet;
-	int mouse_delta_x,mouse_delta_y;
+  uint8_t send_ack;
+  uint8_t packet[3] = {};
+  uint8_t packet_xmit;
+  uint8_t mouse_buttons; /* bit 0 = left   bit 1 = right     becomes bits 5 (L)
+                            and 4 (R) in packet[0] */
+  uint8_t xmit_another_packet;
+  int mouse_delta_x, mouse_delta_y;
 #ifdef CHECKIT_TESTPLUG
-	uint8_t loopbackdata;
+  uint8_t loopbackdata;
 #endif
-
 };
 
 #endif // INCLUDEGUARD

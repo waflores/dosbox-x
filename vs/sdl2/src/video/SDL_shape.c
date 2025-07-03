@@ -21,12 +21,12 @@
 #include "../SDL_internal.h"
 
 #include "SDL.h"
-#include "SDL_video.h"
-#include "SDL_sysvideo.h"
 #include "SDL_pixels.h"
-#include "SDL_surface.h"
 #include "SDL_shape.h"
 #include "SDL_shape_internals.h"
+#include "SDL_surface.h"
+#include "SDL_sysvideo.h"
+#include "SDL_video.h"
 
 SDL_Window *SDL_CreateShapedWindow(const char *title, unsigned int x, unsigned int y, unsigned int w, unsigned int h, Uint32 flags)
 {

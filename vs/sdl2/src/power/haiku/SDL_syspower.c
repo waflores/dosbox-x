@@ -26,19 +26,19 @@
 #ifndef SDL_POWER_DISABLED
 #ifdef SDL_POWER_HAIKU
 
+#include <ctype.h>
+#include <drivers/Drivers.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <drivers/Drivers.h>
 
 /* These values are from apm.h ... */
 #define APM_DEVICE_PATH           "/dev/misc/apm"
 #define APM_FUNC_OFFSET           0x5300
 #define APM_FUNC_GET_POWER_STATUS 10
-#define APM_DEVICE_ALL 1
-#define APM_BIOS_CALL (B_DEVICE_OP_CODES_END + 3)
+#define APM_DEVICE_ALL            1
+#define APM_BIOS_CALL             (B_DEVICE_OP_CODES_END + 3)
 
 #include "SDL_power.h"
 

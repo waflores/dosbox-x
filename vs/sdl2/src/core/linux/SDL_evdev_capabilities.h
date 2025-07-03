@@ -42,7 +42,7 @@ typedef enum
 } SDL_UDEV_deviceclass;
 
 #define BITS_PER_LONG        (sizeof(unsigned long) * 8)
-#define NBITS(x)             ((((x)-1) / BITS_PER_LONG) + 1)
+#define NBITS(x)             ((((x) - 1) / BITS_PER_LONG) + 1)
 #define EVDEV_OFF(x)         ((x) % BITS_PER_LONG)
 #define EVDEV_LONG(x)        ((x) / BITS_PER_LONG)
 #define test_bit(bit, array) ((array[EVDEV_LONG(bit)] >> EVDEV_OFF(bit)) & 1)

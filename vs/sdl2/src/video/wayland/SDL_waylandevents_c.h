@@ -24,10 +24,10 @@
 #ifndef SDL_waylandevents_h_
 #define SDL_waylandevents_h_
 
-#include "SDL_waylandvideo.h"
-#include "SDL_waylandwindow.h"
 #include "SDL_waylanddatamanager.h"
 #include "SDL_waylandkeyboard.h"
+#include "SDL_waylandvideo.h"
+#include "SDL_waylandwindow.h"
 
 enum SDL_WaylandAxisEvent
 {

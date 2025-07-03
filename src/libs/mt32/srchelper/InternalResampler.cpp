@@ -16,8 +16,8 @@
 
 #include "InternalResampler.h"
 
-#include "srctools/include/SincResampler.h"
 #include "srctools/include/ResamplerModel.h"
+#include "srctools/include/SincResampler.h"
 
 #include "../Synth.h"
 
@@ -26,49 +26,59 @@ using namespace SRCTools;
 namespace MT32Emu {
 
 class SynthWrapper : public FloatSampleProvider {
-	Synth &synth;
+  Synth &synth;
 
 public:
-	SynthWrapper(Synth &useSynth) : synth(useSynth)
-	{}
+  SynthWrapper(Synth &useSynth) : synth(useSynth) {}
 
-	void getOutputSamples(FloatSample *outBuffer, unsigned int size) {
-		synth.render(outBuffer, size);
-	}
+  void getOutputSamples(FloatSample *outBuffer, unsigned int size) {
+    synth.render(outBuffer, size);
+  }
 };
 
-static FloatSampleProvider &createModel(Synth &synth, SRCTools::FloatSampleProvider &synthSource, double targetSampleRate, SamplerateConversionQuality quality) {
-	static const double MAX_AUDIBLE_FREQUENCY = 20000.0;
+static FloatSampleProvider &
+createModel(Synth &synth, SRCTools::FloatSampleProvider &synthSource,
+            double targetSampleRate, SamplerateConversionQuality quality) {
+  static const double MAX_AUDIBLE_FREQUENCY = 20000.0;
 
-	const double sourceSampleRate = synth.getStereoOutputSampleRate();
-	if (quality != SamplerateConversionQuality_FASTEST) {
-		const bool oversampledMode = synth.getStereoOutputSampleRate() == Synth::getStereoOutputSampleRate(AnalogOutputMode_OVERSAMPLED);
-		// Oversampled input allows to bypass IIR interpolation stage and, in some cases, IIR decimation stage
-		if (oversampledMode && (0.5 * sourceSampleRate) <= targetSampleRate) {
-			// NOTE: In the oversampled mode, the transition band starts at 20kHz and ends at 28kHz
-			double passband = MAX_AUDIBLE_FREQUENCY;
-			double stopband = 0.5 * sourceSampleRate + MAX_AUDIBLE_FREQUENCY;
-			ResamplerStage &resamplerStage = *SincResampler::createSincResampler(sourceSampleRate, targetSampleRate, passband, stopband, ResamplerModel::DEFAULT_DB_SNR, ResamplerModel::DEFAULT_WINDOWED_SINC_MAX_UPSAMPLE_FACTOR);
-			return ResamplerModel::createResamplerModel(synthSource, resamplerStage);
-		}
-	}
-	return ResamplerModel::createResamplerModel(synthSource, sourceSampleRate, targetSampleRate, static_cast<ResamplerModel::Quality>(quality));
+  const double sourceSampleRate = synth.getStereoOutputSampleRate();
+  if (quality != SamplerateConversionQuality_FASTEST) {
+    const bool oversampledMode =
+        synth.getStereoOutputSampleRate() ==
+        Synth::getStereoOutputSampleRate(AnalogOutputMode_OVERSAMPLED);
+    // Oversampled input allows to bypass IIR interpolation stage and, in some
+    // cases, IIR decimation stage
+    if (oversampledMode && (0.5 * sourceSampleRate) <= targetSampleRate) {
+      // NOTE: In the oversampled mode, the transition band starts at 20kHz and
+      // ends at 28kHz
+      double passband = MAX_AUDIBLE_FREQUENCY;
+      double stopband = 0.5 * sourceSampleRate + MAX_AUDIBLE_FREQUENCY;
+      ResamplerStage &resamplerStage = *SincResampler::createSincResampler(
+          sourceSampleRate, targetSampleRate, passband, stopband,
+          ResamplerModel::DEFAULT_DB_SNR,
+          ResamplerModel::DEFAULT_WINDOWED_SINC_MAX_UPSAMPLE_FACTOR);
+      return ResamplerModel::createResamplerModel(synthSource, resamplerStage);
+    }
+  }
+  return ResamplerModel::createResamplerModel(
+      synthSource, sourceSampleRate, targetSampleRate,
+      static_cast<ResamplerModel::Quality>(quality));
 }
 
 } // namespace MT32Emu
 
 using namespace MT32Emu;
 
-InternalResampler::InternalResampler(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality) :
-	synthSource(*new SynthWrapper(synth)),
-	model(createModel(synth, synthSource, targetSampleRate, quality))
-{}
+InternalResampler::InternalResampler(Synth &synth, double targetSampleRate,
+                                     SamplerateConversionQuality quality)
+    : synthSource(*new SynthWrapper(synth)),
+      model(createModel(synth, synthSource, targetSampleRate, quality)) {}
 
 InternalResampler::~InternalResampler() {
-	ResamplerModel::freeResamplerModel(model, synthSource);
-	delete &synthSource;
+  ResamplerModel::freeResamplerModel(model, synthSource);
+  delete &synthSource;
 }
 
 void InternalResampler::getOutputSamples(float *buffer, unsigned int length) {
-	model.getOutputSamples(buffer, length);
+  model.getOutputSamples(buffer, length);
 }

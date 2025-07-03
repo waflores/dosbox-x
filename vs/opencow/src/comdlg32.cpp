@@ -33,12 +33,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// define these symbols so that we don't get dllimport linkage 
+// define these symbols so that we don't get dllimport linkage
 // from the system headers
 #define _COMDLG32_
 
-#include <windows.h>
 #include <commdlg.h>
+#include <windows.h>
 
 #include "MbcsBuffer.h"
 
@@ -50,146 +50,146 @@
 // FindTextW
 // GetFileTitleW
 
-static BOOL 
-OpenSaveFileNameW(
-    LPOPENFILENAMEW lpofn, 
-    BOOL            aIsOpen
-    )
-{
-    OPENFILENAMEA ofnA;
-    ::ZeroMemory(&ofnA, sizeof(ofnA));
+static BOOL OpenSaveFileNameW(LPOPENFILENAMEW lpofn, BOOL aIsOpen) {
+  OPENFILENAMEA ofnA;
+  ::ZeroMemory(&ofnA, sizeof(ofnA));
 
-#if defined(__MINGW64_VERSION_MAJOR) //32bit mingw on mingw-w64 https://sourceforge.net/p/predef/wiki/Compilers/
-    ofnA.lStructSize = OPENFILENAME_SIZE_VERSION_400A;//sizeof(OPENFILENAME_NT4A);
+#if defined(                                                                   \
+    __MINGW64_VERSION_MAJOR) // 32bit mingw on mingw-w64
+                             // https://sourceforge.net/p/predef/wiki/Compilers/
+  ofnA.lStructSize =
+      OPENFILENAME_SIZE_VERSION_400A; // sizeof(OPENFILENAME_NT4A);
 #else
-    ofnA.lStructSize = sizeof(ofnA);
+  ofnA.lStructSize = sizeof(ofnA);
 #endif
-    ofnA.hwndOwner = lpofn->hwndOwner;
-    ofnA.hInstance = lpofn->hInstance;
+  ofnA.hwndOwner = lpofn->hwndOwner;
+  ofnA.hInstance = lpofn->hInstance;
 
-    CMbcsBuffer mbcsFilter;
-    if (lpofn->lpstrFilter) {
-        int filterLen = 0;
-        int len = wcslen(lpofn->lpstrFilter);
-        while (len > 0) {
-            filterLen += len + 1;
-            len = wcslen(lpofn->lpstrFilter + filterLen);
-        }
-        ++filterLen;
-        if (!mbcsFilter.FromUnicode(lpofn->lpstrFilter, filterLen)) 
-            return FALSE;
-        ofnA.lpstrFilter = mbcsFilter;
+  CMbcsBuffer mbcsFilter;
+  if (lpofn->lpstrFilter) {
+    int filterLen = 0;
+    int len = wcslen(lpofn->lpstrFilter);
+    while (len > 0) {
+      filterLen += len + 1;
+      len = wcslen(lpofn->lpstrFilter + filterLen);
     }
+    ++filterLen;
+    if (!mbcsFilter.FromUnicode(lpofn->lpstrFilter, filterLen))
+      return FALSE;
+    ofnA.lpstrFilter = mbcsFilter;
+  }
 
-    CMbcsBuffer mbcsCustomFilter;
-    if (lpofn->lpstrCustomFilter) {
-        int customFilterLen = 0;
-        customFilterLen = wcslen(lpofn->lpstrCustomFilter) + 1;
-        customFilterLen += wcslen(lpofn->lpstrCustomFilter + customFilterLen) + 1;
+  CMbcsBuffer mbcsCustomFilter;
+  if (lpofn->lpstrCustomFilter) {
+    int customFilterLen = 0;
+    customFilterLen = wcslen(lpofn->lpstrCustomFilter) + 1;
+    customFilterLen += wcslen(lpofn->lpstrCustomFilter + customFilterLen) + 1;
 
-        // double the buffer space requested because MBCS can consume double that of Unicode (in chars)
-        if (!mbcsCustomFilter.FromUnicode(lpofn->lpstrCustomFilter, customFilterLen, lpofn->nMaxCustFilter * 2)) 
-            return FALSE;
-        ofnA.lpstrCustomFilter = mbcsCustomFilter;
-        ofnA.nMaxCustFilter = mbcsCustomFilter.BufferSize();
+    // double the buffer space requested because MBCS can consume double that of
+    // Unicode (in chars)
+    if (!mbcsCustomFilter.FromUnicode(lpofn->lpstrCustomFilter, customFilterLen,
+                                      lpofn->nMaxCustFilter * 2))
+      return FALSE;
+    ofnA.lpstrCustomFilter = mbcsCustomFilter;
+    ofnA.nMaxCustFilter = mbcsCustomFilter.BufferSize();
+  }
+
+  ofnA.nFilterIndex = lpofn->nFilterIndex;
+
+  CMbcsBuffer mbcsFile;
+  if (!mbcsFile.FromUnicode(lpofn->lpstrFile))
+    return FALSE;
+  ofnA.lpstrFile = mbcsFile;
+  ofnA.nMaxFile = mbcsFile.BufferSize();
+
+  CMbcsBuffer mbcsFileTitle;
+  if (!mbcsFileTitle.FromUnicode(lpofn->lpstrFileTitle, -1,
+                                 lpofn->nMaxFileTitle * 2))
+    return FALSE;
+  ofnA.lpstrFileTitle = mbcsFileTitle;
+  ofnA.nMaxFileTitle = mbcsFileTitle.BufferSize();
+
+  CMbcsBuffer mbcsInitialDir;
+  if (!mbcsInitialDir.FromUnicode(lpofn->lpstrInitialDir))
+    return FALSE;
+  ofnA.lpstrInitialDir = mbcsInitialDir;
+
+  CMbcsBuffer mbcsTitle;
+  if (!mbcsTitle.FromUnicode(lpofn->lpstrTitle))
+    return FALSE;
+  ofnA.lpstrTitle = mbcsTitle;
+
+  ofnA.Flags = lpofn->Flags;
+  // nFileOffset
+  // nFileExtension
+
+  CMbcsBuffer mbcsDefExt;
+  if (!mbcsDefExt.FromUnicode(lpofn->lpstrDefExt))
+    return FALSE;
+  ofnA.lpstrDefExt = mbcsDefExt;
+
+  ofnA.lCustData = lpofn->lCustData;
+  ofnA.lpfnHook = lpofn->lpfnHook;
+
+  CMbcsBuffer mbcsTemplateName;
+  if (!mbcsTemplateName.FromUnicode(lpofn->lpTemplateName))
+    return FALSE;
+  ofnA.lpTemplateName = mbcsTemplateName;
+
+  BOOL success;
+  if (aIsOpen)
+    success = ::GetOpenFileNameA(&ofnA);
+  else
+    success = ::GetSaveFileNameA(&ofnA);
+  if (!success)
+    return success;
+
+  if (ofnA.lpstrFile) {
+    int fileLen = ::lstrlenA(ofnA.lpstrFile);
+    if (fileLen > 0 && (ofnA.Flags & OFN_ALLOWMULTISELECT)) {
+      // lpstrFile contains the directory and file name strings
+      // which are NULL separated, with an extra NULL character after the last
+      // file name.
+      int totalLen = 0;
+      while (fileLen > 0) {
+        totalLen += fileLen + 1;
+        fileLen = ::lstrlenA(ofnA.lpstrFile + totalLen);
+      }
+      fileLen = totalLen;
     }
+    ++fileLen; // add null character
 
-    ofnA.nFilterIndex = lpofn->nFilterIndex;
+    // ensure our buffer is big enough
+    int lenRequired =
+        ::MultiByteToWideChar(CP_ACP, 0, ofnA.lpstrFile, fileLen, 0, 0);
+    if (lpofn->nMaxFile < (DWORD)lenRequired)
+      return FALSE; // doesn't have enough allocated space
 
-    CMbcsBuffer mbcsFile;
-    if (!mbcsFile.FromUnicode(lpofn->lpstrFile)) 
-        return FALSE;
-    ofnA.lpstrFile = mbcsFile;
-    ofnA.nMaxFile = mbcsFile.BufferSize();
+    // return these files
+    ::MultiByteToWideChar(CP_ACP, 0, ofnA.lpstrFile, fileLen, lpofn->lpstrFile,
+                          lpofn->nMaxFile);
+  }
 
-    CMbcsBuffer mbcsFileTitle;
-    if (!mbcsFileTitle.FromUnicode(lpofn->lpstrFileTitle, -1, lpofn->nMaxFileTitle * 2)) 
-        return FALSE;
-    ofnA.lpstrFileTitle = mbcsFileTitle;
-    ofnA.nMaxFileTitle = mbcsFileTitle.BufferSize();
+  lpofn->nFilterIndex = ofnA.nFilterIndex;
 
-    CMbcsBuffer mbcsInitialDir;
-    if (!mbcsInitialDir.FromUnicode(lpofn->lpstrInitialDir)) 
-        return FALSE;
-    ofnA.lpstrInitialDir = mbcsInitialDir;
+  // TODO: these should be set correctly
+  lpofn->nFileOffset = 0;
+  lpofn->nFileExtension = 0;
 
-    CMbcsBuffer mbcsTitle;
-    if (!mbcsTitle.FromUnicode(lpofn->lpstrTitle)) 
-        return FALSE;
-    ofnA.lpstrTitle = mbcsTitle;
-    
-    ofnA.Flags = lpofn->Flags;
-    // nFileOffset
-    // nFileExtension
-    
-    CMbcsBuffer mbcsDefExt;
-    if (!mbcsDefExt.FromUnicode(lpofn->lpstrDefExt)) 
-        return FALSE;
-    ofnA.lpstrDefExt = mbcsDefExt;
-
-    ofnA.lCustData = lpofn->lCustData;
-    ofnA.lpfnHook = lpofn->lpfnHook;
-
-    CMbcsBuffer mbcsTemplateName;
-    if (!mbcsTemplateName.FromUnicode(lpofn->lpTemplateName)) 
-        return FALSE;
-    ofnA.lpTemplateName = mbcsTemplateName;
-
-    BOOL success;
-    if (aIsOpen)
-        success = ::GetOpenFileNameA(&ofnA);
-    else
-        success = ::GetSaveFileNameA(&ofnA);
-    if (!success)
-        return success;
-
-    if (ofnA.lpstrFile) {
-        int fileLen = ::lstrlenA(ofnA.lpstrFile);
-        if (fileLen > 0 && (ofnA.Flags & OFN_ALLOWMULTISELECT))
-        {
-            // lpstrFile contains the directory and file name strings 
-            // which are NULL separated, with an extra NULL character after the last file name. 
-            int totalLen = 0;
-            while (fileLen > 0) {
-                totalLen += fileLen + 1;
-                fileLen = ::lstrlenA(ofnA.lpstrFile + totalLen);
-            }
-            fileLen = totalLen;
-        }
-        ++fileLen; // add null character
-
-        // ensure our buffer is big enough
-        int lenRequired = ::MultiByteToWideChar(CP_ACP, 0, ofnA.lpstrFile, fileLen, 0, 0);
-        if (lpofn->nMaxFile < (DWORD) lenRequired)
-            return FALSE; // doesn't have enough allocated space
-
-        // return these files
-        ::MultiByteToWideChar(CP_ACP, 0, ofnA.lpstrFile, fileLen, lpofn->lpstrFile, lpofn->nMaxFile);
-    }
-
-    lpofn->nFilterIndex = ofnA.nFilterIndex;
-
-    //TODO: these should be set correctly
-    lpofn->nFileOffset = 0;
-    lpofn->nFileExtension = 0;
-
-    return TRUE;
+  return TRUE;
 }
-
 
 EXTERN_C {
 
-OCOW_DEF(BOOL, GetOpenFileNameW, (LPOPENFILENAMEW lpofn))
-{
+  OCOW_DEF(BOOL, GetOpenFileNameW, (LPOPENFILENAMEW lpofn)) {
     return OpenSaveFileNameW(lpofn, TRUE);
-}
+  }
 
-OCOW_DEF(BOOL, GetSaveFileNameW, (LPOPENFILENAMEW lpofn))
-{
+  OCOW_DEF(BOOL, GetSaveFileNameW, (LPOPENFILENAMEW lpofn)) {
     return OpenSaveFileNameW(lpofn, FALSE);
-}
+  }
 
-}//EXTERN_C 
+} // EXTERN_C
 
 // PageSetupDlgW
 // PrintDlgW

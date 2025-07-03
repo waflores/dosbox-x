@@ -22,11 +22,11 @@
 
 #if defined(SDL_VIDEO_DRIVER_EMSCRIPTEN) && defined(SDL_VIDEO_OPENGL_EGL)
 
-#include <emscripten/emscripten.h>
 #include <GLES2/gl2.h>
+#include <emscripten/emscripten.h>
 
-#include "SDL_emscriptenvideo.h"
 #include "SDL_emscriptenopengles.h"
+#include "SDL_emscriptenvideo.h"
 #include "SDL_hints.h"
 
 #define LOAD_FUNC(NAME) _this->egl_data->NAME = NAME;
@@ -36,7 +36,7 @@
 int Emscripten_GLES_LoadLibrary(_THIS, const char *path)
 {
     /*we can't load EGL dynamically*/
-    _this->egl_data = (struct SDL_EGL_VideoData *) SDL_calloc(1, sizeof(SDL_EGL_VideoData));
+    _this->egl_data = (struct SDL_EGL_VideoData *)SDL_calloc(1, sizeof(SDL_EGL_VideoData));
     if (!_this->egl_data) {
         return SDL_OutOfMemory();
     }
@@ -44,7 +44,7 @@ int Emscripten_GLES_LoadLibrary(_THIS, const char *path)
     /* Emscripten forces you to manually cast eglGetProcAddress to the real
        function type; grep for "__eglMustCastToProperFunctionPointerType" in
        Emscripten's egl.h for details. */
-    _this->egl_data->eglGetProcAddress = (void *(EGLAPIENTRY *)(const char *)) eglGetProcAddress;
+    _this->egl_data->eglGetProcAddress = (void *(EGLAPIENTRY *)(const char *))eglGetProcAddress;
 
     LOAD_FUNC(eglGetDisplay);
     LOAD_FUNC(eglInitialize);
@@ -83,11 +83,11 @@ int Emscripten_GLES_LoadLibrary(_THIS, const char *path)
 }
 
 SDL_EGL_CreateContext_impl(Emscripten)
-SDL_EGL_MakeCurrent_impl(Emscripten)
+    SDL_EGL_MakeCurrent_impl(Emscripten)
 
-int Emscripten_GLES_SwapWindow(_THIS, SDL_Window *window)
+        int Emscripten_GLES_SwapWindow(_THIS, SDL_Window *window)
 {
-    EGLBoolean ret = SDL_EGL_SwapBuffers(_this, ((SDL_WindowData *) window->driverdata)->egl_surface);
+    EGLBoolean ret = SDL_EGL_SwapBuffers(_this, ((SDL_WindowData *)window->driverdata)->egl_surface);
     if (emscripten_has_asyncify() && SDL_GetHintBoolean(SDL_HINT_EMSCRIPTEN_ASYNCIFY, SDL_TRUE)) {
         /* give back control to browser for screen refresh */
         emscripten_sleep(0);

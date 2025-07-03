@@ -20,9 +20,9 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_video.h"
 #include "SDL_blit.h"
 #include "SDL_blit_slow.h"
+#include "SDL_video.h"
 
 #define FORMAT_ALPHA                0
 #define FORMAT_NO_ALPHA             -1
@@ -114,7 +114,7 @@ void SDL_Blit_Slow(SDL_BlitInfo *info)
                     dstA = 0xFF;
                 } else {
                     /* SDL_PIXELFORMAT_ARGB2101010 */
-                    dstpixel = *((Uint32 *) (dst));
+                    dstpixel = *((Uint32 *)(dst));
                     RGBA_FROM_ARGB2101010(dstpixel, dstR, dstG, dstB, dstA);
                 }
             } else {

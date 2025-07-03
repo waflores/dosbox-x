@@ -117,208 +117,178 @@ inopts
 
 **man-end****************************************************************/
 
-int cbreak(void)
-{
-    PDC_LOG(("cbreak() - called\n"));
+int cbreak(void) {
+  PDC_LOG(("cbreak() - called\n"));
 
-    SP->cbreak = TRUE;
+  SP->cbreak = TRUE;
 
-    return OK;
+  return OK;
 }
 
-int nocbreak(void)
-{
-    PDC_LOG(("nocbreak() - called\n"));
+int nocbreak(void) {
+  PDC_LOG(("nocbreak() - called\n"));
 
-    SP->cbreak = FALSE;
-    SP->delaytenths = 0;
+  SP->cbreak = FALSE;
+  SP->delaytenths = 0;
 
-    return OK;
+  return OK;
 }
 
-int echo(void)
-{
-    PDC_LOG(("echo() - called\n"));
+int echo(void) {
+  PDC_LOG(("echo() - called\n"));
 
-    SP->echo = TRUE;
+  SP->echo = TRUE;
 
-    return OK;
+  return OK;
 }
 
-int noecho(void)
-{
-    PDC_LOG(("noecho() - called\n"));
+int noecho(void) {
+  PDC_LOG(("noecho() - called\n"));
 
-    SP->echo = FALSE;
+  SP->echo = FALSE;
 
-    return OK;
+  return OK;
 }
 
-int halfdelay(int tenths)
-{
-    PDC_LOG(("halfdelay() - called\n"));
+int halfdelay(int tenths) {
+  PDC_LOG(("halfdelay() - called\n"));
 
-    if (tenths < 1 || tenths > 255)
-        return ERR;
+  if (tenths < 1 || tenths > 255)
+    return ERR;
 
-    SP->delaytenths = tenths;
+  SP->delaytenths = tenths;
 
-    return OK;
+  return OK;
 }
 
-int intrflush(WINDOW *win, bool bf)
-{
-    PDC_LOG(("intrflush() - called\n"));
+int intrflush(WINDOW *win, bool bf) {
+  PDC_LOG(("intrflush() - called\n"));
 
-    return OK;
+  return OK;
 }
 
-int keypad(WINDOW *win, bool bf)
-{
-    PDC_LOG(("keypad() - called\n"));
+int keypad(WINDOW *win, bool bf) {
+  PDC_LOG(("keypad() - called\n"));
 
-    if (!win)
-        return ERR;
+  if (!win)
+    return ERR;
 
-    win->_use_keypad = bf;
+  win->_use_keypad = bf;
 
-    return OK;
+  return OK;
 }
 
-int meta(WINDOW *win, bool bf)
-{
-    PDC_LOG(("meta() - called\n"));
+int meta(WINDOW *win, bool bf) {
+  PDC_LOG(("meta() - called\n"));
 
-    SP->raw_inp = bf;
+  SP->raw_inp = bf;
 
-    return OK;
+  return OK;
 }
 
-int nl(void)
-{
-    PDC_LOG(("nl() - called\n"));
+int nl(void) {
+  PDC_LOG(("nl() - called\n"));
 
-    SP->autocr = TRUE;
+  SP->autocr = TRUE;
 
-    return OK;
+  return OK;
 }
 
-int nonl(void)
-{
-    PDC_LOG(("nonl() - called\n"));
+int nonl(void) {
+  PDC_LOG(("nonl() - called\n"));
 
-    SP->autocr = FALSE;
+  SP->autocr = FALSE;
 
-    return OK;
+  return OK;
 }
 
-int nodelay(WINDOW *win, bool flag)
-{
-    PDC_LOG(("nodelay() - called\n"));
+int nodelay(WINDOW *win, bool flag) {
+  PDC_LOG(("nodelay() - called\n"));
 
-    if (!win)
-        return ERR;
+  if (!win)
+    return ERR;
 
-    win->_nodelay = flag;
+  win->_nodelay = flag;
 
-    return OK;
+  return OK;
 }
 
-int notimeout(WINDOW *win, bool flag)
-{
-    PDC_LOG(("notimeout() - called\n"));
+int notimeout(WINDOW *win, bool flag) {
+  PDC_LOG(("notimeout() - called\n"));
 
-    return OK;
+  return OK;
 }
 
-int raw(void)
-{
-    PDC_LOG(("raw() - called\n"));
+int raw(void) {
+  PDC_LOG(("raw() - called\n"));
 
-    PDC_set_keyboard_binary(TRUE);
-    SP->raw_inp = TRUE;
+  PDC_set_keyboard_binary(TRUE);
+  SP->raw_inp = TRUE;
 
-    return OK;
+  return OK;
 }
 
-int noraw(void)
-{
-    PDC_LOG(("noraw() - called\n"));
+int noraw(void) {
+  PDC_LOG(("noraw() - called\n"));
 
-    PDC_set_keyboard_binary(FALSE);
-    SP->raw_inp = FALSE;
+  PDC_set_keyboard_binary(FALSE);
+  SP->raw_inp = FALSE;
 
-    return OK;
+  return OK;
 }
 
-void noqiflush(void)
-{
-    PDC_LOG(("noqiflush() - called\n"));
+void noqiflush(void) { PDC_LOG(("noqiflush() - called\n")); }
+
+void qiflush(void) { PDC_LOG(("qiflush() - called\n")); }
+
+int typeahead(int fildes) {
+  PDC_LOG(("typeahead() - called\n"));
+
+  return OK;
 }
 
-void qiflush(void)
-{
-    PDC_LOG(("qiflush() - called\n"));
+void wtimeout(WINDOW *win, int delay) {
+  PDC_LOG(("wtimeout() - called\n"));
+
+  if (!win)
+    return;
+
+  if (delay < 0) {
+    /* This causes a blocking read on the window, so turn on delay
+       mode */
+
+    win->_nodelay = FALSE;
+    win->_delayms = 0;
+  } else if (!delay) {
+    /* This causes a non-blocking read on the window, so turn off
+       delay mode */
+
+    win->_nodelay = TRUE;
+    win->_delayms = 0;
+  } else {
+    /* This causes the read on the window to delay for the number of
+       milliseconds. Also forces the window into non-blocking read
+       mode */
+
+    /*win->_nodelay = TRUE;*/
+    win->_delayms = delay;
+  }
 }
 
-int typeahead(int fildes)
-{
-    PDC_LOG(("typeahead() - called\n"));
+void timeout(int delay) {
+  PDC_LOG(("timeout() - called\n"));
 
-    return OK;
+  wtimeout(stdscr, delay);
 }
 
-void wtimeout(WINDOW *win, int delay)
-{
-    PDC_LOG(("wtimeout() - called\n"));
+int crmode(void) {
+  PDC_LOG(("crmode() - called\n"));
 
-    if (!win)
-        return;
-
-    if (delay < 0)
-    {
-        /* This causes a blocking read on the window, so turn on delay
-           mode */
-
-        win->_nodelay = FALSE;
-        win->_delayms = 0;
-    }
-    else if (!delay)
-    {
-        /* This causes a non-blocking read on the window, so turn off
-           delay mode */
-
-        win->_nodelay = TRUE;
-        win->_delayms = 0;
-    }
-    else
-    {
-        /* This causes the read on the window to delay for the number of
-           milliseconds. Also forces the window into non-blocking read
-           mode */
-
-        /*win->_nodelay = TRUE;*/
-        win->_delayms = delay;
-    }
+  return cbreak();
 }
 
-void timeout(int delay)
-{
-    PDC_LOG(("timeout() - called\n"));
+int nocrmode(void) {
+  PDC_LOG(("nocrmode() - called\n"));
 
-    wtimeout(stdscr, delay);
-}
-
-int crmode(void)
-{
-    PDC_LOG(("crmode() - called\n"));
-
-    return cbreak();
-}
-
-int nocrmode(void)
-{
-    PDC_LOG(("nocrmode() - called\n"));
-
-    return nocbreak();
+  return nocbreak();
 }

@@ -36,11 +36,11 @@
  * see contrib/examples/pngtopng.c
  */
 
+#include <png.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <png.h>
 #include <zlib.h>
 
 int main(int argc, const char **argv)
@@ -221,7 +221,7 @@ int main(int argc, const char **argv)
   */
 
 #ifndef png_jmpbuf
-#  define png_jmpbuf(png_ptr) ((png_ptr)->png_jmpbuf)
+#define png_jmpbuf(png_ptr) ((png_ptr)->png_jmpbuf)
 #endif
 
 /* Check to see if a file is a PNG file using png_sig_cmp().  png_sig_cmp()
@@ -282,7 +282,7 @@ void read_png(char *file_name) /* We need to open the file */
    if ((fp = fopen(file_name, "rb")) == NULL)
       return ERROR;
 
-#else no_open_file /* prototype 2 */
+#else no_open_file  /* prototype 2 */
 void read_png(FILE *fp, int sig_read) /* File is already open */
 {
    png_structp png_ptr;
@@ -329,11 +329,11 @@ void read_png(FILE *fp, int sig_read) /* File is already open */
    }
 
    /* One of the following I/O initialization methods is REQUIRED. */
-#ifdef streams /* PNG file I/O method 1 */
+#ifdef streams      /* PNG file I/O method 1 */
    /* Set up the input control if you are using standard C streams. */
    png_init_io(png_ptr, fp);
 
-#else no_streams /* PNG file I/O method 2 */
+#else no_streams  /* PNG file I/O method 2 */
    /* If you are using replacement read functions, instead of calling
     * png_init_io(), you would call:
     */
@@ -524,9 +524,9 @@ void read_png(FILE *fp, int sig_read) /* File is already open */
     * see the png_read_row() method below:
     */
    number_passes = png_set_interlace_handling(png_ptr);
-#else /* !READ_INTERLACING */
+#else         /* !READ_INTERLACING */
    number_passes = 1;
-#endif /* READ_INTERLACING */
+#endif        /* READ_INTERLACING */
 
    /* Optional call to gamma correct and add the background to the palette
     * and update info structure.  REQUIRED if you are expecting libpng to
@@ -550,26 +550,26 @@ void read_png(FILE *fp, int sig_read) /* File is already open */
    /* The other way to read images - deal with interlacing: */
    for (pass = 0; pass < number_passes; pass++)
    {
-#ifdef single /* Read the image a single row at a time */
+#ifdef single   /* Read the image a single row at a time */
       for (y = 0; y < height; y++)
          png_read_rows(png_ptr, &row_pointers[y], NULL, 1);
 
-#else no_single /* Read the image several rows at a time */
+#else no_single   /* Read the image several rows at a time */
       for (y = 0; y < height; y += number_of_rows)
       {
-#ifdef sparkle /* Read the image using the "sparkle" effect. */
+#ifdef sparkle    /* Read the image using the "sparkle" effect. */
          png_read_rows(png_ptr, &row_pointers[y], NULL,
              number_of_rows);
-#else no_sparkle /* Read the image using the "rectangle" effect */
+#else no_sparkle  /* Read the image using the "rectangle" effect */
          png_read_rows(png_ptr, NULL, &row_pointers[y],
              number_of_rows);
 #endif no_sparkle /* Use only one of these two methods */
       }
 
       /* If you want to display the image after every pass, do so here. */
-#endif no_single /* Use only one of these two methods */
+#endif no_single  /* Use only one of these two methods */
    }
-#endif no_entire /* Use only one of these two methods */
+#endif no_entire  /* Use only one of these two methods */
 
    /* Read rest of file, and get additional chunks in info_ptr.  REQUIRED. */
    png_read_end(png_ptr, info_ptr);
@@ -788,7 +788,7 @@ void write_png(char *file_name /* , ... other image information ... */)
    /* Set up the output control if you are using standard C streams. */
    png_init_io(png_ptr, fp);
 
-#else no_streams /* I/O initialization method 2 */
+#else no_streams  /* I/O initialization method 2 */
    /* If you are using replacement write functions, instead of calling
     * png_init_io(), you would call:
     */
@@ -979,7 +979,7 @@ void write_png(char *file_name /* , ... other image information ... */)
 
    /* The other way to write the image - deal with interlacing. */
 
-#else no_entire /* Write out the image data by one or more scanlines */
+#else no_entire  /* Write out the image data by one or more scanlines */
 
    /* The number of passes is either 1 for non-interlaced images,
     * or 7 for interlaced images.

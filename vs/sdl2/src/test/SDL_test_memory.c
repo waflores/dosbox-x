@@ -18,14 +18,14 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "SDL_test_memory.h"
 #include "SDL_assert.h"
 #include "SDL_atomic.h"
+#include "SDL_config.h"
 #include "SDL_loadso.h"
-#include "SDL_stdinc.h"
 #include "SDL_log.h"
+#include "SDL_stdinc.h"
 #include "SDL_test_crc32.h"
-#include "SDL_test_memory.h"
 
 #ifdef HAVE_LIBUNWIND_H
 #define UNW_LOCAL_ONLY
@@ -41,18 +41,19 @@ static SDL_bool s_unwind_symbol_names = SDL_TRUE;
 #endif
 
 #ifdef WIN32_WITH_DBGHELP
-#include <windows.h>
 #include <dbghelp.h>
+#include <windows.h>
 
-static struct {
+static struct
+{
     HMODULE module;
-    BOOL (WINAPI *pSymInitialize)(HANDLE hProcess, PCSTR UserSearchPath, BOOL fInvadeProcess);
-    BOOL (WINAPI *pSymFromAddr)(HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement, PSYMBOL_INFO Symbol);
-    BOOL (WINAPI *pSymGetLineFromAddr64)(HANDLE hProcess, DWORD64 qwAddr, PDWORD pdwDisplacement, PIMAGEHLP_LINE64 Line);
+    BOOL(WINAPI *pSymInitialize)(HANDLE hProcess, PCSTR UserSearchPath, BOOL fInvadeProcess);
+    BOOL(WINAPI *pSymFromAddr)(HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement, PSYMBOL_INFO Symbol);
+    BOOL(WINAPI *pSymGetLineFromAddr64)(HANDLE hProcess, DWORD64 qwAddr, PDWORD pdwDisplacement, PIMAGEHLP_LINE64 Line);
 } dyn_dbghelp;
 
 /* older SDKs might not have this: */
-__declspec(dllimport) USHORT WINAPI RtlCaptureStackBackTrace(ULONG FramesToSkip, ULONG FramesToCapture, PVOID* BackTrace, PULONG BackTraceHash);
+__declspec(dllimport) USHORT WINAPI RtlCaptureStackBackTrace(ULONG FramesToSkip, ULONG FramesToCapture, PVOID *BackTrace, PULONG BackTraceHash);
 #define CaptureStackBackTrace RtlCaptureStackBackTrace
 
 #endif
@@ -86,14 +87,17 @@ static int s_previous_allocations = 0;
 static SDL_tracked_allocation *s_tracked_allocations[256];
 static SDL_atomic_t s_lock;
 
-#define LOCK_ALLOCATOR()                               \
-    do {                                               \
-        if (SDL_AtomicCAS(&s_lock, 0, 1)) {            \
-            break;                                     \
-        }                                              \
-        SDL_CPUPauseInstruction();                     \
+#define LOCK_ALLOCATOR()                    \
+    do {                                    \
+        if (SDL_AtomicCAS(&s_lock, 0, 1)) { \
+            break;                          \
+        }                                   \
+        SDL_CPUPauseInstruction();          \
     } while (SDL_TRUE)
-#define UNLOCK_ALLOCATOR() do { SDL_AtomicSet(&s_lock, 0); } while (0)
+#define UNLOCK_ALLOCATOR()         \
+    do {                           \
+        SDL_AtomicSet(&s_lock, 0); \
+    } while (0)
 
 static unsigned int get_allocation_bucket(void *mem)
 {

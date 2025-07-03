@@ -33,26 +33,26 @@
 
 /* Shader blob headers are generated with a pre-build step using buildshaders.bat */
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_Colors_Series.h"
-#include "../VisualC-GDK/shaders/D3D12_PixelShader_Textures_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_NV12_BT601_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_NV12_BT709_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_NV12_JPEG_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_NV21_BT601_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_NV21_BT709_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_NV21_JPEG_Series.h"
+#include "../VisualC-GDK/shaders/D3D12_PixelShader_Textures_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_YUV_BT601_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_YUV_BT709_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_PixelShader_YUV_JPEG_Series.h"
 
 #include "../VisualC-GDK/shaders/D3D12_VertexShader_Color_Series.h"
-#include "../VisualC-GDK/shaders/D3D12_VertexShader_Texture_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_VertexShader_NV_Series.h"
+#include "../VisualC-GDK/shaders/D3D12_VertexShader_Texture_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_VertexShader_YUV_Series.h"
 
 #include "../VisualC-GDK/shaders/D3D12_RootSig_Color_Series.h"
+#include "../VisualC-GDK/shaders/D3D12_RootSig_NV_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_RootSig_Texture_Series.h"
 #include "../VisualC-GDK/shaders/D3D12_RootSig_YUV_Series.h"
-#include "../VisualC-GDK/shaders/D3D12_RootSig_NV_Series.h"
 
 static struct
 {

@@ -20,8 +20,8 @@
 */
 #include "./SDL_internal.h"
 
-#include "SDL.h"
 #include "./SDL_list.h"
+#include "SDL.h"
 
 /* Push */
 int SDL_ListAdd(SDL_ListNode **head, void *ent)

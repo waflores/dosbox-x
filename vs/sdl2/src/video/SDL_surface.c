@@ -20,13 +20,13 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_video.h"
-#include "SDL_sysvideo.h"
-#include "SDL_blit.h"
-#include "SDL_RLEaccel_c.h"
-#include "SDL_pixels_c.h"
-#include "SDL_yuv_c.h"
 #include "../render/SDL_sysrender.h"
+#include "SDL_RLEaccel_c.h"
+#include "SDL_blit.h"
+#include "SDL_pixels_c.h"
+#include "SDL_sysvideo.h"
+#include "SDL_video.h"
+#include "SDL_yuv_c.h"
 
 /* Check to make sure we can safely check multiplication of surface w and pitch and it won't overflow size_t */
 SDL_COMPILE_TIME_ASSERT(surface_size_assumptions,
@@ -75,7 +75,7 @@ static size_t SDL_CalculatePitch(Uint32 format, size_t width, SDL_bool minimal)
  * enum SDL_PIXELFORMAT_* format
  */
 SDL_Surface *SDL_CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height, int depth,
-                               Uint32 format)
+                                            Uint32 format)
 {
     size_t pitch;
     SDL_Surface *surface;
@@ -186,8 +186,8 @@ SDL_Surface *SDL_CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height,
  * Create an empty RGB surface of the appropriate depth
  */
 SDL_Surface *SDL_CreateRGBSurface(Uint32 flags,
-                     int width, int height, int depth,
-                     Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+                                  int width, int height, int depth,
+                                  Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
     Uint32 format;
 
@@ -205,9 +205,9 @@ SDL_Surface *SDL_CreateRGBSurface(Uint32 flags,
  * Create an RGB surface from an existing memory buffer
  */
 SDL_Surface *SDL_CreateRGBSurfaceFrom(void *pixels,
-                         int width, int height, int depth, int pitch,
-                         Uint32 Rmask, Uint32 Gmask, Uint32 Bmask,
-                         Uint32 Amask)
+                                      int width, int height, int depth, int pitch,
+                                      Uint32 Rmask, Uint32 Gmask, Uint32 Bmask,
+                                      Uint32 Amask)
 {
     SDL_Surface *surface;
     Uint32 format;
@@ -255,8 +255,8 @@ SDL_Surface *SDL_CreateRGBSurfaceFrom(void *pixels,
  * enum SDL_PIXELFORMAT_* format
  */
 SDL_Surface *SDL_CreateRGBSurfaceWithFormatFrom(void *pixels,
-                         int width, int height, int depth, int pitch,
-                         Uint32 format)
+                                                int width, int height, int depth, int pitch,
+                                                Uint32 format)
 {
     SDL_Surface *surface;
     size_t minimalPitch;
@@ -1114,8 +1114,8 @@ SDL_Surface *SDL_DuplicateSurface(SDL_Surface *surface)
 /*
  * Convert a surface into the specified pixel format.
  */
-SDL_Surface *SDL_ConvertSurface(SDL_Surface * surface, const SDL_PixelFormat * format,
-                   Uint32 flags)
+SDL_Surface *SDL_ConvertSurface(SDL_Surface *surface, const SDL_PixelFormat *format,
+                                Uint32 flags)
 {
     SDL_Surface *convert;
     Uint32 copy_flags;
@@ -1297,9 +1297,9 @@ SDL_Surface *SDL_ConvertSurface(SDL_Surface * surface, const SDL_PixelFormat * f
 
             /* Create a dummy surface to get the colorkey converted */
             tmp = SDL_CreateRGBSurface(0, 1, 1,
-                                   surface->format->BitsPerPixel, surface->format->Rmask,
-                                   surface->format->Gmask, surface->format->Bmask,
-                                   surface->format->Amask);
+                                       surface->format->BitsPerPixel, surface->format->Rmask,
+                                       surface->format->Gmask, surface->format->Bmask,
+                                       surface->format->Amask);
 
             /* Share the palette, if any */
             if (surface->format->palette) {
@@ -1345,8 +1345,8 @@ SDL_Surface *SDL_ConvertSurface(SDL_Surface * surface, const SDL_PixelFormat * f
     return convert;
 }
 
-SDL_Surface *SDL_ConvertSurfaceFormat(SDL_Surface * surface, Uint32 pixel_format,
-                         Uint32 flags)
+SDL_Surface *SDL_ConvertSurfaceFormat(SDL_Surface *surface, Uint32 pixel_format,
+                                      Uint32 flags)
 {
     SDL_PixelFormat *fmt;
     SDL_Surface *convert = NULL;

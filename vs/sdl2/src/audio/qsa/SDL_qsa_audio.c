@@ -33,21 +33,21 @@
 #ifdef SDL_AUDIO_DRIVER_QSA
 
 #include <errno.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/time.h>
 #include <sched.h>
-#include <sys/select.h>
-#include <sys/neutrino.h>
+#include <signal.h>
 #include <sys/asoundlib.h>
+#include <sys/neutrino.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../../core/unix/SDL_poll.h"
 #include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_qsa_audio.h"
+#include "SDL_timer.h"
 
 /* default channel communication parameters */
 #define DEFAULT_CPARAMS_RATE   44100
@@ -58,12 +58,12 @@
 #define DEFAULT_CPARAMS_FRAGS_MAX 1
 
 /* List of found devices */
-#define QSA_MAX_DEVICES       32
-#define QSA_MAX_NAME_LENGTH   81+16     /* Hardcoded in QSA, can't be changed */
+#define QSA_MAX_DEVICES     32
+#define QSA_MAX_NAME_LENGTH 81 + 16 /* Hardcoded in QSA, can't be changed */
 
 typedef struct _QSA_Device
 {
-    char name[QSA_MAX_NAME_LENGTH];     /* Long audio device name for SDL  */
+    char name[QSA_MAX_NAME_LENGTH]; /* Long audio device name for SDL  */
     int cardno;
     int deviceno;
 } QSA_Device;
@@ -91,7 +91,7 @@ static void QSA_ThreadInit(_THIS)
 }
 
 /* PCM channel parameters initialize function */
-static void QSA_InitAudioParams(snd_pcm_channel_params_t * cpars)
+static void QSA_InitAudioParams(snd_pcm_channel_params_t *cpars)
 {
     SDL_zerop(cpars);
     cpars->channel = SND_PCM_CHANNEL_PLAYBACK;
@@ -193,13 +193,11 @@ static void QSA_PlayDevice(_THIS)
                         (cstatus.status == SND_PCM_STATUS_READY)) {
                         if (!this->iscapture) {
                             status =
-                                snd_pcm_plugin_prepare(this->hidden->
-                                                       audio_handle,
+                                snd_pcm_plugin_prepare(this->hidden->audio_handle,
                                                        SND_PCM_CHANNEL_PLAYBACK);
                         } else {
                             status =
-                                snd_pcm_plugin_prepare(this->hidden->
-                                                       audio_handle,
+                                snd_pcm_plugin_prepare(this->hidden->audio_handle,
                                                        SND_PCM_CHANNEL_CAPTURE);
                         }
                         if (status < 0) {
@@ -253,7 +251,7 @@ static void QSA_CloseDevice(_THIS)
 
 static int QSA_OpenDevice(_THIS, const char *devname)
 {
-    const QSA_Device *device = (const QSA_Device *) this->handle;
+    const QSA_Device *device = (const QSA_Device *)this->handle;
     SDL_bool iscapture = this->iscapture;
     int status = 0;
     int format = 0;
@@ -263,10 +261,9 @@ static int QSA_OpenDevice(_THIS, const char *devname)
 
     /* Initialize all variables that we clean on shutdown */
     this->hidden =
-        (struct SDL_PrivateAudioData *) SDL_calloc(1,
-                                                   (sizeof
-                                                    (struct
-                                                     SDL_PrivateAudioData)));
+        (struct SDL_PrivateAudioData *)SDL_calloc(1,
+                                                  (sizeof(struct
+                                                          SDL_PrivateAudioData)));
     if (!this->hidden) {
         return SDL_OutOfMemory();
     }
@@ -386,7 +383,7 @@ static int QSA_OpenDevice(_THIS, const char *devname)
      *  closest multiple)
      */
     this->hidden->pcm_buf =
-        (Uint8 *) SDL_malloc(this->hidden->pcm_len);
+        (Uint8 *)SDL_malloc(this->hidden->pcm_len);
     if (!this->hidden->pcm_buf) {
         return SDL_OutOfMemory();
     }
@@ -449,7 +446,7 @@ static void QSA_DetectDevices(void)
 
     /* !!! FIXME: code duplication */
     /* Find requested devices by type */
-    {  /* output devices */
+    { /* output devices */
         /* Playback devices enumeration requested */
         for (it = 0; it < cards; it++) {
             devices = 0;
@@ -457,15 +454,18 @@ static void QSA_DetectDevices(void)
                 status =
                     snd_card_get_longname(it,
                                           qsa_playback_device
-                                          [qsa_playback_devices].name,
+                                              [qsa_playback_devices]
+                                                  .name,
                                           QSA_MAX_NAME_LENGTH);
                 if (status == EOK) {
                     snd_pcm_t *handle;
 
                     /* Add device number to device name */
                     sprintf(qsa_playback_device[qsa_playback_devices].name +
-                            SDL_strlen(qsa_playback_device
-                                       [qsa_playback_devices].name), " d%d",
+                                SDL_strlen(qsa_playback_device
+                                               [qsa_playback_devices]
+                                                   .name),
+                            " d%d",
                             devices);
 
                     /* Store associated card number id */
@@ -511,7 +511,7 @@ static void QSA_DetectDevices(void)
         }
     }
 
-    {  /* capture devices */
+    { /* capture devices */
         /* Capture devices enumeration requested */
         for (it = 0; it < cards; it++) {
             devices = 0;
@@ -519,15 +519,18 @@ static void QSA_DetectDevices(void)
                 status =
                     snd_card_get_longname(it,
                                           qsa_capture_device
-                                          [qsa_capture_devices].name,
+                                              [qsa_capture_devices]
+                                                  .name,
                                           QSA_MAX_NAME_LENGTH);
                 if (status == EOK) {
                     snd_pcm_t *handle;
 
                     /* Add device number to device name */
                     sprintf(qsa_capture_device[qsa_capture_devices].name +
-                            SDL_strlen(qsa_capture_device
-                                       [qsa_capture_devices].name), " d%d",
+                                SDL_strlen(qsa_capture_device
+                                               [qsa_capture_devices]
+                                                   .name),
+                            " d%d",
                             devices);
 
                     /* Store associated card number id */
@@ -584,7 +587,7 @@ static void QSA_Deinitialize(void)
     qsa_capture_devices = 0;
 }
 
-static SDL_bool QSA_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool QSA_Init(SDL_AudioDriverImpl *impl)
 {
     /* Clear devices array */
     SDL_zeroa(qsa_playback_device);
@@ -606,7 +609,7 @@ static SDL_bool QSA_Init(SDL_AudioDriverImpl * impl)
 
     impl->HasCaptureSupport = SDL_TRUE;
 
-    return SDL_TRUE;   /* this audio target is available. */
+    return SDL_TRUE; /* this audio target is available. */
 }
 
 AudioBootStrap QSAAUDIO_bootstrap = {

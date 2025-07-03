@@ -67,21 +67,21 @@
 #ifndef _MACH_THREAD_SPECIAL_PORTS_H_
 #define _MACH_THREAD_SPECIAL_PORTS_H_
 
-#define THREAD_KERNEL_PORT      1       /* The full thread port for thread. */
+#define THREAD_KERNEL_PORT 1 /* The full thread port for thread. */
 
-#define THREAD_INSPECT_PORT     2       /* The inspect port for thread. */
+#define THREAD_INSPECT_PORT 2 /* The inspect port for thread. */
 
-#define THREAD_READ_PORT        3       /* The read port for thread. */
+#define THREAD_READ_PORT 3 /* The read port for thread. */
 
 #define THREAD_MAX_SPECIAL_PORT THREAD_READ_PORT
 /*
  *	Definitions for ease of use
  */
 
-#define thread_get_kernel_port(thread, port)    \
-	        (thread_get_special_port((thread), THREAD_KERNEL_PORT, (port)))
+#define thread_get_kernel_port(thread, port)                                   \
+  (thread_get_special_port((thread), THREAD_KERNEL_PORT, (port)))
 
-#define thread_set_kernel_port(thread, port)    \
-	        (thread_set_special_port((thread), THREAD_KERNEL_PORT, (port)))
+#define thread_set_kernel_port(thread, port)                                   \
+  (thread_set_special_port((thread), THREAD_KERNEL_PORT, (port)))
 
-#endif  /* _MACH_THREAD_SPECIAL_PORTS_H_ */
+#endif /* _MACH_THREAD_SPECIAL_PORTS_H_ */

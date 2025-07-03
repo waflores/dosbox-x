@@ -15,9 +15,9 @@
  */
 int syswm_getWindowWMInfo(void *arg)
 {
-  SDL_bool result;
-  SDL_Window *window;
-  SDL_SysWMinfo info;
+    SDL_bool result;
+    SDL_Window *window;
+    SDL_SysWMinfo info;
 
     window = SDL_CreateWindow("", 0, 0, 0, 0, SDL_WINDOW_HIDDEN);
     SDLTest_AssertPass("Call to SDL_CreateWindow()");
@@ -26,13 +26,13 @@ int syswm_getWindowWMInfo(void *arg)
         return TEST_ABORTED;
     }
 
-  /* Initialize info structure with SDL version info */
-  SDL_VERSION(&info.version);
+    /* Initialize info structure with SDL version info */
+    SDL_VERSION(&info.version);
 
-  /* Make call */
-  result = SDL_GetWindowWMInfo(window, &info);
-  SDLTest_AssertPass("Call to SDL_GetWindowWMInfo()");
-  SDLTest_Log((result == SDL_TRUE) ? "Got window information" : "Couldn't get window information");
+    /* Make call */
+    result = SDL_GetWindowWMInfo(window, &info);
+    SDLTest_AssertPass("Call to SDL_GetWindowWMInfo()");
+    SDLTest_Log((result == SDL_TRUE) ? "Got window information" : "Couldn't get window information");
 
     SDL_DestroyWindow(window);
     SDLTest_AssertPass("Call to SDL_DestroyWindow()");

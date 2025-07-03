@@ -7,33 +7,33 @@
 #include "SDL.h"
 #include "common.h"
 
-#define NUM_CHANNELS 8          /* max number of sounds we can play at once */
-#define NUM_DRUMS 4             /* number of drums in our set */
+#define NUM_CHANNELS 8 /* max number of sounds we can play at once */
+#define NUM_DRUMS    4 /* number of drums in our set */
 
 static struct
 {
-    SDL_Rect rect;              /* where the button is drawn */
-    SDL_Color upColor;          /* color when button is not active */
-    SDL_Color downColor;        /* color when button is active */
-    int isPressed;              /* is the button being pressed ? */
-    int touchIndex;             /* what mouse (touch) index pressed the button ? */
+    SDL_Rect rect;       /* where the button is drawn */
+    SDL_Color upColor;   /* color when button is not active */
+    SDL_Color downColor; /* color when button is active */
+    int isPressed;       /* is the button being pressed ? */
+    int touchIndex;      /* what mouse (touch) index pressed the button ? */
 } buttons[NUM_DRUMS];
 
 struct sound
 {
-    Uint8 *buffer;              /* audio buffer for sound file */
-    Uint32 length;              /* length of the buffer (in bytes) */
+    Uint8 *buffer; /* audio buffer for sound file */
+    Uint32 length; /* length of the buffer (in bytes) */
 };
 
 /* this array holds the audio for the drum noises */
 static struct sound drums[NUM_DRUMS];
 
 /* function declarations */
-void handleMouseButtonDown(SDL_Event * event);
-void handleMouseButtonUp(SDL_Event * event);
+void handleMouseButtonDown(SDL_Event *event);
+void handleMouseButtonUp(SDL_Event *event);
 int playSound(struct sound *);
 void initializeButtons(SDL_Renderer *);
-void audioCallback(void *userdata, Uint8 * stream, int len);
+void audioCallback(void *userdata, Uint8 *stream, int len);
 void loadSound(const char *file, struct sound *s);
 
 struct
@@ -41,23 +41,22 @@ struct
     /* channel array holds information about currently playing sounds */
     struct
     {
-        Uint8 *position;        /* what is the current position in the buffer of this sound ? */
-        Uint32 remaining;       /* how many bytes remaining before we're done playing the sound ? */
-        Uint32 timestamp;       /* when did this sound start playing ? */
+        Uint8 *position;  /* what is the current position in the buffer of this sound ? */
+        Uint32 remaining; /* how many bytes remaining before we're done playing the sound ? */
+        Uint32 timestamp; /* when did this sound start playing ? */
     } channels[NUM_CHANNELS];
-    SDL_AudioSpec outputSpec;   /* what audio format are we using for output? */
-    int numSoundsPlaying;       /* how many sounds are currently playing */
+    SDL_AudioSpec outputSpec; /* what audio format are we using for output? */
+    int numSoundsPlaying;     /* how many sounds are currently playing */
 } mixer;
 
 /* sets up the buttons (color, position, state) */
-void
-initializeButtons(SDL_Renderer *renderer)
+void initializeButtons(SDL_Renderer *renderer)
 {
     int i;
-    int spacing = 10;           /* gap between drum buttons */
-    SDL_Rect buttonRect;        /* keeps track of where to position drum */
-    SDL_Color upColor = { 86, 86, 140, 255 };   /* color of drum when not pressed */
-    SDL_Color downColor = { 191, 191, 221, 255 };       /* color of drum when pressed */
+    int spacing = 10;                             /* gap between drum buttons */
+    SDL_Rect buttonRect;                          /* keeps track of where to position drum */
+    SDL_Color upColor = { 86, 86, 140, 255 };     /* color of drum when not pressed */
+    SDL_Color downColor = { 191, 191, 221, 255 }; /* color of drum when pressed */
     int renderW, renderH;
 
     SDL_RenderGetLogicalSize(renderer, &renderW, &renderH);
@@ -76,7 +75,6 @@ initializeButtons(SDL_Renderer *renderer)
         buttons[i].downColor = downColor;
 
         buttonRect.y += spacing + buttonRect.h; /* setup y coordinate for next drum */
-
     }
 }
 
@@ -84,11 +82,10 @@ initializeButtons(SDL_Renderer *renderer)
  loads a wav file (stored in 'file'), converts it to the mixer's output format,
  and stores the resulting buffer and length in the sound structure
  */
-void
-loadSound(const char *file, struct sound *s)
+void loadSound(const char *file, struct sound *s)
 {
-    SDL_AudioSpec spec;         /* the audio format of the .wav file */
-    SDL_AudioCVT cvt;           /* used to convert .wav to output format when formats differ */
+    SDL_AudioSpec spec; /* the audio format of the .wav file */
+    SDL_AudioCVT cvt;   /* used to convert .wav to output format when formats differ */
     int result;
     if (SDL_LoadWAV(file, &spec, &s->buffer, &s->length) == NULL) {
         fatalError("could not load .wav");
@@ -105,21 +102,20 @@ loadSound(const char *file, struct sound *s)
            this happens when the .wav format differs from the output format.
            we convert the .wav buffer here
          */
-        cvt.buf = (Uint8 *) SDL_malloc(s->length * cvt.len_mult);       /* allocate conversion buffer */
-        cvt.len = s->length;    /* set conversion buffer length */
-        SDL_memcpy(cvt.buf, s->buffer, s->length);      /* copy sound to conversion buffer */
-        if (SDL_ConvertAudio(&cvt) == -1) {     /* convert the sound */
+        cvt.buf = (Uint8 *)SDL_malloc(s->length * cvt.len_mult); /* allocate conversion buffer */
+        cvt.len = s->length;                                     /* set conversion buffer length */
+        SDL_memcpy(cvt.buf, s->buffer, s->length);               /* copy sound to conversion buffer */
+        if (SDL_ConvertAudio(&cvt) == -1) {                      /* convert the sound */
             fatalError("could not convert .wav");
         }
-        SDL_free(s->buffer);    /* Free the original (unconverted) buffer */
-        s->buffer = cvt.buf;    /* point sound buffer to converted buffer */
-        s->length = cvt.len_cvt;        /* set sound buffer's new length */
+        SDL_free(s->buffer);     /* Free the original (unconverted) buffer */
+        s->buffer = cvt.buf;     /* point sound buffer to converted buffer */
+        s->length = cvt.len_cvt; /* set sound buffer's new length */
     }
 }
 
 /* called from main event loop */
-void
-handleMouseButtonDown(SDL_Event * event)
+void handleMouseButtonDown(SDL_Event *event)
 {
 
     int x, y, mouseIndex, i, drumIndex;
@@ -130,10 +126,7 @@ handleMouseButtonDown(SDL_Event * event)
     SDL_GetMouseState(&x, &y);
     /* check if we hit any of the drum buttons */
     for (i = 0; i < NUM_DRUMS; i++) {
-        if (x >= buttons[i].rect.x
-            && x < buttons[i].rect.x + buttons[i].rect.w
-            && y >= buttons[i].rect.y
-            && y < buttons[i].rect.y + buttons[i].rect.h) {
+        if (x >= buttons[i].rect.x && x < buttons[i].rect.x + buttons[i].rect.w && y >= buttons[i].rect.y && y < buttons[i].rect.y + buttons[i].rect.h) {
             drumIndex = i;
             break;
         }
@@ -144,12 +137,10 @@ handleMouseButtonDown(SDL_Event * event)
         buttons[drumIndex].isPressed = 1;
         playSound(&drums[drumIndex]);
     }
-
 }
 
 /* called from main event loop */
-void
-handleMouseButtonUp(SDL_Event * event)
+void handleMouseButtonUp(SDL_Event *event)
 {
     int i;
     int mouseIndex = 0;
@@ -162,12 +153,11 @@ handleMouseButtonUp(SDL_Event * event)
 }
 
 /* draws buttons to screen */
-void
-render(SDL_Renderer *renderer)
+void render(SDL_Renderer *renderer)
 {
     int i;
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-    SDL_RenderClear(renderer);       /* draw background (gray) */
+    SDL_RenderClear(renderer); /* draw background (gray) */
     /* draw the drum buttons */
     for (i = 0; i < NUM_DRUMS; i++) {
         SDL_Color color =
@@ -183,8 +173,7 @@ render(SDL_Renderer *renderer)
     finds a sound channel in the mixer for a sound
     and sets it up to start playing
 */
-int
-playSound(struct sound *s)
+int playSound(struct sound *s)
 {
     /*
        find an empty channel to play on.
@@ -230,23 +219,24 @@ playSound(struct sound *s)
     Called from SDL's audio system.  Supplies sound input with data by mixing together all
     currently playing sound effects.
 */
-void
-audioCallback(void *userdata, Uint8 * stream, int len)
+void audioCallback(void *userdata, Uint8 *stream, int len)
 {
     int i;
     int copy_amt;
-    SDL_memset(stream, mixer.outputSpec.silence, len);  /* initialize buffer to silence */
+    SDL_memset(stream, mixer.outputSpec.silence, len); /* initialize buffer to silence */
     /* for each channel, mix in whatever is playing on that channel */
     for (i = 0; i < NUM_CHANNELS; i++) {
         if (mixer.channels[i].position == NULL) {
             /* if no sound is playing on this channel */
-            continue;           /* nothing to do for this channel */
+            continue; /* nothing to do for this channel */
         }
 
         /* copy len bytes to the buffer, unless we have fewer than len bytes remaining */
         copy_amt =
             mixer.channels[i].remaining <
-            len ? mixer.channels[i].remaining : len;
+                    len
+                ? mixer.channels[i].remaining
+                : len;
 
         /* mix this sound effect with the output */
         SDL_MixAudioFormat(stream, mixer.channels[i].position,
@@ -258,7 +248,7 @@ audioCallback(void *userdata, Uint8 * stream, int len)
 
         /* did we finish playing the sound effect ? */
         if (mixer.channels[i].remaining == 0) {
-            mixer.channels[i].position = NULL;  /* indicates no sound playing on channel anymore */
+            mixer.channels[i].position = NULL; /* indicates no sound playing on channel anymore */
             mixer.numSoundsPlaying--;
             if (mixer.numSoundsPlaying == 0) {
                 /* if no sounds left playing, pause audio callback */
@@ -268,11 +258,10 @@ audioCallback(void *userdata, Uint8 * stream, int len)
     }
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    int done;                   /* has user tried to quit ? */
-    SDL_Window *window;         /* main window */
+    int done;           /* has user tried to quit ? */
+    SDL_Window *window; /* main window */
     SDL_Renderer *renderer;
     SDL_Event event;
     int i;
@@ -328,7 +317,7 @@ main(int argc, char *argv[])
                 break;
             }
         }
-        render(renderer);               /* draw buttons */
+        render(renderer); /* draw buttons */
 
         SDL_Delay(1);
     }

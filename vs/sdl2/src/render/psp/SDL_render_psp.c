@@ -22,21 +22,21 @@
 
 #if SDL_VIDEO_RENDER_PSP
 
-#include "SDL_hints.h"
 #include "../SDL_sysrender.h"
+#include "SDL_hints.h"
 
-#include <pspkernel.h>
+#include "SDL_render_psp.h"
+#include <math.h>
 #include <pspdisplay.h>
+#include <pspge.h>
 #include <pspgu.h>
 #include <pspgum.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <pspge.h>
+#include <pspkernel.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <vram.h>
-#include "SDL_render_psp.h"
 
 /* PSP renderer implementation, based on the PGE  */
 static unsigned int __attribute__((aligned(16))) DisplayList[262144];
@@ -118,7 +118,7 @@ typedef struct
     float x, y, z;
 } VertTCV;
 
-int SDL_PSP_RenderGetProp(SDL_Renderer *r, enum SDL_PSP_RenderProps which, void** out)
+int SDL_PSP_RenderGetProp(SDL_Renderer *r, enum SDL_PSP_RenderProps which, void **out)
 {
     PSP_RenderData *rd;
     if (r == NULL) {
@@ -126,20 +126,20 @@ int SDL_PSP_RenderGetProp(SDL_Renderer *r, enum SDL_PSP_RenderProps which, void*
     }
     rd = r->driverdata;
     switch (which) {
-        case SDL_PSP_RENDERPROPS_FRONTBUFFER:
-            *out = rd->frontbuffer;
-            return 0;
-        case SDL_PSP_RENDERPROPS_BACKBUFFER:
-            *out = rd->backbuffer;
-            return 0;
+    case SDL_PSP_RENDERPROPS_FRONTBUFFER:
+        *out = rd->frontbuffer;
+        return 0;
+    case SDL_PSP_RENDERPROPS_BACKBUFFER:
+        *out = rd->backbuffer;
+        return 0;
     }
     return -1;
 }
 
 #define PI 3.14159265358979f
 
-#define radToDeg(x) ((x)*180.f / PI)
-#define degToRad(x) ((x)*PI / 180.f)
+#define radToDeg(x) ((x) * 180.f / PI)
+#define degToRad(x) ((x) * PI / 180.f)
 
 static float MathAbs(float x)
 {

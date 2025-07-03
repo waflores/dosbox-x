@@ -37,8 +37,8 @@ extern "C" {
 }
 #endif
 
-#include "SDL_ngagevideo.h"
 #include "SDL_ngageevents_c.h"
+#include "SDL_ngagevideo.h"
 
 int HandleWsEvent(_THIS, const TWsEvent &aWsEvent);
 

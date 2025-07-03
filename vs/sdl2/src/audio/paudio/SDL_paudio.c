@@ -25,19 +25,19 @@
 /* Allow access to a raw mixing buffer */
 
 #include <errno.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <sys/time.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
-#include "SDL_stdinc.h"
-#include "../SDL_audio_c.h"
 #include "../../core/unix/SDL_poll.h"
+#include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_paudio.h"
+#include "SDL_stdinc.h"
+#include "SDL_timer.h"
 
 /* #define DEBUG_AUDIO */
 
@@ -49,24 +49,16 @@
 
 /* Open the audio device for playback, and don't block if busy */
 /* #define OPEN_FLAGS   (O_WRONLY|O_NONBLOCK) */
-#define OPEN_FLAGS  O_WRONLY
+#define OPEN_FLAGS O_WRONLY
 
 /* Get the name of the audio device we use for output */
 
 #ifndef _PATH_DEV_DSP
-#define _PATH_DEV_DSP   "/dev/%caud%c/%c"
+#define _PATH_DEV_DSP "/dev/%caud%c/%c"
 #endif
 
 static char devsettings[][3] = {
-    {'p', '0', '1'}, {'p', '0', '2'}, {'p', '0', '3'}, {'p', '0', '4'},
-    {'p', '1', '1'}, {'p', '1', '2'}, {'p', '1', '3'}, {'p', '1', '4'},
-    {'p', '2', '1'}, {'p', '2', '2'}, {'p', '2', '3'}, {'p', '2', '4'},
-    {'p', '3', '1'}, {'p', '3', '2'}, {'p', '3', '3'}, {'p', '3', '4'},
-    {'b', '0', '1'}, {'b', '0', '2'}, {'b', '0', '3'}, {'b', '0', '4'},
-    {'b', '1', '1'}, {'b', '1', '2'}, {'b', '1', '3'}, {'b', '1', '4'},
-    {'b', '2', '1'}, {'b', '2', '2'}, {'b', '2', '3'}, {'b', '2', '4'},
-    {'b', '3', '1'}, {'b', '3', '2'}, {'b', '3', '3'}, {'b', '3', '4'},
-    {'\0', '\0', '\0'}
+    { 'p', '0', '1' }, { 'p', '0', '2' }, { 'p', '0', '3' }, { 'p', '0', '4' }, { 'p', '1', '1' }, { 'p', '1', '2' }, { 'p', '1', '3' }, { 'p', '1', '4' }, { 'p', '2', '1' }, { 'p', '2', '2' }, { 'p', '2', '3' }, { 'p', '2', '4' }, { 'p', '3', '1' }, { 'p', '3', '2' }, { 'p', '3', '3' }, { 'p', '3', '4' }, { 'b', '0', '1' }, { 'b', '0', '2' }, { 'b', '0', '3' }, { 'b', '0', '4' }, { 'b', '1', '1' }, { 'b', '1', '2' }, { 'b', '1', '3' }, { 'b', '1', '4' }, { 'b', '2', '1' }, { 'b', '2', '2' }, { 'b', '2', '3' }, { 'b', '2', '4' }, { 'b', '3', '1' }, { 'b', '3', '2' }, { 'b', '3', '3' }, { 'b', '3', '4' }, { '\0', '\0', '\0' }
 };
 
 static int OpenUserDefinedDevice(char *path, int maxlen, int flags)
@@ -130,7 +122,7 @@ static void PAUDIO_WaitDevice(_THIS)
         /* Use timer for general audio synchronization */
         Sint32 ticks;
 
-        ticks = ((Sint32) (this->hidden->next_frame - SDL_GetTicks())) - FUDGE_TICKS;
+        ticks = ((Sint32)(this->hidden->next_frame - SDL_GetTicks())) - FUDGE_TICKS;
         if (ticks > 0) {
             SDL_Delay(ticks);
         }
@@ -183,7 +175,7 @@ static void PAUDIO_PlayDevice(_THIS)
     do {
         written = write(this->hidden->audio_fd, mixbuf, mixlen);
         if ((written < 0) && ((errno == 0) || (errno == EAGAIN))) {
-            SDL_Delay(1);       /* Let a little CPU time go by */
+            SDL_Delay(1); /* Let a little CPU time go by */
         }
     } while ((written < 0) &&
              ((errno == 0) || (errno == EAGAIN) || (errno == EINTR)));
@@ -358,11 +350,9 @@ static int PAUDIO_OpenDevice(_THIS, const char *devname)
      *  (or paud_bufinfo.write_buf_cap/2) into this->spec.size in return.
      */
     if (paud_bufinfo.request_buf_cap == 1) {
-        this->spec.samples = paud_bufinfo.write_buf_cap
-            / bytes_per_sample / this->spec.channels;
+        this->spec.samples = paud_bufinfo.write_buf_cap / bytes_per_sample / this->spec.channels;
     } else {
-        this->spec.samples = paud_bufinfo.write_buf_cap
-            / bytes_per_sample / this->spec.channels / 2;
+        this->spec.samples = paud_bufinfo.write_buf_cap / bytes_per_sample / this->spec.channels / 2;
     }
     paud_init.bsize = bytes_per_sample * this->spec.channels;
 
@@ -402,7 +392,7 @@ static int PAUDIO_OpenDevice(_THIS, const char *devname)
 
     /* Allocate mixing buffer */
     this->hidden->mixlen = this->spec.size;
-    this->hidden->mixbuf = (Uint8 *) SDL_malloc(this->hidden->mixlen);
+    this->hidden->mixbuf = (Uint8 *)SDL_malloc(this->hidden->mixlen);
     if (!this->hidden->mixbuf) {
         return SDL_OutOfMemory();
     }
@@ -412,19 +402,19 @@ static int PAUDIO_OpenDevice(_THIS, const char *devname)
      * Set some paramters: full volume, first speaker that we can find.
      * Ignore the other settings for now.
      */
-    paud_change.input = AUDIO_IGNORE;   /* the new input source */
-    paud_change.output = OUTPUT_1;      /* EXTERNAL_SPEAKER,INTERNAL_SPEAKER,OUTPUT_1 */
-    paud_change.monitor = AUDIO_IGNORE; /* the new monitor state */
-    paud_change.volume = 0x7fffffff;    /* volume level [0-0x7fffffff] */
-    paud_change.volume_delay = AUDIO_IGNORE;    /* the new volume delay */
-    paud_change.balance = 0x3fffffff;   /* the new balance */
-    paud_change.balance_delay = AUDIO_IGNORE;   /* the new balance delay */
-    paud_change.treble = AUDIO_IGNORE;  /* the new treble state */
-    paud_change.bass = AUDIO_IGNORE;    /* the new bass state */
-    paud_change.pitch = AUDIO_IGNORE;   /* the new pitch state */
+    paud_change.input = AUDIO_IGNORE;         /* the new input source */
+    paud_change.output = OUTPUT_1;            /* EXTERNAL_SPEAKER,INTERNAL_SPEAKER,OUTPUT_1 */
+    paud_change.monitor = AUDIO_IGNORE;       /* the new monitor state */
+    paud_change.volume = 0x7fffffff;          /* volume level [0-0x7fffffff] */
+    paud_change.volume_delay = AUDIO_IGNORE;  /* the new volume delay */
+    paud_change.balance = 0x3fffffff;         /* the new balance */
+    paud_change.balance_delay = AUDIO_IGNORE; /* the new balance delay */
+    paud_change.treble = AUDIO_IGNORE;        /* the new treble state */
+    paud_change.bass = AUDIO_IGNORE;          /* the new bass state */
+    paud_change.pitch = AUDIO_IGNORE;         /* the new pitch state */
 
     paud_control.ioctl_request = AUDIO_CHANGE;
-    paud_control.request_info = (char *) &paud_change;
+    paud_control.request_info = (char *)&paud_change;
     if (ioctl(fd, AUDIO_CONTROL, &paud_control) < 0) {
 #ifdef DEBUG_AUDIO
         fprintf(stderr, "Can't change audio display settings\n");
@@ -446,8 +436,8 @@ static int PAUDIO_OpenDevice(_THIS, const char *devname)
 
     /* Check to see if we need to use SDL_IOReady() workaround */
     if (workaround) {
-        this->hidden->frame_ticks = (float) (this->spec.samples * 1000) /
-            this->spec.freq;
+        this->hidden->frame_ticks = (float)(this->spec.samples * 1000) /
+                                    this->spec.freq;
         this->hidden->next_frame = SDL_GetTicks() + this->hidden->frame_ticks;
     }
 
@@ -455,7 +445,7 @@ static int PAUDIO_OpenDevice(_THIS, const char *devname)
     return 0;
 }
 
-static SDL_bool PAUDIO_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool PAUDIO_Init(SDL_AudioDriverImpl *impl)
 {
     /* !!! FIXME: not right for device enum? */
     int fd = OpenAudioPath(NULL, 0, OPEN_FLAGS, 0);
@@ -471,9 +461,9 @@ static SDL_bool PAUDIO_Init(SDL_AudioDriverImpl * impl)
     impl->WaitDevice = PAUDIO_WaitDevice;
     impl->GetDeviceBuf = PAUDIO_GetDeviceBuf;
     impl->CloseDevice = PAUDIO_CloseDevice;
-    impl->OnlyHasDefaultOutputDevice = SDL_TRUE;       /* !!! FIXME: add device enum! */
+    impl->OnlyHasDefaultOutputDevice = SDL_TRUE; /* !!! FIXME: add device enum! */
 
-    return SDL_TRUE;   /* this audio target is available. */
+    return SDL_TRUE; /* this audio target is available. */
 }
 
 AudioBootStrap PAUDIO_bootstrap = {

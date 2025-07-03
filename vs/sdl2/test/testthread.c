@@ -12,9 +12,9 @@
 
 /* Simple test of the SDL threading code */
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 
 #include "SDL.h"
 #include "SDL_test.h"
@@ -157,5 +157,5 @@ int main(int argc, char *argv[])
     (void)raise(SIGTERM);
 
     SDLTest_CommonQuit(state); /* Never reached */
-    return 0;   /* Never reached */
+    return 0;                  /* Never reached */
 }

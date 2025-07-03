@@ -39,7 +39,7 @@
 #include "SDL_thread.h"
 #include "SDL_timer.h"
 
-typedef SDL_sem * (*pfnSDL_CreateSemaphore)(Uint32);
+typedef SDL_sem *(*pfnSDL_CreateSemaphore)(Uint32);
 typedef void (*pfnSDL_DestroySemaphore)(SDL_sem *);
 typedef int (*pfnSDL_SemWaitTimeout)(SDL_sem *, Uint32);
 typedef int (*pfnSDL_SemTryWait)(SDL_sem *);

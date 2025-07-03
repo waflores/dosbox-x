@@ -59,7 +59,7 @@ extern "C" {
  * specified then the value of LowerBound should be multiplied by the
  * sample rate.
  */
-#define FLUID_HINT_BOUNDED_BELOW   0x1
+#define FLUID_HINT_BOUNDED_BELOW 0x1
 
 /** Hint FLUID_HINT_BOUNDED_ABOVE indicates that the UpperBound field
    of the FLUID_PortRangeHint should be considered meaningful. The
@@ -67,7 +67,7 @@ extern "C" {
    bound of the valid range. If FLUID_HINT_SAMPLE_RATE is also
    specified then the value of UpperBound should be multiplied by the
    sample rate. */
-#define FLUID_HINT_BOUNDED_ABOVE   0x2
+#define FLUID_HINT_BOUNDED_ABOVE 0x2
 
 /**
  * Hint FLUID_HINT_TOGGLED indicates that the data item should be
@@ -76,7 +76,7 @@ extern "C" {
  * considered `on' or `true.' FLUID_HINT_TOGGLED may not be used in
  * conjunction with any other hint.
  */
-#define FLUID_HINT_TOGGLED         0x4
+#define FLUID_HINT_TOGGLED 0x4
 
 /**
  * Hint FLUID_HINT_SAMPLE_RATE indicates that any bounds specified
@@ -86,14 +86,14 @@ extern "C" {
  * with LowerBound = 0 and UpperBound = 0.5. Hosts that support bounds
  * at all must support this hint to retain meaning.
  */
-#define FLUID_HINT_SAMPLE_RATE     0x8
+#define FLUID_HINT_SAMPLE_RATE 0x8
 
 /**
  * Hint FLUID_HINT_LOGARITHMIC indicates that it is likely that the
  * user will find it more intuitive to view values using a logarithmic
  * scale. This is particularly useful for frequencies and gains.
  */
-#define FLUID_HINT_LOGARITHMIC     0x10
+#define FLUID_HINT_LOGARITHMIC 0x10
 
 /**
  * Hint FLUID_HINT_INTEGER indicates that a user interface would
@@ -103,12 +103,10 @@ extern "C" {
  *
  * As there is an integer setting type, this hint is not used.
  */
-#define FLUID_HINT_INTEGER         0x20
+#define FLUID_HINT_INTEGER 0x20
 
-
-#define FLUID_HINT_FILENAME        0x01         /**< String setting is a file name */
-#define FLUID_HINT_OPTIONLIST      0x02         /**< Setting is a list of string options */
-
+#define FLUID_HINT_FILENAME 0x01   /**< String setting is a file name */
+#define FLUID_HINT_OPTIONLIST 0x02 /**< Setting is a list of string options */
 
 /**
  * Settings type
@@ -125,62 +123,72 @@ enum fluid_types_enum {
   FLUID_SET_TYPE      /**< Set of values */
 };
 
-
-FLUIDSYNTH_API fluid_settings_t* new_fluid_settings(void);
-FLUIDSYNTH_API void delete_fluid_settings(fluid_settings_t* settings);
-
-FLUIDSYNTH_API
-int fluid_settings_get_type(fluid_settings_t* settings, const char *name);
+FLUIDSYNTH_API fluid_settings_t *new_fluid_settings(void);
+FLUIDSYNTH_API void delete_fluid_settings(fluid_settings_t *settings);
 
 FLUIDSYNTH_API
-int fluid_settings_get_hints(fluid_settings_t* settings, const char *name);
+int fluid_settings_get_type(fluid_settings_t *settings, const char *name);
 
 FLUIDSYNTH_API
-int fluid_settings_is_realtime(fluid_settings_t* settings, const char *name);
+int fluid_settings_get_hints(fluid_settings_t *settings, const char *name);
 
 FLUIDSYNTH_API
-int fluid_settings_setstr(fluid_settings_t* settings, const char *name, const char *str);
+int fluid_settings_is_realtime(fluid_settings_t *settings, const char *name);
 
 FLUIDSYNTH_API
-int fluid_settings_copystr(fluid_settings_t* settings, const char *name, char *str, int len);
+int fluid_settings_setstr(fluid_settings_t *settings, const char *name,
+                          const char *str);
 
 FLUIDSYNTH_API
-int fluid_settings_dupstr(fluid_settings_t* settings, const char *name, char** str);
+int fluid_settings_copystr(fluid_settings_t *settings, const char *name,
+                           char *str, int len);
 
 FLUIDSYNTH_API
-int fluid_settings_getstr(fluid_settings_t* settings, const char *name, char** str);
+int fluid_settings_dupstr(fluid_settings_t *settings, const char *name,
+                          char **str);
 
 FLUIDSYNTH_API
-char* fluid_settings_getstr_default(fluid_settings_t* settings, const char *name);
+int fluid_settings_getstr(fluid_settings_t *settings, const char *name,
+                          char **str);
 
 FLUIDSYNTH_API
-int fluid_settings_str_equal(fluid_settings_t* settings, const char *name, const char *value);
+char *fluid_settings_getstr_default(fluid_settings_t *settings,
+                                    const char *name);
 
 FLUIDSYNTH_API
-int fluid_settings_setnum(fluid_settings_t* settings, const char *name, double val);
+int fluid_settings_str_equal(fluid_settings_t *settings, const char *name,
+                             const char *value);
 
 FLUIDSYNTH_API
-int fluid_settings_getnum(fluid_settings_t* settings, const char *name, double* val);
+int fluid_settings_setnum(fluid_settings_t *settings, const char *name,
+                          double val);
 
 FLUIDSYNTH_API
-double fluid_settings_getnum_default(fluid_settings_t* settings, const char *name);
+int fluid_settings_getnum(fluid_settings_t *settings, const char *name,
+                          double *val);
 
 FLUIDSYNTH_API
-void fluid_settings_getnum_range(fluid_settings_t* settings, const char *name,
-				double* min, double* max);
+double fluid_settings_getnum_default(fluid_settings_t *settings,
+                                     const char *name);
 
 FLUIDSYNTH_API
-int fluid_settings_setint(fluid_settings_t* settings, const char *name, int val);
+void fluid_settings_getnum_range(fluid_settings_t *settings, const char *name,
+                                 double *min, double *max);
 
 FLUIDSYNTH_API
-int fluid_settings_getint(fluid_settings_t* settings, const char *name, int* val);
+int fluid_settings_setint(fluid_settings_t *settings, const char *name,
+                          int val);
 
 FLUIDSYNTH_API
-int fluid_settings_getint_default(fluid_settings_t* settings, const char *name);
+int fluid_settings_getint(fluid_settings_t *settings, const char *name,
+                          int *val);
 
 FLUIDSYNTH_API
-void fluid_settings_getint_range(fluid_settings_t* settings, const char *name,
-				int* min, int* max);
+int fluid_settings_getint_default(fluid_settings_t *settings, const char *name);
+
+FLUIDSYNTH_API
+void fluid_settings_getint_range(fluid_settings_t *settings, const char *name,
+                                 int *min, int *max);
 
 /**
  * Callback function type used with fluid_settings_foreach_option()
@@ -188,17 +196,18 @@ void fluid_settings_getint_range(fluid_settings_t* settings, const char *name,
  * @param name Setting name
  * @param option A string option for this setting (iterates through the list)
  */
-typedef void (*fluid_settings_foreach_option_t)(void *data, char *name, char *option);
+typedef void (*fluid_settings_foreach_option_t)(void *data, char *name,
+                                                char *option);
 
 FLUIDSYNTH_API
-void fluid_settings_foreach_option(fluid_settings_t* settings,
-				  const char* name, void* data,
-				  fluid_settings_foreach_option_t func);
+void fluid_settings_foreach_option(fluid_settings_t *settings, const char *name,
+                                   void *data,
+                                   fluid_settings_foreach_option_t func);
 FLUIDSYNTH_API
-int fluid_settings_option_count (fluid_settings_t* settings, const char* name);
-FLUIDSYNTH_API char *fluid_settings_option_concat (fluid_settings_t* settings,
-                                                   const char* name,
-                                                   const char* separator);
+int fluid_settings_option_count(fluid_settings_t *settings, const char *name);
+FLUIDSYNTH_API char *fluid_settings_option_concat(fluid_settings_t *settings,
+                                                  const char *name,
+                                                  const char *separator);
 
 /**
  * Callback function type used with fluid_settings_foreach()
@@ -209,8 +218,8 @@ FLUIDSYNTH_API char *fluid_settings_option_concat (fluid_settings_t* settings,
 typedef void (*fluid_settings_foreach_t)(void *data, char *name, int type);
 
 FLUIDSYNTH_API
-void fluid_settings_foreach(fluid_settings_t* settings, void* data,
-			   fluid_settings_foreach_t func);
+void fluid_settings_foreach(fluid_settings_t *settings, void *data,
+                            fluid_settings_foreach_t func);
 
 #ifdef __cplusplus
 }

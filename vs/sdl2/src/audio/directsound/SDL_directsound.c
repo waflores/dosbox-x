@@ -24,11 +24,11 @@
 
 /* Allow access to a raw mixing buffer */
 
-#include "SDL_timer.h"
-#include "SDL_loadso.h"
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_directsound.h"
+#include "SDL_loadso.h"
+#include "SDL_timer.h"
 #include <mmreg.h>
 #ifdef HAVE_MMDEVICEAPI_H
 #include "../../core/windows/SDL_immdevice.h"

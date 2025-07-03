@@ -22,8 +22,8 @@
 
 #ifdef SDL_AUDIO_DRIVER_EMSCRIPTEN
 
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_emscriptenaudio.h"
 
 #include <emscripten/emscripten.h>
@@ -194,7 +194,7 @@ static void EMSCRIPTENAUDIO_CloseDevice(_THIS)
     }, this->iscapture);
 /* *INDENT-ON* */ /* clang-format on */
 
-#if 0  /* !!! FIXME: currently not used. Can we move some stuff off the SDL2 namespace? --ryan. */
+#if 0 /* !!! FIXME: currently not used. Can we move some stuff off the SDL2 namespace? --ryan. */
     SDL_free(this->hidden);
 #endif
 }
@@ -259,7 +259,7 @@ static int EMSCRIPTENAUDIO_OpenDevice(_THIS, const char *devname)
     this->spec.format = test_format;
 
     /* Initialize all variables that we clean on shutdown */
-#if 0  /* !!! FIXME: currently not used. Can we move some stuff off the SDL2 namespace? --ryan. */
+#if 0 /* !!! FIXME: currently not used. Can we move some stuff off the SDL2 namespace? --ryan. */
     this->hidden = (struct SDL_PrivateAudioData *)
         SDL_malloc(sizeof(*this->hidden));
     if (this->hidden == NULL) {
@@ -271,8 +271,8 @@ static int EMSCRIPTENAUDIO_OpenDevice(_THIS, const char *devname)
 
     /* limit to native freq */
     this->spec.freq = EM_ASM_INT({
-      var SDL2 = Module['SDL2'];
-      return SDL2.audioContext.sampleRate;
+        var SDL2 = Module['SDL2'];
+        return SDL2.audioContext.sampleRate;
     });
 
     SDL_CalculateAudioSpec(&this->spec);

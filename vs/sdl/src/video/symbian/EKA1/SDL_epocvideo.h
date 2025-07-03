@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@devolution.com
@@ -24,11 +25,9 @@
 #define _SDL_epocvideo_h
 
 #ifndef EKA2
-#include"SDL_epocvideo_org.h"
+#include "SDL_epocvideo_org.h"
 #else
-#include"SDL_epocvideo2.h"
+#include "SDL_epocvideo2.h"
 #endif
 
-
 #endif
-

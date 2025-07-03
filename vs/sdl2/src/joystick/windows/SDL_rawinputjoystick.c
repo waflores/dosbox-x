@@ -33,16 +33,16 @@
 
 #ifdef SDL_JOYSTICK_RAWINPUT
 
+#include "../../core/windows/SDL_hid.h"
+#include "../../core/windows/SDL_windows.h"
+#include "../SDL_sysjoystick.h"
+#include "../hidapi/SDL_hidapijoystick_c.h"
+#include "../usb_ids.h"
 #include "SDL_atomic.h"
 #include "SDL_endian.h"
 #include "SDL_events.h"
 #include "SDL_hints.h"
 #include "SDL_timer.h"
-#include "../usb_ids.h"
-#include "../SDL_sysjoystick.h"
-#include "../../core/windows/SDL_windows.h"
-#include "../../core/windows/SDL_hid.h"
-#include "../hidapi/SDL_hidapijoystick_c.h"
 
 /* SDL_JOYSTICK_RAWINPUT_XINPUT is disabled because using XInput at the same time as
    raw input will turn off the Xbox Series X controller when it is connected via the
@@ -1614,9 +1614,9 @@ static void RAWINPUT_HandleStatePacket(SDL_Joystick *joystick, Uint8 *data, int 
     SDL_PrivateJoystickButton(joystick, button, state)
 #ifdef SDL_JOYSTICK_RAWINPUT_MATCH_AXES
     /* Grab high 4 bits of value, then fall through */
-#define AddAxisToMatchState(axis, value)                                                                    \
-    {                                                                                                       \
-        match_state = (match_state & ~(0xFull << (4 * axis + 16))) | ((value)&0xF000ull) << (4 * axis + 4); \
+#define AddAxisToMatchState(axis, value)                                                                      \
+    {                                                                                                         \
+        match_state = (match_state & ~(0xFull << (4 * axis + 16))) | ((value) & 0xF000ull) << (4 * axis + 4); \
     }
 #define SDL_PrivateJoystickAxis(joystick, axis, value) \
     if (axis < 4)                                      \

@@ -39,54 +39,50 @@ pdcsetsc
 
 **man-end****************************************************************/
 
-int PDC_curs_set(int visibility)
-{
-    int ret_vis = SP->visibility;
+int PDC_curs_set(int visibility) {
+  int ret_vis = SP->visibility;
 
-    PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
+  PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
 
-    if (visibility != -1)
-        SP->visibility = visibility;
+  if (visibility != -1)
+    SP->visibility = visibility;
 
-    PDC_display_cursor(SP->cursrow, SP->curscol, SP->cursrow,
-                       SP->curscol, visibility);
+  PDC_display_cursor(SP->cursrow, SP->curscol, SP->cursrow, SP->curscol,
+                     visibility);
 
-    return ret_vis;
+  return ret_vis;
 }
 
-void PDC_set_title(const char *title)
-{
-    int len;
+void PDC_set_title(const char *title) {
+  int len;
 
-    PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
+  PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
 
-    len = strlen(title) + 1;        /* write nul character */
+  len = strlen(title) + 1; /* write nul character */
 
-    XCursesInstruct(CURSES_TITLE);
+  XCursesInstruct(CURSES_TITLE);
 
-    if (XC_write_display_socket_int(len) >= 0)
-        if (XC_write_socket(xc_display_sock, title, len) >= 0)
-            return;
+  if (XC_write_display_socket_int(len) >= 0)
+    if (XC_write_socket(xc_display_sock, title, len) >= 0)
+      return;
 
-    XCursesExitCursesProcess(1, "exiting from PDC_set_title");
+  XCursesExitCursesProcess(1, "exiting from PDC_set_title");
 }
 
-int PDC_set_blink(bool blinkon)
-{
-    if (pdc_color_started)
-        COLORS = 256;
+int PDC_set_blink(bool blinkon) {
+  if (pdc_color_started)
+    COLORS = 256;
 
-    XCursesInstruct(blinkon ? CURSES_BLINK_ON : CURSES_BLINK_OFF);
+  XCursesInstruct(blinkon ? CURSES_BLINK_ON : CURSES_BLINK_OFF);
 
-    return OK;
+  return OK;
 }
 
-int PDC_set_bold(bool boldon)
-{
-    if (boldon)
-        SP->termattrs |= A_BOLD;
-    else
-        SP->termattrs &= ~A_BOLD;
+int PDC_set_bold(bool boldon) {
+  if (boldon)
+    SP->termattrs |= A_BOLD;
+  else
+    SP->termattrs &= ~A_BOLD;
 
-    return OK;
+  return OK;
 }

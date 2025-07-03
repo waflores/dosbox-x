@@ -21,21 +21,21 @@
 #include "../../SDL_internal.h"
 
 #ifdef HAVE_IBUS_IBUS_H
-#include "SDL.h"
-#include "SDL_hints.h"
-#include "SDL_syswm.h"
-#include "SDL_ibus.h"
-#include "SDL_dbus.h"
-#include "../../video/SDL_sysvideo.h"
 #include "../../events/SDL_keyboard_c.h"
+#include "../../video/SDL_sysvideo.h"
+#include "SDL.h"
+#include "SDL_dbus.h"
+#include "SDL_hints.h"
+#include "SDL_ibus.h"
+#include "SDL_syswm.h"
 
 #ifdef SDL_VIDEO_DRIVER_X11
-    #include "../../video/x11/SDL_x11video.h"
+#include "../../video/x11/SDL_x11video.h"
 #endif
 
+#include <fcntl.h>
 #include <sys/inotify.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 static const char IBUS_PATH[] = "/org/freedesktop/IBus";
 
@@ -725,7 +725,7 @@ void SDL_IBus_UpdateTextRect(const SDL_Rect *rect)
 
 #ifdef SDL_VIDEO_DRIVER_X11
     if (info.subsystem == SDL_SYSWM_X11) {
-        SDL_DisplayData *displaydata = (SDL_DisplayData *) SDL_GetDisplayForWindow(focused_win)->driverdata;
+        SDL_DisplayData *displaydata = (SDL_DisplayData *)SDL_GetDisplayForWindow(focused_win)->driverdata;
 
         Display *x_disp = info.info.x11.display;
         Window x_win = info.info.x11.window;

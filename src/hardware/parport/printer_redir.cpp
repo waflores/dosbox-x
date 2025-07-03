@@ -14,62 +14,51 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "dosbox.h"
 
 #if C_PRINTER
 
 #include "parport.h"
-//#include "callback.h"
+// #include "callback.h"
 #include "printer_redir.h"
 
-// Purpose of this is to pass LPT register access to the virtual printer 
+// Purpose of this is to pass LPT register access to the virtual printer
 
-CPrinterRedir::CPrinterRedir(Bitu nr, uint8_t initIrq, CommandLine* cmd)
-                              :CParallel (cmd, nr, initIrq) {
-	InstallationSuccessful = PRINTER_isInited();
+CPrinterRedir::CPrinterRedir(Bitu nr, uint8_t initIrq, CommandLine *cmd)
+    : CParallel(cmd, nr, initIrq) {
+  InstallationSuccessful = PRINTER_isInited();
 }
 
-CPrinterRedir::~CPrinterRedir () {
-	// close file
+CPrinterRedir::~CPrinterRedir() {
+  // close file
 }
 
-bool CPrinterRedir::Putchar(uint8_t val)
-{	
-	Write_CON(0xD4);
-	// strobe data out
-	Write_PR(val);
-	Write_CON(0xD5); // strobe pulse
-	Write_CON(0xD4); // strobe off
-	Read_SR();		 // clear ack
+bool CPrinterRedir::Putchar(uint8_t val) {
+  Write_CON(0xD4);
+  // strobe data out
+  Write_PR(val);
+  Write_CON(0xD5); // strobe pulse
+  Write_CON(0xD4); // strobe off
+  Read_SR();       // clear ack
 
 #if PARALLEL_DEBUG
-	log_par(dbg_putchar,"putchar  0x%2x",val);
-	if(dbg_plainputchar) fprintf(debugfp,"%c",val);
+  log_par(dbg_putchar, "putchar  0x%2x", val);
+  if (dbg_plainputchar)
+    fprintf(debugfp, "%c", val);
 #endif
 
-	return true;
+  return true;
 }
-Bitu CPrinterRedir::Read_PR() {
-	return PRINTER_readdata(0,1);
-}
-Bitu CPrinterRedir::Read_COM() {
-	return PRINTER_readcontrol(0,1);
-}
-Bitu CPrinterRedir::Read_SR() {
-	return PRINTER_readstatus(0,1);
-}
-void CPrinterRedir::Write_PR(Bitu val) {
-	PRINTER_writedata(0,val,1);
-}
-void CPrinterRedir::Write_CON(Bitu val) {
-	PRINTER_writecontrol(0,val,1);
-}
+Bitu CPrinterRedir::Read_PR() { return PRINTER_readdata(0, 1); }
+Bitu CPrinterRedir::Read_COM() { return PRINTER_readcontrol(0, 1); }
+Bitu CPrinterRedir::Read_SR() { return PRINTER_readstatus(0, 1); }
+void CPrinterRedir::Write_PR(Bitu val) { PRINTER_writedata(0, val, 1); }
+void CPrinterRedir::Write_CON(Bitu val) { PRINTER_writecontrol(0, val, 1); }
 void CPrinterRedir::Write_IOSEL(Bitu val) {
-    (void)val; // UNUSED
-	// nothing
+  (void)val; // UNUSED
+             // nothing
 }
 void CPrinterRedir::handleUpperEvent(uint16_t type) {
-    (void)type; // UNUSED
+  (void)type; // UNUSED
 }
 #endif // C_PRINTER

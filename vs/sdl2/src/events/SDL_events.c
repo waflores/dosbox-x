@@ -22,12 +22,12 @@
 
 /* General event handling code for SDL */
 
-#include "SDL.h"
-#include "SDL_events.h"
-#include "SDL_thread.h"
-#include "SDL_events_c.h"
 #include "../SDL_hints_c.h"
 #include "../timer/SDL_timer_c.h"
+#include "SDL.h"
+#include "SDL_events.h"
+#include "SDL_events_c.h"
+#include "SDL_thread.h"
 #ifndef SDL_JOYSTICK_DISABLED
 #include "../joystick/SDL_joystick_c.h"
 #endif

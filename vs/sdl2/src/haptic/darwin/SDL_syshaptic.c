@@ -22,19 +22,19 @@
 
 #ifdef SDL_HAPTIC_IOKIT
 
-#include "SDL_stdinc.h"
-#include "SDL_haptic.h"
+#include "../../joystick/SDL_sysjoystick.h"            /* For the real SDL_Joystick */
+#include "../../joystick/darwin/SDL_iokitjoystick_c.h" /* For joystick hwdata */
 #include "../SDL_syshaptic.h"
+#include "SDL_haptic.h"
 #include "SDL_joystick.h"
-#include "../../joystick/SDL_sysjoystick.h"     /* For the real SDL_Joystick */
-#include "../../joystick/darwin/SDL_iokitjoystick_c.h"    /* For joystick hwdata */
+#include "SDL_stdinc.h"
 #include "SDL_syshaptic_c.h"
 
+#include <ForceFeedback/ForceFeedback.h>
+#include <ForceFeedback/ForceFeedbackConstants.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/hid/IOHIDKeys.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
-#include <ForceFeedback/ForceFeedback.h>
-#include <ForceFeedback/ForceFeedbackConstants.h>
 
 #ifndef IO_OBJECT_NULL
 #define IO_OBJECT_NULL ((io_service_t)0)
@@ -745,9 +745,9 @@ static int SDL_SYS_SetDirection(FFEFFECT *effect, SDL_HapticDirection *dir, int 
 }
 
 /* Clamps and converts. */
-#define CCONVERT(x) (((x) > 0x7FFF) ? 10000 : ((x)*10000) / 0x7FFF)
+#define CCONVERT(x) (((x) > 0x7FFF) ? 10000 : ((x) * 10000) / 0x7FFF)
 /* Just converts. */
-#define CONVERT(x) (((x)*10000) / 0x7FFF)
+#define CONVERT(x) (((x) * 10000) / 0x7FFF)
 /*
  * Creates the FFEFFECT from a SDL_HapticEffect.
  */
@@ -1281,7 +1281,7 @@ int SDL_SYS_HapticSetGain(SDL_Haptic *haptic, int gain)
     HRESULT ret;
     Uint32 val;
 
-    val = gain * 100;           /* Mac OS X uses 0 to 10,000 */
+    val = gain * 100; /* Mac OS X uses 0 to 10,000 */
     ret = FFDeviceSetForceFeedbackProperty(haptic->hwdata->device,
                                            FFPROP_FFGAIN, &val);
     if (ret != FF_OK) {

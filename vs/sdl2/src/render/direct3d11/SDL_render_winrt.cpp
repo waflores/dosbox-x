@@ -22,14 +22,14 @@
 
 #if SDL_VIDEO_RENDER_D3D11
 
-#include "SDL_syswm.h"
 #include "../../video/winrt/SDL_winrtvideo_cpp.h"
+#include "SDL_syswm.h"
 extern "C" {
 #include "../SDL_sysrender.h"
 }
 
-#include <windows.ui.core.h>
 #include <windows.graphics.display.h>
+#include <windows.ui.core.h>
 
 #if WINAPI_FAMILY == WINAPI_FAMILY_APP
 #include <windows.ui.xaml.media.dxinterop.h>
@@ -52,7 +52,7 @@ D3D11_GetCoreWindowFromSDLRenderer(SDL_Renderer *renderer)
 
     SDL_SysWMinfo sdlWindowInfo;
     SDL_VERSION(&sdlWindowInfo.version);
-    if ( ! SDL_GetWindowWMInfo(sdlWindow, &sdlWindowInfo) ) {
+    if (!SDL_GetWindowWMInfo(sdlWindow, &sdlWindowInfo)) {
         return NULL;
     }
 

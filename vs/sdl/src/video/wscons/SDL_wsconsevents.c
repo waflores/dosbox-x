@@ -21,25 +21,24 @@
 */
 #include "SDL_config.h"
 
-#include <sys/types.h>
 #include <dev/wscons/wsdisplay_usl_io.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>    
-#include <unistd.h>  
-#include <termios.h>
-#include <errno.h> 
+#include <errno.h>
+#include <fcntl.h>
 #include <string.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <termios.h>
+#include <unistd.h>
 
-#include "SDL.h"
-#include "../../events/SDL_sysevents.h"
 #include "../../events/SDL_events_c.h"
-#include "SDL_wsconsvideo.h"
+#include "../../events/SDL_sysevents.h"
+#include "SDL.h"
 #include "SDL_wsconsevents_c.h"
+#include "SDL_wsconsvideo.h"
 
 static int posted = 0;
 
-int WSCONS_InitKeyboard(_THIS)
-{
+int WSCONS_InitKeyboard(_THIS) {
   struct termios tty;
 
   if (ioctl(private->fd, WSKBDIO_GTYPE, &private->kbdType) == -1) {
@@ -73,30 +72,26 @@ int WSCONS_InitKeyboard(_THIS)
   return 0;
 }
 
-void WSCONS_ReleaseKeyboard(_THIS)
-{
+void WSCONS_ReleaseKeyboard(_THIS) {
   if (private->fd != -1) {
     if (ioctl(private->fd, KDSKBMODE, K_XLATE) == -1) {
       WSCONS_ReportError("cannot restore keyboard to translated mode: %s",
-			 strerror(errno));
+                         strerror(errno));
     }
     if (private->did_save_tty) {
       if (tcsetattr(private->fd, TCSANOW, &private->saved_tty) < 0) {
-	WSCONS_ReportError("cannot restore keynoard attributes: %s",
-			   strerror(errno));
+        WSCONS_ReportError("cannot restore keynoard attributes: %s",
+                           strerror(errno));
       }
     }
   }
 }
 
-static void updateMouse()
-{
-}
+static void updateMouse() {}
 
 static SDLKey keymap[128];
 
-static SDL_keysym *TranslateKey(int scancode, SDL_keysym *keysym)
-{
+static SDL_keysym *TranslateKey(int scancode, SDL_keysym *keysym) {
   keysym->scancode = scancode;
   keysym->sym = SDLK_UNKNOWN;
   keysym->mod = KMOD_NONE;
@@ -110,8 +105,7 @@ static SDL_keysym *TranslateKey(int scancode, SDL_keysym *keysym)
   return keysym;
 }
 
-static void updateKeyboard(_THIS)
-{
+static void updateKeyboard(_THIS) {
   unsigned char buf[100];
   SDL_keysym keysym;
   int n, i;
@@ -120,15 +114,15 @@ static void updateKeyboard(_THIS)
     for (i = 0; i < n; i++) {
       unsigned char c = buf[i] & 0x7f;
       if (c == 224) // special key prefix -- what should we do with it?
-	continue;
-      posted += SDL_PrivateKeyboard((buf[i] & 0x80) ? SDL_RELEASED : SDL_PRESSED,
-				    TranslateKey(c, &keysym));
+        continue;
+      posted +=
+          SDL_PrivateKeyboard((buf[i] & 0x80) ? SDL_RELEASED : SDL_PRESSED,
+                              TranslateKey(c, &keysym));
     }
   }
 }
 
-void WSCONS_PumpEvents(_THIS)
-{
+void WSCONS_PumpEvents(_THIS) {
   do {
     posted = 0;
     updateMouse();
@@ -136,12 +130,11 @@ void WSCONS_PumpEvents(_THIS)
   } while (posted);
 }
 
-void WSCONS_InitOSKeymap(_THIS)
-{
+void WSCONS_InitOSKeymap(_THIS) {
   int i;
 
   /* Make sure unknown keys are mapped correctly */
-  for (i=0; i < SDL_arraysize(keymap); i++) {
+  for (i = 0; i < SDL_arraysize(keymap); i++) {
     keymap[i] = SDLK_UNKNOWN;
   }
 
@@ -160,7 +153,7 @@ void WSCONS_InitOSKeymap(_THIS)
     keymap[10] = SDLK_9;
     keymap[11] = SDLK_0;
     keymap[14] = SDLK_BACKSPACE;
-    
+
     /* second row */
     keymap[16] = SDLK_q;
     keymap[17] = SDLK_w;
@@ -223,11 +216,10 @@ void WSCONS_InitOSKeymap(_THIS)
 #endif /* WSKBD_TYPE_ZAURUS */
 
   default:
-    WSCONS_ReportError("Unable to map keys for keyboard type %u", 
-		       private->kbdType);
+    WSCONS_ReportError("Unable to map keys for keyboard type %u",
+                       private->kbdType);
     break;
   }
 }
 
 /* end of SDL_wsconsevents.c ... */
-

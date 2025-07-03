@@ -19,7 +19,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #ifndef _CATGETS_H
 #define _CATGETS_H
 
@@ -33,25 +32,25 @@ typedef int nl_catd;
 
 /* Functions */
 
-#define catgets(catalog, set,message_number,message) kittengets(set,message_number,message)
-#define catopen(name,flag) kittenopen(name)
-#define catclose(catalog)  kittenclose()
+#define catgets(catalog, set, message_number, message)                         \
+  kittengets(set, message_number, message)
+#define catopen(name, flag) kittenopen(name)
+#define catclose(catalog) kittenclose()
 
-
-char *  kittengets( int set_number, int message_number,char *message);
+char *kittengets(int set_number, int message_number, char *message);
 nl_catd kittenopen(char *name);
-void    kittenclose (void);
+void kittenclose(void);
 
-int get_line (int file, char *buffer, int size);
+int get_line(int file, char *buffer, int size);
 
 int dos_open(char *filename, int mode);
-#define open(filename,mode) dos_open(filename,mode)
+#define open(filename, mode) dos_open(filename, mode)
 
 int dos_read(int file, void *ptr, unsigned count);
-#define read(file, ptr, count) dos_read(file,ptr,count)
+#define read(file, ptr, count) dos_read(file, ptr, count)
 
 int dos_write(int file, void *ptr, unsigned count);
-#define write(file, ptr, count) dos_write(file,ptr,count)
+#define write(file, ptr, count) dos_write(file, ptr, count)
 
 void dos_close(int file);
 #define close(file) dos_close(file)

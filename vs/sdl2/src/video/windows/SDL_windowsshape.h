@@ -24,10 +24,10 @@
 #ifndef SDL_windowsshape_h_
 #define SDL_windowsshape_h_
 
-#include "SDL_video.h"
-#include "SDL_shape.h"
-#include "../SDL_sysvideo.h"
 #include "../SDL_shape_internals.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_shape.h"
+#include "SDL_video.h"
 
 typedef struct
 {

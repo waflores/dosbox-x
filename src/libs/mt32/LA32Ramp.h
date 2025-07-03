@@ -18,28 +18,28 @@
 #ifndef MT32EMU_LA32RAMP_H
 #define MT32EMU_LA32RAMP_H
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
 class LA32Ramp {
 private:
-	Bit32u current;
-	unsigned int largeTarget;
-	unsigned int largeIncrement;
-	bool descending;
+  Bit32u current;
+  unsigned int largeTarget;
+  unsigned int largeIncrement;
+  bool descending;
 
-	int interruptCountdown;
-	bool interruptRaised;
+  int interruptCountdown;
+  bool interruptRaised;
 
 public:
-	LA32Ramp();
-	void startRamp(Bit8u target, Bit8u increment);
-	Bit32u nextValue();
-	bool checkInterrupt();
-	void reset();
-	bool isBelowCurrent(Bit8u target) const;
+  LA32Ramp();
+  void startRamp(Bit8u target, Bit8u increment);
+  Bit32u nextValue();
+  bool checkInterrupt();
+  void reset();
+  bool isBelowCurrent(Bit8u target) const;
 };
 
 } // namespace MT32Emu

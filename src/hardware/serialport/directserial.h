@@ -16,7 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 // include guard
 #ifndef DOSBOX_DIRECTSERIAL_WIN32_H
 #define DOSBOX_DIRECTSERIAL_WIN32_H
@@ -32,39 +31,38 @@
 
 class CDirectSerial : public CSerial {
 public:
-	CDirectSerial(Bitu id, CommandLine* cmd);
-	~CDirectSerial();
+  CDirectSerial(Bitu id, CommandLine *cmd);
+  ~CDirectSerial();
 
-	void updatePortConfig(uint16_t divider, uint8_t lcr) override;
-	void updateMSR() override;
-	void transmitByte(uint8_t val, bool first) override;
-	void setBreak(bool value) override;
-	
-	void setRTSDTR(bool rts, bool dtr) override;
-	void setRTS(bool val) override;
-	void setDTR(bool val) override;
-	void handleUpperEvent(uint16_t type) override;
+  void updatePortConfig(uint16_t divider, uint8_t lcr) override;
+  void updateMSR() override;
+  void transmitByte(uint8_t val, bool first) override;
+  void setBreak(bool value) override;
+
+  void setRTSDTR(bool rts, bool dtr) override;
+  void setRTS(bool val) override;
+  void setDTR(bool val) override;
+  void handleUpperEvent(uint16_t type) override;
 
 private:
-	COMPORT comport;
+  COMPORT comport;
 
-	Bitu rx_state = 0;
-#define D_RX_IDLE		0
-#define D_RX_WAIT		1
-#define D_RX_BLOCKED	2
-#define D_RX_FASTWAIT	3
+  Bitu rx_state = 0;
+#define D_RX_IDLE 0
+#define D_RX_WAIT 1
+#define D_RX_BLOCKED 2
+#define D_RX_FASTWAIT 3
 
-	Bitu rx_retry;		// counter of retries (every millisecond)
-	Bitu rx_retry_max;	// how many POLL_EVENTS to wait before causing
-						// an overrun error.
-	bool doReceive();
+  Bitu rx_retry;     // counter of retries (every millisecond)
+  Bitu rx_retry_max; // how many POLL_EVENTS to wait before causing
+                     // an overrun error.
+  bool doReceive();
 
 #if SERIAL_DEBUG
-	bool dbgmsg_poll_block = false;
-	bool dbgmsg_rx_block = false;
+  bool dbgmsg_poll_block = false;
+  bool dbgmsg_rx_block = false;
 #endif
-
 };
 
-#endif	// C_DIRECTSERIAL
-#endif	// include guard
+#endif // C_DIRECTSERIAL
+#endif // include guard

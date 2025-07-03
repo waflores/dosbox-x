@@ -20,9 +20,9 @@
 
 typedef struct _COMPORT *COMPORT;
 
-bool SERIAL_open(const char* portname, COMPORT* port);
+bool SERIAL_open(const char *portname, COMPORT *port);
 void SERIAL_close(COMPORT port);
-void SERIAL_getErrorString(char* buffer, size_t length);
+void SERIAL_getErrorString(char *buffer, size_t length);
 
 #define SERIAL_1STOP 1
 #define SERIAL_2STOP 2
@@ -30,8 +30,8 @@ void SERIAL_getErrorString(char* buffer, size_t length);
 
 // parity: n, o, e, m, s
 
-bool SERIAL_setCommParameters(COMPORT port,
-			int baudrate, char parity, int stopbits, int length);
+bool SERIAL_setCommParameters(COMPORT port, int baudrate, char parity,
+                              int stopbits, int length);
 
 void SERIAL_setDTR(COMPORT port, bool value);
 void SERIAL_setRTS(COMPORT port, bool value);

@@ -41,8 +41,8 @@ extern "C" {
 }
 
 #include "../../core/winrt/SDL_winrtapp_direct3d.h"
-#include "SDL_winrtvideo_cpp.h"
 #include "SDL_winrtmouse_c.h"
+#include "SDL_winrtvideo_cpp.h"
 
 extern "C" SDL_bool WINRT_UsingRelativeMouseMode = SDL_FALSE;
 

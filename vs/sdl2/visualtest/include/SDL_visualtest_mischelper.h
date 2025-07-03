@@ -1,5 +1,5 @@
 /**
- * \file mischelper.c 
+ * \file mischelper.c
  *
  * Header with miscellaneous helper functions.
  */
@@ -16,7 +16,7 @@ extern "C" {
  * Stores a 32 digit hexadecimal string representing the MD5 hash of the
  * string \c str in \c hash.
  */
-void SDLVisualTest_HashString(char* str, char hash[33]);
+void SDLVisualTest_HashString(char *str, char hash[33]);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

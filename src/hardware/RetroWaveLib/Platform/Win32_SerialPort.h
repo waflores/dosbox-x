@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "../RetroWave.h"
 #include "../Protocol/Serial.h"
+#include "../RetroWave.h"
 
 #ifdef _WIN32
 
@@ -31,10 +31,11 @@ extern "C" {
 #endif
 
 typedef struct {
-	HANDLE porthandle;
+  HANDLE porthandle;
 } RetroWavePlatform_Win32SerialPort;
 
-extern int retrowave_init_win32_serialport(RetroWaveContext *ctx, const char *com_path);
+extern int retrowave_init_win32_serialport(RetroWaveContext *ctx,
+                                           const char *com_path);
 extern void retrowave_deinit_win32_serialport(RetroWaveContext *ctx);
 
 #ifdef __cplusplus

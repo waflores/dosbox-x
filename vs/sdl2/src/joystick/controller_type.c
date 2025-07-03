@@ -19,43 +19,41 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_hints.h"
 #include "SDL_gamecontroller.h"
+#include "SDL_hints.h"
 
-#include "controller_type.h"
 #include "controller_list.h"
+#include "controller_type.h"
 
-
-static const char *GetControllerTypeOverride( int nVID, int nPID )
+static const char *GetControllerTypeOverride(int nVID, int nPID)
 {
-	const char *hint = SDL_GetHint(SDL_HINT_GAMECONTROLLERTYPE);
-	if (hint) {
-		char key[32];
-		const char *spot = NULL;
+    const char *hint = SDL_GetHint(SDL_HINT_GAMECONTROLLERTYPE);
+    if (hint) {
+        char key[32];
+        const char *spot = NULL;
 
-		SDL_snprintf(key, sizeof(key), "0x%.4x/0x%.4x=", nVID, nPID);
-		spot = SDL_strstr(hint, key);
-		if (!spot) {
-			SDL_snprintf(key, sizeof(key), "0x%.4X/0x%.4X=", nVID, nPID);
-			spot = SDL_strstr(hint, key);
-		}
-		if (spot) {
-			spot += SDL_strlen(key);
-			if (SDL_strncmp(spot, "k_eControllerType_", 18) == 0) {
-				spot += 18;
-			}
-			return spot;
-		}
-	}
-	return NULL;
+        SDL_snprintf(key, sizeof(key), "0x%.4x/0x%.4x=", nVID, nPID);
+        spot = SDL_strstr(hint, key);
+        if (!spot) {
+            SDL_snprintf(key, sizeof(key), "0x%.4X/0x%.4X=", nVID, nPID);
+            spot = SDL_strstr(hint, key);
+        }
+        if (spot) {
+            spot += SDL_strlen(key);
+            if (SDL_strncmp(spot, "k_eControllerType_", 18) == 0) {
+                spot += 18;
+            }
+            return spot;
+        }
+    }
+    return NULL;
 }
 
-
-EControllerType GuessControllerType( int nVID, int nPID )
+EControllerType GuessControllerType(int nVID, int nPID)
 {
-#if 0//def _DEBUG
-	// Verify that there are no duplicates in the controller list
-	// If the list were sorted, we could do this much more efficiently, as well as improve lookup speed.
+#if 0 // def _DEBUG
+      //  Verify that there are no duplicates in the controller list
+      //  If the list were sorted, we could do this much more efficiently, as well as improve lookup speed.
 	static bool s_bCheckedForDuplicates;
 	if ( !s_bCheckedForDuplicates )
 	{
@@ -74,69 +72,55 @@ EControllerType GuessControllerType( int nVID, int nPID )
 	}
 #endif // _DEBUG
 
-	unsigned int unDeviceID = MAKE_CONTROLLER_ID( nVID, nPID );
-	int iIndex;
+    unsigned int unDeviceID = MAKE_CONTROLLER_ID(nVID, nPID);
+    int iIndex;
 
-	const char *pszOverride = GetControllerTypeOverride( nVID, nPID );
-	if ( pszOverride )
-	{
-		if ( SDL_strncasecmp( pszOverride, "Xbox360", 7 ) == 0 )
-		{
-			return k_eControllerType_XBox360Controller;
-		}
-		if ( SDL_strncasecmp( pszOverride, "XboxOne", 7 ) == 0 )
-		{
-			return k_eControllerType_XBoxOneController;
-		}
-		if ( SDL_strncasecmp( pszOverride, "PS3", 3 ) == 0 )
-		{
-			return k_eControllerType_PS3Controller;
-		}
-		if ( SDL_strncasecmp( pszOverride, "PS4", 3 ) == 0 )
-		{
-			return k_eControllerType_PS4Controller;
-		}
-		if ( SDL_strncasecmp( pszOverride, "PS5", 3 ) == 0 )
-		{
-			return k_eControllerType_PS5Controller;
-		}
-		if ( SDL_strncasecmp( pszOverride, "SwitchPro", 9 ) == 0 )
-		{
-			return k_eControllerType_SwitchProController;
-		}
-		if ( SDL_strncasecmp( pszOverride, "Steam", 5 ) == 0 )
-		{
-			return k_eControllerType_SteamController;
-		}
-		return k_eControllerType_UnknownNonSteamController;
-	}
+    const char *pszOverride = GetControllerTypeOverride(nVID, nPID);
+    if (pszOverride) {
+        if (SDL_strncasecmp(pszOverride, "Xbox360", 7) == 0) {
+            return k_eControllerType_XBox360Controller;
+        }
+        if (SDL_strncasecmp(pszOverride, "XboxOne", 7) == 0) {
+            return k_eControllerType_XBoxOneController;
+        }
+        if (SDL_strncasecmp(pszOverride, "PS3", 3) == 0) {
+            return k_eControllerType_PS3Controller;
+        }
+        if (SDL_strncasecmp(pszOverride, "PS4", 3) == 0) {
+            return k_eControllerType_PS4Controller;
+        }
+        if (SDL_strncasecmp(pszOverride, "PS5", 3) == 0) {
+            return k_eControllerType_PS5Controller;
+        }
+        if (SDL_strncasecmp(pszOverride, "SwitchPro", 9) == 0) {
+            return k_eControllerType_SwitchProController;
+        }
+        if (SDL_strncasecmp(pszOverride, "Steam", 5) == 0) {
+            return k_eControllerType_SteamController;
+        }
+        return k_eControllerType_UnknownNonSteamController;
+    }
 
-	for ( iIndex = 0; iIndex < sizeof( arrControllers ) / sizeof( arrControllers[0] ); ++iIndex )
-	{
-		if ( unDeviceID == arrControllers[ iIndex ].m_unDeviceID )
-		{
-			return arrControllers[ iIndex ].m_eControllerType;
-		}
-	}
+    for (iIndex = 0; iIndex < sizeof(arrControllers) / sizeof(arrControllers[0]); ++iIndex) {
+        if (unDeviceID == arrControllers[iIndex].m_unDeviceID) {
+            return arrControllers[iIndex].m_eControllerType;
+        }
+    }
 
-	return k_eControllerType_UnknownNonSteamController;
-
+    return k_eControllerType_UnknownNonSteamController;
 }
 
-const char *GuessControllerName( int nVID, int nPID )
+const char *GuessControllerName(int nVID, int nPID)
 {
-	unsigned int unDeviceID = MAKE_CONTROLLER_ID( nVID, nPID );
-	int iIndex;
-	for ( iIndex = 0; iIndex < sizeof( arrControllers ) / sizeof( arrControllers[0] ); ++iIndex )
-	{
-		if ( unDeviceID == arrControllers[ iIndex ].m_unDeviceID )
-		{
-			return arrControllers[ iIndex ].m_pszName;
-		}
-	}
+    unsigned int unDeviceID = MAKE_CONTROLLER_ID(nVID, nPID);
+    int iIndex;
+    for (iIndex = 0; iIndex < sizeof(arrControllers) / sizeof(arrControllers[0]); ++iIndex) {
+        if (unDeviceID == arrControllers[iIndex].m_unDeviceID) {
+            return arrControllers[iIndex].m_pszName;
+        }
+    }
 
-	return NULL;
-
+    return NULL;
 }
 
 #undef MAKE_CONTROLLER_ID

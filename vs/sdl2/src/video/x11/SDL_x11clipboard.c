@@ -25,9 +25,9 @@
 #include <limits.h> /* For INT_MAX */
 
 #include "SDL_events.h"
-#include "SDL_x11video.h"
 #include "SDL_timer.h"
 #include "SDL_x11clipboard.h"
+#include "SDL_x11video.h"
 
 /* Get any application owned window handle for clipboard association */
 static Window GetWindow(_THIS)

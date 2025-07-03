@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -29,20 +30,20 @@
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
 struct SDL_PrivateAudioData {
-	/* The audio device handle */
-	snd_pcm_t *pcm_handle;
+  /* The audio device handle */
+  snd_pcm_t *pcm_handle;
 
-	/* Raw mixing buffer */
-	Uint8 *mixbuf;
-	int    mixlen;
+  /* Raw mixing buffer */
+  Uint8 *mixbuf;
+  int mixlen;
 };
 
 /* Old variable names */
-#define pcm_handle		(this->hidden->pcm_handle)
-#define mixbuf			(this->hidden->mixbuf)
-#define mixlen			(this->hidden->mixlen)
+#define pcm_handle (this->hidden->pcm_handle)
+#define mixbuf (this->hidden->mixbuf)
+#define mixlen (this->hidden->mixlen)
 
 #endif /* _ALSA_PCM_audio_h */

@@ -20,9 +20,9 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_video.h"
 #include "SDL_blit.h"
 #include "SDL_cpuinfo.h"
+#include "SDL_video.h"
 
 #ifdef __SSE__
 /* *INDENT-OFF* */ /* clang-format off */
@@ -310,7 +310,7 @@ int SDL_FillRects(SDL_Surface *dst, const SDL_Rect *rects, int count,
     SDL_Rect clipped;
     Uint8 *pixels;
     const SDL_Rect *rect;
-    void (*fill_function)(Uint8 * pixels, int pitch, Uint32 color, int w, int h) = NULL;
+    void (*fill_function)(Uint8 *pixels, int pitch, Uint32 color, int w, int h) = NULL;
     int i;
 
     if (!dst) {

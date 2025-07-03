@@ -28,23 +28,23 @@
 #if defined(SDL_AUDIO_DRIVER_WASAPI) && defined(__WINRT__)
 
 #include <Windows.h>
-#include <windows.ui.core.h>
+#include <collection.h>
 #include <windows.devices.enumeration.h>
 #include <windows.media.devices.h>
+#include <windows.ui.core.h>
 #include <wrl/implements.h>
-#include <collection.h>
 
 extern "C" {
 #include "../../core/windows/SDL_windows.h"
-#include "SDL_audio.h"
-#include "SDL_timer.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_sysaudio.h"
+#include "SDL_audio.h"
+#include "SDL_timer.h"
 }
 
 #define COBJMACROS
-#include <mmdeviceapi.h>
 #include <audioclient.h>
+#include <mmdeviceapi.h>
 
 #include "SDL_wasapi.h"
 

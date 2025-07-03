@@ -47,7 +47,7 @@ GetPixel(Uint8 *p, size_t bytes_per_pixel)
      * leaving the most-significant bytes set to zero, so that ret can
      * be decoded with SDL_GetRGBA afterwards. */
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    SDL_memcpy(((Uint8 *) &ret) + (sizeof(ret) - bytes_per_pixel), p, bytes_per_pixel);
+    SDL_memcpy(((Uint8 *)&ret) + (sizeof(ret) - bytes_per_pixel), p, bytes_per_pixel);
 #else
     SDL_memcpy(&ret, p, bytes_per_pixel);
 #endif

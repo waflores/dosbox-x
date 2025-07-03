@@ -37,74 +37,62 @@ pdcsetsc
 
 **man-end****************************************************************/
 
-int PDC_curs_set(int visibility)
-{
-    VIOCURSORINFO pvioCursorInfo;
-    int ret_vis, hidden = 0, start = 0, end = 0;
+int PDC_curs_set(int visibility) {
+  VIOCURSORINFO pvioCursorInfo;
+  int ret_vis, hidden = 0, start = 0, end = 0;
 
-    PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
+  PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
 
-    ret_vis = SP->visibility;
-    SP->visibility = visibility;
+  ret_vis = SP->visibility;
+  SP->visibility = visibility;
 
-    switch(visibility)
-    {
-    case 0:     /* invisible */
-        start = pdc_font / 4;
-        end = pdc_font;
-        hidden = -1;
-        break;
+  switch (visibility) {
+  case 0: /* invisible */
+    start = pdc_font / 4;
+    end = pdc_font;
+    hidden = -1;
+    break;
 
-    case 2:     /* highly visible */
-        start = 2;      /* almost full-height block */
-        end = pdc_font - 1;
-        break;
+  case 2:      /* highly visible */
+    start = 2; /* almost full-height block */
+    end = pdc_font - 1;
+    break;
 
-    default:    /* normal visibility */
-        start = (SP->orig_cursor >> 8) & 0xff;
-        end = SP->orig_cursor & 0xff;
+  default: /* normal visibility */
+    start = (SP->orig_cursor >> 8) & 0xff;
+    end = SP->orig_cursor & 0xff;
+  }
+
+  pvioCursorInfo.yStart = (USHORT)start;
+  pvioCursorInfo.cEnd = (USHORT)end;
+  pvioCursorInfo.cx = (USHORT)1;
+  pvioCursorInfo.attr = hidden;
+  VioSetCurType((PVIOCURSORINFO)&pvioCursorInfo, 0);
+
+  return ret_vis;
+}
+
+void PDC_set_title(const char *title) {
+  PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
+}
+
+int PDC_set_blink(bool blinkon) {
+  if (pdc_color_started)
+    COLORS = 16;
+
+  if (blinkon) {
+    if (!(SP->termattrs & A_BLINK)) {
+      SP->termattrs |= A_BLINK;
+      pdc_last_blink = PDC_ms_count();
     }
-
-    pvioCursorInfo.yStart = (USHORT)start;
-    pvioCursorInfo.cEnd = (USHORT)end;
-    pvioCursorInfo.cx = (USHORT)1;
-    pvioCursorInfo.attr = hidden;
-    VioSetCurType((PVIOCURSORINFO)&pvioCursorInfo, 0);
-
-    return ret_vis;
-}
-
-void PDC_set_title(const char *title)
-{
-    PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
-}
-
-int PDC_set_blink(bool blinkon)
-{
-    if (pdc_color_started)
-        COLORS = 16;
-
-    if (blinkon)
-    {
-        if (!(SP->termattrs & A_BLINK))
-        {
-            SP->termattrs |= A_BLINK;
-            pdc_last_blink = PDC_ms_count();
-        }
+  } else {
+    if (SP->termattrs & A_BLINK) {
+      SP->termattrs &= ~A_BLINK;
+      PDC_blink_text();
     }
-    else
-    {
-        if (SP->termattrs & A_BLINK)
-        {
-            SP->termattrs &= ~A_BLINK;
-            PDC_blink_text();
-        }
-    }
+  }
 
-    return OK;
+  return OK;
 }
 
-int PDC_set_bold(bool boldon)
-{
-    return boldon ? ERR : OK;
-}
+int PDC_set_bold(bool boldon) { return boldon ? ERR : OK; }

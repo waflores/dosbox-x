@@ -24,8 +24,8 @@
 
 #include "../../SDL_internal.h"
 
-#include "SDL_stdinc.h"
 #include "SDL_rect.h"
+#include "SDL_stdinc.h"
 
 extern SDL_bool SDL_IME_Init(void);
 extern void SDL_IME_Quit(void);

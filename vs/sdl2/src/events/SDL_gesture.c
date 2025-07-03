@@ -23,8 +23,8 @@
 
 /* General gesture handling code for SDL */
 
-#include "SDL_events.h"
 #include "SDL_endian.h"
+#include "SDL_events.h"
 #include "SDL_events_c.h"
 #include "SDL_gesture_c.h"
 
@@ -312,14 +312,14 @@ static float bestDollarDifference(SDL_FloatPoint *points, SDL_FloatPoint *templ)
       -TRANSLATED DIRECTLY FROM PSUDEO-CODE AVAILABLE AT-
       -"http://depts.washington.edu/aimgroup/proj/dollar/"
     */
-    double ta = -M_PI/4;
-    double tb = M_PI/4;
-    double dt = M_PI/90;
-    float x1 = (float)(PHI*ta + (1-PHI)*tb);
-    float f1 = dollarDifference(points,templ,x1);
-    float x2 = (float)((1-PHI)*ta + PHI*tb);
-    float f2 = dollarDifference(points,templ,x2);
-    while (SDL_fabs(ta-tb) > dt) {
+    double ta = -M_PI / 4;
+    double tb = M_PI / 4;
+    double dt = M_PI / 90;
+    float x1 = (float)(PHI * ta + (1 - PHI) * tb);
+    float f1 = dollarDifference(points, templ, x1);
+    float x2 = (float)((1 - PHI) * ta + PHI * tb);
+    float f2 = dollarDifference(points, templ, x2);
+    while (SDL_fabs(ta - tb) > dt) {
         if (f1 < f2) {
             tb = x2;
             x2 = x1;

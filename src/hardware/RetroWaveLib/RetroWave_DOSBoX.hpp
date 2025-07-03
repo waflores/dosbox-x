@@ -19,22 +19,23 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
 #include <sstream>
+#include <string>
+#include <vector>
 
-#include "RetroWave.h"
 #include "Board/OPL3.h"
-#include "Protocol/Serial.h"
+#include "Platform/Linux_SPI.h"
 #include "Platform/POSIX_SerialPort.h"
 #include "Platform/Win32_SerialPort.h"
-#include "Platform/Linux_SPI.h"
+#include "Protocol/Serial.h"
+#include "RetroWave.h"
 
-#include "logging.h"
 #include "../serialport/libserial.h"
+#include "logging.h"
 
 extern RetroWaveContext retrowave_global_context;
 extern int retrowave_global_context_inited;
 
-extern void retrowave_init_dosbox(const std::string& bus, const std::string& path, const std::string& spi_cs);
-
+extern void retrowave_init_dosbox(const std::string &bus,
+                                  const std::string &path,
+                                  const std::string &spi_cs);

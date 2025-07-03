@@ -27,10 +27,10 @@
 /* Simple log messages in SDL */
 
 #include "SDL_error.h"
-#include "SDL_log.h"
 #include "SDL_hints.h"
-#include "SDL_mutex.h"
+#include "SDL_log.h"
 #include "SDL_log_c.h"
+#include "SDL_mutex.h"
 
 #ifdef HAVE_STDIO_H
 #include <stdio.h>

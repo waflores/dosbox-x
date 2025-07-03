@@ -18,54 +18,53 @@
 #ifndef MT32EMU_MIDI_EVENT_QUEUE_H
 #define MT32EMU_MIDI_EVENT_QUEUE_H
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
 /**
- * Simple queue implementation using a ring buffer to store incoming MIDI event before the synth actually processes it.
- * It is intended to:
+ * Simple queue implementation using a ring buffer to store incoming MIDI event
+ * before the synth actually processes it. It is intended to:
  * - get rid of prerenderer while retaining graceful partial abortion
  * - add fair emulation of the MIDI interface delays
- * - extend the synth interface with the default implementation of a typical rendering loop.
- * THREAD SAFETY:
- * It is safe to use either in a single thread environment or when there are only two threads - one performs only reading
- * and one performs only writing. More complicated usage requires external synchronisation.
+ * - extend the synth interface with the default implementation of a typical
+ * rendering loop. THREAD SAFETY: It is safe to use either in a single thread
+ * environment or when there are only two threads - one performs only reading
+ * and one performs only writing. More complicated usage requires external
+ * synchronisation.
  */
 class MidiEventQueue {
 public:
-	class SysexDataStorage;
+  class SysexDataStorage;
 
-	struct MidiEvent {
-		const Bit8u *sysexData;
-		union {
-			Bit32u sysexLength;
-			Bit32u shortMessageData;
-		};
-		Bit32u timestamp;
-	};
+  struct MidiEvent {
+    const Bit8u *sysexData;
+    union {
+      Bit32u sysexLength;
+      Bit32u shortMessageData;
+    };
+    Bit32u timestamp;
+  };
 
-	explicit MidiEventQueue(
-		// Must be a power of 2
-		Bit32u ringBufferSize,
-		Bit32u storageBufferSize
-	);
-	~MidiEventQueue();
-	void reset();
-	bool pushShortMessage(Bit32u shortMessageData, Bit32u timestamp);
-	bool pushSysex(const Bit8u *sysexData, Bit32u sysexLength, Bit32u timestamp);
-	const volatile MidiEvent *peekMidiEvent();
-	void dropMidiEvent();
-	inline bool isEmpty() const;
+  explicit MidiEventQueue(
+      // Must be a power of 2
+      Bit32u ringBufferSize, Bit32u storageBufferSize);
+  ~MidiEventQueue();
+  void reset();
+  bool pushShortMessage(Bit32u shortMessageData, Bit32u timestamp);
+  bool pushSysex(const Bit8u *sysexData, Bit32u sysexLength, Bit32u timestamp);
+  const volatile MidiEvent *peekMidiEvent();
+  void dropMidiEvent();
+  inline bool isEmpty() const;
 
 private:
-	SysexDataStorage &sysexDataStorage;
+  SysexDataStorage &sysexDataStorage;
 
-	MidiEvent * const ringBuffer;
-	const Bit32u ringBufferMask;
-	volatile Bit32u startPosition;
-	volatile Bit32u endPosition;
+  MidiEvent *const ringBuffer;
+  const Bit32u ringBufferMask;
+  volatile Bit32u startPosition;
+  volatile Bit32u endPosition;
 };
 
 } // namespace MT32Emu

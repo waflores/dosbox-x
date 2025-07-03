@@ -49,11 +49,9 @@ extern "C" {
  */
 #if defined(__WATCOMC__) && defined(__386__)
 extern __inline int _SDL_bsr_watcom(Uint32);
-#pragma aux _SDL_bsr_watcom = \
-    "bsr eax, eax" \
-    parm [eax] nomemory \
-    value [eax] \
-    modify exact [eax] nomemory;
+#pragma aux _SDL_bsr_watcom =         \
+    "bsr eax, eax" parm[eax] nomemory \
+        value[eax] modify exact[eax] nomemory;
 #endif
 
 /**
@@ -89,8 +87,8 @@ SDL_MostSignificantBitIndex32(Uint32 x)
      * <seander@cs.stanford.edu>, released in the public domain.
      * http://graphics.stanford.edu/~seander/bithacks.html#IntegerLog
      */
-    const Uint32 b[] = {0x2, 0xC, 0xF0, 0xFF00, 0xFFFF0000};
-    const int    S[] = {1, 2, 4, 8, 16};
+    const Uint32 b[] = { 0x2, 0xC, 0xF0, 0xFF00, 0xFFFF0000 };
+    const int S[] = { 1, 2, 4, 8, 16 };
 
     int msbIndex = 0;
     int i;
@@ -99,10 +97,8 @@ SDL_MostSignificantBitIndex32(Uint32 x)
         return -1;
     }
 
-    for (i = 4; i >= 0; i--)
-    {
-        if (x & b[i])
-        {
+    for (i = 4; i >= 0; i--) {
+        if (x & b[i]) {
             x >>= S[i];
             msbIndex |= S[i];
         }

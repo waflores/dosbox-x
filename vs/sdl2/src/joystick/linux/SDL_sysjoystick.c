@@ -28,29 +28,29 @@
 
 /* This is the Linux implementation of the SDL joystick API */
 
-#include <sys/stat.h>
 #include <errno.h> /* errno, strerror */
 #include <fcntl.h>
 #include <limits.h> /* For the definition of PATH_MAX */
+#include <sys/stat.h>
 #ifdef HAVE_INOTIFY
 #include <sys/inotify.h>
 #endif
-#include <sys/ioctl.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <linux/joystick.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
+#include "../../events/SDL_events_c.h"
+#include "../SDL_joystick_c.h"
+#include "../SDL_sysjoystick.h"
+#include "../hidapi/SDL_hidapijoystick_c.h"
+#include "../steam/SDL_steamcontroller.h"
+#include "SDL_endian.h"
 #include "SDL_hints.h"
 #include "SDL_joystick.h"
 #include "SDL_log.h"
-#include "SDL_endian.h"
-#include "SDL_timer.h"
-#include "../../events/SDL_events_c.h"
-#include "../SDL_sysjoystick.h"
-#include "../SDL_joystick_c.h"
-#include "../steam/SDL_steamcontroller.h"
 #include "SDL_sysjoystick_c.h"
-#include "../hidapi/SDL_hidapijoystick_c.h"
+#include "SDL_timer.h"
 
 /* This isn't defined in older Linux kernel headers */
 #ifndef MSC_TIMESTAMP
@@ -80,53 +80,52 @@
 #endif
 
 #ifndef BTN_TRIGGER_HAPPY
-#define BTN_TRIGGER_HAPPY       0x2c0
-#define BTN_TRIGGER_HAPPY1      0x2c0
-#define BTN_TRIGGER_HAPPY2      0x2c1
-#define BTN_TRIGGER_HAPPY3      0x2c2
-#define BTN_TRIGGER_HAPPY4      0x2c3
-#define BTN_TRIGGER_HAPPY5      0x2c4
-#define BTN_TRIGGER_HAPPY6      0x2c5
-#define BTN_TRIGGER_HAPPY7      0x2c6
-#define BTN_TRIGGER_HAPPY8      0x2c7
-#define BTN_TRIGGER_HAPPY9      0x2c8
-#define BTN_TRIGGER_HAPPY10     0x2c9
-#define BTN_TRIGGER_HAPPY11     0x2ca
-#define BTN_TRIGGER_HAPPY12     0x2cb
-#define BTN_TRIGGER_HAPPY13     0x2cc
-#define BTN_TRIGGER_HAPPY14     0x2cd
-#define BTN_TRIGGER_HAPPY15     0x2ce
-#define BTN_TRIGGER_HAPPY16     0x2cf
-#define BTN_TRIGGER_HAPPY17     0x2d0
-#define BTN_TRIGGER_HAPPY18     0x2d1
-#define BTN_TRIGGER_HAPPY19     0x2d2
-#define BTN_TRIGGER_HAPPY20     0x2d3
-#define BTN_TRIGGER_HAPPY21     0x2d4
-#define BTN_TRIGGER_HAPPY22     0x2d5
-#define BTN_TRIGGER_HAPPY23     0x2d6
-#define BTN_TRIGGER_HAPPY24     0x2d7
-#define BTN_TRIGGER_HAPPY25     0x2d8
-#define BTN_TRIGGER_HAPPY26     0x2d9
-#define BTN_TRIGGER_HAPPY27     0x2da
-#define BTN_TRIGGER_HAPPY28     0x2db
-#define BTN_TRIGGER_HAPPY29     0x2dc
-#define BTN_TRIGGER_HAPPY30     0x2dd
-#define BTN_TRIGGER_HAPPY31     0x2de
-#define BTN_TRIGGER_HAPPY32     0x2df
-#define BTN_TRIGGER_HAPPY33     0x2e0
-#define BTN_TRIGGER_HAPPY34     0x2e1
-#define BTN_TRIGGER_HAPPY35     0x2e2
-#define BTN_TRIGGER_HAPPY36     0x2e3
-#define BTN_TRIGGER_HAPPY37     0x2e4
-#define BTN_TRIGGER_HAPPY38     0x2e5
-#define BTN_TRIGGER_HAPPY39     0x2e6
-#define BTN_TRIGGER_HAPPY40     0x2e7
+#define BTN_TRIGGER_HAPPY   0x2c0
+#define BTN_TRIGGER_HAPPY1  0x2c0
+#define BTN_TRIGGER_HAPPY2  0x2c1
+#define BTN_TRIGGER_HAPPY3  0x2c2
+#define BTN_TRIGGER_HAPPY4  0x2c3
+#define BTN_TRIGGER_HAPPY5  0x2c4
+#define BTN_TRIGGER_HAPPY6  0x2c5
+#define BTN_TRIGGER_HAPPY7  0x2c6
+#define BTN_TRIGGER_HAPPY8  0x2c7
+#define BTN_TRIGGER_HAPPY9  0x2c8
+#define BTN_TRIGGER_HAPPY10 0x2c9
+#define BTN_TRIGGER_HAPPY11 0x2ca
+#define BTN_TRIGGER_HAPPY12 0x2cb
+#define BTN_TRIGGER_HAPPY13 0x2cc
+#define BTN_TRIGGER_HAPPY14 0x2cd
+#define BTN_TRIGGER_HAPPY15 0x2ce
+#define BTN_TRIGGER_HAPPY16 0x2cf
+#define BTN_TRIGGER_HAPPY17 0x2d0
+#define BTN_TRIGGER_HAPPY18 0x2d1
+#define BTN_TRIGGER_HAPPY19 0x2d2
+#define BTN_TRIGGER_HAPPY20 0x2d3
+#define BTN_TRIGGER_HAPPY21 0x2d4
+#define BTN_TRIGGER_HAPPY22 0x2d5
+#define BTN_TRIGGER_HAPPY23 0x2d6
+#define BTN_TRIGGER_HAPPY24 0x2d7
+#define BTN_TRIGGER_HAPPY25 0x2d8
+#define BTN_TRIGGER_HAPPY26 0x2d9
+#define BTN_TRIGGER_HAPPY27 0x2da
+#define BTN_TRIGGER_HAPPY28 0x2db
+#define BTN_TRIGGER_HAPPY29 0x2dc
+#define BTN_TRIGGER_HAPPY30 0x2dd
+#define BTN_TRIGGER_HAPPY31 0x2de
+#define BTN_TRIGGER_HAPPY32 0x2df
+#define BTN_TRIGGER_HAPPY33 0x2e0
+#define BTN_TRIGGER_HAPPY34 0x2e1
+#define BTN_TRIGGER_HAPPY35 0x2e2
+#define BTN_TRIGGER_HAPPY36 0x2e3
+#define BTN_TRIGGER_HAPPY37 0x2e4
+#define BTN_TRIGGER_HAPPY38 0x2e5
+#define BTN_TRIGGER_HAPPY39 0x2e6
+#define BTN_TRIGGER_HAPPY40 0x2e7
 #endif
 
-
 #include "../../core/linux/SDL_evdev_capabilities.h"
-#include "../../core/linux/SDL_udev.h"
 #include "../../core/linux/SDL_sandbox.h"
+#include "../../core/linux/SDL_udev.h"
 
 #if 0
 #define DEBUG_INPUT_EVENTS 1
@@ -1942,7 +1941,7 @@ static void PollAllSensors(SDL_Joystick *joystick)
     SDL_assert(joystick->hwdata->fd_sensor >= 0);
 
     if (joystick->hwdata->has_gyro) {
-        float data[3] = {0.0f, 0.0f, 0.0f};
+        float data[3] = { 0.0f, 0.0f, 0.0f };
         for (i = 0; i < 3; i++) {
             if (ioctl(joystick->hwdata->fd_sensor, EVIOCGABS(ABS_RX + i), &absinfo) >= 0) {
                 data[i] = absinfo.value * (M_PI / 180.f) / joystick->hwdata->gyro_scale[i];
@@ -1954,7 +1953,7 @@ static void PollAllSensors(SDL_Joystick *joystick)
         SDL_PrivateJoystickSensor(joystick, SDL_SENSOR_GYRO, joystick->hwdata->sensor_tick, data, 3);
     }
     if (joystick->hwdata->has_accelerometer) {
-        float data[3] = {0.0f, 0.0f, 0.0f};
+        float data[3] = { 0.0f, 0.0f, 0.0f };
         for (i = 0; i < 3; i++) {
             if (ioctl(joystick->hwdata->fd_sensor, EVIOCGABS(ABS_X + i), &absinfo) >= 0) {
                 data[i] = absinfo.value * SDL_STANDARD_GRAVITY / joystick->hwdata->accelerometer_scale[i];
@@ -2094,15 +2093,13 @@ static void HandleInputEvents(SDL_Joystick *joystick)
                     case ABS_Y:
                     case ABS_Z:
                         j = code - ABS_X;
-                        joystick->hwdata->accel_data[j] = event->value * SDL_STANDARD_GRAVITY
-                                                        / joystick->hwdata->accelerometer_scale[j];
+                        joystick->hwdata->accel_data[j] = event->value * SDL_STANDARD_GRAVITY / joystick->hwdata->accelerometer_scale[j];
                         break;
                     case ABS_RX:
                     case ABS_RY:
                     case ABS_RZ:
                         j = code - ABS_RX;
-                        joystick->hwdata->gyro_data[j] = event->value * (M_PI / 180.f)
-                                                       / joystick->hwdata->gyro_scale[j];
+                        joystick->hwdata->gyro_data[j] = event->value * (M_PI / 180.f) / joystick->hwdata->gyro_scale[j];
                         break;
                     }
                     break;
@@ -2122,9 +2119,9 @@ static void HandleInputEvents(SDL_Joystick *joystick)
                 case EV_SYN:
                     switch (code) {
                     case SYN_DROPPED:
-    #ifdef DEBUG_INPUT_EVENTS
+#ifdef DEBUG_INPUT_EVENTS
                         SDL_Log("Event SYN_DROPPED detected\n");
-    #endif
+#endif
                         joystick->hwdata->recovering_from_dropped_sensor = SDL_TRUE;
                         break;
                     case SYN_REPORT:
@@ -2133,11 +2130,11 @@ static void HandleInputEvents(SDL_Joystick *joystick)
                             PollAllSensors(joystick); /* try to sync up to current state now */
                         } else {
                             SDL_PrivateJoystickSensor(joystick, SDL_SENSOR_GYRO,
-                                                   joystick->hwdata->sensor_tick,
-                                                   joystick->hwdata->gyro_data, 3);
+                                                      joystick->hwdata->sensor_tick,
+                                                      joystick->hwdata->gyro_data, 3);
                             SDL_PrivateJoystickSensor(joystick, SDL_SENSOR_ACCEL,
-                                                   joystick->hwdata->sensor_tick,
-                                                   joystick->hwdata->accel_data, 3);
+                                                      joystick->hwdata->sensor_tick,
+                                                      joystick->hwdata->accel_data, 3);
                         }
                         break;
                     default:
@@ -2313,7 +2310,8 @@ static SDL_bool LINUX_JoystickGetGamepadMapping(int device_index, SDL_GamepadMap
 {
     SDL_Joystick *joystick;
     SDL_joylist_item *item = JoystickByDevIndex(device_index);
-    enum {
+    enum
+    {
         MAPPED_TRIGGER_LEFT = 0x1,
         MAPPED_TRIGGER_RIGHT = 0x2,
         MAPPED_TRIGGER_BOTH = 0x3,

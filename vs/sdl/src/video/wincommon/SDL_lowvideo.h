@@ -28,16 +28,16 @@
 #include <windows.h>
 
 #ifndef SetClassLongPtr
-#define SetClassLongPtr	SetClassLong
+#define SetClassLongPtr SetClassLong
 #endif
 #ifndef GetWindowLongPtr
-#define GetWindowLongPtr	GetWindowLong
+#define GetWindowLongPtr GetWindowLong
 #endif
 #ifndef SetWindowLongPtr
-#define SetWindowLongPtr	SetWindowLong
+#define SetWindowLongPtr SetWindowLong
 #endif
 #ifndef GWLP_WNDPROC
-#define GWLP_WNDPROC	GWL_WNDPROC
+#define GWLP_WNDPROC GWL_WNDPROC
 #endif
 #ifndef GWLP_HINSTANCE
 #define GWLP_HINSTANCE GWL_HINSTANCE
@@ -49,32 +49,23 @@
 #include "../SDL_sysvideo.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *this
+#define _THIS SDL_VideoDevice *this
 
-#define FULLSCREEN() \
-	((SDL_VideoSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN)
+#define FULLSCREEN()                                                           \
+  ((SDL_VideoSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN)
 
-#define WINDIB_FULLSCREEN()						\
-(									\
-	SDL_VideoSurface &&						\
-	FULLSCREEN() && \
-	(((SDL_VideoSurface->flags & SDL_OPENGL   ) == SDL_OPENGL    ) || \
-	((SDL_strcmp(this->name, "windib") == 0) || \
-	 (SDL_strcmp(this->name, "gapi") == 0))) \
-)
-#define DDRAW_FULLSCREEN() 						\
-(									\
-	SDL_VideoSurface &&						\
-	FULLSCREEN() && \
-	((SDL_VideoSurface->flags & SDL_OPENGL    ) != SDL_OPENGL    ) && \
-	(SDL_strcmp(this->name, "directx") == 0)				\
-)
+#define WINDIB_FULLSCREEN()                                                    \
+  (SDL_VideoSurface && FULLSCREEN() &&                                         \
+   (((SDL_VideoSurface->flags & SDL_OPENGL) == SDL_OPENGL) ||                  \
+    ((SDL_strcmp(this->name, "windib") == 0) ||                                \
+     (SDL_strcmp(this->name, "gapi") == 0))))
+#define DDRAW_FULLSCREEN()                                                     \
+  (SDL_VideoSurface && FULLSCREEN() &&                                         \
+   ((SDL_VideoSurface->flags & SDL_OPENGL) != SDL_OPENGL) &&                   \
+   (SDL_strcmp(this->name, "directx") == 0))
 
-#define DINPUT_FULLSCREEN() 						\
-(									\
-	FULLSCREEN() && \
-	(strcmp(this->name, "directx") == 0)				\
-)
+#define DINPUT_FULLSCREEN()                                                    \
+  (FULLSCREEN() && (strcmp(this->name, "directx") == 0))
 
 #define DINPUT() (strcmp(this->name, "directx") == 0)
 
@@ -94,21 +85,21 @@ extern BOOL SDL_windowid;
 
 #if !defined(SDL_WIN32_HX_DOS)
 typedef struct {
-	HIMC SDL_IMC;
-	union {
-		char *im_multi_byte_buffer;
-		wchar_t *im_wide_char_buffer;
-	}string;
-	int im_buffer_sz;
-	int im_compose_sz;
+  HIMC SDL_IMC;
+  union {
+    char *im_multi_byte_buffer;
+    wchar_t *im_wide_char_buffer;
+  } string;
+  int im_buffer_sz;
+  int im_compose_sz;
 
-	Uint32 video_flags;
-	int bFlip;
-	int bEnable;
-	int bCompos;
+  Uint32 video_flags;
+  int bFlip;
+  int bEnable;
+  int bCompos;
 
-	void *notify_data;
-	void (*notify_func)(void*);
+  void *notify_data;
+  void (*notify_func)(void *);
 } _IM_Context;
 
 extern _IM_Context IM_Context;
@@ -132,7 +123,8 @@ extern void (*WIN_PaletteChanged)(_THIS, HWND window);
 extern void (*WIN_WinPAINT)(_THIS, HDC hdc);
 
 /* Called by windows message loop when the message isn't handled */
-extern LONG (*HandleMessage)(_THIS, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern LONG (*HandleMessage)(_THIS, HWND hwnd, UINT msg, WPARAM wParam,
+                             LPARAM lParam);
 
 /* The window cursor (from SDL_sysmouse.c) */
 extern HCURSOR SDL_hcursor;
@@ -167,10 +159,10 @@ extern void DX5_SoundFocus(HWND window);
 LRESULT CALLBACK WinMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #ifdef _WIN64
-#define SDL_ToUnicode  ToUnicode
+#define SDL_ToUnicode ToUnicode
 #else
 /* JFP: Implementation of ToUnicode() that works on 9x/ME/2K/XP */
-typedef int (WINAPI *ToUnicodeFN)(UINT, UINT, const BYTE *, LPWSTR, int, UINT);
+typedef int(WINAPI *ToUnicodeFN)(UINT, UINT, const BYTE *, LPWSTR, int, UINT);
 
 extern ToUnicodeFN SDL_ToUnicode;
 #endif

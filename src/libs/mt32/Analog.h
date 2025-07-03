@@ -18,34 +18,51 @@
 #ifndef MT32EMU_ANALOG_H
 #define MT32EMU_ANALOG_H
 
-#include "globals.h"
-#include "internals.h"
 #include "Enumerations.h"
 #include "Types.h"
+#include "globals.h"
+#include "internals.h"
 
 namespace MT32Emu {
 
-/* Analog class is dedicated to perform fair emulation of analogue circuitry of hardware units that is responsible
- * for processing output signal after the DAC. It appears that the analogue circuit labeled "LPF" on the schematic
- * also applies audible changes to the signal spectra. There is a significant boost of higher frequencies observed
- * aside from quite poor attenuation of the mirror spectra above 16 kHz which is due to a relatively low filter order.
+/* Analog class is dedicated to perform fair emulation of analogue circuitry of
+ * hardware units that is responsible for processing output signal after the
+ * DAC. It appears that the analogue circuit labeled "LPF" on the schematic also
+ * applies audible changes to the signal spectra. There is a significant boost
+ * of higher frequencies observed aside from quite poor attenuation of the
+ * mirror spectra above 16 kHz which is due to a relatively low filter order.
  *
- * As the final mixing of multiplexed output signal is performed after the DAC, this function is migrated here from Synth.
- * Saying precisely, mixing is performed within the LPF as the entrance resistors are actually components of a LPF
- * designed using the multiple feedback topology. Nevertheless, the schematic separates them.
+ * As the final mixing of multiplexed output signal is performed after the DAC,
+ * this function is migrated here from Synth. Saying precisely, mixing is
+ * performed within the LPF as the entrance resistors are actually components of
+ * a LPF designed using the multiple feedback topology. Nevertheless, the
+ * schematic separates them.
  */
 class Analog {
 public:
-	static Analog *createAnalog(const AnalogOutputMode mode, const bool oldMT32AnalogLPF, const RendererType rendererType);
+  static Analog *createAnalog(const AnalogOutputMode mode,
+                              const bool oldMT32AnalogLPF,
+                              const RendererType rendererType);
 
-	virtual ~Analog() {}
-	virtual unsigned int getOutputSampleRate() const = 0;
-	virtual Bit32u getDACStreamsLength(const Bit32u outputLength) const = 0;
-	virtual void setSynthOutputGain(const float synthGain) = 0;
-	virtual void setReverbOutputGain(const float reverbGain, const bool mt32ReverbCompatibilityMode) = 0;
+  virtual ~Analog() {}
+  virtual unsigned int getOutputSampleRate() const = 0;
+  virtual Bit32u getDACStreamsLength(const Bit32u outputLength) const = 0;
+  virtual void setSynthOutputGain(const float synthGain) = 0;
+  virtual void setReverbOutputGain(const float reverbGain,
+                                   const bool mt32ReverbCompatibilityMode) = 0;
 
-	virtual bool process(IntSample *outStream, const IntSample *nonReverbLeft, const IntSample *nonReverbRight, const IntSample *reverbDryLeft, const IntSample *reverbDryRight, const IntSample *reverbWetLeft, const IntSample *reverbWetRight, Bit32u outLength) = 0;
-	virtual bool process(FloatSample *outStream, const FloatSample *nonReverbLeft, const FloatSample *nonReverbRight, const FloatSample *reverbDryLeft, const FloatSample *reverbDryRight, const FloatSample *reverbWetLeft, const FloatSample *reverbWetRight, Bit32u outLength) = 0;
+  virtual bool process(IntSample *outStream, const IntSample *nonReverbLeft,
+                       const IntSample *nonReverbRight,
+                       const IntSample *reverbDryLeft,
+                       const IntSample *reverbDryRight,
+                       const IntSample *reverbWetLeft,
+                       const IntSample *reverbWetRight, Bit32u outLength) = 0;
+  virtual bool process(FloatSample *outStream, const FloatSample *nonReverbLeft,
+                       const FloatSample *nonReverbRight,
+                       const FloatSample *reverbDryLeft,
+                       const FloatSample *reverbDryRight,
+                       const FloatSample *reverbWetLeft,
+                       const FloatSample *reverbWetRight, Bit32u outLength) = 0;
 };
 
 } // namespace MT32Emu

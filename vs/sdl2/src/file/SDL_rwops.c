@@ -35,8 +35,8 @@
 #endif
 
 #ifdef HAVE_STDIO_H
-#include <stdio.h>
 #include <errno.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #endif
 #ifdef HAVE_LIMITS_H
@@ -332,7 +332,7 @@ static int SDLCALL windows_file_close(SDL_RWops *context)
  * and eliminate the dead code if off_t has 64 bits.
  */
 #define FSEEK_OFF_MAX (((((off_t)1 << (sizeof(off_t) * CHAR_BIT - 2)) - 1) << 1) + 1)
-#define FSEEK_OFF_MIN (-(FSEEK_OFF_MAX)-1)
+#define FSEEK_OFF_MIN (-(FSEEK_OFF_MAX) - 1)
 #endif
 #define fseek_off_t off_t
 #define fseek       fseeko
@@ -352,7 +352,7 @@ static int SDLCALL windows_file_close(SDL_RWops *context)
 /* Functions to read/write stdio file pointers */
 
 static Sint64 SDLCALL
-stdio_size(SDL_RWops * context)
+stdio_size(SDL_RWops *context)
 {
     Sint64 pos, size;
 
@@ -531,18 +531,18 @@ static int SDLCALL mem_close(SDL_RWops *context)
 #if defined(HAVE_STDIO_H) && !(defined(__WIN32__) || defined(__GDK__))
 static SDL_bool IsRegularFileOrPipe(FILE *f)
 {
-    #ifdef __WINRT__
+#ifdef __WINRT__
     struct __stat64 st;
     if (_fstat64(_fileno(f), &st) < 0 ||
         !((st.st_mode & _S_IFMT) == _S_IFREG || (st.st_mode & _S_IFMT) == _S_IFIFO)) {
         return SDL_FALSE;
     }
-    #elif !defined __EMSCRIPTEN__
+#elif !defined __EMSCRIPTEN__
     struct stat st;
     if (fstat(fileno(f), &st) < 0 || !(S_ISREG(st.st_mode) || S_ISFIFO(st.st_mode))) {
         return SDL_FALSE;
     }
-    #endif
+#endif
     return SDL_TRUE;
 }
 #endif
@@ -654,7 +654,7 @@ SDL_RWops *SDL_RWFromFile(const char *file, const char *mode)
 }
 
 #ifdef HAVE_STDIO_H
-SDL_RWops *SDL_RWFromFP(FILE * fp, SDL_bool autoclose)
+SDL_RWops *SDL_RWFromFP(FILE *fp, SDL_bool autoclose)
 {
     SDL_RWops *rwops = NULL;
 
@@ -672,7 +672,7 @@ SDL_RWops *SDL_RWFromFP(FILE * fp, SDL_bool autoclose)
     return rwops;
 }
 #else
-SDL_RWops *SDL_RWFromFP(void * fp, SDL_bool autoclose)
+SDL_RWops *SDL_RWFromFP(void *fp, SDL_bool autoclose)
 {
     SDL_SetError("SDL not compiled with stdio support");
     return NULL;

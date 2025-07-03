@@ -20,52 +20,52 @@
 
 #include <cstddef>
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
 class MT32EMU_EXPORT File {
 public:
-	// Includes terminator char.
-	typedef char SHA1Digest[41];
+  // Includes terminator char.
+  typedef char SHA1Digest[41];
 
-	virtual ~File() {}
-	virtual size_t getSize() = 0;
-	virtual const Bit8u *getData() = 0;
-	virtual const SHA1Digest &getSHA1() = 0;
+  virtual ~File() {}
+  virtual size_t getSize() = 0;
+  virtual const Bit8u *getData() = 0;
+  virtual const SHA1Digest &getSHA1() = 0;
 
-	virtual void close() = 0;
+  virtual void close() = 0;
 };
 
 class MT32EMU_EXPORT AbstractFile : public File {
 public:
-	const SHA1Digest &getSHA1() override;
+  const SHA1Digest &getSHA1() override;
 
 protected:
-	AbstractFile();
-	AbstractFile(const SHA1Digest &sha1Digest);
+  AbstractFile();
+  AbstractFile(const SHA1Digest &sha1Digest);
 
 private:
-	bool sha1DigestCalculated;
-	SHA1Digest sha1Digest;
+  bool sha1DigestCalculated;
+  SHA1Digest sha1Digest;
 
-	// Binary compatibility helper.
-	void *reserved;
+  // Binary compatibility helper.
+  void *reserved;
 };
 
 class MT32EMU_EXPORT ArrayFile : public AbstractFile {
 public:
-	ArrayFile(const Bit8u *data, size_t size);
-	ArrayFile(const Bit8u *data, size_t size, const SHA1Digest &sha1Digest);
+  ArrayFile(const Bit8u *data, size_t size);
+  ArrayFile(const Bit8u *data, size_t size, const SHA1Digest &sha1Digest);
 
-	size_t getSize() override;
-	const Bit8u *getData() override;
-	void close() override {}
+  size_t getSize() override;
+  const Bit8u *getData() override;
+  void close() override {}
 
 private:
-	const Bit8u *data;
-	size_t size;
+  const Bit8u *data;
+  size_t size;
 };
 
 } // namespace MT32Emu

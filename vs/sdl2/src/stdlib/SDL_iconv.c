@@ -27,16 +27,16 @@
 
 /* This file contains portable iconv functions for SDL */
 
-#include "SDL_stdinc.h"
 #include "SDL_endian.h"
+#include "SDL_stdinc.h"
 
 #if defined(HAVE_ICONV) && defined(HAVE_ICONV_H)
 #ifndef SDL_USE_LIBICONV
 /* Define LIBICONV_PLUG to use iconv from the base instead of ports and avoid linker errors. */
 #define LIBICONV_PLUG 1
 #endif
-#include <iconv.h>
 #include <errno.h>
+#include <iconv.h>
 
 SDL_COMPILE_TIME_ASSERT(iconv_t, sizeof(iconv_t) <= sizeof(SDL_iconv_t));
 
@@ -51,8 +51,8 @@ int SDL_iconv_close(SDL_iconv_t cd)
 }
 
 size_t SDL_iconv(SDL_iconv_t cd,
-          const char **inbuf, size_t *inbytesleft,
-          char **outbuf, size_t *outbytesleft)
+                 const char **inbuf, size_t *inbytesleft,
+                 char **outbuf, size_t *outbytesleft)
 {
     /* iconv's second parameter may or may not be `const char const *` depending on the
        C runtime's whims. Casting to void * seems to make everyone happy, though. */
@@ -822,7 +822,7 @@ char *SDL_iconv_string(const char *tocode, const char *fromcode, const char *inb
         switch (retCode) {
         case SDL_ICONV_E2BIG:
         {
-            const ptrdiff_t diff = (ptrdiff_t) (outbuf - string);
+            const ptrdiff_t diff = (ptrdiff_t)(outbuf - string);
             char *oldstring = string;
             stringsize *= 2;
             string = (char *)SDL_realloc(string, stringsize + sizeof(Uint32));

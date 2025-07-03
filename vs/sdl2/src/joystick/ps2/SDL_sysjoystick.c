@@ -27,19 +27,19 @@
 #include <libpad.h>
 #include <ps2_joystick_driver.h>
 
+#include <stdbool.h>
 #include <stdio.h> /* For the definition of NULL */
 #include <stdlib.h>
-#include <stdbool.h>
 
-#include "../SDL_sysjoystick.h"
 #include "../SDL_joystick_c.h"
+#include "../SDL_sysjoystick.h"
 
-#include "SDL_events.h"
 #include "SDL_error.h"
+#include "SDL_events.h"
 
-#define PS2_MAX_PORT 2 /* each ps2 has 2 ports */
-#define PS2_MAX_SLOT 4 /* maximum - 4 slots in one multitap */
-#define MAX_CONTROLLERS (PS2_MAX_PORT * PS2_MAX_SLOT)
+#define PS2_MAX_PORT      2 /* each ps2 has 2 ports */
+#define PS2_MAX_SLOT      4 /* maximum - 4 slots in one multitap */
+#define MAX_CONTROLLERS   (PS2_MAX_PORT * PS2_MAX_SLOT)
 #define PS2_ANALOG_STICKS 2
 #define PS2_ANALOG_AXIS   2
 #define PS2_BUTTONS       16

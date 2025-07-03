@@ -22,11 +22,11 @@
 
 #ifdef SDL_VIDEO_DRIVER_X11
 
-#include <X11/cursorfont.h>
-#include "SDL_x11video.h"
-#include "SDL_x11mouse.h"
-#include "SDL_x11xinput2.h"
 #include "../../events/SDL_mouse_c.h"
+#include "SDL_x11mouse.h"
+#include "SDL_x11video.h"
+#include "SDL_x11xinput2.h"
+#include <X11/cursorfont.h>
 
 /* FIXME: Find a better place to put this... */
 static Cursor x11_empty_cursor = None;
@@ -224,21 +224,34 @@ static SDL_Cursor *X11_CreateCursor(SDL_Surface *surface, int hot_x, int hot_y)
 static unsigned int GetLegacySystemCursorShape(SDL_SystemCursor id)
 {
     switch (id) {
-        /* X Font Cursors reference: */
-        /*   http://tronche.com/gui/x/xlib/appendix/b/ */
-        case SDL_SYSTEM_CURSOR_ARROW: return XC_left_ptr;
-        case SDL_SYSTEM_CURSOR_IBEAM: return XC_xterm;
-        case SDL_SYSTEM_CURSOR_WAIT: return XC_watch;
-        case SDL_SYSTEM_CURSOR_CROSSHAIR: return XC_tcross;
-        case SDL_SYSTEM_CURSOR_WAITARROW: return XC_watch;
-        case SDL_SYSTEM_CURSOR_SIZENWSE: return XC_top_left_corner;
-        case SDL_SYSTEM_CURSOR_SIZENESW: return XC_top_right_corner;
-        case SDL_SYSTEM_CURSOR_SIZEWE: return XC_sb_h_double_arrow;
-        case SDL_SYSTEM_CURSOR_SIZENS: return XC_sb_v_double_arrow;
-        case SDL_SYSTEM_CURSOR_SIZEALL: return XC_fleur;
-        case SDL_SYSTEM_CURSOR_NO: return XC_pirate;
-        case SDL_SYSTEM_CURSOR_HAND: return XC_hand2;
-        case SDL_NUM_SYSTEM_CURSORS: break;  /* so the compiler might notice if an enum value is missing here. */
+    /* X Font Cursors reference: */
+    /*   http://tronche.com/gui/x/xlib/appendix/b/ */
+    case SDL_SYSTEM_CURSOR_ARROW:
+        return XC_left_ptr;
+    case SDL_SYSTEM_CURSOR_IBEAM:
+        return XC_xterm;
+    case SDL_SYSTEM_CURSOR_WAIT:
+        return XC_watch;
+    case SDL_SYSTEM_CURSOR_CROSSHAIR:
+        return XC_tcross;
+    case SDL_SYSTEM_CURSOR_WAITARROW:
+        return XC_watch;
+    case SDL_SYSTEM_CURSOR_SIZENWSE:
+        return XC_top_left_corner;
+    case SDL_SYSTEM_CURSOR_SIZENESW:
+        return XC_top_right_corner;
+    case SDL_SYSTEM_CURSOR_SIZEWE:
+        return XC_sb_h_double_arrow;
+    case SDL_SYSTEM_CURSOR_SIZENS:
+        return XC_sb_v_double_arrow;
+    case SDL_SYSTEM_CURSOR_SIZEALL:
+        return XC_fleur;
+    case SDL_SYSTEM_CURSOR_NO:
+        return XC_pirate;
+    case SDL_SYSTEM_CURSOR_HAND:
+        return XC_hand2;
+    case SDL_NUM_SYSTEM_CURSORS:
+        break; /* so the compiler might notice if an enum value is missing here. */
     }
 
     SDL_assert(0);

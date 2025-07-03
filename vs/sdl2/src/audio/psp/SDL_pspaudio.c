@@ -22,18 +22,18 @@
 
 #ifdef SDL_AUDIO_DRIVER_PSP
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <malloc.h> /* memalign() */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "SDL_audio.h"
-#include "SDL_error.h"
-#include "SDL_timer.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_audiodev_c.h"
 #include "../SDL_sysaudio.h"
+#include "SDL_audio.h"
+#include "SDL_error.h"
 #include "SDL_pspaudio.h"
+#include "SDL_timer.h"
 
 #include <pspaudio.h>
 #include <pspthreadman.h>

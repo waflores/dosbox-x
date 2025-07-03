@@ -24,14 +24,14 @@
 
 #include "../SDL_sysvideo.h"
 
-#include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_keyboard_c.h"
+#include "../../events/SDL_mouse_c.h"
 #include "SDL_naclvideo.h"
 #include "SDL_naclwindow.h"
 
-int NACL_CreateWindow(_THIS, SDL_Window * window)
+int NACL_CreateWindow(_THIS, SDL_Window *window)
 {
-    SDL_VideoData *driverdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *driverdata = (SDL_VideoData *)_this->driverdata;
 
     if (driverdata->window) {
         return SDL_SetError("NaCl only supports one window");
@@ -44,10 +44,10 @@ int NACL_CreateWindow(_THIS, SDL_Window * window)
     window->w = driverdata->w;
     window->h = driverdata->h;
 
-    window->flags &= ~SDL_WINDOW_RESIZABLE;     /* window is NEVER resizeable */
+    window->flags &= ~SDL_WINDOW_RESIZABLE; /* window is NEVER resizeable */
     window->flags &= ~SDL_WINDOW_HIDDEN;
-    window->flags |= SDL_WINDOW_SHOWN;          /* only one window on NaCl */
-    window->flags |= SDL_WINDOW_INPUT_FOCUS;    /* always has input focus */
+    window->flags |= SDL_WINDOW_SHOWN;       /* only one window on NaCl */
+    window->flags |= SDL_WINDOW_INPUT_FOCUS; /* always has input focus */
     window->flags |= SDL_WINDOW_OPENGL;
 
     SDL_SetMouseFocus(window);
@@ -56,14 +56,14 @@ int NACL_CreateWindow(_THIS, SDL_Window * window)
     return 0;
 }
 
-void NACL_SetWindowTitle(_THIS, SDL_Window * window)
+void NACL_SetWindowTitle(_THIS, SDL_Window *window)
 {
     /* TODO */
 }
 
-void NACL_DestroyWindow(_THIS, SDL_Window * window)
+void NACL_DestroyWindow(_THIS, SDL_Window *window)
 {
-    SDL_VideoData *driverdata = (SDL_VideoData *) _this->driverdata;
+    SDL_VideoData *driverdata = (SDL_VideoData *)_this->driverdata;
     if (window == driverdata->window) {
         driverdata->window = NULL;
     }

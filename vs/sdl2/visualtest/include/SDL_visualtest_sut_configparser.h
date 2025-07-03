@@ -25,7 +25,8 @@ extern "C" {
 /**
  * Describes the different kinds of options to the SUT.
  */
-typedef enum {
+typedef enum
+{
     SDL_SUT_OPTIONTYPE_STRING = 0,
     SDL_SUT_OPTIONTYPE_INT,
     SDL_SUT_OPTIONTYPE_ENUM,
@@ -35,7 +36,8 @@ typedef enum {
 /**
  * Represents the range of values an integer option can take.
  */
-typedef struct SDLVisualTest_SUTIntRange {
+typedef struct SDLVisualTest_SUTIntRange
+{
     /*! Minimum value of the integer option */
     int min;
     /*! Maximum value of the integer option */
@@ -45,25 +47,27 @@ typedef struct SDLVisualTest_SUTIntRange {
 /**
  * Struct that defines an option to be passed to the SUT.
  */
-typedef struct SDLVisualTest_SUTOption {
+typedef struct SDLVisualTest_SUTOption
+{
     /*! The name of the option. This is what you would pass in the command line
         along with two leading hyphens. */
     char name[MAX_SUTOPTION_NAME_LEN];
     /*! An array of categories that the option belongs to. The last element is
         NULL. */
-    char** categories;
+    char **categories;
     /*! Type of the option - integer, boolean, etc. */
     SDLVisualTest_SUTOptionType type;
     /*! Whether the option is required or not */
     SDL_bool required;
     /*! extra data that is required for certain types */
-    union {
+    union
+    {
         /*! This field is valid only for integer type options; it defines the
         valid range for such an option */
         SDLVisualTest_SUTIntRange range;
         /*! This field is valid only for enum type options; it holds the list of values
         that the option can take. The last element is NULL */
-        char** enum_values;
+        char **enum_values;
     } data;
 } SDLVisualTest_SUTOption;
 
@@ -73,7 +77,7 @@ typedef struct SDLVisualTest_SUTOption {
 typedef struct SDLVisualTest_SUTConfig
 {
     /*! Pointer to an array of options */
-    SDLVisualTest_SUTOption* options;
+    SDLVisualTest_SUTOption *options;
     /*! Number of options in \c options */
     int num_options;
 } SDLVisualTest_SUTConfig;
@@ -81,19 +85,19 @@ typedef struct SDLVisualTest_SUTConfig
 /**
  * Parses a configuration file that describes the command line options an SUT
  * application will take and populates a SUT config object. All lines in the
- * config file must be smaller than 
+ * config file must be smaller than
  *
  * \param file Path to the configuration file.
  * \param config Pointer to an object that represents an SUT configuration.
  *
  * \return zero on failure, non-zero on success
  */
-int SDLVisualTest_ParseSUTConfig(char* file, SDLVisualTest_SUTConfig* config);
+int SDLVisualTest_ParseSUTConfig(char *file, SDLVisualTest_SUTConfig *config);
 
 /**
  * Free any resources associated with the config object pointed to by \c config.
  */
-void SDLVisualTest_FreeSUTConfig(SDLVisualTest_SUTConfig* config);
+void SDLVisualTest_FreeSUTConfig(SDLVisualTest_SUTConfig *config);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

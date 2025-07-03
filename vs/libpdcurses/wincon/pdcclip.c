@@ -49,102 +49,95 @@ clipboard
 **man-end****************************************************************/
 
 #ifdef PDC_WIDE
-# define PDC_TEXT CF_UNICODETEXT
+#define PDC_TEXT CF_UNICODETEXT
 #else
-# define PDC_TEXT CF_OEMTEXT
+#define PDC_TEXT CF_OEMTEXT
 #endif
 
-int PDC_getclipboard(char **contents, long *length)
-{
-    HANDLE handle;
-    long len;
+int PDC_getclipboard(char **contents, long *length) {
+  HANDLE handle;
+  long len;
 
-    PDC_LOG(("PDC_getclipboard() - called\n"));
+  PDC_LOG(("PDC_getclipboard() - called\n"));
 
-    if (!OpenClipboard(NULL))
-        return PDC_CLIP_ACCESS_ERROR;
+  if (!OpenClipboard(NULL))
+    return PDC_CLIP_ACCESS_ERROR;
 
-    if ((handle = GetClipboardData(PDC_TEXT)) == NULL)
-    {
-        CloseClipboard();
-        return PDC_CLIP_EMPTY;
-    }
-
-#ifdef PDC_WIDE
-    len = wcslen((wchar_t *)handle) * 3;
-#else
-    len = (long)strlen((char *)handle);
-#endif
-    *contents = (char *)GlobalAlloc(GMEM_FIXED, len + 1);
-
-    if (!*contents)
-    {
-        CloseClipboard();
-        return PDC_CLIP_MEMORY_ERROR;
-    }
-
-#ifdef PDC_WIDE
-    len = PDC_wcstombs((char *)*contents, (wchar_t *)handle, len);
-#else
-    strcpy((char *)*contents, (char *)handle);
-#endif
-    *length = len;
+  if ((handle = GetClipboardData(PDC_TEXT)) == NULL) {
     CloseClipboard();
+    return PDC_CLIP_EMPTY;
+  }
 
-    return PDC_CLIP_SUCCESS;
+#ifdef PDC_WIDE
+  len = wcslen((wchar_t *)handle) * 3;
+#else
+  len = (long)strlen((char *)handle);
+#endif
+  *contents = (char *)GlobalAlloc(GMEM_FIXED, len + 1);
+
+  if (!*contents) {
+    CloseClipboard();
+    return PDC_CLIP_MEMORY_ERROR;
+  }
+
+#ifdef PDC_WIDE
+  len = PDC_wcstombs((char *)*contents, (wchar_t *)handle, len);
+#else
+  strcpy((char *)*contents, (char *)handle);
+#endif
+  *length = len;
+  CloseClipboard();
+
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_setclipboard(const char *contents, long length)
-{
-    HGLOBAL ptr1;
-    LPTSTR ptr2;
+int PDC_setclipboard(const char *contents, long length) {
+  HGLOBAL ptr1;
+  LPTSTR ptr2;
 
-    PDC_LOG(("PDC_setclipboard() - called\n"));
+  PDC_LOG(("PDC_setclipboard() - called\n"));
 
-    if (!OpenClipboard(NULL))
-        return PDC_CLIP_ACCESS_ERROR;
+  if (!OpenClipboard(NULL))
+    return PDC_CLIP_ACCESS_ERROR;
 
-    ptr1 = GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE,
-        (length + 1) * sizeof(TCHAR));
+  ptr1 =
+      GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, (length + 1) * sizeof(TCHAR));
 
-    if (!ptr1)
-        return PDC_CLIP_MEMORY_ERROR;
+  if (!ptr1)
+    return PDC_CLIP_MEMORY_ERROR;
 
-    ptr2 = GlobalLock(ptr1);
+  ptr2 = GlobalLock(ptr1);
 
 #ifdef PDC_WIDE
-    PDC_mbstowcs((wchar_t *)ptr2, contents, length);
+  PDC_mbstowcs((wchar_t *)ptr2, contents, length);
 #else
-    memcpy((char *)ptr2, contents, length + 1);
+  memcpy((char *)ptr2, contents, length + 1);
 #endif
-    GlobalUnlock(ptr1);
-    EmptyClipboard();
+  GlobalUnlock(ptr1);
+  EmptyClipboard();
 
-    if (!SetClipboardData(PDC_TEXT, ptr1))
-    {
-        GlobalFree(ptr1);
-        return PDC_CLIP_ACCESS_ERROR;
-    }
-
-    CloseClipboard();
+  if (!SetClipboardData(PDC_TEXT, ptr1)) {
     GlobalFree(ptr1);
+    return PDC_CLIP_ACCESS_ERROR;
+  }
 
-    return PDC_CLIP_SUCCESS;
+  CloseClipboard();
+  GlobalFree(ptr1);
+
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_freeclipboard(char *contents)
-{
-    PDC_LOG(("PDC_freeclipboard() - called\n"));
+int PDC_freeclipboard(char *contents) {
+  PDC_LOG(("PDC_freeclipboard() - called\n"));
 
-    GlobalFree(contents);
-    return PDC_CLIP_SUCCESS;
+  GlobalFree(contents);
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_clearclipboard(void)
-{
-    PDC_LOG(("PDC_clearclipboard() - called\n"));
+int PDC_clearclipboard(void) {
+  PDC_LOG(("PDC_clearclipboard() - called\n"));
 
-    EmptyClipboard();
+  EmptyClipboard();
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }

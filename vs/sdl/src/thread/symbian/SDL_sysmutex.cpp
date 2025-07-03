@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@devolution.com
@@ -26,16 +27,15 @@
     Epoc version by Markus Mertama (w@iki.fi)
 */
 
-
 #ifdef SAVE_RCSID
 static char rcsid =
- "@(#) $Id: SDL_sysmutex.c,v 1.1.2.3 2000/06/22 15:25:23 hercules Exp $";
+    "@(#) $Id: SDL_sysmutex.c,v 1.1.2.3 2000/06/22 15:25:23 hercules Exp $";
 #endif
 
 /* Mutex functions using the Win32 API */
 
-//#include <stdio.h>
-//#include <stdlib.h>
+// #include <stdio.h>
+// #include <stdlib.h>
 
 #include <e32std.h>
 
@@ -44,87 +44,74 @@ static char rcsid =
 #include "SDL_error.h"
 #include "SDL_mutex.h"
 
-
 #ifdef EKA2 //???
-struct SDL_mutex
-    {
-    TInt handle;
-    };
+struct SDL_mutex {
+  TInt handle;
+};
 #else
-struct _SDL_mutex
-    {
-    TInt handle;
-    };
+struct _SDL_mutex {
+  TInt handle;
+};
 #endif
 
-extern TInt CreateUnique(TInt (*aFunc)(const TDesC& aName, TAny*, TAny*), TAny*, TAny*);
+extern TInt CreateUnique(TInt (*aFunc)(const TDesC &aName, TAny *, TAny *),
+                         TAny *, TAny *);
 
-TInt NewMutex(const TDesC& aName, TAny* aPtr1, TAny*)
-    {
-    return ((RMutex*)aPtr1)->CreateGlobal(aName);
-    }
-    
-void DeleteMutex(TAny* aMutex)
-    {
-    SDL_DestroyMutex ((SDL_mutex*) aMutex);
-    }
+TInt NewMutex(const TDesC &aName, TAny *aPtr1, TAny *) {
+  return ((RMutex *)aPtr1)->CreateGlobal(aName);
+}
+
+void DeleteMutex(TAny *aMutex) { SDL_DestroyMutex((SDL_mutex *)aMutex); }
 
 /* Create a mutex */
-SDL_mutex *SDL_CreateMutex(void)
-{
-    RMutex rmutex;
+SDL_mutex *SDL_CreateMutex(void) {
+  RMutex rmutex;
 
-    TInt status = CreateUnique(NewMutex, &rmutex, NULL);
-	if(status != KErrNone)
-	    {
-			SDL_SetError("Couldn't create mutex");
-		}
-    SDL_mutex* mutex = new /*(ELeave)*/ SDL_mutex;
-    mutex->handle = rmutex.Handle();
-    EpocSdlEnv::AppendCleanupItem(TSdlCleanupItem(DeleteMutex, mutex));
-	return(mutex);
+  TInt status = CreateUnique(NewMutex, &rmutex, NULL);
+  if (status != KErrNone) {
+    SDL_SetError("Couldn't create mutex");
+  }
+  SDL_mutex *mutex = new /*(ELeave)*/ SDL_mutex;
+  mutex->handle = rmutex.Handle();
+  EpocSdlEnv::AppendCleanupItem(TSdlCleanupItem(DeleteMutex, mutex));
+  return (mutex);
 }
 
 /* Free the mutex */
-void SDL_DestroyMutex(SDL_mutex *mutex)
-{
-	if ( mutex ) 
-	{
+void SDL_DestroyMutex(SDL_mutex *mutex) {
+  if (mutex) {
     RMutex rmutex;
     rmutex.SetHandle(mutex->handle);
-    if(rmutex.IsHeld())
-        {
-	    rmutex.Signal();
-        }
-	rmutex.Close();
-	EpocSdlEnv::RemoveCleanupItem(mutex);
-	delete(mutex);
+    if (rmutex.IsHeld()) {
+      rmutex.Signal();
+    }
+    rmutex.Close();
+    EpocSdlEnv::RemoveCleanupItem(mutex);
+    delete (mutex);
     mutex = NULL;
-	}
+  }
 }
 
 /* Lock the mutex */
-int SDL_mutexP(SDL_mutex *mutex)
-{
-	if ( mutex == NULL ) {
-		SDL_SetError("Passed a NULL mutex");
-		return -1;
-	}
-    RMutex rmutex;
-    rmutex.SetHandle(mutex->handle);
-	rmutex.Wait(); 
-	return(0);
+int SDL_mutexP(SDL_mutex *mutex) {
+  if (mutex == NULL) {
+    SDL_SetError("Passed a NULL mutex");
+    return -1;
+  }
+  RMutex rmutex;
+  rmutex.SetHandle(mutex->handle);
+  rmutex.Wait();
+  return (0);
 }
 
 /* Unlock the mutex */
-int SDL_mutexV(SDL_mutex *mutex)
-{
-	if ( mutex == NULL ) {
-		SDL_SetError("Passed a NULL mutex");
-		return -1;
-	}
-	RMutex rmutex;
-    rmutex.SetHandle(mutex->handle);
-	rmutex.Signal();
-	return(0);
+int SDL_mutexV(SDL_mutex *mutex) {
+  if (mutex == NULL) {
+    SDL_SetError("Passed a NULL mutex");
+    return -1;
+  }
+  RMutex rmutex;
+  rmutex.SetHandle(mutex->handle);
+  rmutex.Signal();
+  return (0);
 }

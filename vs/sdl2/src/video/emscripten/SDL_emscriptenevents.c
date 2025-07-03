@@ -19,13 +19,12 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
 #include "../../SDL_internal.h"
 
 #ifdef SDL_VIDEO_DRIVER_EMSCRIPTEN
 
-#include <emscripten/html5.h>
 #include <emscripten/dom_pk_codes.h>
+#include <emscripten/html5.h>
 
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_keyboard_c.h"
@@ -36,7 +35,7 @@
 
 #include "SDL_hints.h"
 
-#define FULLSCREEN_MASK ( SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN )
+#define FULLSCREEN_MASK (SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN)
 
 /*
 .keyCode to SDL keycode

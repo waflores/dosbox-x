@@ -36,10 +36,10 @@
 #ifndef _MACH_MIG_H_
 #define _MACH_MIG_H_
 
-#include <stdint.h>
-#include <mach/port.h>
 #include <mach/message.h>
+#include <mach/port.h>
 #include <mach/vm_types.h>
+#include <stdint.h>
 
 #include <sys/cdefs.h>
 
@@ -77,8 +77,8 @@
  * unpack the request message, call the server procedure, and pack the
  * reply message.
  */
-typedef void    (*mig_stub_routine_t) (mach_msg_header_t *InHeadP,
-    mach_msg_header_t *OutHeadP);
+typedef void (*mig_stub_routine_t)(mach_msg_header_t *InHeadP,
+                                   mach_msg_header_t *OutHeadP);
 
 typedef mig_stub_routine_t mig_routine_t;
 
@@ -87,14 +87,14 @@ typedef mig_stub_routine_t mig_routine_t;
  * message, and returns the appropriate stub function for handling that
  * message.
  */
-typedef mig_routine_t (*mig_server_routine_t) (mach_msg_header_t *InHeadP);
+typedef mig_routine_t (*mig_server_routine_t)(mach_msg_header_t *InHeadP);
 
 /*
  * Generic definition for implementation routines.  These routines do
  * the real work associated with this request.  This generic type is
  * used for keeping the pointers in the subsystem array.
  */
-typedef kern_return_t   (*mig_impl_routine_t)(void);
+typedef kern_return_t (*mig_impl_routine_t)(void);
 
 typedef mach_msg_type_descriptor_t routine_arg_descriptor;
 typedef mach_msg_type_descriptor_t *routine_arg_descriptor_t;
@@ -103,13 +103,12 @@ typedef mach_msg_type_descriptor_t *mig_routine_arg_descriptor_t;
 #define MIG_ROUTINE_ARG_DESCRIPTOR_NULL ((mig_routine_arg_descriptor_t)0)
 
 struct routine_descriptor {
-	mig_impl_routine_t      impl_routine;   /* Server work func pointer   */
-	mig_stub_routine_t      stub_routine;   /* Unmarshalling func pointer */
-	unsigned int            argc;                   /* Number of argument words   */
-	unsigned int            descr_count;    /* Number complex descriptors */
-	routine_arg_descriptor_t
-	    arg_descr;                                                  /* pointer to descriptor array*/
-	unsigned int            max_reply_msg;  /* Max size for reply msg     */
+  mig_impl_routine_t impl_routine;    /* Server work func pointer   */
+  mig_stub_routine_t stub_routine;    /* Unmarshalling func pointer */
+  unsigned int argc;                  /* Number of argument words   */
+  unsigned int descr_count;           /* Number complex descriptors */
+  routine_arg_descriptor_t arg_descr; /* pointer to descriptor array*/
+  unsigned int max_reply_msg;         /* Max size for reply msg     */
 };
 typedef struct routine_descriptor *routine_descriptor_t;
 
@@ -119,25 +118,24 @@ typedef mig_routine_descriptor *mig_routine_descriptor_t;
 #define MIG_ROUTINE_DESCRIPTOR_NULL ((mig_routine_descriptor_t)0)
 
 typedef struct mig_subsystem {
-	mig_server_routine_t server;            /* pointer to demux routine	*/
-	mach_msg_id_t            start;                 /* Min routine number	    */
-	mach_msg_id_t            end;                   /* Max routine number + 1   */
-	mach_msg_size_t          maxsize;               /* Max reply message size   */
-	vm_address_t             reserved;              /* reserved for MIG use	    */
-	mig_routine_descriptor
-	    routine[1];                                         /* Routine descriptor array */
+  mig_server_routine_t server;       /* pointer to demux routine	*/
+  mach_msg_id_t start;               /* Min routine number	    */
+  mach_msg_id_t end;                 /* Max routine number + 1   */
+  mach_msg_size_t maxsize;           /* Max reply message size   */
+  vm_address_t reserved;             /* reserved for MIG use	    */
+  mig_routine_descriptor routine[1]; /* Routine descriptor array */
 } *mig_subsystem_t;
 
-#define MIG_SUBSYSTEM_NULL              ((mig_subsystem_t)0)
+#define MIG_SUBSYSTEM_NULL ((mig_subsystem_t)0)
 
 typedef struct mig_symtab {
-	char                            *ms_routine_name;
-	int                                     ms_routine_number;
-	void                            (*ms_routine)(void);    /* Since the functions in the
-	                                                         * symbol table have unknown
-	                                                         * signatures, this is the best
-	                                                         * we can do...
-	                                                         */
+  char *ms_routine_name;
+  int ms_routine_number;
+  void (*ms_routine)(void); /* Since the functions in the
+                             * symbol table have unknown
+                             * signatures, this is the best
+                             * we can do...
+                             */
 } mig_symtab_t;
 
 /*
@@ -151,7 +149,6 @@ typedef struct mig_symtab {
 #define MIG_SERVER_ROUTINE
 #endif
 
-
 __BEGIN_DECLS
 
 /* Client side reply port allocate */
@@ -164,9 +161,8 @@ extern void mig_dealloc_reply_port(mach_port_t reply_port);
 extern void mig_put_reply_port(mach_port_t reply_port);
 
 /* Bounded string copy */
-extern int mig_strncpy(char     *dest, const char *src, int     len);
-extern int mig_strncpy_zerofill(char    *dest, const char *src, int     len);
-
+extern int mig_strncpy(char *dest, const char *src, int len);
+extern int mig_strncpy_zerofill(char *dest, const char *src, int len);
 
 /* Allocate memory for out-of-line mig structures */
 extern void mig_allocate(vm_address_t *, vm_size_t);
@@ -174,7 +170,6 @@ extern void mig_allocate(vm_address_t *, vm_size_t);
 /* Deallocate memory used for out-of-line mig structures */
 extern void mig_deallocate(vm_address_t, vm_size_t);
 
-
 __END_DECLS
 
-#endif  /* _MACH_MIG_H_ */
+#endif /* _MACH_MIG_H_ */

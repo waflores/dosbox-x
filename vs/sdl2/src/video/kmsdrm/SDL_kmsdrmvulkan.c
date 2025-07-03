@@ -28,12 +28,12 @@
 
 #if defined(SDL_VIDEO_VULKAN) && defined(SDL_VIDEO_DRIVER_KMSDRM)
 
-#include "SDL_kmsdrmvideo.h"
-#include "SDL_kmsdrmdyn.h"
 #include "SDL_assert.h"
+#include "SDL_kmsdrmdyn.h"
+#include "SDL_kmsdrmvideo.h"
 
-#include "SDL_loadso.h"
 #include "SDL_kmsdrmvulkan.h"
+#include "SDL_loadso.h"
 #include "SDL_syswm.h"
 #include "sys/ioctl.h"
 

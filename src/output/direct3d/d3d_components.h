@@ -1,19 +1,20 @@
 #include <TCHAR.h>
 
 /*
- Not documented: D3DXFillTextureTX, D3DXFillVolumeTextureTX, D3DXCreateTextureShader
- Code borrowed from Wine and ReactOS
+ Not documented: D3DXFillTextureTX, D3DXFillVolumeTextureTX,
+ D3DXCreateTextureShader Code borrowed from Wine and ReactOS
 */
 
-#if 0 // disabled as this code currently does not support pixel shaders (see ID3DXBaseEffectImpl_GetPassDesc)
-#include <d3dx9shader.h>
+#if 0 // disabled as this code currently does not support pixel shaders (see
+      // ID3DXBaseEffectImpl_GetPassDesc)
 #include <Unknwn.h>
+#include <d3dx9shader.h>
 
 HRESULT map_view_of_file(LPCWSTR filename, LPVOID *buffer, DWORD *length);
 
 //#define ARRAY_SIZE(array) (sizeof(array)/sizeof(*array))
 #define INT_FLOAT_MULTI 255.0f
-#define INT_FLOAT_MULTI_INVERSE (1/INT_FLOAT_MULTI)
+#define INT_FLOAT_MULTI_INVERSE (1 / INT_FLOAT_MULTI)
 
 static BOOL get_bool(D3DXPARAMETER_TYPE type, LPCVOID data)
 {
@@ -6974,243 +6975,269 @@ HRESULT WINAPI D3DXCreateEffect(LPDIRECT3DDEVICE9 device,
 
 #include <D3dx9shader.h>
 
-typedef HRESULT (WINAPI * pD3DXCreateEffect)(LPDIRECT3DDEVICE9 device,
-                                LPCVOID srcdata,
-                                UINT srcdatalen,
-                                CONST D3DXMACRO* defines,
-                                LPD3DXINCLUDE include,
-                                DWORD flags,
-                                LPD3DXEFFECTPOOL pool,
-                                LPD3DXEFFECT* effect,
-                                LPD3DXBUFFER* compilation_errors);
+typedef HRESULT(WINAPI *pD3DXCreateEffect)(LPDIRECT3DDEVICE9 device,
+                                           LPCVOID srcdata, UINT srcdatalen,
+                                           CONST D3DXMACRO *defines,
+                                           LPD3DXINCLUDE include, DWORD flags,
+                                           LPD3DXEFFECTPOOL pool,
+                                           LPD3DXEFFECT *effect,
+                                           LPD3DXBUFFER *compilation_errors);
 
-/* extern "C" */HRESULT WINAPI D3DXCreateEffect(LPDIRECT3DDEVICE9 device,
-                                LPCVOID srcdata,
-                                UINT srcdatalen,
-                                CONST D3DXMACRO* defines,
-                                LPD3DXINCLUDE include,
-                                DWORD flags,
-                                LPD3DXEFFECTPOOL pool,
-                                LPD3DXEFFECT* effect,
-                                LPD3DXBUFFER* compilation_errors) {
-	static pD3DXCreateEffect D3DXCreateEffect_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod)
-		D3DXCreateEffect_p = (pD3DXCreateEffect) GetProcAddress(mod, "D3DXCreateEffect");
-	if(NULL != D3DXCreateEffect_p)
-		return D3DXCreateEffect_p(device, srcdata, srcdatalen, defines, include, flags, pool, effect, compilation_errors);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI
+D3DXCreateEffect(LPDIRECT3DDEVICE9 device, LPCVOID srcdata, UINT srcdatalen,
+                 CONST D3DXMACRO *defines, LPD3DXINCLUDE include, DWORD flags,
+                 LPD3DXEFFECTPOOL pool, LPD3DXEFFECT *effect,
+                 LPD3DXBUFFER *compilation_errors) {
+  static pD3DXCreateEffect D3DXCreateEffect_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXCreateEffect_p =
+        (pD3DXCreateEffect)GetProcAddress(mod, "D3DXCreateEffect");
+  if (NULL != D3DXCreateEffect_p)
+    return D3DXCreateEffect_p(device, srcdata, srcdatalen, defines, include,
+                              flags, pool, effect, compilation_errors);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXCreateEffectCompilerFromFileA)(LPCSTR srcfile, const D3DXMACRO *defines, LPD3DXINCLUDE include,
-    DWORD flags, LPD3DXEFFECTCOMPILER *effectcompiler, LPD3DXBUFFER *parseerrors);
+typedef HRESULT(WINAPI *pD3DXCreateEffectCompilerFromFileA)(
+    LPCSTR srcfile, const D3DXMACRO *defines, LPD3DXINCLUDE include,
+    DWORD flags, LPD3DXEFFECTCOMPILER *effectcompiler,
+    LPD3DXBUFFER *parseerrors);
 
-/* extern "C" */HRESULT WINAPI D3DXCreateEffectCompilerFromFileA(LPCSTR srcfile, const D3DXMACRO *defines, LPD3DXINCLUDE include,
-    DWORD flags, LPD3DXEFFECTCOMPILER *effectcompiler, LPD3DXBUFFER *parseerrors) {
-	static pD3DXCreateEffectCompilerFromFileA D3DXCreateEffectCompilerFromFileA_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod)
-		D3DXCreateEffectCompilerFromFileA_p = (pD3DXCreateEffectCompilerFromFileA) GetProcAddress(mod, "D3DXCreateEffectCompilerFromFileA");
-	if(NULL != D3DXCreateEffectCompilerFromFileA_p)
-		return D3DXCreateEffectCompilerFromFileA_p(srcfile, defines, include, flags, effectcompiler, parseerrors);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI D3DXCreateEffectCompilerFromFileA(
+    LPCSTR srcfile, const D3DXMACRO *defines, LPD3DXINCLUDE include,
+    DWORD flags, LPD3DXEFFECTCOMPILER *effectcompiler,
+    LPD3DXBUFFER *parseerrors) {
+  static pD3DXCreateEffectCompilerFromFileA
+      D3DXCreateEffectCompilerFromFileA_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXCreateEffectCompilerFromFileA_p =
+        (pD3DXCreateEffectCompilerFromFileA)GetProcAddress(
+            mod, "D3DXCreateEffectCompilerFromFileA");
+  if (NULL != D3DXCreateEffectCompilerFromFileA_p)
+    return D3DXCreateEffectCompilerFromFileA_p(srcfile, defines, include, flags,
+                                               effectcompiler, parseerrors);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXCreateTexture)(LPDIRECT3DDEVICE9 pDevice,
-                                 UINT width,
-                                 UINT height,
-                                 UINT miplevels,
-                                  DWORD usage,
-                                 D3DFORMAT format,
-                                  D3DPOOL pool,
-                                LPDIRECT3DTEXTURE9 *ppTexture);
+typedef HRESULT(WINAPI *pD3DXCreateTexture)(LPDIRECT3DDEVICE9 pDevice,
+                                            UINT width, UINT height,
+                                            UINT miplevels, DWORD usage,
+                                            D3DFORMAT format, D3DPOOL pool,
+                                            LPDIRECT3DTEXTURE9 *ppTexture);
 
-/* extern "C" */HRESULT WINAPI D3DXCreateTexture(LPDIRECT3DDEVICE9 pDevice,
-                                 UINT width,
-                                 UINT height,
-                                 UINT miplevels,
-                                  DWORD usage,
-                                 D3DFORMAT format,
-                                  D3DPOOL pool,
-                                LPDIRECT3DTEXTURE9 *ppTexture) {
-	static pD3DXCreateTexture D3DXCreateTexture_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod) 
-		D3DXCreateTexture_p = (pD3DXCreateTexture) GetProcAddress(mod, "D3DXCreateTexture");
-	if(NULL != D3DXCreateTexture_p)
-		return D3DXCreateTexture_p(pDevice, width, height, miplevels, usage, format, pool, ppTexture);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI
+D3DXCreateTexture(LPDIRECT3DDEVICE9 pDevice, UINT width, UINT height,
+                  UINT miplevels, DWORD usage, D3DFORMAT format, D3DPOOL pool,
+                  LPDIRECT3DTEXTURE9 *ppTexture) {
+  static pD3DXCreateTexture D3DXCreateTexture_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXCreateTexture_p =
+        (pD3DXCreateTexture)GetProcAddress(mod, "D3DXCreateTexture");
+  if (NULL != D3DXCreateTexture_p)
+    return D3DXCreateTexture_p(pDevice, width, height, miplevels, usage, format,
+                               pool, ppTexture);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXCreateCubeTexture)(LPDIRECT3DDEVICE9 device,
-                                     UINT size,
-                                     UINT miplevels,
-                                     DWORD usage,
-                                    D3DFORMAT format,
-                                     D3DPOOL pool,
-                                     LPDIRECT3DCUBETEXTURE9 *texture);
+typedef HRESULT(WINAPI *pD3DXCreateCubeTexture)(
+    LPDIRECT3DDEVICE9 device, UINT size, UINT miplevels, DWORD usage,
+    D3DFORMAT format, D3DPOOL pool, LPDIRECT3DCUBETEXTURE9 *texture);
 
-/* extern "C" */HRESULT WINAPI D3DXCreateCubeTexture(LPDIRECT3DDEVICE9 device,
-                                     UINT size,
-                                     UINT miplevels,
-                                     DWORD usage,
-                                    D3DFORMAT format,
-                                     D3DPOOL pool,
-                                     LPDIRECT3DCUBETEXTURE9 *texture) {
-	static pD3DXCreateCubeTexture D3DXCreateCubeTexture_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod) 
-		D3DXCreateCubeTexture_p = (pD3DXCreateCubeTexture) GetProcAddress(mod, "D3DXCreateCubeTexture");
-	if(NULL != D3DXCreateCubeTexture_p)
-		return D3DXCreateCubeTexture_p(device, size, miplevels, usage, format, pool, texture);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI D3DXCreateCubeTexture(
+    LPDIRECT3DDEVICE9 device, UINT size, UINT miplevels, DWORD usage,
+    D3DFORMAT format, D3DPOOL pool, LPDIRECT3DCUBETEXTURE9 *texture) {
+  static pD3DXCreateCubeTexture D3DXCreateCubeTexture_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXCreateCubeTexture_p =
+        (pD3DXCreateCubeTexture)GetProcAddress(mod, "D3DXCreateCubeTexture");
+  if (NULL != D3DXCreateCubeTexture_p)
+    return D3DXCreateCubeTexture_p(device, size, miplevels, usage, format, pool,
+                                   texture);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXCreateVolumeTexture)(LPDIRECT3DDEVICE9 device,
-                                       UINT width,
-                                       UINT height,
-                                       UINT depth,
-                                       UINT miplevels,
-                                       DWORD usage,
-                                       D3DFORMAT format,
-                                       D3DPOOL pool,
-                                       LPDIRECT3DVOLUMETEXTURE9 *texture);
+typedef HRESULT(WINAPI *pD3DXCreateVolumeTexture)(
+    LPDIRECT3DDEVICE9 device, UINT width, UINT height, UINT depth,
+    UINT miplevels, DWORD usage, D3DFORMAT format, D3DPOOL pool,
+    LPDIRECT3DVOLUMETEXTURE9 *texture);
 
-/* extern "C" */HRESULT WINAPI D3DXCreateVolumeTexture(LPDIRECT3DDEVICE9 device,
-                                       UINT width,
-                                       UINT height,
-                                       UINT depth,
-                                       UINT miplevels,
-                                       DWORD usage,
-                                       D3DFORMAT format,
-                                       D3DPOOL pool,
-                                       LPDIRECT3DVOLUMETEXTURE9 *texture) {
-	static pD3DXCreateVolumeTexture D3DXCreateVolumeTexture_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod) 
-		D3DXCreateVolumeTexture_p = (pD3DXCreateVolumeTexture) GetProcAddress(mod, "D3DXCreateVolumeTexture");
-	if(NULL != D3DXCreateVolumeTexture_p)
-		return D3DXCreateVolumeTexture_p(device, width, height, depth, miplevels, usage, format, pool, texture);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI D3DXCreateVolumeTexture(
+    LPDIRECT3DDEVICE9 device, UINT width, UINT height, UINT depth,
+    UINT miplevels, DWORD usage, D3DFORMAT format, D3DPOOL pool,
+    LPDIRECT3DVOLUMETEXTURE9 *texture) {
+  static pD3DXCreateVolumeTexture D3DXCreateVolumeTexture_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXCreateVolumeTexture_p = (pD3DXCreateVolumeTexture)GetProcAddress(
+        mod, "D3DXCreateVolumeTexture");
+  if (NULL != D3DXCreateVolumeTexture_p)
+    return D3DXCreateVolumeTexture_p(device, width, height, depth, miplevels,
+                                     usage, format, pool, texture);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
 #endif
 
-typedef HRESULT (WINAPI * pD3DXFillVolumeTextureTX)(LPDIRECT3DVOLUMETEXTURE9 pVolumeTexture,
-                                        LPD3DXTEXTURESHADER pTextureShader);
+typedef HRESULT(WINAPI *pD3DXFillVolumeTextureTX)(
+    LPDIRECT3DVOLUMETEXTURE9 pVolumeTexture,
+    LPD3DXTEXTURESHADER pTextureShader);
 
-/* extern "C" */HRESULT WINAPI D3DXFillVolumeTextureTX(LPDIRECT3DVOLUMETEXTURE9 pVolumeTexture,
-                                        LPD3DXTEXTURESHADER pTextureShader) {
-	static pD3DXFillVolumeTextureTX D3DXFillVolumeTextureTX_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod) 
-		D3DXFillVolumeTextureTX_p = (pD3DXFillVolumeTextureTX) GetProcAddress(mod, "D3DXFillVolumeTextureTX");
-	//FreeLibrary(mod);
-	if(NULL != D3DXFillVolumeTextureTX_p)
-		return D3DXFillVolumeTextureTX_p(pVolumeTexture, pTextureShader);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI
+D3DXFillVolumeTextureTX(LPDIRECT3DVOLUMETEXTURE9 pVolumeTexture,
+                        LPD3DXTEXTURESHADER pTextureShader) {
+  static pD3DXFillVolumeTextureTX D3DXFillVolumeTextureTX_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXFillVolumeTextureTX_p = (pD3DXFillVolumeTextureTX)GetProcAddress(
+        mod, "D3DXFillVolumeTextureTX");
+  // FreeLibrary(mod);
+  if (NULL != D3DXFillVolumeTextureTX_p)
+    return D3DXFillVolumeTextureTX_p(pVolumeTexture, pTextureShader);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXFillCubeTextureTX)(
-        LPDIRECT3DCUBETEXTURE9    pCubeTexture,
-        LPD3DXTEXTURESHADER       pTextureShader);
+typedef HRESULT(WINAPI *pD3DXFillCubeTextureTX)(
+    LPDIRECT3DCUBETEXTURE9 pCubeTexture, LPD3DXTEXTURESHADER pTextureShader);
 
-/* extern "C" */HRESULT WINAPI
-    D3DXFillCubeTextureTX(
-        LPDIRECT3DCUBETEXTURE9    pCubeTexture,
-        LPD3DXTEXTURESHADER       pTextureShader) {
-	static pD3DXFillCubeTextureTX D3DXFillCubeTextureTX_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	if (mod) 
-		D3DXFillCubeTextureTX_p = (pD3DXFillCubeTextureTX) GetProcAddress(mod, "D3DXFillCubeTextureTX");
-	//FreeLibrary(mod);
-	if(NULL != D3DXFillCubeTextureTX_p)
-		return D3DXFillCubeTextureTX_p(pCubeTexture, pTextureShader);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI D3DXFillCubeTextureTX(
+    LPDIRECT3DCUBETEXTURE9 pCubeTexture, LPD3DXTEXTURESHADER pTextureShader) {
+  static pD3DXFillCubeTextureTX D3DXFillCubeTextureTX_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  if (mod)
+    D3DXFillCubeTextureTX_p =
+        (pD3DXFillCubeTextureTX)GetProcAddress(mod, "D3DXFillCubeTextureTX");
+  // FreeLibrary(mod);
+  if (NULL != D3DXFillCubeTextureTX_p)
+    return D3DXFillCubeTextureTX_p(pCubeTexture, pTextureShader);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXFillTextureTX)(
-        LPDIRECT3DTEXTURE9        pTexture,
-        LPD3DXTEXTURESHADER       pTextureShader);
+typedef HRESULT(WINAPI *pD3DXFillTextureTX)(LPDIRECT3DTEXTURE9 pTexture,
+                                            LPD3DXTEXTURESHADER pTextureShader);
 
-/* extern "C" */HRESULT WINAPI 
-    D3DXFillTextureTX(
-        LPDIRECT3DTEXTURE9        pTexture,
-        LPD3DXTEXTURESHADER       pTextureShader) {
-	static pD3DXFillTextureTX D3DXFillTextureTX_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	//FreeLibrary(mod);
-	if (mod) 
-		D3DXFillTextureTX_p = (pD3DXFillTextureTX) GetProcAddress(mod, "D3DXFillTextureTX");
-	if(NULL != D3DXFillTextureTX_p)
-		return D3DXFillTextureTX_p(pTexture, pTextureShader);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI D3DXFillTextureTX(
+    LPDIRECT3DTEXTURE9 pTexture, LPD3DXTEXTURESHADER pTextureShader) {
+  static pD3DXFillTextureTX D3DXFillTextureTX_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  // FreeLibrary(mod);
+  if (mod)
+    D3DXFillTextureTX_p =
+        (pD3DXFillTextureTX)GetProcAddress(mod, "D3DXFillTextureTX");
+  if (NULL != D3DXFillTextureTX_p)
+    return D3DXFillTextureTX_p(pTexture, pTextureShader);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-typedef HRESULT (WINAPI * pD3DXCreateTextureShader)(
-  const DWORD *pFunction,
-  LPD3DXTEXTURESHADER *ppTextureShader
-);
+typedef HRESULT(WINAPI *pD3DXCreateTextureShader)(
+    const DWORD *pFunction, LPD3DXTEXTURESHADER *ppTextureShader);
 
-/* extern "C" */HRESULT WINAPI D3DXCreateTextureShader(
-  const DWORD *pFunction,
-  LPD3DXTEXTURESHADER *ppTextureShader) {
-	static pD3DXCreateTextureShader D3DXCreateTextureShader_p = NULL;
-	HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
-	//FreeLibrary(mod);
-	if (mod) 
-		D3DXCreateTextureShader_p = (pD3DXCreateTextureShader) GetProcAddress(mod, "D3DXCreateTextureShader");
-	if(NULL != D3DXCreateTextureShader_p)
-		return D3DXCreateTextureShader_p(pFunction, ppTextureShader);
-	else
-		return D3DERR_NOTAVAILABLE;
+/* extern "C" */ HRESULT WINAPI D3DXCreateTextureShader(
+    const DWORD *pFunction, LPD3DXTEXTURESHADER *ppTextureShader) {
+  static pD3DXCreateTextureShader D3DXCreateTextureShader_p = NULL;
+  HMODULE mod = LoadLibrary(_T("D3DX9_43.DLL"));
+  // FreeLibrary(mod);
+  if (mod)
+    D3DXCreateTextureShader_p = (pD3DXCreateTextureShader)GetProcAddress(
+        mod, "D3DXCreateTextureShader");
+  if (NULL != D3DXCreateTextureShader_p)
+    return D3DXCreateTextureShader_p(pFunction, ppTextureShader);
+  else
+    return D3DERR_NOTAVAILABLE;
 }
 
-D3DXMATRIX* WINAPI D3DXMatrixMultiply(D3DXMATRIX *pout, CONST D3DXMATRIX *pm1, CONST D3DXMATRIX *pm2) {
-    int i,j;
+D3DXMATRIX *WINAPI D3DXMatrixMultiply(D3DXMATRIX *pout, CONST D3DXMATRIX *pm1,
+                                      CONST D3DXMATRIX *pm2) {
+  int i, j;
 
-    for (i=0; i<4; i++)
-    {
-     for (j=0; j<4; j++)
-     {
-      pout->m[i][j] = pm1->m[i][0] * pm2->m[0][j] + pm1->m[i][1] * pm2->m[1][j] + pm1->m[i][2] * pm2->m[2][j] + pm1->m[i][3] * pm2->m[3][j];
-     }
+  for (i = 0; i < 4; i++) {
+    for (j = 0; j < 4; j++) {
+      pout->m[i][j] = pm1->m[i][0] * pm2->m[0][j] +
+                      pm1->m[i][1] * pm2->m[1][j] +
+                      pm1->m[i][2] * pm2->m[2][j] + pm1->m[i][3] * pm2->m[3][j];
     }
-    return pout;
+  }
+  return pout;
 }
 
-D3DXMATRIX* WINAPI D3DXMatrixTranslation(D3DXMATRIX *pOut, FLOAT tx, FLOAT ty, FLOAT tz) {
-    pOut->_11=1.0f;   pOut->_12=0.0f;   pOut->_13=0.0f;  pOut->_14=0.0f;
-    pOut->_21=0.0f;   pOut->_22=1.0f;   pOut->_23=0.0f;  pOut->_24=0.0f;
-    pOut->_31=0.0f;   pOut->_32=0.0f;   pOut->_33=1.0f;  pOut->_34=0.0f;
-    pOut->_41=tx;     pOut->_42=ty;     pOut->_43=tz;    pOut->_44=1.0f;
+D3DXMATRIX *WINAPI D3DXMatrixTranslation(D3DXMATRIX *pOut, FLOAT tx, FLOAT ty,
+                                         FLOAT tz) {
+  pOut->_11 = 1.0f;
+  pOut->_12 = 0.0f;
+  pOut->_13 = 0.0f;
+  pOut->_14 = 0.0f;
+  pOut->_21 = 0.0f;
+  pOut->_22 = 1.0f;
+  pOut->_23 = 0.0f;
+  pOut->_24 = 0.0f;
+  pOut->_31 = 0.0f;
+  pOut->_32 = 0.0f;
+  pOut->_33 = 1.0f;
+  pOut->_34 = 0.0f;
+  pOut->_41 = tx;
+  pOut->_42 = ty;
+  pOut->_43 = tz;
+  pOut->_44 = 1.0f;
 
-    return pOut;
+  return pOut;
 }
 
-D3DXMATRIX* WINAPI D3DXMatrixOrthoOffCenterLH(D3DXMATRIX *pOut, FLOAT l, FLOAT r, FLOAT b, FLOAT t, FLOAT zn, FLOAT zf) {
-    (void)l; (void)b; (void)zn; (void)zf;
-    pOut->_11=2.0f/r; pOut->_12=0.0f;   pOut->_13=0.0f;  pOut->_14=0.0f;
-    pOut->_21=0.0f;   pOut->_22=2.0f/t; pOut->_23=0.0f;  pOut->_24=0.0f;
-    pOut->_31=0.0f;   pOut->_32=0.0f;   pOut->_33=1.0f;  pOut->_34=0.0f;
-    pOut->_41=-1.0f;  pOut->_42=-1.0f;  pOut->_43=0.0f;  pOut->_44=1.0f;
+D3DXMATRIX *WINAPI D3DXMatrixOrthoOffCenterLH(D3DXMATRIX *pOut, FLOAT l,
+                                              FLOAT r, FLOAT b, FLOAT t,
+                                              FLOAT zn, FLOAT zf) {
+  (void)l;
+  (void)b;
+  (void)zn;
+  (void)zf;
+  pOut->_11 = 2.0f / r;
+  pOut->_12 = 0.0f;
+  pOut->_13 = 0.0f;
+  pOut->_14 = 0.0f;
+  pOut->_21 = 0.0f;
+  pOut->_22 = 2.0f / t;
+  pOut->_23 = 0.0f;
+  pOut->_24 = 0.0f;
+  pOut->_31 = 0.0f;
+  pOut->_32 = 0.0f;
+  pOut->_33 = 1.0f;
+  pOut->_34 = 0.0f;
+  pOut->_41 = -1.0f;
+  pOut->_42 = -1.0f;
+  pOut->_43 = 0.0f;
+  pOut->_44 = 1.0f;
 
-    return pOut;
+  return pOut;
 }
 
-D3DXMATRIX* WINAPI D3DXMatrixScaling(D3DXMATRIX *pOut, FLOAT sx, FLOAT sy, FLOAT sz) {
-    pOut->_11=sx;     pOut->_12=0.0f;   pOut->_13=0.0f;  pOut->_14=0.0f;
-    pOut->_21=0.0f;   pOut->_22=sy;     pOut->_23=0.0f;  pOut->_24=0.0f;
-    pOut->_31=0.0f;   pOut->_32=0.0f;   pOut->_33=sz;    pOut->_34=0.0f;
-    pOut->_41=0.0f;   pOut->_42=0.0f;   pOut->_43=0.0f;  pOut->_44=1.0f;
+D3DXMATRIX *WINAPI D3DXMatrixScaling(D3DXMATRIX *pOut, FLOAT sx, FLOAT sy,
+                                     FLOAT sz) {
+  pOut->_11 = sx;
+  pOut->_12 = 0.0f;
+  pOut->_13 = 0.0f;
+  pOut->_14 = 0.0f;
+  pOut->_21 = 0.0f;
+  pOut->_22 = sy;
+  pOut->_23 = 0.0f;
+  pOut->_24 = 0.0f;
+  pOut->_31 = 0.0f;
+  pOut->_32 = 0.0f;
+  pOut->_33 = sz;
+  pOut->_34 = 0.0f;
+  pOut->_41 = 0.0f;
+  pOut->_42 = 0.0f;
+  pOut->_43 = 0.0f;
+  pOut->_44 = 1.0f;
 
-    return pOut;
+  return pOut;
 }

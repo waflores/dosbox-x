@@ -91,169 +91,150 @@ kernel
 RIPPEDOFFLINE linesripped[5];
 char linesrippedoff = 0;
 
-static struct cttyset
-{
-    bool been_set;
-    SCREEN saved;
+static struct cttyset {
+  bool been_set;
+  SCREEN saved;
 } ctty[3];
 
 enum { PDC_SH_TTY, PDC_PR_TTY, PDC_SAVE_TTY };
 
-static void _save_mode(int i)
-{
-    ctty[i].been_set = TRUE;
+static void _save_mode(int i) {
+  ctty[i].been_set = TRUE;
 
-    memcpy(&(ctty[i].saved), SP, sizeof(SCREEN));
+  memcpy(&(ctty[i].saved), SP, sizeof(SCREEN));
 
-    PDC_save_screen_mode(i);
+  PDC_save_screen_mode(i);
 }
 
-static int _restore_mode(int i)
-{
-    if (ctty[i].been_set == TRUE)
-    {
-        memcpy(SP, &(ctty[i].saved), sizeof(SCREEN));
+static int _restore_mode(int i) {
+  if (ctty[i].been_set == TRUE) {
+    memcpy(SP, &(ctty[i].saved), sizeof(SCREEN));
 
-        if (ctty[i].saved.raw_out)
-            raw();
+    if (ctty[i].saved.raw_out)
+      raw();
 
-        PDC_restore_screen_mode(i);
+    PDC_restore_screen_mode(i);
 
-        if ((LINES != ctty[i].saved.lines) ||
-            (COLS != ctty[i].saved.cols))
-            resize_term(ctty[i].saved.lines, ctty[i].saved.cols);
+    if ((LINES != ctty[i].saved.lines) || (COLS != ctty[i].saved.cols))
+      resize_term(ctty[i].saved.lines, ctty[i].saved.cols);
 
-        PDC_curs_set(ctty[i].saved.visibility);
+    PDC_curs_set(ctty[i].saved.visibility);
 
-        PDC_gotoyx(ctty[i].saved.cursrow, ctty[i].saved.curscol);
-    }
+    PDC_gotoyx(ctty[i].saved.cursrow, ctty[i].saved.curscol);
+  }
 
-    return ctty[i].been_set ? OK : ERR;
+  return ctty[i].been_set ? OK : ERR;
 }
 
-int def_prog_mode(void)
-{
-    PDC_LOG(("def_prog_mode() - called\n"));
+int def_prog_mode(void) {
+  PDC_LOG(("def_prog_mode() - called\n"));
 
-    _save_mode(PDC_PR_TTY);
+  _save_mode(PDC_PR_TTY);
 
-    return OK;
+  return OK;
 }
 
-int def_shell_mode(void)
-{
-    PDC_LOG(("def_shell_mode() - called\n"));
+int def_shell_mode(void) {
+  PDC_LOG(("def_shell_mode() - called\n"));
 
-    _save_mode(PDC_SH_TTY);
+  _save_mode(PDC_SH_TTY);
 
-    return OK;
+  return OK;
 }
 
-int reset_prog_mode(void)
-{
-    PDC_LOG(("reset_prog_mode() - called\n"));
+int reset_prog_mode(void) {
+  PDC_LOG(("reset_prog_mode() - called\n"));
 
-    _restore_mode(PDC_PR_TTY);
-    PDC_reset_prog_mode();
+  _restore_mode(PDC_PR_TTY);
+  PDC_reset_prog_mode();
 
-    return OK;
+  return OK;
 }
 
-int reset_shell_mode(void)
-{
-    PDC_LOG(("reset_shell_mode() - called\n"));
+int reset_shell_mode(void) {
+  PDC_LOG(("reset_shell_mode() - called\n"));
 
-    _restore_mode(PDC_SH_TTY);
-    PDC_reset_shell_mode();
+  _restore_mode(PDC_SH_TTY);
+  PDC_reset_shell_mode();
 
-    return OK;
+  return OK;
 }
 
-int resetty(void)
-{
-    PDC_LOG(("resetty() - called\n"));
+int resetty(void) {
+  PDC_LOG(("resetty() - called\n"));
 
-    return _restore_mode(PDC_SAVE_TTY);
+  return _restore_mode(PDC_SAVE_TTY);
 }
 
-int savetty(void)
-{
-    PDC_LOG(("savetty() - called\n"));
+int savetty(void) {
+  PDC_LOG(("savetty() - called\n"));
 
-    _save_mode(PDC_SAVE_TTY);
+  _save_mode(PDC_SAVE_TTY);
 
-    return OK;
+  return OK;
 }
 
-int curs_set(int visibility)
-{
-    int ret_vis;
+int curs_set(int visibility) {
+  int ret_vis;
 
-    PDC_LOG(("curs_set() - called: visibility=%d\n", visibility));
+  PDC_LOG(("curs_set() - called: visibility=%d\n", visibility));
 
-    if ((visibility < 0) || (visibility > 2))
-        return ERR;
-
-    ret_vis = PDC_curs_set(visibility);
-
-    /* If the cursor is changing from invisible to visible, update
-       its position */
-
-    if (visibility && !ret_vis)
-        PDC_gotoyx(SP->cursrow, SP->curscol);
-
-    return ret_vis;
-}
-
-int napms(int ms)
-{
-    PDC_LOG(("napms() - called: ms=%d\n", ms));
-
-    if (ms)
-        PDC_napms(ms);
-
-    return OK;
-}
-
-int ripoffline(int line, int (*init)(WINDOW *, int))
-{
-    PDC_LOG(("ripoffline() - called: line=%d\n", line));
-
-    if (linesrippedoff < 5 && line && init)
-    {
-        linesripped[(int)linesrippedoff].line = line;
-        linesripped[(int)linesrippedoff++].init = init;
-
-        return OK;
-    }
-
+  if ((visibility < 0) || (visibility > 2))
     return ERR;
+
+  ret_vis = PDC_curs_set(visibility);
+
+  /* If the cursor is changing from invisible to visible, update
+     its position */
+
+  if (visibility && !ret_vis)
+    PDC_gotoyx(SP->cursrow, SP->curscol);
+
+  return ret_vis;
 }
 
-int draino(int ms)
-{
-    PDC_LOG(("draino() - called\n"));
+int napms(int ms) {
+  PDC_LOG(("napms() - called: ms=%d\n", ms));
 
-    return napms(ms);
+  if (ms)
+    PDC_napms(ms);
+
+  return OK;
 }
 
-int resetterm(void)
-{
-    PDC_LOG(("resetterm() - called\n"));
+int ripoffline(int line, int (*init)(WINDOW *, int)) {
+  PDC_LOG(("ripoffline() - called: line=%d\n", line));
 
-    return reset_shell_mode();
+  if (linesrippedoff < 5 && line && init) {
+    linesripped[(int)linesrippedoff].line = line;
+    linesripped[(int)linesrippedoff++].init = init;
+
+    return OK;
+  }
+
+  return ERR;
 }
 
-int fixterm(void)
-{
-    PDC_LOG(("fixterm() - called\n"));
+int draino(int ms) {
+  PDC_LOG(("draino() - called\n"));
 
-    return reset_prog_mode();
+  return napms(ms);
 }
 
-int saveterm(void)
-{
-    PDC_LOG(("saveterm() - called\n"));
+int resetterm(void) {
+  PDC_LOG(("resetterm() - called\n"));
 
-    return def_prog_mode();
+  return reset_shell_mode();
+}
+
+int fixterm(void) {
+  PDC_LOG(("fixterm() - called\n"));
+
+  return reset_prog_mode();
+}
+
+int saveterm(void) {
+  PDC_LOG(("saveterm() - called\n"));
+
+  return def_prog_mode();
 }

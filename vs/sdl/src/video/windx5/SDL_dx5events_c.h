@@ -23,11 +23,11 @@
 
 #include "../wincommon/SDL_lowvideo.h"
 
-/* Variables and functions exported by SDL_dx5events.c to other parts 
+/* Variables and functions exported by SDL_dx5events.c to other parts
    of the native video subsystem (SDL_dx5video.c)
 */
-extern LONG
- DX5_HandleMessage(_THIS, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern LONG DX5_HandleMessage(_THIS, HWND hwnd, UINT msg, WPARAM wParam,
+                              LPARAM lParam);
 extern int DX5_CreateWindow(_THIS);
 extern void DX5_DestroyWindow(_THIS);
 

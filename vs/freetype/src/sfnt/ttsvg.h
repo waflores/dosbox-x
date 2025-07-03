@@ -21,23 +21,19 @@
 #include <freetype/internal/ftstream.h>
 #include <freetype/internal/tttypes.h>
 
-
 FT_BEGIN_HEADER
 
-  FT_LOCAL( FT_Error )
-  tt_face_load_svg( TT_Face    face,
-                    FT_Stream  stream );
+FT_LOCAL( FT_Error )
+tt_face_load_svg( TT_Face face, FT_Stream stream );
 
-  FT_LOCAL( void )
-  tt_face_free_svg( TT_Face  face );
+FT_LOCAL( void )
+tt_face_free_svg( TT_Face face );
 
-  FT_LOCAL( FT_Error )
-  tt_face_load_svg_doc( FT_GlyphSlot  glyph,
-                        FT_UInt       glyph_index );
+FT_LOCAL( FT_Error )
+tt_face_load_svg_doc( FT_GlyphSlot glyph, FT_UInt glyph_index );
 
 FT_END_HEADER
 
 #endif /* TTSVG_H_ */
-
 
 /* END */

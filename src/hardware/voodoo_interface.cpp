@@ -16,307 +16,312 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
-#include "dosbox.h"
 #include "cross.h"
+#include "dosbox.h"
 #include "logging.h"
-#include "vga.h"
-#include "pic.h"
 #include "paging.h"
+#include "pic.h"
 #include "render.h"
+#include "vga.h"
 
-#include "voodoo_interface.h"
 #include "voodoo_emu.h"
-
+#include "voodoo_interface.h"
 
 static voodoo_draw vdraw;
 
-
-Voodoo_PageHandler * voodoo_pagehandler;
-
+Voodoo_PageHandler *voodoo_pagehandler;
 
 uint8_t Voodoo_PageHandler::readb(PhysPt addr) {
-    (void)addr;//UNUSED
-//	LOG_MSG("voodoo readb at %x",addr);
-	return (uint8_t)-1;
+  (void)addr; // UNUSED
+  //	LOG_MSG("voodoo readb at %x",addr);
+  return (uint8_t)-1;
 }
-void Voodoo_PageHandler::writeb(PhysPt addr,uint8_t val) {
-    (void)addr;//UNUSED
-    (void)val;//UNUSED
-//	LOG_MSG("voodoo writeb at %x",addr);
+void Voodoo_PageHandler::writeb(PhysPt addr, uint8_t val) {
+  (void)addr; // UNUSED
+  (void)val;  // UNUSED
+  //	LOG_MSG("voodoo writeb at %x",addr);
 }
 
 uint16_t Voodoo_PageHandler::readw(PhysPt addr) {
-	addr = PAGING_GetPhysicalAddress(addr);
-    if (addr&1) {
-        LOG_MSG("voodoo readw unaligned");
-        return (uint16_t)-1;
-    }
+  addr = PAGING_GetPhysicalAddress(addr);
+  if (addr & 1) {
+    LOG_MSG("voodoo readw unaligned");
+    return (uint16_t)-1;
+  }
 
-	uint32_t retval = voodoo_r((addr>>2)&0x3FFFFF);
-	if (addr&3)
-		retval >>= 16;
-	else
-		retval &= 0xffff;
+  uint32_t retval = voodoo_r((addr >> 2) & 0x3FFFFF);
+  if (addr & 3)
+    retval >>= 16;
+  else
+    retval &= 0xffff;
 
-	return (uint16_t)retval;
+  return (uint16_t)retval;
 }
 
-void Voodoo_PageHandler::writew(PhysPt addr,uint16_t val) {
-	addr = PAGING_GetPhysicalAddress(addr);
-	if (addr&1u) {
-        LOG_MSG("voodoo writew unaligned");
-        return;
-    }
+void Voodoo_PageHandler::writew(PhysPt addr, uint16_t val) {
+  addr = PAGING_GetPhysicalAddress(addr);
+  if (addr & 1u) {
+    LOG_MSG("voodoo writew unaligned");
+    return;
+  }
 
-	if (addr&3u)
-		voodoo_w((addr>>2u)&0x3FFFFFu,(UINT32)(val<<16u),0xffff0000u);
-	else
-		voodoo_w((addr>>2u)&0x3FFFFFu,val,0x0000ffffu);
+  if (addr & 3u)
+    voodoo_w((addr >> 2u) & 0x3FFFFFu, (UINT32)(val << 16u), 0xffff0000u);
+  else
+    voodoo_w((addr >> 2u) & 0x3FFFFFu, val, 0x0000ffffu);
 }
 
 uint32_t Voodoo_PageHandler::readd(PhysPt addr) {
-	addr = PAGING_GetPhysicalAddress(addr);
-	if (!(addr&3)) {
-		return voodoo_r((addr>>2)&0x3FFFFF);
-	} else {
-		if (!(addr&1)) {
-			uint32_t low = voodoo_r((addr>>2)&0x3FFFFF);
-			uint32_t high = voodoo_r(((addr>>2)+1)&0x3FFFFF);
-			return (low>>16) | (high<<16);
-		} else {
-			LOG_MSG("voodoo readd unaligned");
-		}
-	}
-	return 0xffffffff;
+  addr = PAGING_GetPhysicalAddress(addr);
+  if (!(addr & 3)) {
+    return voodoo_r((addr >> 2) & 0x3FFFFF);
+  } else {
+    if (!(addr & 1)) {
+      uint32_t low = voodoo_r((addr >> 2) & 0x3FFFFF);
+      uint32_t high = voodoo_r(((addr >> 2) + 1) & 0x3FFFFF);
+      return (low >> 16) | (high << 16);
+    } else {
+      LOG_MSG("voodoo readd unaligned");
+    }
+  }
+  return 0xffffffff;
 }
 
-void Voodoo_PageHandler::writed(PhysPt addr,uint32_t val) {
-	addr = PAGING_GetPhysicalAddress(addr);
-	if (!(addr&3)) {
-		voodoo_w((addr>>2)&0x3FFFFF,val,0xffffffff);
-	} else {
-		if (!(addr&1)) {
-			voodoo_w((addr>>2)&0x3FFFFF,val<<16,0xffff0000);
-			voodoo_w(((addr>>2)+1)&0x3FFFFF,val>>16,0x0000ffff);
-		} else {
-			uint32_t val1 = voodoo_r((addr>>2)&0x3FFFFF);
-			uint32_t val2 = voodoo_r(((addr>>2)+1)&0x3FFFFF);
-			if ((addr&3)==1) {
-				val1 = (val1&0xffffff) | ((val&0xff)<<24);
-				val2 = (val2&0xff000000) | (val>>8);
-			} else if ((addr&3)==3) {
-				val1 = (val1&0xff) | ((val&0xffffff)<<8);
-				val2 = (val2&0xffffff00) | (val>>24);
-			} else E_Exit("???");
-			voodoo_w((addr>>2)&0x3FFFFF,val1,0xffffffff);
-			voodoo_w(((addr>>2)+1)&0x3FFFFF,val2,0xffffffff);
-		}
-	}
+void Voodoo_PageHandler::writed(PhysPt addr, uint32_t val) {
+  addr = PAGING_GetPhysicalAddress(addr);
+  if (!(addr & 3)) {
+    voodoo_w((addr >> 2) & 0x3FFFFF, val, 0xffffffff);
+  } else {
+    if (!(addr & 1)) {
+      voodoo_w((addr >> 2) & 0x3FFFFF, val << 16, 0xffff0000);
+      voodoo_w(((addr >> 2) + 1) & 0x3FFFFF, val >> 16, 0x0000ffff);
+    } else {
+      uint32_t val1 = voodoo_r((addr >> 2) & 0x3FFFFF);
+      uint32_t val2 = voodoo_r(((addr >> 2) + 1) & 0x3FFFFF);
+      if ((addr & 3) == 1) {
+        val1 = (val1 & 0xffffff) | ((val & 0xff) << 24);
+        val2 = (val2 & 0xff000000) | (val >> 8);
+      } else if ((addr & 3) == 3) {
+        val1 = (val1 & 0xff) | ((val & 0xffffff) << 8);
+        val2 = (val2 & 0xffffff00) | (val >> 24);
+      } else
+        E_Exit("???");
+      voodoo_w((addr >> 2) & 0x3FFFFF, val1, 0xffffffff);
+      voodoo_w(((addr >> 2) + 1) & 0x3FFFFF, val2, 0xffffffff);
+    }
+  }
 }
-
 
 static void Voodoo_VerticalTimer(Bitu /*val*/) {
-	vdraw.frame_start = PIC_FullIndex();
-	PIC_AddEvent( Voodoo_VerticalTimer, vdraw.vfreq );
+  vdraw.frame_start = PIC_FullIndex();
+  PIC_AddEvent(Voodoo_VerticalTimer, vdraw.vfreq);
 
-	if (v->fbi.vblank_flush_pending) {
-		voodoo_vblank_flush();
-		if (GFX_LazyFullscreenRequested()) {
-			v->ogl_dimchange = true;
-		}
-	}
+  if (v->fbi.vblank_flush_pending) {
+    voodoo_vblank_flush();
+    if (GFX_LazyFullscreenRequested()) {
+      v->ogl_dimchange = true;
+    }
+  }
 
-	if (!v->ogl) {
-		if (!RENDER_StartUpdate()) return; // frameskip
+  if (!v->ogl) {
+    if (!RENDER_StartUpdate())
+      return; // frameskip
 
-		rectangle r;
-		r.min_x = r.min_y = 0;
-		r.max_x = (int)v->fbi.width;
-		r.max_y = (int)v->fbi.height;
+    rectangle r;
+    r.min_x = r.min_y = 0;
+    r.max_x = (int)v->fbi.width;
+    r.max_y = (int)v->fbi.height;
 
-		// draw all lines at once
-		uint16_t *viewbuf = (uint16_t *)(v->fbi.ram + v->fbi.rgboffs[v->fbi.frontbuf]);
-		for(Bitu i = 0; i < v->fbi.height; i++) {
-			RENDER_DrawLine((uint8_t*) viewbuf);
-			viewbuf += v->fbi.rowpixels;
-		}
-		RENDER_EndUpdate(false);
-	} else {
-		// ???
-		voodoo_set_window();
-	}
+    // draw all lines at once
+    uint16_t *viewbuf =
+        (uint16_t *)(v->fbi.ram + v->fbi.rgboffs[v->fbi.frontbuf]);
+    for (Bitu i = 0; i < v->fbi.height; i++) {
+      RENDER_DrawLine((uint8_t *)viewbuf);
+      viewbuf += v->fbi.rowpixels;
+    }
+    RENDER_EndUpdate(false);
+  } else {
+    // ???
+    voodoo_set_window();
+  }
 }
 
 bool Voodoo_GetRetrace() {
-	// TODO proper implementation
-	double time_in_frame = PIC_FullIndex() - vdraw.frame_start;
-	double vfreq = vdraw.vfreq;
-	if (vfreq <= 0.0) return false;
-	if (v->clock_enabled && v->output_on) {
-		if ((time_in_frame/vfreq) > 0.95) return true;
-	} else if (v->output_on) {
-		double rtime = time_in_frame/vfreq;
-		rtime = fmod(rtime, 1.0);
-		if (rtime > 0.95) return true;
-	}
-	return false;
+  // TODO proper implementation
+  double time_in_frame = PIC_FullIndex() - vdraw.frame_start;
+  double vfreq = vdraw.vfreq;
+  if (vfreq <= 0.0)
+    return false;
+  if (v->clock_enabled && v->output_on) {
+    if ((time_in_frame / vfreq) > 0.95)
+      return true;
+  } else if (v->output_on) {
+    double rtime = time_in_frame / vfreq;
+    rtime = fmod(rtime, 1.0);
+    if (rtime > 0.95)
+      return true;
+  }
+  return false;
 }
 
 double Voodoo_GetVRetracePosition() {
-	// TODO proper implementation
-	double time_in_frame = PIC_FullIndex() - vdraw.frame_start;
-	double vfreq = vdraw.vfreq;
-	if (vfreq <= 0.0) return 0.0;
-	if (v->clock_enabled && v->output_on) {
-		return time_in_frame/vfreq;
-	} else if (v->output_on) {
-		double rtime = time_in_frame/vfreq;
-		rtime = fmod(rtime, 1.0);
-		return rtime;
-	}
-	return 0.0;
+  // TODO proper implementation
+  double time_in_frame = PIC_FullIndex() - vdraw.frame_start;
+  double vfreq = vdraw.vfreq;
+  if (vfreq <= 0.0)
+    return 0.0;
+  if (v->clock_enabled && v->output_on) {
+    return time_in_frame / vfreq;
+  } else if (v->output_on) {
+    double rtime = time_in_frame / vfreq;
+    rtime = fmod(rtime, 1.0);
+    return rtime;
+  }
+  return 0.0;
 }
 
 double Voodoo_GetHRetracePosition() {
-	// TODO proper implementation
-	double time_in_frame = PIC_FullIndex() - vdraw.frame_start;
-	double hfreq = vdraw.vfreq*100.0;
-	if (hfreq <= 0.0) return 0.0;
-	if (v->clock_enabled && v->output_on) {
-		return time_in_frame/hfreq;
-	} else if (v->output_on) {
-		double rtime = time_in_frame/hfreq;
-		rtime = fmod(rtime, 1.0);
-		return rtime;
-	}
-	return 0.0;
+  // TODO proper implementation
+  double time_in_frame = PIC_FullIndex() - vdraw.frame_start;
+  double hfreq = vdraw.vfreq * 100.0;
+  if (hfreq <= 0.0)
+    return 0.0;
+  if (v->clock_enabled && v->output_on) {
+    return time_in_frame / hfreq;
+  } else if (v->output_on) {
+    double rtime = time_in_frame / hfreq;
+    rtime = fmod(rtime, 1.0);
+    return rtime;
+  }
+  return 0.0;
 }
 
 static void Voodoo_UpdateScreen(void) {
-	// abort drawing
-	RENDER_EndUpdate(true);
+  // abort drawing
+  RENDER_EndUpdate(true);
 
-	if ((!v->clock_enabled || !v->output_on) && vdraw.override_on) {
-		// switching off
-		PIC_RemoveEvents(Voodoo_VerticalTimer);
-		voodoo_leave();
+  if ((!v->clock_enabled || !v->output_on) && vdraw.override_on) {
+    // switching off
+    PIC_RemoveEvents(Voodoo_VerticalTimer);
+    voodoo_leave();
 
-		VGA_SetOverride(false);
-		vdraw.override_on=false;
-	}
+    VGA_SetOverride(false);
+    vdraw.override_on = false;
+  }
 
-	if ((v->clock_enabled && v->output_on) && !vdraw.override_on) {
-		// switching on
-		PIC_RemoveEvents(Voodoo_VerticalTimer); // shouldn't be needed
-		
-		// TODO proper implementation of refresh rates and timings
-		vdraw.vfreq = 1000.0f/60.0f;
-		VGA_SetOverride(true);
-		vdraw.override_on=true;
+  if ((v->clock_enabled && v->output_on) && !vdraw.override_on) {
+    // switching on
+    PIC_RemoveEvents(Voodoo_VerticalTimer); // shouldn't be needed
 
-		vdraw.height=v->fbi.height;
+    // TODO proper implementation of refresh rates and timings
+    vdraw.vfreq = 1000.0f / 60.0f;
+    VGA_SetOverride(true);
+    vdraw.override_on = true;
 
-		voodoo_activate();
-		
-		if (v->ogl) {
-			v->ogl_dimchange = false;
-		} else {
-			RENDER_SetSize(v->fbi.width, v->fbi.height, 16, 1000.0f / vdraw.vfreq, 4.0/3.0);
-		}
+    vdraw.height = v->fbi.height;
 
-		Voodoo_VerticalTimer(0);
-	}
+    voodoo_activate();
 
-	if ((v->clock_enabled && v->output_on) && v->ogl_dimchange) {
-		voodoo_update_dimensions();
-	}
+    if (v->ogl) {
+      v->ogl_dimchange = false;
+    } else {
+      RENDER_SetSize(v->fbi.width, v->fbi.height, 16, 1000.0f / vdraw.vfreq,
+                     4.0 / 3.0);
+    }
 
-	vdraw.screen_update_requested = false;
+    Voodoo_VerticalTimer(0);
+  }
+
+  if ((v->clock_enabled && v->output_on) && v->ogl_dimchange) {
+    voodoo_update_dimensions();
+  }
+
+  vdraw.screen_update_requested = false;
 }
 
 static void Voodoo_CheckScreenUpdate(Bitu /*val*/) {
-	vdraw.screen_update_pending = false;
-	if (vdraw.screen_update_requested) {
-		vdraw.screen_update_pending = true;
-		Voodoo_UpdateScreen();
-		PIC_AddEvent(Voodoo_CheckScreenUpdate, 100.0f);
-	}
+  vdraw.screen_update_pending = false;
+  if (vdraw.screen_update_requested) {
+    vdraw.screen_update_pending = true;
+    Voodoo_UpdateScreen();
+    PIC_AddEvent(Voodoo_CheckScreenUpdate, 100.0f);
+  }
 }
 
 void Voodoo_UpdateScreenStart() {
-	vdraw.screen_update_requested = true;
-	if (!vdraw.screen_update_pending) {
-		vdraw.screen_update_pending = true;
-		PIC_AddEvent(Voodoo_CheckScreenUpdate, 0.0f);
-	}
+  vdraw.screen_update_requested = true;
+  if (!vdraw.screen_update_pending) {
+    vdraw.screen_update_pending = true;
+    PIC_AddEvent(Voodoo_CheckScreenUpdate, 0.0f);
+  }
 }
 
 void Voodoo_Output_Enable(bool enabled) {
-	if (v->output_on != enabled) {
-		v->output_on = enabled;
-		Voodoo_UpdateScreenStart();
-	}
+  if (v->output_on != enabled) {
+    v->output_on = enabled;
+    Voodoo_UpdateScreenStart();
+  }
 }
 
-void Voodoo_Initialize(Bits emulation_type, Bits card_type, bool max_voodoomem) {
-	if ((emulation_type <= 0) || (emulation_type > 2)) return;
+void Voodoo_Initialize(Bits emulation_type, Bits card_type,
+                       bool max_voodoomem) {
+  if ((emulation_type <= 0) || (emulation_type > 2))
+    return;
 
-	int board = VOODOO_1;
-	
-	switch (card_type) {
-		case 1:
-			if (max_voodoomem) board = VOODOO_1_DTMU;
-			else board = VOODOO_1;
-			break;
-		case 2:
-//			if (max_voodoomem) board = VOODOO_2_DTMU;
-//			else
-				board = VOODOO_2;
-			break;
-		default:
-			E_Exit("invalid voodoo card type specified");
-			break;
-	}
+  int board = VOODOO_1;
 
-	voodoo_pagehandler = new Voodoo_PageHandler(nullptr);
+  switch (card_type) {
+  case 1:
+    if (max_voodoomem)
+      board = VOODOO_1_DTMU;
+    else
+      board = VOODOO_1;
+    break;
+  case 2:
+    //			if (max_voodoomem) board = VOODOO_2_DTMU;
+    //			else
+    board = VOODOO_2;
+    break;
+  default:
+    E_Exit("invalid voodoo card type specified");
+    break;
+  }
 
-	v = new voodoo_state;
-	v->ogl = false;
-    if (emulation_type == 2) v->ogl = true;
+  voodoo_pagehandler = new Voodoo_PageHandler(nullptr);
 
-	vdraw.vfreq = 1000.0f/60.0f;
+  v = new voodoo_state;
+  v->ogl = false;
+  if (emulation_type == 2)
+    v->ogl = true;
 
-	voodoo_init(board);
+  vdraw.vfreq = 1000.0f / 60.0f;
+
+  voodoo_init(board);
 }
 
 void Voodoo_Shut_Down() {
-	voodoo_shutdown();
+  voodoo_shutdown();
 
-	if (v != NULL) {
-		delete v;
-		v = NULL;
-	}
-	if (voodoo_pagehandler != NULL) {
-		delete voodoo_pagehandler;
-		voodoo_pagehandler = NULL;
-	}
+  if (v != NULL) {
+    delete v;
+    v = NULL;
+  }
+  if (voodoo_pagehandler != NULL) {
+    delete voodoo_pagehandler;
+    voodoo_pagehandler = NULL;
+  }
 }
 
-void Voodoo_PCI_InitEnable(Bitu val) {
-	v->pci.init_enable = (UINT32)val;
-}
+void Voodoo_PCI_InitEnable(Bitu val) { v->pci.init_enable = (UINT32)val; }
 
 void Voodoo_PCI_Enable(bool enable) {
-	v->clock_enabled = enable;
-	CPU_Core_Dyn_X86_SaveDHFPUState();
-	Voodoo_UpdateScreenStart();
-	CPU_Core_Dyn_X86_RestoreDHFPUState();
+  v->clock_enabled = enable;
+  CPU_Core_Dyn_X86_SaveDHFPUState();
+  Voodoo_UpdateScreenStart();
+  CPU_Core_Dyn_X86_RestoreDHFPUState();
 }
 
-PageHandler* Voodoo_GetPageHandler() {
-	return voodoo_pagehandler;
-}
+PageHandler *Voodoo_GetPageHandler() { return voodoo_pagehandler; }

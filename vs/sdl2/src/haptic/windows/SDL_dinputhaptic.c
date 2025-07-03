@@ -20,19 +20,19 @@
 */
 #include "../../SDL_internal.h"
 
+#include "../SDL_syshaptic.h"
 #include "SDL.h"
 #include "SDL_error.h"
 #include "SDL_haptic.h"
-#include "../SDL_syshaptic.h"
 
 #ifdef SDL_HAPTIC_DINPUT
 
+#include "../../joystick/windows/SDL_windowsjoystick_c.h"
+#include "SDL_dinputhaptic_c.h"
 #include "SDL_hints.h"
 #include "SDL_stdinc.h"
 #include "SDL_timer.h"
 #include "SDL_windowshaptic_c.h"
-#include "SDL_dinputhaptic_c.h"
-#include "../../joystick/windows/SDL_windowsjoystick_c.h"
 
 /*
  * External stuff.
@@ -588,9 +588,9 @@ static int SDL_SYS_SetDirection(DIEFFECT *effect, SDL_HapticDirection *dir, int 
 }
 
 /* Clamps and converts. */
-#define CCONVERT(x) (((x) > 0x7FFF) ? 10000 : ((x)*10000) / 0x7FFF)
+#define CCONVERT(x) (((x) > 0x7FFF) ? 10000 : ((x) * 10000) / 0x7FFF)
 /* Just converts. */
-#define CONVERT(x) (((x)*10000) / 0x7FFF)
+#define CONVERT(x) (((x) * 10000) / 0x7FFF)
 /*
  * Creates the DIEFFECT from a SDL_HapticEffect.
  */

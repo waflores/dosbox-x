@@ -24,13 +24,13 @@
 
 /* Android SDL video driver implementation */
 
-#include "SDL_video.h"
 #include "../SDL_egl_c.h"
 #include "SDL_androidwindow.h"
+#include "SDL_video.h"
 
-#include "SDL_androidvideo.h"
-#include "SDL_androidgl.h"
 #include "../../core/android/SDL_android.h"
+#include "SDL_androidgl.h"
+#include "SDL_androidvideo.h"
 
 #include <android/log.h>
 

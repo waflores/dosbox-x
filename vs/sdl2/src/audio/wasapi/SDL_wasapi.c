@@ -22,12 +22,12 @@
 
 #ifdef SDL_AUDIO_DRIVER_WASAPI
 
-#include "../../core/windows/SDL_windows.h"
 #include "../../core/windows/SDL_immdevice.h"
-#include "SDL_audio.h"
-#include "SDL_timer.h"
+#include "../../core/windows/SDL_windows.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_sysaudio.h"
+#include "SDL_audio.h"
+#include "SDL_timer.h"
 
 #define COBJMACROS
 #include <audioclient.h>
@@ -48,7 +48,6 @@
 /* Some GUIDs we need to know without linking to libraries that aren't available before Vista. */
 static const IID SDL_IID_IAudioRenderClient = { 0xf294acfc, 0x3146, 0x4483, { 0xa7, 0xbf, 0xad, 0xdc, 0xa7, 0xc2, 0x60, 0xe2 } };
 static const IID SDL_IID_IAudioCaptureClient = { 0xc8adbd64, 0xe71e, 0x48a0, { 0xa4, 0xde, 0x18, 0x5c, 0x39, 0x5c, 0xd3, 0x17 } };
-
 
 static void WASAPI_DetectDevices(void)
 {
@@ -188,7 +187,7 @@ static Uint8 *WASAPI_GetDeviceBuf(_THIS)
     while (RecoverWasapiIfLost(this) && this->hidden->render) {
         const HRESULT ret = IAudioRenderClient_GetBuffer(this->hidden->render, this->spec.samples, &buffer);
         if (ret == AUDCLNT_E_BUFFER_TOO_LARGE) {
-            WASAPI_WaitDevice(this);  /* see if we can wait on the buffer to drain some more first... */
+            WASAPI_WaitDevice(this); /* see if we can wait on the buffer to drain some more first... */
         } else if (!WasapiFailed(this, ret)) {
             return (Uint8 *)buffer;
         }
@@ -384,7 +383,7 @@ void WASAPI_UnrefDevice(_THIS)
     ReleaseWasapiDevice(this);
 
     if (SDL_ThreadID() == this->hidden->open_threadid) {
-        WIN_CoUninitialize();  /* if you closed from a different thread than you opened, sorry, it's a leak. We can't help you. */
+        WIN_CoUninitialize(); /* if you closed from a different thread than you opened, sorry, it's a leak. We can't help you. */
     }
 
     SDL_free(this->hidden->devid);
@@ -552,7 +551,7 @@ static int WASAPI_OpenDevice(_THIS, const char *devname)
     LPCWSTR devid = (LPCWSTR)this->handle;
 
     /* Initialize all variables that we clean on shutdown */
-    this->hidden = (struct SDL_PrivateAudioData *) SDL_malloc(sizeof(*this->hidden));
+    this->hidden = (struct SDL_PrivateAudioData *)SDL_malloc(sizeof(*this->hidden));
     if (!this->hidden) {
         return SDL_OutOfMemory();
     }
@@ -560,10 +559,10 @@ static int WASAPI_OpenDevice(_THIS, const char *devname)
 
     WASAPI_RefDevice(this); /* so CloseDevice() will unref to zero. */
 
-    if (FAILED(WIN_CoInitialize())) {  /* WASAPI uses COM, we need to make sure it's initialized. You have to close the device from the same thread!! */
+    if (FAILED(WIN_CoInitialize())) { /* WASAPI uses COM, we need to make sure it's initialized. You have to close the device from the same thread!! */
         return SDL_SetError("WIN_CoInitialize failed during WASAPI device open");
     }
-    this->hidden->open_threadid = SDL_ThreadID();  /* set this _after_ coinitialize so we don't uninit if device fails at the wrong moment. */
+    this->hidden->open_threadid = SDL_ThreadID(); /* set this _after_ coinitialize so we don't uninit if device fails at the wrong moment. */
 
     if (!devid) { /* is default device? */
         this->hidden->default_device_generation = SDL_AtomicGet(this->iscapture ? &SDL_IMMDevice_DefaultCaptureGeneration : &SDL_IMMDevice_DefaultPlaybackGeneration);

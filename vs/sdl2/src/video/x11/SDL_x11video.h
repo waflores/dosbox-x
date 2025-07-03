@@ -27,9 +27,9 @@
 
 #include "../SDL_sysvideo.h"
 
+#include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/Xatom.h>
 
 #ifdef SDL_VIDEO_DRIVER_X11_XCURSOR
 #include <X11/Xcursor/Xcursor.h>
@@ -61,8 +61,8 @@
 #include "SDL_x11modes.h"
 #include "SDL_x11mouse.h"
 #include "SDL_x11opengl.h"
-#include "SDL_x11window.h"
 #include "SDL_x11vulkan.h"
+#include "SDL_x11window.h"
 
 /* Private display data */
 

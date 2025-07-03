@@ -5,8 +5,8 @@
  * Header for common functionality used by variators.
  */
 
-#include <SDL_types.h>
 #include "SDL_visualtest_sut_configparser.h"
+#include <SDL_types.h>
 
 #ifndef SDL_visualtest_variator_common_h_
 #define SDL_visualtest_variator_common_h_
@@ -36,21 +36,24 @@ typedef union SDLVisualTest_SUTOptionValue
     SDL_bool bool_value;
     /*! Value if the option is of type integer. If on is true then the option
         will be passed to the SUT, otherwise it will be ignored. */
-    struct {
+    struct
+    {
         int value;
         SDL_bool on;
     } integer;
     /*! Index of the string in the enum_values field of the corresponding
         SDLVisualTest_SUTOption object. If on is true the option will passed
         to the SUT, otherwise it will be ignored. */
-    struct {
+    struct
+    {
         int index;
         SDL_bool on;
     } enumerated;
-    /*! Value if the option is of type string. If on is true the option will 
+    /*! Value if the option is of type string. If on is true the option will
         be passed to the SUT, otherwise it will be ignored. */
-    struct {
-        char* value;
+    struct
+    {
+        char *value;
         SDL_bool on;
     } string;
 } SDLVisualTest_SUTOptionValue;
@@ -63,7 +66,7 @@ typedef union SDLVisualTest_SUTOptionValue
 typedef struct SDLVisualTest_Variation
 {
     /*! Pointer to array of option values */
-    SDLVisualTest_SUTOptionValue* vars;
+    SDLVisualTest_SUTOptionValue *vars;
     /*! Number of option values in \c vars */
     int num_vars;
 } SDLVisualTest_Variation;
@@ -82,8 +85,8 @@ typedef struct SDLVisualTest_Variation
  *         1 is always returned for integer and string type options. -1 is
  *         returned on error.
  */
-int SDLVisualTest_NextValue(SDLVisualTest_SUTOptionValue* var,
-                            SDLVisualTest_SUTOption* opt);
+int SDLVisualTest_NextValue(SDLVisualTest_SUTOptionValue *var,
+                            SDLVisualTest_SUTOption *opt);
 
 /**
  * Converts a variation object into a string of command line arguments.
@@ -95,9 +98,9 @@ int SDLVisualTest_NextValue(SDLVisualTest_SUTOptionValue* var,
  *
  * \return 1 on success, 0 on failure
  */
-int SDLVisualTest_MakeStrFromVariation(SDLVisualTest_Variation* variation,
-                                       SDLVisualTest_SUTConfig* config,
-                                       char* buffer, int size);
+int SDLVisualTest_MakeStrFromVariation(SDLVisualTest_Variation *variation,
+                                       SDLVisualTest_SUTConfig *config,
+                                       char *buffer, int size);
 
 /**
  * Initializes the variation using the following rules:
@@ -109,8 +112,8 @@ int SDLVisualTest_MakeStrFromVariation(SDLVisualTest_Variation* variation,
  *
  * \return 1 on success, 0 on failure.
  */
-int SDLVisualTest_InitVariation(SDLVisualTest_Variation* variation,
-                                SDLVisualTest_SUTConfig* config);
+int SDLVisualTest_InitVariation(SDLVisualTest_Variation *variation,
+                                SDLVisualTest_SUTConfig *config);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

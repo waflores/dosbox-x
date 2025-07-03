@@ -16,7 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef DOSBOX_SHELL_H
 #define DOSBOX_SHELL_H
 
@@ -39,40 +38,41 @@
 extern Bitu call_shellstop;
 class DOS_Shell;
 
-/* first_shell is used to add and delete stuff from the shell env 
+/* first_shell is used to add and delete stuff from the shell env
  * by "external" programs. (config) */
-extern DOS_Shell * first_shell;
+extern DOS_Shell *first_shell;
 
-const std::map<int, std::string> langcp_map {
-	{437, "en_US"},
-	//{850, "de_DE"},
+const std::map<int, std::string> langcp_map{
+    {437, "en_US"},
+    //{850, "de_DE"},
     {852, "hu_HU"},
     {857, "tr_TR"},
-	{858, "es_ES"},
-	{859, "fr_FR"},
-	{860, "pt_BR"},
-	{866, "ru_RU"},
-	{932, "ja_JP"},
-	{936, "zh_CN"},
-	{949, "ko_KR"},
-	{950, "zh_TW"},
-	{951, "zh_TW"},
+    {858, "es_ES"},
+    {859, "fr_FR"},
+    {860, "pt_BR"},
+    {866, "ru_RU"},
+    {932, "ja_JP"},
+    {936, "zh_CN"},
+    {949, "ko_KR"},
+    {950, "zh_TW"},
+    {951, "zh_TW"},
 };
 
 class BatchFile {
 public:
-	BatchFile(DOS_Shell * host,char const* const resolved_name,char const* const entered_name, char const * const cmd_line);
-	virtual ~BatchFile();
-	virtual bool ReadLine(char * line);
-	bool Goto(const char * where);
-	void Shift(void);
-	uint16_t file_handle;
-	uint32_t location;
-	bool echo;
-	DOS_Shell * shell;
-	BatchFile * prev;
-	CommandLine * cmd;
-	std::string filename;
+  BatchFile(DOS_Shell *host, char const *const resolved_name,
+            char const *const entered_name, char const *const cmd_line);
+  virtual ~BatchFile();
+  virtual bool ReadLine(char *line);
+  bool Goto(const char *where);
+  void Shift(void);
+  uint16_t file_handle;
+  uint32_t location;
+  bool echo;
+  DOS_Shell *shell;
+  BatchFile *prev;
+  CommandLine *cmd;
+  std::string filename;
 };
 
 class AutoexecEditor;
@@ -83,311 +83,314 @@ class AutoexecEditor;
  */
 class DOS_Shell : public Program {
 private:
-	friend class AutoexecEditor;
-	std::list<std::string> l_history, l_completion;
-    template<class _Type>
-    struct less_ignore_case {
-        typedef _Type first_argument_type;
-        typedef _Type second_argument_type;
-        typedef bool result_type;
+  friend class AutoexecEditor;
+  std::list<std::string> l_history, l_completion;
+  template <class _Type> struct less_ignore_case {
+    typedef _Type first_argument_type;
+    typedef _Type second_argument_type;
+    typedef bool result_type;
 
-        constexpr bool operator()(const _Type& _Left, const _Type& _Right) const {
-            return strcasecmp(_Left.c_str(), _Right.c_str()) < 0;
-        }
-    };
-    typedef std::map<std::string, std::string, less_ignore_case<std::string> > cmd_alias_map_t, cmd_assoc_map_t;
-    cmd_alias_map_t cmd_alias;
-    cmd_assoc_map_t cmd_assoc;
-	uint16_t completion_index;
-	
+    constexpr bool operator()(const _Type &_Left, const _Type &_Right) const {
+      return strcasecmp(_Left.c_str(), _Right.c_str()) < 0;
+    }
+  };
+  typedef std::map<std::string, std::string, less_ignore_case<std::string>>
+      cmd_alias_map_t, cmd_assoc_map_t;
+  cmd_alias_map_t cmd_alias;
+  cmd_assoc_map_t cmd_assoc;
+  uint16_t completion_index;
+
 private:
-	void ProcessCmdLineEnvVarStitution(char * line);
-	std::string hasAssociation(const char* name);
-	static bool hasExecutableExtension(const char* name);
+  void ProcessCmdLineEnvVarStitution(char *line);
+  std::string hasAssociation(const char *name);
+  static bool hasExecutableExtension(const char *name);
 
 public:
+  DOS_Shell();
+  virtual ~DOS_Shell();
 
-	DOS_Shell();
-	virtual ~DOS_Shell();
+  void Prepare(void);
+  /*! \brief      Program entry point, when the command is run
+   */
+  void Run(void) override;
 
-	void Prepare(void);
-    /*! \brief      Program entry point, when the command is run
-     */
-	void Run(void) override;
+  /*! \brief      Alternate execution if /C switch is given
+   */
+  void RunInternal(void); // for command /C
 
-    /*! \brief      Alternate execution if /C switch is given
-     */
-	void RunInternal(void); //for command /C
+  /* A load of subfunctions */
 
-/* A load of subfunctions */
+  /*! \brief      Line parsing function
+   */
+  void ParseLine(char *line);
 
-    /*! \brief      Line parsing function
-     */
-	void ParseLine(char * line);
+  /*! \brief      Redirection handling
+   */
+  Bitu GetRedirection(char *s, char **ifn, char **ofn, char **toc,
+                      bool *append);
 
-    /*! \brief      Redirection handling
-     */
-	Bitu GetRedirection(char *s, char **ifn, char **ofn, char **toc,bool * append);
+  /*! \brief      Build Tab completion
+   */
+  bool BuildCompletions(char *line, uint16_t str_len);
 
-    /*! \brief      Build Tab completion
-     */
-	bool BuildCompletions(char * line, uint16_t str_len);
+  /*! \brief      Command line input and keyboard handling
+   */
+  void InputCommand(char *line);
 
-    /*! \brief      Command line input and keyboard handling
-     */
-	void InputCommand(char * line);
+  /*! \brief      Render and output command prompt
+   */
+  void ShowPrompt();
 
-    /*! \brief      Render and output command prompt
-     */
-	void ShowPrompt();
+  /*! \brief      Process and execute command (internal or external)
+   */
+  void DoCommand(char *line);
 
-    /*! \brief      Process and execute command (internal or external)
-     */
-	void DoCommand(char * line);
+  /*! \brief      Execute a command
+   */
+  bool Execute(char *name, const char *args);
 
-    /*! \brief      Execute a command
-     */
-    bool Execute(char* name, const char* args);
+  /*! \brief      Checks if it matches a hardware-property */
+  bool CheckConfig(char *cmd_in, char *line);
 
-	/*! \brief      Checks if it matches a hardware-property */
-	bool CheckConfig(char* cmd_in,char*line);
+  /*! \brief      Given a command, look up the path using default paths and the
+   * PATH variable
+   */
+  char *Which(char *name);
 
-    /*! \brief      Given a command, look up the path using default paths and the PATH variable
-     */
-	char * Which(char * name);
+  /*! \brief      Command history list
+   */
+  void CMD_HISTORY(char *args);
 
-    /*! \brief      Command history list
-     */
-	void CMD_HISTORY(char * args);
+  /*! \brief      Online HELP for the shell
+   */
+  void CMD_HELP(char *args);
 
-    /*! \brief      Online HELP for the shell
-     */
-	void CMD_HELP(char * args);
+  /*! \brief      Extended Ctrl+C switch
+   */
+  void CMD_BREAK(char *args);
 
-    /*! \brief      Extended Ctrl+C switch
-     */
-	void CMD_BREAK(char * args);
+  /*! \brief      Clear screen (CLS)
+   */
+  void CMD_CLS(char *args);
 
-    /*! \brief      Clear screen (CLS)
-     */
-	void CMD_CLS(char * args);
+  /*! \brief      File copy command
+   */
+  void CMD_COPY(char *args);
 
-    /*! \brief      File copy command
-     */
-	void CMD_COPY(char * args);
+  /*! \brief      Command to set date (DATE)
+   */
+  void CMD_DATE(char *args);
 
-    /*! \brief      Command to set date (DATE)
-     */
-	void CMD_DATE(char * args);
+  /*! \brief      Command to set time (TIME)
+   */
+  void CMD_TIME(char *args);
 
-    /*! \brief      Command to set time (TIME)
-     */
-	void CMD_TIME(char * args);
+  /*! \brief      Directory listing (DIR)
+   */
+  void CMD_DIR(char *args);
 
-    /*! \brief      Directory listing (DIR)
-     */
-	void CMD_DIR(char * args);
+  /*! \brief      Deletion command (DEL)
+   */
+  void CMD_DELETE(char *args);
 
-    /*! \brief      Deletion command (DEL)
-     */
-	void CMD_DELETE(char * args);
+  /*! \brief      Delete directory tree (DELTREE)
+   */
+  void CMD_DELTREE(char *args);
 
-    /*! \brief      Delete directory tree (DELTREE)
-     */
-	void CMD_DELTREE(char * args);
+  /*! \brief      Echo command (ECHO)
+   */
+  void CMD_ECHO(char *args);
 
-    /*! \brief      Echo command (ECHO)
-     */
-	void CMD_ECHO(char * args);
+  /*! \brief      Exit command (EXIT)
+   */
+  void CMD_EXIT(char *args);
 
-    /*! \brief      Exit command (EXIT)
-     */
-	void CMD_EXIT(char * args);
+  /*! \brief      Directory creation (MKDIR)
+   */
+  void CMD_MKDIR(char *args);
 
-    /*! \brief      Directory creation (MKDIR)
-     */
-	void CMD_MKDIR(char * args);
+  /*! \brief      Change current directory (CD)
+   */
+  void CMD_CHDIR(char *args);
 
-    /*! \brief      Change current directory (CD)
-     */
-	void CMD_CHDIR(char * args);
+  /*! \brief      Directory deletion (RMDIR)
+   */
+  void CMD_RMDIR(char *args);
 
-    /*! \brief      Directory deletion (RMDIR)
-     */
-	void CMD_RMDIR(char * args);
+  /*! \brief      Environment variable setting/management (SET)
+   */
+  void CMD_SET(char *args);
 
-    /*! \brief      Environment variable setting/management (SET)
-     */
-	void CMD_SET(char * args);
+  /*! \brief      Conditional execution (IF)
+   */
+  void CMD_IF(char *args);
 
-    /*! \brief      Conditional execution (IF)
-     */
-	void CMD_IF(char * args);
+  /*! \brief      Batch file branching (GOTO)
+   */
+  void CMD_GOTO(char *args);
 
-    /*! \brief      Batch file branching (GOTO)
-     */
-	void CMD_GOTO(char * args);
+  /*! \brief      Print file to console (TYPE)
+   */
+  void CMD_TYPE(char *args);
 
-    /*! \brief      Print file to console (TYPE)
-     */
-	void CMD_TYPE(char * args);
+  /*! \brief      Human readable comment (REM)
+   */
+  void CMD_REM(char *args);
 
-    /*! \brief      Human readable comment (REM)
-     */
-	void CMD_REM(char * args);
+  /*! \brief      File rename (REN)
+   */
+  void CMD_RENAME(char *args);
 
-    /*! \brief      File rename (REN)
-     */
-	void CMD_RENAME(char * args);
+  /*! \brief      Execute batch file as sub-program (CALL)
+   */
+  void CMD_CALL(char *args);
 
-    /*! \brief      Execute batch file as sub-program (CALL)
-     */
-	void CMD_CALL(char * args);
+  /*! \brief      Print generic Syntax Error message to console
+   */
+  void SyntaxError(void);
 
-    /*! \brief      Print generic Syntax Error message to console
-     */
-	void SyntaxError(void);
+  /*! \brief      Pause and wait for user to hit Enter (PAUSE)
+   */
+  void CMD_PAUSE(char *args);
 
-    /*! \brief      Pause and wait for user to hit Enter (PAUSE)
-     */
-	void CMD_PAUSE(char * args);
+  /*! \brief      Map drive letter to folder (SUBST)
+   */
+  void CMD_SUBST(char *args);
 
-    /*! \brief      Map drive letter to folder (SUBST)
-     */
-	void CMD_SUBST(char* args);
+  /*! \brief      Load a program into high memory if possible
+   */
+  void CMD_LOADHIGH(char *args);
 
-    /*! \brief      Load a program into high memory if possible
-     */
-	void CMD_LOADHIGH(char* args);
+  /*! \brief      Prompt for a choice (CHOICE)
+   */
+  void CMD_CHOICE(char *args);
 
-    /*! \brief      Prompt for a choice (CHOICE)
-     */
-	void CMD_CHOICE(char * args);
+  /*! \brief      Set file attributes (ATTRIB)
+   */
+  void CMD_ATTRIB(char *args);
 
-    /*! \brief      Set file attributes (ATTRIB)
-     */
-	void CMD_ATTRIB(char * args);
+  /*! \brief      Set PATH variable (PATH)
+   */
+  void CMD_PATH(char *args);
 
-    /*! \brief      Set PATH variable (PATH)
-     */
-	void CMD_PATH(char * args);
+  /*! \brief      Consume one command line argument (SHIFT)
+   */
+  void CMD_SHIFT(char *args);
 
-    /*! \brief      Consume one command line argument (SHIFT)
-     */
-	void CMD_SHIFT(char * args);
+  /*! \brief      List directory tree (TREE)
+   */
+  void CMD_TREE(char *args);
 
-    /*! \brief      List directory tree (TREE)
-     */
-	void CMD_TREE(char * args);
+  /*! \brief      File verification switch
+   */
+  void CMD_VERIFY(char *args);
 
-    /*! \brief      File verification switch
-     */
-	void CMD_VERIFY(char * args);
+  /*! \brief      Print DOS version (VER)
+   */
+  void CMD_VER(char *args);
 
-    /*! \brief      Print DOS version (VER)
-     */
-	void CMD_VER(char * args);
+  /*! \brief      TODO?
+   */
+  void CMD_ADDKEY(char *args);
 
-    /*! \brief      TODO?
-     */
-	void CMD_ADDKEY(char * args);
+  /*! \brief      TODO?
+   */
+  void CMD_VOL(char *args);
 
-    /*! \brief      TODO?
-     */
-	void CMD_VOL(char * args);
+  /*! \brief      Change DOS prompt pattern (PROMPT)
+   */
+  void CMD_PROMPT(char *args);
 
-    /*! \brief      Change DOS prompt pattern (PROMPT)
-     */
-	void CMD_PROMPT(char * args);
+  /*! \brief      Text pager (MORE)
+   */
+  void CMD_MORE(char *args);
 
-    /*! \brief      Text pager (MORE)
-     */
-	void CMD_MORE(char * args);
+  /*! \brief      Change TTY (console) device (CTTY)
+   */
+  void CMD_CTTY(char *args);
 
-    /*! \brief      Change TTY (console) device (CTTY)
-     */
-	void CMD_CTTY(char * args);
+  /*! \brief      Change country code
+   */
+  void CMD_CHCP(char *args);
+  void CMD_COUNTRY(char *args);
+  void CMD_PUSHD(char *args);
+  void CMD_POPD(char *args);
+  void CMD_TRUENAME(char *args);
+  void CMD_DXCAPTURE(char *args);
 
-    /*! \brief      Change country code
-     */
-	void CMD_CHCP(char * args);
-	void CMD_COUNTRY(char * args);
-	void CMD_PUSHD(char * args);
-	void CMD_POPD(char * args);
-    void CMD_TRUENAME(char * args);
-    void CMD_DXCAPTURE(char * args);
+  /*! \brief      Looping execution (FOR)
+   */
+  void CMD_FOR(char *args);
 
-    /*! \brief      Looping execution (FOR)
-     */
-	void CMD_FOR(char * args);
+  /*! \brief      LFN switch for FOR
+   */
+  void CMD_LFNFOR(char *args);
 
-    /*! \brief      LFN switch for FOR
-     */
-	void CMD_LFNFOR(char * args);
+  /*! \brief      ALIAS
+   */
+  void CMD_ALIAS(char *args);
 
-    /*! \brief      ALIAS
-    */
-	void CMD_ALIAS(char* args);
+  /*! \brief      ALIAS
+   */
+  void CMD_ASSOC(char *args);
 
-    /*! \brief      ALIAS
-    */
-	void CMD_ASSOC(char* args);
+  /*! \brief      VTEXT
+   */
+  void CMD_VTEXT(char *args);
 
-    /*! \brief      VTEXT
-    */
-	void CMD_VTEXT(char *args);
-
-    /*! \brief      LS
-    */
-	void CMD_LS(char *args);
+  /*! \brief      LS
+   */
+  void CMD_LS(char *args);
 
 #if C_DEBUG
-    /*! \brief      Execute command within debugger (break at entry point)
-     */
-	void CMD_DEBUGBOX(char * args);
+  /*! \brief      Execute command within debugger (break at entry point)
+   */
+  void CMD_DEBUGBOX(char *args);
 
-    /*! \brief      INT 2Fh debugging tool
-     */
-	void CMD_INT2FDBG(char * args);
+  /*! \brief      INT 2Fh debugging tool
+   */
+  void CMD_INT2FDBG(char *args);
 #endif
 
-	virtual bool execute_shell_cmd(char *name, char *arguments);
+  virtual bool execute_shell_cmd(char *name, char *arguments);
 
-	/* The shell's variables */
-	uint16_t input_handle;
-	BatchFile * bf;                     //! Batch file to execute
-	bool echo;
-	bool exit;
-	bool call;
-    bool exec;
-    bool perm;
-	bool lfnfor;
-    /* Status */
-    bool input_eof;                     //! STDIN has hit EOF
+  /* The shell's variables */
+  uint16_t input_handle;
+  BatchFile *bf; //! Batch file to execute
+  bool echo;
+  bool exit;
+  bool call;
+  bool exec;
+  bool perm;
+  bool lfnfor;
+  /* Status */
+  bool input_eof; //! STDIN has hit EOF
 };
 
 struct SHELL_Cmd {
-	const char * name;								/* Command name*/
-	uint32_t flags;									/* Flags about the command */
-	void (DOS_Shell::*handler)(char * args);		/* Handler for this command */
-	const char * help;								/* String with command help */
+  const char *name;                       /* Command name*/
+  uint32_t flags;                         /* Flags about the command */
+  void (DOS_Shell::*handler)(char *args); /* Handler for this command */
+  const char *help;                       /* String with command help */
 };
 
 /* Object to manage lines in the autoexec.bat The lines get removed from
  * the file if the object gets destroyed. The environment is updated
  * as well if the line set a variable */
-class AutoexecObject{
+class AutoexecObject {
 private:
-	bool installed = false;
-	std::string buf;
+  bool installed = false;
+  std::string buf;
+
 public:
-	AutoexecObject() {};
-	void Install(std::string const &in);
-	void InstallBefore(std::string const &in);
-	void Uninstall();
-	~AutoexecObject();
+  AutoexecObject() {};
+  void Install(std::string const &in);
+  void InstallBefore(std::string const &in);
+  void Uninstall();
+  ~AutoexecObject();
+
 private:
-	void CreateAutoexec(void);
+  void CreateAutoexec(void);
 };
 
 size_t GetPauseCount();

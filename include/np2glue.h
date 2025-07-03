@@ -2,19 +2,19 @@
  * to help port code from Neko Project II and match the typedefs
  * it uses. */
 
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if defined(WIN32)
-# include <windows.h>
-# include <io.h>
+#include <io.h>
+#include <windows.h>
 
-# if defined(_MSC_VER)
-#  pragma warning(disable:4996)
-# endif
+#if defined(_MSC_VER)
+#pragma warning(disable : 4996)
+#endif
 #endif
 
 #if defined(WIN32) && !defined(strcasecmp)
@@ -28,60 +28,54 @@
 #endif
 
 #if defined(WIN32) || defined(OS2)
-# define BYTESEX_LITTLE
-# define _G_DIR_SEPARATOR '\\'
+#define BYTESEX_LITTLE
+#define _G_DIR_SEPARATOR '\\'
 #elif defined(EMSCRIPTEN)
-# define BYTESEX_LITTLE
-# define _G_DIR_SEPARATOR '/'
+#define BYTESEX_LITTLE
+#define _G_DIR_SEPARATOR '/'
 #else
-# include "byteorder.h"
-# define _G_DIR_SEPARATOR '/'
-# if !defined(BYTE_ORDER) || !defined(LITTLE_ENDIAN) || !defined(BIG_ENDIAN)
-#  error byteorder not enough information
-# endif
-# if BYTE_ORDER == LITTLE_ENDIAN
-#  define BYTESEX_LITTLE
-# elif BYTE_ORDER == BIG_ENDIAN
-#  define BYTESEX_BIG
-# else
-#  error unknown byte order
-# endif
+#include "byteorder.h"
+#define _G_DIR_SEPARATOR '/'
+#if !defined(BYTE_ORDER) || !defined(LITTLE_ENDIAN) || !defined(BIG_ENDIAN)
+#error byteorder not enough information
+#endif
+#if BYTE_ORDER == LITTLE_ENDIAN
+#define BYTESEX_LITTLE
+#elif BYTE_ORDER == BIG_ENDIAN
+#define BYTESEX_BIG
+#else
+#error unknown byte order
+#endif
 #endif
 
-enum {
-	SUCCESS		= 0,
-	FAILURE		= 1
-};
+enum { SUCCESS = 0, FAILURE = 1 };
+
+enum { PCBASECLOCK25 = 2457600, PCBASECLOCK20 = 1996800 };
 
 enum {
-	PCBASECLOCK25		= 2457600,
-	PCBASECLOCK20		= 1996800
-};
+  CPUMODE_8MHZ = 0x20,
 
-enum {
-	CPUMODE_8MHZ		= 0x20,
+  PCMODEL_VF = 0,
+  PCMODEL_VM = 1,
+  PCMODEL_VX = 2,
+  PCMODELMASK = 0x3f,
+  PCMODEL_PC9821 = 0x40,
+  PCMODEL_EPSON = 0x80,
 
-	PCMODEL_VF			= 0,
-	PCMODEL_VM			= 1,
-	PCMODEL_VX			= 2,
-	PCMODELMASK			= 0x3f,
-	PCMODEL_PC9821		= 0x40,
-	PCMODEL_EPSON		= 0x80,
+  PCHDD_SASI = 0x01,
+  PCHDD_SCSI = 0x02,
+  PCHDD_IDE = 0x04,
 
-	PCHDD_SASI			= 0x01,
-	PCHDD_SCSI			= 0x02,
-	PCHDD_IDE			= 0x04,
+  PCROM_BIOS = 0x01,
+  PCROM_SOUND = 0x02,
+  PCROM_SASI = 0x04,
+  PCROM_SCSI = 0x08,
+  PCROM_BIOS9821 = 0x10,
 
-	PCROM_BIOS			= 0x01,
-	PCROM_SOUND			= 0x02,
-	PCROM_SASI			= 0x04,
-	PCROM_SCSI			= 0x08,
-	PCROM_BIOS9821		= 0x10,
+  PCSOUND_NONE = 0x00,
 
-	PCSOUND_NONE		= 0x00,
-
-	PCCBUS_PC9861K		= 0x0001,
-	PCCBUS_MPU98		= 0x0002
+  PCCBUS_PC9861K = 0x0001,
+  PCCBUS_MPU98 = 0x0002
 };
 
 // GLUE TYPEDEFS
@@ -100,24 +94,20 @@ typedef uint8_t BOOL;
 typedef uint8_t BYTE;
 #endif
 typedef char OEMCHAR;
-typedef void* NEVENTITEM;
+typedef void *NEVENTITEM;
 #define OEMTEXT(x) x
 #define SOUNDCALL
 
-static inline uint16_t LOADINTELWORD(void *x) {
-    return *((uint16_t*)(x));
+static inline uint16_t LOADINTELWORD(void *x) { return *((uint16_t *)(x)); }
+
+static inline void STOREINTELWORD(void *x, uint16_t y) {
+  *((uint16_t *)(x)) = y;
 }
 
-static inline void STOREINTELWORD(void *x,uint16_t y) {
-    *((uint16_t*)(x)) = y;
-}
+static inline uint32_t LOADINTELDWORD(void *x) { return *((uint32_t *)(x)); }
 
-static inline uint32_t LOADINTELDWORD(void *x) {
-    return *((uint32_t*)(x));
-}
-
-static inline void STOREINTELDWORD(void *x,uint32_t y) {
-    *((uint32_t*)(x)) = y;
+static inline void STOREINTELDWORD(void *x, uint32_t y) {
+  *((uint32_t *)(x)) = y;
 }
 
 #ifndef TRUE
@@ -138,12 +128,10 @@ static inline void STOREINTELDWORD(void *x,uint32_t y) {
 #endif
 
 #ifndef WIN32
-static inline void ZeroMemory(void *p,size_t l) {
-    memset(p,0,l);
-}
+static inline void ZeroMemory(void *p, size_t l) { memset(p, 0, l); }
 
-static inline void FillMemory(void *p,size_t l,unsigned char c) {
-    memset(p,c,l);
+static inline void FillMemory(void *p, size_t l, unsigned char c) {
+  memset(p, c, l);
 }
 #endif
 
@@ -157,16 +145,16 @@ void sound_sync(void);
 }
 #endif
 
-#define BRESULT             UINT8
+#define BRESULT UINT8
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #if 1
-void _TRACEOUT(const char *fmt,...);
+void _TRACEOUT(const char *fmt, ...);
 #else
-static inline void _TRACEOUT(const char *fmt,...) { };
+static inline void _TRACEOUT(const char *fmt, ...) {};
 #endif
 #define TRACEOUT(a) _TRACEOUT a
 
@@ -175,82 +163,82 @@ static inline void _TRACEOUT(const char *fmt,...) { };
 #endif
 
 typedef struct {
-	// G~[gÉæ­QÆ³êéz
-	UINT8	uPD72020;
-	UINT8	DISPSYNC;
-	UINT8	RASTER;
-	UINT8	realpal;
-	UINT8	LCD_MODE;
-	UINT8	skipline;
-	UINT16	skiplight;
+  // G~[gÉæ­QÆ³êéz
+  UINT8 uPD72020;
+  UINT8 DISPSYNC;
+  UINT8 RASTER;
+  UINT8 realpal;
+  UINT8 LCD_MODE;
+  UINT8 skipline;
+  UINT16 skiplight;
 
-	UINT8	KEY_MODE;
-	UINT8	XSHIFT;
-	UINT8	BTN_RAPID;
-	UINT8	BTN_MODE;
+  UINT8 KEY_MODE;
+  UINT8 XSHIFT;
+  UINT8 BTN_RAPID;
+  UINT8 BTN_MODE;
 
-	UINT8	dipsw[3];
-	UINT8	MOUSERAPID;
+  UINT8 dipsw[3];
+  UINT8 MOUSERAPID;
 
-	UINT8	calendar;
-	UINT8	usefd144;
-	UINT8	wait[6];
+  UINT8 calendar;
+  UINT8 usefd144;
+  UINT8 wait[6];
 
-	// ZbgÆ© ñÜèQÆ³êÈ¢z
-	OEMCHAR	model[8];
-	UINT	baseclock;
-	UINT	multiple;
+  // ZbgÆ© ñÜèQÆ³êÈ¢z
+  OEMCHAR model[8];
+  UINT baseclock;
+  UINT multiple;
 
-	UINT8	memsw[8];
+  UINT8 memsw[8];
 
-	UINT8	ITF_WORK;
-	UINT8	EXTMEM;
-	UINT8	grcg;
-	UINT8	color16;
-	UINT32	BG_COLOR;
-	UINT32	FG_COLOR;
+  UINT8 ITF_WORK;
+  UINT8 EXTMEM;
+  UINT8 grcg;
+  UINT8 color16;
+  UINT32 BG_COLOR;
+  UINT32 FG_COLOR;
 
-	UINT16	samplingrate;
-	UINT16	delayms;
-	UINT8	SOUND_SW;
-	UINT8	snd_x;
+  UINT16 samplingrate;
+  UINT16 delayms;
+  UINT8 SOUND_SW;
+  UINT8 snd_x;
 
-	UINT8	snd14opt[3];
-	UINT8	snd26opt;
-	UINT8	snd86opt;
-	UINT8	spbopt;
-	UINT8	spb_vrc;												// ver0.30
-	UINT8	spb_vrl;												// ver0.30
-	UINT8	spb_x;													// ver0.30
+  UINT8 snd14opt[3];
+  UINT8 snd26opt;
+  UINT8 snd86opt;
+  UINT8 spbopt;
+  UINT8 spb_vrc; // ver0.30
+  UINT8 spb_vrl; // ver0.30
+  UINT8 spb_x;   // ver0.30
 
-	UINT8	BEEP_VOL;
-	UINT8	vol14[6];
-	UINT8	vol_fm;
-	UINT8	vol_ssg;
-	UINT8	vol_adpcm;
-	UINT8	vol_pcm;
-	UINT8	vol_rhythm;
+  UINT8 BEEP_VOL;
+  UINT8 vol14[6];
+  UINT8 vol_fm;
+  UINT8 vol_ssg;
+  UINT8 vol_adpcm;
+  UINT8 vol_pcm;
+  UINT8 vol_rhythm;
 
-	UINT8	mpuenable;
-	UINT8	mpuopt;
+  UINT8 mpuenable;
+  UINT8 mpuopt;
 
-	UINT8	pc9861enable;
-	UINT8	pc9861sw[3];
-	UINT8	pc9861jmp[6];
+  UINT8 pc9861enable;
+  UINT8 pc9861sw[3];
+  UINT8 pc9861jmp[6];
 
-	UINT8	fddequip;
-	UINT8	MOTOR;
-	UINT8	MOTORVOL;
-	UINT8	PROTECTMEM;
-	UINT8	hdrvacc;
+  UINT8 fddequip;
+  UINT8 MOTOR;
+  UINT8 MOTORVOL;
+  UINT8 PROTECTMEM;
+  UINT8 hdrvacc;
 
-	OEMCHAR	sasihdd[2][MAX_PATH];									// ver0.74
+  OEMCHAR sasihdd[2][MAX_PATH]; // ver0.74
 #if defined(SUPPORT_SCSI)
-	OEMCHAR	scsihdd[4][MAX_PATH];									// ver0.74
+  OEMCHAR scsihdd[4][MAX_PATH]; // ver0.74
 #endif
-	OEMCHAR	fontfile[MAX_PATH];
-	OEMCHAR	biospath[MAX_PATH];
-	OEMCHAR	hdrvroot[MAX_PATH];
+  OEMCHAR fontfile[MAX_PATH];
+  OEMCHAR biospath[MAX_PATH];
+  OEMCHAR hdrvroot[MAX_PATH];
 } NP2CFG;
 
 #ifdef __cplusplus
@@ -276,35 +264,35 @@ extern NP2CFG pccore;
 #endif
 
 #ifndef min
-#define min(a,b)    (((a) < (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-#ifndef	NELEMENTS
-#define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
+#ifndef NELEMENTS
+#define NELEMENTS(a) ((int)(sizeof(a) / sizeof(a[0])))
 #endif
 
-#define	_MEM_INIT()				
-#define	_MALLOC(a, b)			malloc(a)
-#define	_MFREE(a)				free(a)
-#define	_HANDLE_ADD(a, b)		
-#define	_HANDLE_REM(a)			
-#define	_MEM_USED(a)			
+#define _MEM_INIT()
+#define _MALLOC(a, b) malloc(a)
+#define _MFREE(a) free(a)
+#define _HANDLE_ADD(a, b)
+#define _HANDLE_REM(a)
+#define _MEM_USED(a)
 
 #ifndef WIN32
-#define CopyMemory(d,s,n)   memcpy((d), (s), (n))
+#define CopyMemory(d, s, n) memcpy((d), (s), (n))
 #endif
 
-typedef FILE *			FILEH;
+typedef FILE *FILEH;
 
-#ifndef	FASTCALL
-#define	FASTCALL
+#ifndef FASTCALL
+#define FASTCALL
 #endif
 
-#define	IOOUTCALL	FASTCALL
-#define	IOINPCALL	FASTCALL
+#define IOOUTCALL FASTCALL
+#define IOINPCALL FASTCALL
 
-typedef	void (IOOUTCALL *IOOUT)(UINT port, REG8 val);
-typedef	REG8 (IOINPCALL *IOINP)(UINT port);
+typedef void(IOOUTCALL *IOOUT)(UINT port, REG8 val);
+typedef REG8(IOINPCALL *IOINP)(UINT port);
 
 #ifdef __cplusplus
 extern "C" {

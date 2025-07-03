@@ -23,14 +23,14 @@
 
 #ifdef SDL_JOYSTICK_EMSCRIPTEN
 
-#include <stdio.h>              /* For the definition of NULL */
 #include "SDL_error.h"
 #include "SDL_events.h"
+#include <stdio.h> /* For the definition of NULL */
 
-#include "SDL_joystick.h"
-#include "SDL_timer.h"
-#include "SDL_sysjoystick_c.h"
 #include "../SDL_joystick_c.h"
+#include "SDL_joystick.h"
+#include "SDL_sysjoystick_c.h"
+#include "SDL_timer.h"
 
 static SDL_joylist_item *JoystickByIndex(int index);
 

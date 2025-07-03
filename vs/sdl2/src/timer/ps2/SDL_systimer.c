@@ -22,14 +22,14 @@
 
 #ifdef SDL_TIMER_PS2
 
+#include "../SDL_timer_c.h"
+#include "SDL_error.h"
 #include "SDL_thread.h"
 #include "SDL_timer.h"
-#include "SDL_error.h"
-#include "../SDL_timer_c.h"
 #include <stdlib.h>
+#include <sys/time.h>
 #include <time.h>
 #include <timer.h>
-#include <sys/time.h>
 
 static uint64_t start;
 static SDL_bool ticks_started = SDL_FALSE;

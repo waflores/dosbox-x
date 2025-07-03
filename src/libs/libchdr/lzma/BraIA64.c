@@ -6,7 +6,8 @@
 // the code was moved to Bra.c
 
 #ifdef _MSC_VER
-#pragma warning(disable : 4206) // nonstandard extension used : translation unit is empty
+#pragma warning(                                                               \
+    disable : 4206) // nonstandard extension used : translation unit is empty
 #endif
 
 #if defined(__clang__)

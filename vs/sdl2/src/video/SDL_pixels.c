@@ -22,13 +22,13 @@
 
 /* General (mostly internal) pixel/color manipulation routines for SDL */
 
-#include "SDL_endian.h"
-#include "SDL_video.h"
-#include "SDL_sysvideo.h"
-#include "SDL_blit.h"
-#include "SDL_pixels_c.h"
-#include "SDL_RLEaccel_c.h"
 #include "../SDL_list.h"
+#include "SDL_RLEaccel_c.h"
+#include "SDL_blit.h"
+#include "SDL_endian.h"
+#include "SDL_pixels_c.h"
+#include "SDL_sysvideo.h"
+#include "SDL_video.h"
 
 /* Lookup tables to expand partial bytes to the full 0..255 range */
 
@@ -1140,18 +1140,18 @@ void SDL_FreeBlitMap(SDL_BlitMap *map)
     }
 }
 
-void SDL_CalculateGammaRamp(float gamma, Uint16 * ramp)
+void SDL_CalculateGammaRamp(float gamma, Uint16 *ramp)
 {
     int i;
 
     /* Input validation */
-    if (gamma < 0.0f ) {
-      SDL_InvalidParamError("gamma");
-      return;
+    if (gamma < 0.0f) {
+        SDL_InvalidParamError("gamma");
+        return;
     }
     if (!ramp) {
-      SDL_InvalidParamError("ramp");
-      return;
+        SDL_InvalidParamError("ramp");
+        return;
     }
 
     /* 0.0 gamma is all black */
@@ -1170,11 +1170,11 @@ void SDL_CalculateGammaRamp(float gamma, Uint16 * ramp)
         gamma = 1.0f / gamma;
         for (i = 0; i < 256; ++i) {
             value =
-                (int) (SDL_pow((double) i / 256.0, gamma) * 65535.0 + 0.5);
+                (int)(SDL_pow((double)i / 256.0, gamma) * 65535.0 + 0.5);
             if (value > 65535) {
                 value = 65535;
             }
-            ramp[i] = (Uint16) value;
+            ramp[i] = (Uint16)value;
         }
     }
 }

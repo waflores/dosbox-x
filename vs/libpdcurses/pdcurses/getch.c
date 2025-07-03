@@ -84,330 +84,293 @@ getch
 
 **man-end****************************************************************/
 
-#define _INBUFSIZ   512 /* size of terminal input buffer */
-#define NUNGETCH    256 /* max # chars to ungetch() */
+#define _INBUFSIZ 512 /* size of terminal input buffer */
+#define NUNGETCH 256  /* max # chars to ungetch() */
 
-static int c_pindex = 0;    /* putter index */
-static int c_gindex = 1;    /* getter index */
-static int c_ungind = 0;    /* ungetch() push index */
-static int c_ungch[NUNGETCH];   /* array of ungotten chars */
+static int c_pindex = 0;      /* putter index */
+static int c_gindex = 1;      /* getter index */
+static int c_ungind = 0;      /* ungetch() push index */
+static int c_ungch[NUNGETCH]; /* array of ungotten chars */
 
-static int _mouse_key(void)
-{
-    int i, key = KEY_MOUSE;
-    unsigned long mbe = SP->_trap_mbe;
+static int _mouse_key(void) {
+  int i, key = KEY_MOUSE;
+  unsigned long mbe = SP->_trap_mbe;
 
-    /* Filter unwanted mouse events */
+  /* Filter unwanted mouse events */
 
-    for (i = 0; i < 3; i++)
-    {
-        if (pdc_mouse_status.changes & (1 << i))
-        {
-            int shf = i * 5;
-            short button = pdc_mouse_status.button[i] & BUTTON_ACTION_MASK;
+  for (i = 0; i < 3; i++) {
+    if (pdc_mouse_status.changes & (1 << i)) {
+      int shf = i * 5;
+      short button = pdc_mouse_status.button[i] & BUTTON_ACTION_MASK;
 
-            if (   (!(mbe & (BUTTON1_PRESSED << shf)) &&
-                    (button == BUTTON_PRESSED))
+      if ((!(mbe & (BUTTON1_PRESSED << shf)) && (button == BUTTON_PRESSED))
 
-                || (!(mbe & (BUTTON1_CLICKED << shf)) &&
-                    (button == BUTTON_CLICKED))
+          || (!(mbe & (BUTTON1_CLICKED << shf)) && (button == BUTTON_CLICKED))
 
-                || (!(mbe & (BUTTON1_DOUBLE_CLICKED << shf)) &&
-                    (button == BUTTON_DOUBLE_CLICKED))
+          || (!(mbe & (BUTTON1_DOUBLE_CLICKED << shf)) &&
+              (button == BUTTON_DOUBLE_CLICKED))
 
-                || (!(mbe & (BUTTON1_MOVED << shf)) &&
-                    (button == BUTTON_MOVED))
+          || (!(mbe & (BUTTON1_MOVED << shf)) && (button == BUTTON_MOVED))
 
-                || (!(mbe & (BUTTON1_RELEASED << shf)) &&
-                    (button == BUTTON_RELEASED))
-            )
-                pdc_mouse_status.changes ^= (1 << i);
-        }
+          ||
+          (!(mbe & (BUTTON1_RELEASED << shf)) && (button == BUTTON_RELEASED)))
+        pdc_mouse_status.changes ^= (1 << i);
     }
+  }
 
-    if (pdc_mouse_status.changes & PDC_MOUSE_MOVED)
-    {
-        if (!(mbe & (BUTTON1_MOVED|BUTTON2_MOVED|BUTTON3_MOVED)))
-            pdc_mouse_status.changes ^= PDC_MOUSE_MOVED;
-    }
+  if (pdc_mouse_status.changes & PDC_MOUSE_MOVED) {
+    if (!(mbe & (BUTTON1_MOVED | BUTTON2_MOVED | BUTTON3_MOVED)))
+      pdc_mouse_status.changes ^= PDC_MOUSE_MOVED;
+  }
 
-    if (pdc_mouse_status.changes &
-        (PDC_MOUSE_WHEEL_UP|PDC_MOUSE_WHEEL_DOWN))
-    {
-        if (!(mbe & MOUSE_WHEEL_SCROLL))
-            pdc_mouse_status.changes &=
-                ~(PDC_MOUSE_WHEEL_UP|PDC_MOUSE_WHEEL_DOWN);
-    }
+  if (pdc_mouse_status.changes & (PDC_MOUSE_WHEEL_UP | PDC_MOUSE_WHEEL_DOWN)) {
+    if (!(mbe & MOUSE_WHEEL_SCROLL))
+      pdc_mouse_status.changes &= ~(PDC_MOUSE_WHEEL_UP | PDC_MOUSE_WHEEL_DOWN);
+  }
 
-    if (!pdc_mouse_status.changes)
-        return -1;
+  if (!pdc_mouse_status.changes)
+    return -1;
 
-    /* Check for click in slk area */
+  /* Check for click in slk area */
 
-    i = PDC_mouse_in_slk(pdc_mouse_status.y, pdc_mouse_status.x);
+  i = PDC_mouse_in_slk(pdc_mouse_status.y, pdc_mouse_status.x);
 
-    if (i)
-    {
-        if (pdc_mouse_status.button[0] & (BUTTON_PRESSED|BUTTON_CLICKED))
-            key = KEY_F(i);
-        else
-            key = -1;
-    }
-
-    return key;
-}
-
-int wgetch(WINDOW *win)
-{
-    static int buffer[_INBUFSIZ];   /* character buffer */
-    int key, waitcount;
-
-    PDC_LOG(("wgetch() - called\n"));
-
-    if (!win)
-        return ERR;
-
-    waitcount = 0;
-
-     /* set the number of 1/20th second napms() calls */
-
-    if (SP->delaytenths)
-        waitcount = 2 * SP->delaytenths;
+  if (i) {
+    if (pdc_mouse_status.button[0] & (BUTTON_PRESSED | BUTTON_CLICKED))
+      key = KEY_F(i);
     else
-        if (win->_delayms)
-        {
-            /* Can't really do millisecond intervals, so delay in
-               1/20ths of a second (50ms) */
+      key = -1;
+  }
 
-            waitcount = win->_delayms / 50;
-            if (!waitcount)
-                waitcount = 1;
-        }
+  return key;
+}
 
-    /* refresh window when wgetch is called if there have been changes
-       to it and it is not a pad */
+int wgetch(WINDOW *win) {
+  static int buffer[_INBUFSIZ]; /* character buffer */
+  int key, waitcount;
 
-    if (!(win->_flags & _PAD) && ((!win->_leaveit &&
-         (win->_begx + win->_curx != SP->curscol ||
-          win->_begy + win->_cury != SP->cursrow)) || is_wintouched(win)))
-        wrefresh(win);
+  PDC_LOG(("wgetch() - called\n"));
 
-    /* if ungotten char exists, remove and return it */
+  if (!win)
+    return ERR;
 
-    if (c_ungind)
-        return c_ungch[--c_ungind];
+  waitcount = 0;
 
-    /* if normal and data in buffer */
+  /* set the number of 1/20th second napms() calls */
 
-    if ((!SP->raw_inp && !SP->cbreak) && (c_gindex < c_pindex))
-        return buffer[c_gindex++];
+  if (SP->delaytenths)
+    waitcount = 2 * SP->delaytenths;
+  else if (win->_delayms) {
+    /* Can't really do millisecond intervals, so delay in
+       1/20ths of a second (50ms) */
 
-    /* prepare to buffer data */
+    waitcount = win->_delayms / 50;
+    if (!waitcount)
+      waitcount = 1;
+  }
 
-    c_pindex = 0;
-    c_gindex = 0;
+  /* refresh window when wgetch is called if there have been changes
+     to it and it is not a pad */
 
-    /* to get here, no keys are buffered. go and get one. */
+  if (!(win->_flags & _PAD) &&
+      ((!win->_leaveit && (win->_begx + win->_curx != SP->curscol ||
+                           win->_begy + win->_cury != SP->cursrow)) ||
+       is_wintouched(win)))
+    wrefresh(win);
 
-    for (;;)            /* loop for any buffering */
-    {
-        /* is there a keystroke ready? */
+  /* if ungotten char exists, remove and return it */
 
-        if (!PDC_check_key())
-        {
-            /* if not, handle timeout() and halfdelay() */
+  if (c_ungind)
+    return c_ungch[--c_ungind];
 
-            if (SP->delaytenths || win->_delayms)
-            {
-                if (!waitcount)
-                    return ERR;
+  /* if normal and data in buffer */
 
-                waitcount--;
-            }
-            else
-                if (win->_nodelay)
-                    return ERR;
+  if ((!SP->raw_inp && !SP->cbreak) && (c_gindex < c_pindex))
+    return buffer[c_gindex++];
 
-            napms(50);  /* sleep for 1/20th second */
-            continue;   /* then check again */
-        }
+  /* prepare to buffer data */
 
-        /* if there is, fetch it */
+  c_pindex = 0;
+  c_gindex = 0;
 
-        key = PDC_get_key();
+  /* to get here, no keys are buffered. go and get one. */
 
-        if (SP->key_code)
-        {
-            /* filter special keys if not in keypad mode */
+  for (;;) /* loop for any buffering */
+  {
+    /* is there a keystroke ready? */
 
-            if (!win->_use_keypad)
-                key = -1;
+    if (!PDC_check_key()) {
+      /* if not, handle timeout() and halfdelay() */
 
-            /* filter mouse events; translate mouse clicks in the slk
-               area to function keys */
+      if (SP->delaytenths || win->_delayms) {
+        if (!waitcount)
+          return ERR;
 
-            else if (key == KEY_MOUSE)
-                key = _mouse_key();
-        }
+        waitcount--;
+      } else if (win->_nodelay)
+        return ERR;
 
-        /* unwanted key? loop back */
-
-        if (key == -1)
-            continue;
-
-        /* translate CR */
-
-        if (key == '\r' && SP->autocr && !SP->raw_inp)
-            key = '\n';
-
-        /* if echo is enabled */
-
-        if (SP->echo && !SP->key_code)
-        {
-            waddch(win, key);
-            wrefresh(win);
-        }
-
-        /* if no buffering */
-
-        if (SP->raw_inp || SP->cbreak)
-            return key;
-
-        /* if no overflow, put data in buffer */
-
-        if (key == '\b')
-        {
-            if (c_pindex > c_gindex)
-                c_pindex--;
-        }
-        else
-            if (c_pindex < _INBUFSIZ - 2)
-                buffer[c_pindex++] = key;
-
-        /* if we got a line */
-
-        if (key == '\n' || key == '\r')
-            return buffer[c_gindex++];
+      napms(50); /* sleep for 1/20th second */
+      continue;  /* then check again */
     }
+
+    /* if there is, fetch it */
+
+    key = PDC_get_key();
+
+    if (SP->key_code) {
+      /* filter special keys if not in keypad mode */
+
+      if (!win->_use_keypad)
+        key = -1;
+
+      /* filter mouse events; translate mouse clicks in the slk
+         area to function keys */
+
+      else if (key == KEY_MOUSE)
+        key = _mouse_key();
+    }
+
+    /* unwanted key? loop back */
+
+    if (key == -1)
+      continue;
+
+    /* translate CR */
+
+    if (key == '\r' && SP->autocr && !SP->raw_inp)
+      key = '\n';
+
+    /* if echo is enabled */
+
+    if (SP->echo && !SP->key_code) {
+      waddch(win, key);
+      wrefresh(win);
+    }
+
+    /* if no buffering */
+
+    if (SP->raw_inp || SP->cbreak)
+      return key;
+
+    /* if no overflow, put data in buffer */
+
+    if (key == '\b') {
+      if (c_pindex > c_gindex)
+        c_pindex--;
+    } else if (c_pindex < _INBUFSIZ - 2)
+      buffer[c_pindex++] = key;
+
+    /* if we got a line */
+
+    if (key == '\n' || key == '\r')
+      return buffer[c_gindex++];
+  }
 }
 
-int mvgetch(int y, int x)
-{
-    PDC_LOG(("mvgetch() - called\n"));
+int mvgetch(int y, int x) {
+  PDC_LOG(("mvgetch() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wgetch(stdscr);
+  return wgetch(stdscr);
 }
 
-int mvwgetch(WINDOW *win, int y, int x)
-{
-    PDC_LOG(("mvwgetch() - called\n"));
+int mvwgetch(WINDOW *win, int y, int x) {
+  PDC_LOG(("mvwgetch() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wgetch(win);
+  return wgetch(win);
 }
 
-int PDC_ungetch(int ch)
-{
-    PDC_LOG(("ungetch() - called\n"));
+int PDC_ungetch(int ch) {
+  PDC_LOG(("ungetch() - called\n"));
 
-    if (c_ungind >= NUNGETCH)   /* pushback stack full */
-        return ERR;
+  if (c_ungind >= NUNGETCH) /* pushback stack full */
+    return ERR;
 
-    c_ungch[c_ungind++] = ch;
+  c_ungch[c_ungind++] = ch;
 
-    return OK;
+  return OK;
 }
 
-int flushinp(void)
-{
-    PDC_LOG(("flushinp() - called\n"));
+int flushinp(void) {
+  PDC_LOG(("flushinp() - called\n"));
 
-    PDC_flushinp();
+  PDC_flushinp();
 
-    c_gindex = 1;           /* set indices to kill buffer */
-    c_pindex = 0;
-    c_ungind = 0;           /* clear c_ungch array */
+  c_gindex = 1; /* set indices to kill buffer */
+  c_pindex = 0;
+  c_ungind = 0; /* clear c_ungch array */
 
-    return OK;
+  return OK;
 }
 
-unsigned long PDC_get_key_modifiers(void)
-{
-    PDC_LOG(("PDC_get_key_modifiers() - called\n"));
+unsigned long PDC_get_key_modifiers(void) {
+  PDC_LOG(("PDC_get_key_modifiers() - called\n"));
 
-    return pdc_key_modifiers;
+  return pdc_key_modifiers;
 }
 
-int PDC_save_key_modifiers(bool flag)
-{
-    PDC_LOG(("PDC_save_key_modifiers() - called\n"));
+int PDC_save_key_modifiers(bool flag) {
+  PDC_LOG(("PDC_save_key_modifiers() - called\n"));
 
-    SP->save_key_modifiers = flag;
-    return OK;
+  SP->save_key_modifiers = flag;
+  return OK;
 }
 
-int PDC_return_key_modifiers(bool flag)
-{
-    PDC_LOG(("PDC_return_key_modifiers() - called\n"));
+int PDC_return_key_modifiers(bool flag) {
+  PDC_LOG(("PDC_return_key_modifiers() - called\n"));
 
-    SP->return_key_modifiers = flag;
-    return PDC_modifiers_set();
+  SP->return_key_modifiers = flag;
+  return PDC_modifiers_set();
 }
 
 #ifdef PDC_WIDE
-int wget_wch(WINDOW *win, wint_t *wch)
-{
-    int key;
+int wget_wch(WINDOW *win, wint_t *wch) {
+  int key;
 
-    PDC_LOG(("wget_wch() - called\n"));
+  PDC_LOG(("wget_wch() - called\n"));
 
-    if (!wch)
-        return ERR;
+  if (!wch)
+    return ERR;
 
-    key = wgetch(win);
+  key = wgetch(win);
 
-    if (key == ERR)
-        return ERR;
+  if (key == ERR)
+    return ERR;
 
-    *wch = key;
+  *wch = key;
 
-    return SP->key_code ? KEY_CODE_YES : OK;
+  return SP->key_code ? KEY_CODE_YES : OK;
 }
 
-int get_wch(wint_t *wch)
-{
-    PDC_LOG(("get_wch() - called\n"));
+int get_wch(wint_t *wch) {
+  PDC_LOG(("get_wch() - called\n"));
 
-    return wget_wch(stdscr, wch);
+  return wget_wch(stdscr, wch);
 }
 
-int mvget_wch(int y, int x, wint_t *wch)
-{
-    PDC_LOG(("mvget_wch() - called\n"));
+int mvget_wch(int y, int x, wint_t *wch) {
+  PDC_LOG(("mvget_wch() - called\n"));
 
-    if (move(y, x) == ERR)
-        return ERR;
+  if (move(y, x) == ERR)
+    return ERR;
 
-    return wget_wch(stdscr, wch);
+  return wget_wch(stdscr, wch);
 }
 
-int mvwget_wch(WINDOW *win, int y, int x, wint_t *wch)
-{
-    PDC_LOG(("mvwget_wch() - called\n"));
+int mvwget_wch(WINDOW *win, int y, int x, wint_t *wch) {
+  PDC_LOG(("mvwget_wch() - called\n"));
 
-    if (wmove(win, y, x) == ERR)
-        return ERR;
+  if (wmove(win, y, x) == ERR)
+    return ERR;
 
-    return wget_wch(win, wch);
+  return wget_wch(win, wch);
 }
 
-int unget_wch(const wchar_t wch)
-{
-    return PDC_ungetch(wch);
-}
+int unget_wch(const wchar_t wch) { return PDC_ungetch(wch); }
 #endif

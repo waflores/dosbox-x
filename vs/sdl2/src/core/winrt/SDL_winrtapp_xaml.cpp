@@ -20,8 +20,8 @@
 */
 
 /* Windows includes */
-#include <agile.h>
 #include <Windows.h>
+#include <agile.h>
 
 #if WINAPI_FAMILY == WINAPI_FAMILY_APP
 #include <windows.ui.xaml.media.dxinterop.h>
@@ -29,9 +29,9 @@
 
 /* SDL includes */
 #include "../../SDL_internal.h"
-#include "SDL.h"
 #include "../../video/winrt/SDL_winrtevents_c.h"
 #include "../../video/winrt/SDL_winrtvideo_cpp.h"
+#include "SDL.h"
 #include "SDL_winrtapp_common.h"
 #include "SDL_winrtapp_xaml.h"
 

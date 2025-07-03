@@ -22,9 +22,9 @@
 
 #if SDL_VIDEO_RENDER_SW
 
-#include "SDL_draw.h"
 #include "SDL_blendline.h"
 #include "SDL_blendpoint.h"
+#include "SDL_draw.h"
 
 static void SDL_BlendLine_RGB2(SDL_Surface *dst, int x1, int y1, int x2, int y2,
                                SDL_BlendMode blendMode, Uint8 _r, Uint8 _g, Uint8 _b, Uint8 _a,

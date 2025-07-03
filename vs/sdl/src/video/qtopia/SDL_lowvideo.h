@@ -24,11 +24,11 @@
 #ifndef _SDL_lowvideo_h
 #define _SDL_lowvideo_h
 
-#include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
 
 /* Hidden "this" pointer for the video functions */
-#define _THIS	SDL_VideoDevice *_this
+#define _THIS SDL_VideoDevice *_this
 
 /* Private display data */
 struct SDL_PrivateVideoData {
@@ -36,7 +36,7 @@ struct SDL_PrivateVideoData {
   SDL_QWin *SDL_Win;
 
   /* The fullscreen mode list */
-#define NUM_MODELISTS	4		/* 8, 16, 24, and 32 bits-per-pixel */
+#define NUM_MODELISTS 4 /* 8, 16, 24, and 32 bits-per-pixel */
   int SDL_nummodes[NUM_MODELISTS];
   SDL_Rect **SDL_modelist[NUM_MODELISTS];
 
@@ -49,17 +49,17 @@ struct SDL_PrivateVideoData {
 
   /* Keyboard state variables */
   int key_flip;
-  //struct key_info keyinfo[2];
+  // struct key_info keyinfo[2];
 };
 /* Old variable names */
-#define SDL_Win		(_this->hidden->SDL_Win)
-#define saved_mode	(_this->hidden->saved_mode)
-#define SDL_nummodes	(_this->hidden->SDL_nummodes)
-#define SDL_modelist	(_this->hidden->SDL_modelist)
-#define SDL_BlankCursor	(_this->hidden->BlankCursor)
-#define last_buttons	(_this->hidden->last_buttons)
-#define last_point	(_this->hidden->last_point)
-#define key_flip	(_this->hidden->key_flip)
-#define keyinfo		(_this->hidden->keyinfo)
+#define SDL_Win (_this->hidden->SDL_Win)
+#define saved_mode (_this->hidden->saved_mode)
+#define SDL_nummodes (_this->hidden->SDL_nummodes)
+#define SDL_modelist (_this->hidden->SDL_modelist)
+#define SDL_BlankCursor (_this->hidden->BlankCursor)
+#define last_buttons (_this->hidden->last_buttons)
+#define last_point (_this->hidden->last_point)
+#define key_flip (_this->hidden->key_flip)
+#define keyinfo (_this->hidden->keyinfo)
 
 #endif /* _SDL_lowvideo_h */

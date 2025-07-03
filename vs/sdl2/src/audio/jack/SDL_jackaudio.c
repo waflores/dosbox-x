@@ -22,12 +22,12 @@
 
 #ifdef SDL_AUDIO_DRIVER_JACK
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
+#include "../../thread/SDL_systhread.h"
 #include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_jackaudio.h"
 #include "SDL_loadso.h"
-#include "../../thread/SDL_systhread.h"
+#include "SDL_timer.h"
 
 static jack_client_t *(*JACK_jack_client_open)(const char *, jack_options_t, jack_status_t *, ...);
 static int (*JACK_jack_client_close)(jack_client_t *);

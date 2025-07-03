@@ -28,20 +28,20 @@
  */
 
 #include <errno.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <sys/time.h>
+#include <sys/audioio.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <sys/types.h>
-#include <sys/audioio.h>
+#include <unistd.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../../core/unix/SDL_poll.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_audiodev_c.h"
+#include "SDL_audio.h"
 #include "SDL_netbsdaudio.h"
+#include "SDL_timer.h"
 
 /* #define DEBUG_AUDIO */
 
@@ -210,7 +210,7 @@ static int NETBSDAUDIO_OpenDevice(_THIS, const char *devname)
     }
 
     /* Initialize all variables that we clean on shutdown */
-    this->hidden = (struct SDL_PrivateAudioData *) SDL_malloc(sizeof(*this->hidden));
+    this->hidden = (struct SDL_PrivateAudioData *)SDL_malloc(sizeof(*this->hidden));
     if (!this->hidden) {
         return SDL_OutOfMemory();
     }

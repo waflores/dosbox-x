@@ -24,9 +24,9 @@
 
 /* Semaphore functions for the PS2. */
 
+#include <kernel_util.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <kernel_util.h>
 
 #include "SDL_error.h"
 #include "SDL_thread.h"

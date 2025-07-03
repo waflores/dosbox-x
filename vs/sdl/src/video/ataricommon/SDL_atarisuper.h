@@ -37,24 +37,20 @@
  * the stack pointer then restore it after the trap.
  * Sometimes, GCC optimizes the stack usage, so this matters.
  */
-#define SuperToUser(ptr)						\
-(void)__extension__							\
-({									\
-	register long retvalue __asm__("d0");				\
-	register long sp_backup;					\
-									\
-	__asm__ volatile						\
-	(								\
-		"movl	sp,%1\n\t"					\
-		"movl	%2,sp@-\n\t"					\
-		"movw	#0x20,sp@-\n\t"					\
-		"trap	#1\n\t"						\
-		"movl	%1,sp\n\t"					\
-	: "=r"(retvalue), "=&r"(sp_backup)	/* outputs */		\
-	: "g"((long)(ptr)) 			/* inputs */		\
-	: "d1", "d2", "a0", "a1", "a2"		\
-	);								\
-})
+#define SuperToUser(ptr)                                                       \
+  (void)__extension__({                                                        \
+    register long retvalue __asm__("d0");                                      \
+    register long sp_backup;                                                   \
+                                                                               \
+    __asm__ volatile("movl	sp,%1\n\t"                                          \
+                     "movl	%2,sp@-\n\t"                                        \
+                     "movw	#0x20,sp@-\n\t"                                     \
+                     "trap	#1\n\t"                                             \
+                     "movl	%1,sp\n\t"                                          \
+                     : "=r"(retvalue), "=&r"(sp_backup) /* outputs */          \
+                     : "g"((long)(ptr))                 /* inputs */           \
+                     : "d1", "d2", "a0", "a1", "a2");                          \
+  })
 
 #endif /* SuperToUser */
 

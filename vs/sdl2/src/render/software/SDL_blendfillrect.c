@@ -22,8 +22,8 @@
 
 #if SDL_VIDEO_RENDER_SW
 
-#include "SDL_draw.h"
 #include "SDL_blendfillrect.h"
+#include "SDL_draw.h"
 
 static int SDL_BlendFillRect_RGB555(SDL_Surface *dst, const SDL_Rect *rect,
                                     SDL_BlendMode blendMode, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
@@ -277,7 +277,7 @@ int SDL_BlendFillRects(SDL_Surface *dst, const SDL_Rect *rects, int count,
 {
     SDL_Rect rect;
     int i;
-    int (*func)(SDL_Surface * dst, const SDL_Rect *rect,
+    int (*func)(SDL_Surface *dst, const SDL_Rect *rect,
                 SDL_BlendMode blendMode, Uint8 r, Uint8 g, Uint8 b, Uint8 a) = NULL;
     int status = 0;
 

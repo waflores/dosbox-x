@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -21,11 +21,9 @@
 #ifndef _FLUIDSYNTH_MISC_H
 #define _FLUIDSYNTH_MISC_H
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * @file misc.h
@@ -49,7 +47,7 @@ extern "C" {
  *   #endif
  * @endcode
  */
-#define FLUID_OK        (0)
+#define FLUID_OK (0)
 
 /**
  * Value that indicates failure, used by most libfluidsynth functions.
@@ -57,18 +55,15 @@ extern "C" {
  *
  * NOTE: See #FLUID_OK for more details.
  */
-#define FLUID_FAILED    (-1)
+#define FLUID_FAILED (-1)
 
-
-FLUIDSYNTH_API int fluid_is_soundfont (const char *filename);
-FLUIDSYNTH_API int fluid_is_midifile (const char *filename);
-
+FLUIDSYNTH_API int fluid_is_soundfont(const char *filename);
+FLUIDSYNTH_API int fluid_is_midifile(const char *filename);
 
 #ifdef WIN32
-FLUIDSYNTH_API void* fluid_get_hinstance(void);
-FLUIDSYNTH_API void fluid_set_hinstance(void* hinstance);
+FLUIDSYNTH_API void *fluid_get_hinstance(void);
+FLUIDSYNTH_API void fluid_set_hinstance(void *hinstance);
 #endif
-
 
 #ifdef __cplusplus
 }

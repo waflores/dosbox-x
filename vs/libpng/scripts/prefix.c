@@ -7,8 +7,7 @@
  * and license in png.h
  */
 
-#define PNG_EXPORTA(ordinal, type, name, args, attributes)\
-        PNG_DFN "@" name "@"
+#define PNG_EXPORTA(ordinal, type, name, args, attributes) PNG_DFN "@" name "@"
 
 /* The configuration information *before* the additional of symbol renames,
  * the list is the C name list; no symbol prefix.
@@ -19,4 +18,4 @@ PNG_DFN_START_SORT 1
 
 #include "../png.h"
 
-PNG_DFN_END_SORT
+    PNG_DFN_END_SORT

@@ -23,15 +23,11 @@
 #if !C_FLUIDSYNTH && defined(WIN32) && !defined(C_HX_DOS)
 #include "fluid_adsr_env.h"
 
-void 
-fluid_adsr_env_set_data(fluid_adsr_env_t* env,
-                        fluid_adsr_env_section_t section,
-                        unsigned int count,
-                        fluid_real_t coeff,
-                        fluid_real_t increment,
-                        fluid_real_t min,
-                        fluid_real_t max)
-{
+void fluid_adsr_env_set_data(fluid_adsr_env_t *env,
+                             fluid_adsr_env_section_t section,
+                             unsigned int count, fluid_real_t coeff,
+                             fluid_real_t increment, fluid_real_t min,
+                             fluid_real_t max) {
   env->data[section].count = count;
   env->data[section].coeff = coeff;
   env->data[section].increment = increment;

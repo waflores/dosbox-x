@@ -30,28 +30,25 @@
 #define COLOR_EXPAND(col) col.r, col.g, col.b, col.a
 
 static DFB_Theme theme_std = {
-    4, 4, 8, 8,
-    {255, 200, 200, 200},
+    4,
+    4,
+    8,
+    8,
+    { 255, 200, 200, 200 },
     24,
-    {255, 0, 0, 255},
+    { 255, 0, 0, 255 },
     16,
-    {255, 255, 255, 255},
+    { 255, 255, 255, 255 },
     "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
-    {255, 255, 0, 0},
-    {255, 255, 255, 0},
+    { 255, 255, 0, 0 },
+    { 255, 255, 255, 0 },
 };
 
 static DFB_Theme theme_none = {
-    0, 0, 0, 0,
-    {0, 0, 0, 0},
-    0,
-    {0, 0, 0, 0},
-    0,
-    {0, 0, 0, 0},
-    NULL
+    0, 0, 0, 0, { 0, 0, 0, 0 }, 0, { 0, 0, 0, 0 }, 0, { 0, 0, 0, 0 }, NULL
 };
 
-static void DrawTriangle(IDirectFBSurface * s, int down, int x, int y, int w)
+static void DrawTriangle(IDirectFBSurface *s, int down, int x, int y, int w)
 {
     int x1, x2, x3;
     int y1, y2, y3;
@@ -74,7 +71,7 @@ static void DrawTriangle(IDirectFBSurface * s, int down, int x, int y, int w)
     s->FillTriangle(s, x1, y1, x2, y2, x3, y3);
 }
 
-static void LoadFont(_THIS, SDL_Window * window)
+static void LoadFont(_THIS, SDL_Window *window)
 {
     SDL_DFB_DEVICEDATA(_this);
     SDL_DFB_WINDOWDATA(window);
@@ -85,21 +82,19 @@ static void LoadFont(_THIS, SDL_Window * window)
         SDL_DFB_CHECK(windata->window_surface->SetFont(windata->window_surface, windata->font));
     }
 
-    if (windata->theme.font)
-    {
+    if (windata->theme.font) {
         DFBFontDescription fdesc;
 
         SDL_zero(fdesc);
         fdesc.flags = DFDESC_HEIGHT;
         fdesc.height = windata->theme.font_size;
-        SDL_DFB_CHECK(devdata->
-                      dfb->CreateFont(devdata->dfb, windata->theme.font,
-                                      &fdesc, &windata->font));
+        SDL_DFB_CHECK(devdata->dfb->CreateFont(devdata->dfb, windata->theme.font,
+                                               &fdesc, &windata->font));
         SDL_DFB_CHECK(windata->window_surface->SetFont(windata->window_surface, windata->font));
     }
 }
 
-static void DrawCraption(_THIS, IDirectFBSurface * s, int x, int y, char *text)
+static void DrawCraption(_THIS, IDirectFBSurface *s, int x, int y, char *text)
 {
     DFBSurfaceTextFlags flags;
 
@@ -108,7 +103,7 @@ static void DrawCraption(_THIS, IDirectFBSurface * s, int x, int y, char *text)
     s->DrawString(s, text, -1, x, y, flags);
 }
 
-void DirectFB_WM_RedrawLayout(_THIS, SDL_Window * window)
+void DirectFB_WM_RedrawLayout(_THIS, SDL_Window *window)
 {
     SDL_DFB_WINDOWDATA(window);
     IDirectFBSurface *s = windata->window_surface;
@@ -116,7 +111,6 @@ void DirectFB_WM_RedrawLayout(_THIS, SDL_Window * window)
     int i;
     int d = (t->caption_size - t->font_size) / 2;
     int x, y, w;
-
 
     if (!windata->is_managed || (window->flags & SDL_WINDOW_FULLSCREEN))
         return;
@@ -154,7 +148,7 @@ void DirectFB_WM_RedrawLayout(_THIS, SDL_Window * window)
     /* Max Button */
     s->SetColor(s, COLOR_EXPAND(t->max_color));
     DrawTriangle(s, window->flags & SDL_WINDOW_MAXIMIZED ? 1 : 0, x - w,
-               y, w - 2 * d);
+                 y, w - 2 * d);
 
     /* Caption */
     if (*window->title) {
@@ -176,7 +170,7 @@ void DirectFB_WM_RedrawLayout(_THIS, SDL_Window * window)
     windata->wm_needs_redraw = 0;
 }
 
-DFBResult DirectFB_WM_GetClientSize(_THIS, SDL_Window * window, int *cw, int *ch)
+DFBResult DirectFB_WM_GetClientSize(_THIS, SDL_Window *window, int *cw, int *ch)
 {
     SDL_DFB_WINDOWDATA(window);
     IDirectFBWindow *dfbwin = windata->dfbwin;
@@ -190,7 +184,7 @@ DFBResult DirectFB_WM_GetClientSize(_THIS, SDL_Window * window, int *cw, int *ch
     return DFB_OK;
 }
 
-void DirectFB_WM_AdjustWindowLayout(SDL_Window * window, int flags, int w, int h)
+void DirectFB_WM_AdjustWindowLayout(SDL_Window *window, int flags, int w, int h)
 {
     SDL_DFB_WINDOWDATA(window);
 
@@ -222,7 +216,6 @@ void DirectFB_WM_AdjustWindowLayout(SDL_Window * window, int flags, int w, int h
         windata->theme.caption_size + windata->theme.bottom_size;
 }
 
-
 enum
 {
     WM_POS_NONE = 0x00,
@@ -235,7 +228,7 @@ enum
     WM_POS_BOTTOM = 0x40,
 };
 
-static int WMIsClient(DFB_WindowData * p, int x, int y)
+static int WMIsClient(DFB_WindowData *p, int x, int y)
 {
     x -= p->client.x;
     y -= p->client.y;
@@ -246,7 +239,7 @@ static int WMIsClient(DFB_WindowData * p, int x, int y)
     return 1;
 }
 
-static int WMPos(DFB_WindowData * p, int x, int y)
+static int WMPos(DFB_WindowData *p, int x, int y)
 {
     int pos = WM_POS_NONE;
 
@@ -259,7 +252,7 @@ static int WMPos(DFB_WindowData * p, int x, int y)
                 pos |= WM_POS_CAPTION;
             } else if (x <
                        p->size.w - p->theme.right_size -
-                       p->theme.caption_size) {
+                           p->theme.caption_size) {
                 pos |= WM_POS_MAX;
             } else {
                 pos |= WM_POS_CLOSE;
@@ -276,7 +269,7 @@ static int WMPos(DFB_WindowData * p, int x, int y)
     return pos;
 }
 
-int DirectFB_WM_ProcessEvent(_THIS, SDL_Window * window, DFBWindowEvent * evt)
+int DirectFB_WM_ProcessEvent(_THIS, SDL_Window *window, DFBWindowEvent *evt)
 {
     SDL_DFB_WINDOWDATA(window);
     SDL_Window *grabbed_window = SDL_GetGrabbedWindow();
@@ -394,8 +387,7 @@ int DirectFB_WM_ProcessEvent(_THIS, SDL_Window * window, DFBWindowEvent * evt)
         break;
     case DWET_KEYUP:
         break;
-    default:
-        ;
+    default:;
     }
     return 0;
 }

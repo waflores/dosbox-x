@@ -31,24 +31,24 @@
  */
 
 /* SDL internals */
-#include "../SDL_sysvideo.h"
-#include "SDL_version.h"
-#include "SDL_syswm.h"
-#include "SDL_loadso.h"
-#include "SDL_events.h"
-#include "../../events/SDL_mouse_c.h"
 #include "../../events/SDL_keyboard_c.h"
+#include "../../events/SDL_mouse_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_events.h"
 #include "SDL_hints.h"
+#include "SDL_loadso.h"
+#include "SDL_syswm.h"
+#include "SDL_version.h"
 
 #ifdef SDL_INPUT_LINUXEV
 #include "../../core/linux/SDL_evdev.h"
 #endif
 
 /* RPI declarations */
-#include "SDL_rpivideo.h"
 #include "SDL_rpievents_c.h"
-#include "SDL_rpiopengles.h"
 #include "SDL_rpimouse.h"
+#include "SDL_rpiopengles.h"
+#include "SDL_rpivideo.h"
 
 static void RPI_Destroy(SDL_VideoDevice *device)
 {

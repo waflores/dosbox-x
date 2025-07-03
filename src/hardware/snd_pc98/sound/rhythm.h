@@ -1,11 +1,10 @@
 
 typedef struct {
-	PMIXHDR	hdr;
-	PMIXTRK	trk[6];
-	UINT	vol;
-	UINT8	trkvol[8];
+  PMIXHDR hdr;
+  PMIXTRK trk[6];
+  UINT vol;
+  UINT8 trkvol[8];
 } _RHYTHM, *RHYTHM;
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,4 +23,3 @@ void rhythm_setreg(RHYTHM rhy, UINT reg, REG8 value);
 #ifdef __cplusplus
 }
 #endif
-

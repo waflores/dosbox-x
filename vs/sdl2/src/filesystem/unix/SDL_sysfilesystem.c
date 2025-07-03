@@ -26,22 +26,22 @@
 /* System dependent filesystem routines                                */
 
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <limits.h>
-#include <fcntl.h>
+#include <unistd.h>
 
 #if defined(__FREEBSD__) || defined(__OPENBSD__)
 #include <sys/sysctl.h>
 #endif
 
 #include "SDL_error.h"
-#include "SDL_stdinc.h"
 #include "SDL_filesystem.h"
 #include "SDL_rwops.h"
+#include "SDL_stdinc.h"
 
 /* QNX's /proc/self/exefile is a text file and not a symlink. */
 #if !defined(__QNXNTO__)
@@ -75,7 +75,6 @@ static char *readSymLink(const char *path)
     return NULL;
 }
 #endif
-
 
 #if defined(__OPENBSD__)
 static char *search_path_for_binary(const char *bin)
@@ -232,7 +231,7 @@ char *SDL_GetBasePath(void)
 #endif
     }
 
-#if defined(__SOLARIS__)  /* try this as a fallback if /proc didn't pan out */
+#if defined(__SOLARIS__) /* try this as a fallback if /proc didn't pan out */
     if (!retval) {
         const char *path = getexecname();
         if ((path != NULL) && (path[0] == '/')) { /* must be absolute path... */

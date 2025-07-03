@@ -24,20 +24,20 @@
 
 /* An implementation of semaphores for OS/2 */
 
-#include "SDL_thread.h"
 #include "../../core/os2/SDL_os2.h"
+#include "SDL_thread.h"
 
 #define INCL_DOSSEMAPHORES
 #define INCL_DOSERRORS
 #define INCL_DOSMISC
 #include <os2.h>
 
-struct SDL_semaphore {
-    HEV     hEv;
-    HMTX    hMtx;
-    ULONG   cPost;
+struct SDL_semaphore
+{
+    HEV hEv;
+    HMTX hMtx;
+    ULONG cPost;
 };
-
 
 SDL_sem *SDL_CreateSemaphore(Uint32 initial_value)
 {
@@ -69,16 +69,17 @@ SDL_sem *SDL_CreateSemaphore(Uint32 initial_value)
     return pSDLSem;
 }
 
-void SDL_DestroySemaphore(SDL_sem * sem)
+void SDL_DestroySemaphore(SDL_sem *sem)
 {
-    if (!sem) return;
+    if (!sem)
+        return;
 
     DosCloseMutexSem(sem->hMtx);
     DosCloseEventSem(sem->hEv);
     SDL_free(sem);
 }
 
-int SDL_SemWaitTimeout(SDL_sem * sem, Uint32 timeout)
+int SDL_SemWaitTimeout(SDL_sem *sem, Uint32 timeout)
 {
     ULONG ulRC;
     ULONG ulStartTime, ulCurTime;
@@ -126,17 +127,17 @@ int SDL_SemWaitTimeout(SDL_sem * sem, Uint32 timeout)
     return 0;
 }
 
-int SDL_SemTryWait(SDL_sem * sem)
+int SDL_SemTryWait(SDL_sem *sem)
 {
     return SDL_SemWaitTimeout(sem, 0);
 }
 
-int SDL_SemWait(SDL_sem * sem)
+int SDL_SemWait(SDL_sem *sem)
 {
     return SDL_SemWaitTimeout(sem, SDL_MUTEX_MAXWAIT);
 }
 
-Uint32 SDL_SemValue(SDL_sem * sem)
+Uint32 SDL_SemValue(SDL_sem *sem)
 {
     ULONG ulRC;
 
@@ -155,7 +156,7 @@ Uint32 SDL_SemValue(SDL_sem * sem)
     return ulRC;
 }
 
-int SDL_SemPost(SDL_sem * sem)
+int SDL_SemPost(SDL_sem *sem)
 {
     ULONG ulRC;
 

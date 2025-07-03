@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Library General Public
     License along with this library; if not, write to the Free
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA
+   USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -22,9 +23,9 @@
 #include "SDL_config.h"
 
 /*
-	Turbo veille screensaver
+        Turbo veille screensaver
 
-	Patrice Mandin
+        Patrice Mandin
 */
 
 #ifndef _SDL_xbios_tveille_h
@@ -35,24 +36,24 @@
 /*--- Structures ---*/
 
 typedef struct {
-	unsigned long	version;
-	void		(*prg_ptr)();
-	void		(*kbd_ptr)();
-	void		(*vbl_ptr)();
-	unsigned long	vbl_count;
-	void		(*oldkbd_ptr)();
-	unsigned long	off_count;
-	unsigned long	prg_size;
-	unsigned long	dummy1[4];
-	unsigned char	dummy2;
-	unsigned char	status;
-	unsigned short	freq;
-	unsigned short	dummy3;
-	unsigned char	clear_first;
-	unsigned char	enabled;	/* 0=enabled, 0xff=disabled */
-	unsigned char	serial_redir;
-	unsigned char	dummy4;
-	void		(*oldserial_ptr)();
+  unsigned long version;
+  void (*prg_ptr)();
+  void (*kbd_ptr)();
+  void (*vbl_ptr)();
+  unsigned long vbl_count;
+  void (*oldkbd_ptr)();
+  unsigned long off_count;
+  unsigned long prg_size;
+  unsigned long dummy1[4];
+  unsigned char dummy2;
+  unsigned char status;
+  unsigned short freq;
+  unsigned short dummy3;
+  unsigned char clear_first;
+  unsigned char enabled; /* 0=enabled, 0xff=disabled */
+  unsigned char serial_redir;
+  unsigned char dummy4;
+  void (*oldserial_ptr)();
 } tveille_t;
 
 /*--- Functions prototypes ---*/

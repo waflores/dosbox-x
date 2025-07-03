@@ -17,8 +17,7 @@
 
 #define FT_MAKE_OPTION_SINGLE_OBJECT
 
-#include "svgtypes.h"
 #include "ftsvg.c"
-
+#include "svgtypes.h"
 
 /* END */

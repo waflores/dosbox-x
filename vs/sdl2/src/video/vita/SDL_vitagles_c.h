@@ -22,11 +22,11 @@
 #ifndef SDL_vitagles_c_h_
 #define SDL_vitagles_c_h_
 
-#include <pib.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <pib.h>
 
 #include "SDL_vitavideo.h"
 

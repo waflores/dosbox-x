@@ -16,18 +16,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef DOSBOX_SUPPORT_H
 #define DOSBOX_SUPPORT_H
 
 #include "dosbox.h"
 
-#if defined (_MSC_VER)						/* MS Visual C++ */
-#define	strcasecmp(a,b) stricmp(a,b)
-#define strncasecmp(a,b,n) _strnicmp(a,b,n)
+#if defined(_MSC_VER) /* MS Visual C++ */
+#define strcasecmp(a, b) stricmp(a, b)
+#define strncasecmp(a, b, n) _strnicmp(a, b, n)
 #endif
 
-#define safe_strncpy(a,b,n) do { strncpy((a),(b),(size_t)((n)-1)); (a)[(size_t)((n)-1)] = 0; } while (0)
+#define safe_strncpy(a, b, n)                                                  \
+  do {                                                                         \
+    strncpy((a), (b), (size_t)((n) - 1));                                      \
+    (a)[(size_t)((n) - 1)] = 0;                                                \
+  } while (0)
 
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
@@ -36,59 +39,57 @@
 char *strchr_dbcs(char *str, char ch);
 char *strrchr_dbcs(char *str, char ch);
 char *strtok_dbcs(char *s, const char *d);
-void strreplace_dbcs(char * str,char o,char n);
-void strreplace(char * str,char o,char n);
+void strreplace_dbcs(char *str, char o, char n);
+void strreplace(char *str, char o, char n);
 char *ltrim(char *str);
 char *rtrim(char *str);
-char *trim(char * str);
-char * upcase(char * str);
-char * lowcase(char * str);
-std::vector<std::string> split(const std::string& str, char split_char);
-char * StripArg(char *&cmd);
-bool ScanCMDBool(char * cmd,char const * const check);
-char * ScanCMDRemain(char * cmd);
-char * StripWord(char *&line);
-Bits ConvDecWord(char * word);
-Bits ConvHexWord(char * word);
+char *trim(char *str);
+char *upcase(char *str);
+char *lowcase(char *str);
+std::vector<std::string> split(const std::string &str, char split_char);
+char *StripArg(char *&cmd);
+bool ScanCMDBool(char *cmd, char const *const check);
+char *ScanCMDRemain(char *cmd);
+char *StripWord(char *&line);
+Bits ConvDecWord(char *word);
+Bits ConvHexWord(char *word);
 bool check_last_split_char(const char *name, size_t len, char split);
 
-enum {
-	UTF8ERR_INVALID=-1,
-	UTF8ERR_NO_ROOM=-2
-};
+enum { UTF8ERR_INVALID = -1, UTF8ERR_NO_ROOM = -2 };
 
-int utf8_encode(char **ptr,const char *fence,uint32_t code);
-int utf8_decode(const char **ptr,const char *fence);
-int utf16le_encode(char **ptr,const char *fence,uint32_t code);
-int utf16le_decode(const char **ptr,const char *fence);
+int utf8_encode(char **ptr, const char *fence, uint32_t code);
+int utf8_decode(const char **ptr, const char *fence);
+int utf16le_encode(char **ptr, const char *fence, uint32_t code);
+int utf16le_decode(const char **ptr, const char *fence);
 
-void trim(std::string& str);
+void trim(std::string &str);
 void upcase(std::string &str);
 void lowcase(std::string &str);
 
 static inline bool is_power_of_2(Bitu val) {
-	return (val != 0) && ((val&(val-1)) == 0);
-	/* To explain: if val is a power of 2, then only one bit is set.
-	 * Decrementing val would change that one bit to 0, and all bits to the right to 1.
-	 * Example:
-	 *
-	 * Power of 2: val = 1024
-	 *
-	 *      1024 = 0000 0100 0000 0000
-	 *  AND 1023 = 0000 0011 1111 1111
-	 *  ------------------------------
-	 *         0 = 0000 0000 0000 0000
-	 *
-	 * Non-power of 2: val = 713
-	 *
-	 *       713 = 0000 0010 1100 1001
-	 *   AND 712 = 0000 0010 1100 1000
-	 *  ------------------------------
-	 *       712 = 0000 0010 1100 1000
-	 *
-	 * See how that works?
-	 *
-	 * For more info see https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2*/
+  return (val != 0) && ((val & (val - 1)) == 0);
+  /* To explain: if val is a power of 2, then only one bit is set.
+   * Decrementing val would change that one bit to 0, and all bits to the right
+   * to 1. Example:
+   *
+   * Power of 2: val = 1024
+   *
+   *      1024 = 0000 0100 0000 0000
+   *  AND 1023 = 0000 0011 1111 1111
+   *  ------------------------------
+   *         0 = 0000 0000 0000 0000
+   *
+   * Non-power of 2: val = 713
+   *
+   *       713 = 0000 0010 1100 1001
+   *   AND 712 = 0000 0010 1100 1000
+   *  ------------------------------
+   *       712 = 0000 0010 1100 1000
+   *
+   * See how that works?
+   *
+   * For more info see
+   * https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2*/
 }
 
 /// Copy a string into C array
@@ -106,16 +107,16 @@ static inline bool is_power_of_2(Bitu val) {
 ///     safe_strcpy(buffer, "abc");
 ///     // buffer is filled with "a"
 
-template<size_t N>
-char * safe_strcpy(char (& dst)[N], const char * src) noexcept {
-        snprintf(dst, N, "%s", src);
-        return & dst[0];
+template <size_t N>
+char *safe_strcpy(char (&dst)[N], const char *src) noexcept {
+  snprintf(dst, N, "%s", src);
+  return &dst[0];
 }
 
-template<size_t N>
-char * safe_strcat(char (& dst)[N], const char * src) noexcept {
-        strncat(dst, src, N - strnlen(dst, N) - 1);
-        return & dst[0];
+template <size_t N>
+char *safe_strcat(char (&dst)[N], const char *src) noexcept {
+  strncat(dst, src, N - strnlen(dst, N) - 1);
+  return &dst[0];
 }
 
 #endif

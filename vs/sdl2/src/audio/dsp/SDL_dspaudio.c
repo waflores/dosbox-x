@@ -24,23 +24,23 @@
 
 /* Allow access to a raw mixing buffer */
 
-#include <stdio.h>  /* For perror() */
-#include <string.h> /* For strerror() */
 #include <errno.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <sys/time.h>
+#include <stdio.h>  /* For perror() */
+#include <string.h> /* For strerror() */
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #include <sys/soundcard.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_audiodev_c.h"
+#include "SDL_audio.h"
 #include "SDL_dspaudio.h"
+#include "SDL_timer.h"
 
 static void DSP_DetectDevices(void)
 {
@@ -85,7 +85,7 @@ static int DSP_OpenDevice(_THIS, const char *devname)
     }
 
     /* Initialize all variables that we clean on shutdown */
-    this->hidden = (struct SDL_PrivateAudioData *) SDL_malloc(sizeof(*this->hidden));
+    this->hidden = (struct SDL_PrivateAudioData *)SDL_malloc(sizeof(*this->hidden));
     if (!this->hidden) {
         return SDL_OutOfMemory();
     }

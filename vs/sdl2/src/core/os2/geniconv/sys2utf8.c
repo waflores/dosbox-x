@@ -25,28 +25,28 @@
 #include "../../../SDL_internal.h"
 #else
 #include <stdlib.h>
-#define SDL_malloc malloc
+#define SDL_malloc  malloc
 #define SDL_realloc realloc
-#define SDL_free free
+#define SDL_free    free
 #endif
 
 int StrUTF8(int to_utf8, char *dst, int c_dst, char *src, int c_src)
 {
-    size_t  rc;
-    char   *dststart = dst;
+    size_t rc;
+    char *dststart = dst;
     iconv_t cd;
-    char   *tocp, *fromcp;
-    int     err = 0;
+    char *tocp, *fromcp;
+    int err = 0;
 
     if (c_dst < 4) {
         return -1;
     }
 
     if (to_utf8) {
-        tocp   = "UTF-8";
+        tocp = "UTF-8";
         fromcp = "";
     } else {
-        tocp   = "";
+        tocp = "";
         fromcp = "UTF-8";
     }
 
@@ -76,13 +76,13 @@ int StrUTF8(int to_utf8, char *dst, int c_dst, char *src, int c_src)
     if (to_utf8) {
         if (c_dst < 1) {
             dst--;
-            err = 1;    /* The destination buffer overflow */
+            err = 1; /* The destination buffer overflow */
         }
         *dst = '\0';
     } else {
         if (c_dst < 2) {
             dst -= (c_dst == 0) ? 2 : 1;
-            err = 1;    /* The destination buffer overflow */
+            err = 1; /* The destination buffer overflow */
         }
         *((short *)dst) = '\0';
     }
@@ -92,8 +92,8 @@ int StrUTF8(int to_utf8, char *dst, int c_dst, char *src, int c_src)
 
 char *StrUTF8New(int to_utf8, char *str, int c_str)
 {
-    int   c_newstr = (((c_str > 4) ? c_str : 4) + 1) * 2;
-    char *  newstr = (char *) SDL_malloc(c_newstr);
+    int c_newstr = (((c_str > 4) ? c_str : 4) + 1) * 2;
+    char *newstr = (char *)SDL_malloc(c_newstr);
 
     if (!newstr) {
         return NULL;
@@ -101,7 +101,7 @@ char *StrUTF8New(int to_utf8, char *str, int c_str)
 
     c_newstr = StrUTF8(to_utf8, newstr, c_newstr, str, c_str);
     if (c_newstr != -1) {
-        str = (char *) SDL_realloc(newstr, c_newstr + ((to_utf8) ? 1 : sizeof(short)));
+        str = (char *)SDL_realloc(newstr, c_newstr + ((to_utf8) ? 1 : sizeof(short)));
         if (str) {
             return str;
         }

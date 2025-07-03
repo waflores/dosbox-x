@@ -24,17 +24,17 @@
 #ifdef SDL_TIMER_WIN32
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <mmsystem.h>
+#include <windows.h>
 
-#include "SDL_timer.h"
 #include "../SDL_timer_c.h"
+#include "SDL_timer.h"
 
 #ifdef _WIN32_WCE
-  #error This is WinCE. Please use src/timer/wince/SDL_systimer.c instead.
+#error This is WinCE. Please use src/timer/wince/SDL_systimer.c instead.
 #endif
 
-#define TIME_WRAP_VALUE	(~(DWORD)0)
+#define TIME_WRAP_VALUE (~(DWORD)0)
 
 /* The first (low-resolution) ticks value of the application */
 static DWORD start;
@@ -48,11 +48,10 @@ static LARGE_INTEGER hires_start_ticks;
 static LARGE_INTEGER hires_ticks_per_second;
 #endif
 
-void SDL_StartTicks(void)
-{
-	/* Set first ticks value */
+void SDL_StartTicks(void) {
+  /* Set first ticks value */
 #ifdef USE_GETTICKCOUNT
-	start = GetTickCount();
+  start = GetTickCount();
 #else
 #if 0 /* Apparently there are problems with QPC on Win2K */
 	if (QueryPerformanceFrequency(&hires_ticks_per_second) == TRUE)
@@ -62,99 +61,83 @@ void SDL_StartTicks(void)
 	}
 	else
 #endif
-	{
-		hires_timer_available = FALSE;
-		timeBeginPeriod(1);		/* use 1 ms timer precision */
-		start = timeGetTime();
-	}
+  {
+    hires_timer_available = FALSE;
+    timeBeginPeriod(1); /* use 1 ms timer precision */
+    start = timeGetTime();
+  }
 #endif
 }
 
-Uint32 SDL_GetTicks(void)
-{
-	DWORD now, ticks;
+Uint32 SDL_GetTicks(void) {
+  DWORD now, ticks;
 #ifndef USE_GETTICKCOUNT
-	LARGE_INTEGER hires_now;
+  LARGE_INTEGER hires_now;
 #endif
 
 #ifdef USE_GETTICKCOUNT
-	now = GetTickCount();
+  now = GetTickCount();
 #else
-	if (hires_timer_available)
-	{
-		QueryPerformanceCounter(&hires_now);
+  if (hires_timer_available) {
+    QueryPerformanceCounter(&hires_now);
 
-		hires_now.QuadPart -= hires_start_ticks.QuadPart;
-		hires_now.QuadPart *= 1000;
-		hires_now.QuadPart /= hires_ticks_per_second.QuadPart;
+    hires_now.QuadPart -= hires_start_ticks.QuadPart;
+    hires_now.QuadPart *= 1000;
+    hires_now.QuadPart /= hires_ticks_per_second.QuadPart;
 
-		return (DWORD)hires_now.QuadPart;
-	}
-	else
-	{
-		now = timeGetTime();
-	}
+    return (DWORD)hires_now.QuadPart;
+  } else {
+    now = timeGetTime();
+  }
 #endif
 
-	if ( now < start ) {
-		ticks = (TIME_WRAP_VALUE-start) + now;
-	} else {
-		ticks = (now - start);
-	}
-	return(ticks);
+  if (now < start) {
+    ticks = (TIME_WRAP_VALUE - start) + now;
+  } else {
+    ticks = (now - start);
+  }
+  return (ticks);
 }
 
-void SDL_Delay(Uint32 ms)
-{
-	Sleep(ms);
-}
+void SDL_Delay(Uint32 ms) { Sleep(ms); }
 
 /* Data to handle a single periodic alarm */
 static UINT timerID = 0;
 
-static void CALLBACK HandleAlarm(UINT uID,  UINT uMsg, DWORD_PTR dwUser,
-						DWORD_PTR dw1, DWORD_PTR dw2)
-{
-	SDL_ThreadedTimerCheck();
+static void CALLBACK HandleAlarm(UINT uID, UINT uMsg, DWORD_PTR dwUser,
+                                 DWORD_PTR dw1, DWORD_PTR dw2) {
+  SDL_ThreadedTimerCheck();
 }
 
+int SDL_SYS_TimerInit(void) {
+  MMRESULT result;
 
-int SDL_SYS_TimerInit(void)
-{
-	MMRESULT result;
-
-	/* Set timer resolution */
-	result = timeBeginPeriod(TIMER_RESOLUTION);
-	if ( result != TIMERR_NOERROR ) {
-		SDL_SetError("Warning: Can't set %d ms timer resolution",
-							TIMER_RESOLUTION);
-	}
-	/* Allow 10 ms of drift so we don't chew on CPU */
-	timerID = timeSetEvent(TIMER_RESOLUTION,1,HandleAlarm,0,TIME_PERIODIC);
-	if ( ! timerID ) {
-		SDL_SetError("timeSetEvent() failed");
-		return(-1);
-	}
-	return(SDL_SetTimerThreaded(1));
+  /* Set timer resolution */
+  result = timeBeginPeriod(TIMER_RESOLUTION);
+  if (result != TIMERR_NOERROR) {
+    SDL_SetError("Warning: Can't set %d ms timer resolution", TIMER_RESOLUTION);
+  }
+  /* Allow 10 ms of drift so we don't chew on CPU */
+  timerID = timeSetEvent(TIMER_RESOLUTION, 1, HandleAlarm, 0, TIME_PERIODIC);
+  if (!timerID) {
+    SDL_SetError("timeSetEvent() failed");
+    return (-1);
+  }
+  return (SDL_SetTimerThreaded(1));
 }
 
-void SDL_SYS_TimerQuit(void)
-{
-	if ( timerID ) {
-		timeKillEvent(timerID);
-	}
-	timeEndPeriod(TIMER_RESOLUTION);
+void SDL_SYS_TimerQuit(void) {
+  if (timerID) {
+    timeKillEvent(timerID);
+  }
+  timeEndPeriod(TIMER_RESOLUTION);
 }
 
-int SDL_SYS_StartTimer(void)
-{
-	SDL_SetError("Internal logic error: Win32 uses threaded timer");
-	return(-1);
+int SDL_SYS_StartTimer(void) {
+  SDL_SetError("Internal logic error: Win32 uses threaded timer");
+  return (-1);
 }
 
-void SDL_SYS_StopTimer(void)
-{
-	return;
-}
+void SDL_SYS_StopTimer(void) { return; }
 
 #endif /* SDL_TIMER_WIN32 */

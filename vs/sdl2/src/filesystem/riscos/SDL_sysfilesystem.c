@@ -30,8 +30,8 @@
 #include <unixlib/local.h>
 
 #include "SDL_error.h"
-#include "SDL_stdinc.h"
 #include "SDL_filesystem.h"
+#include "SDL_stdinc.h"
 
 /* Wrapper around __unixify_std that uses SDL's memory allocators */
 static char *SDL_unixify_std(const char *ro_path, char *buffer, size_t buf_len, int filetype)

@@ -32,37 +32,34 @@ beep
 
 **man-end****************************************************************/
 
-int beep(void)
-{
-    PDC_LOG(("beep() - called\n"));
+int beep(void) {
+  PDC_LOG(("beep() - called\n"));
 
-    if (SP->audible)
-        PDC_beep();
-    else
-        flash();
+  if (SP->audible)
+    PDC_beep();
+  else
+    flash();
 
-    return OK;
+  return OK;
 }
 
-int flash(void)
-{
-    int z, y, x;
+int flash(void) {
+  int z, y, x;
 
-    PDC_LOG(("flash() - called\n"));
+  PDC_LOG(("flash() - called\n"));
 
-    /* Reverse each cell; wait; restore the screen */
+  /* Reverse each cell; wait; restore the screen */
 
-    for (z = 0; z < 2; z++)
-    {
-        for (y = 0; y < LINES; y++)
-            for (x = 0; x < COLS; x++)
-                curscr->_y[y][x] ^= A_REVERSE;
+  for (z = 0; z < 2; z++) {
+    for (y = 0; y < LINES; y++)
+      for (x = 0; x < COLS; x++)
+        curscr->_y[y][x] ^= A_REVERSE;
 
-        wrefresh(curscr);
+    wrefresh(curscr);
 
-        if (!z)
-            napms(50);
-    }
+    if (!z)
+      napms(50);
+  }
 
-    return OK;
+  return OK;
 }

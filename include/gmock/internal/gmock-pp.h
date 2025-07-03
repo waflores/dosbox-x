@@ -26,14 +26,14 @@
 //   GMOCK_PP_NARG(PAIR) => 2
 //
 // Requires: the number of arguments after expansion is at most 15.
-#define GMOCK_PP_NARG(...) \
-  GMOCK_PP_INTERNAL_16TH(  \
+#define GMOCK_PP_NARG(...)                                                     \
+  GMOCK_PP_INTERNAL_16TH(                                                      \
       (__VA_ARGS__, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
 
 // Returns 1 if the expansion of arguments has an unprotected comma. Otherwise
 // returns 0. Requires no more than 15 unprotected commas.
-#define GMOCK_PP_HAS_COMMA(...) \
-  GMOCK_PP_INTERNAL_16TH(       \
+#define GMOCK_PP_HAS_COMMA(...)                                                \
+  GMOCK_PP_INTERNAL_16TH(                                                      \
       (__VA_ARGS__, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0))
 
 // Returns the first argument.
@@ -44,8 +44,8 @@
 #define GMOCK_PP_TAIL(...) GMOCK_PP_INTERNAL_TAIL((__VA_ARGS__))
 
 // Calls CAT(_Macro, NARG(__VA_ARGS__))(__VA_ARGS__)
-#define GMOCK_PP_VARIADIC_CALL(_Macro, ...) \
-  GMOCK_PP_IDENTITY(                        \
+#define GMOCK_PP_VARIADIC_CALL(_Macro, ...)                                    \
+  GMOCK_PP_IDENTITY(                                                           \
       GMOCK_PP_CAT(_Macro, GMOCK_PP_NARG(__VA_ARGS__))(__VA_ARGS__))
 
 // If the arguments after expansion have no tokens, evaluates to `1`. Otherwise
@@ -76,14 +76,14 @@
 //   parenthesis, or is a macro that ()-evaluates to comma. Expected 1.
 //
 // We trigger detection on '0001', i.e. on empty.
-#define GMOCK_PP_IS_EMPTY(...)                                               \
-  GMOCK_PP_INTERNAL_IS_EMPTY(GMOCK_PP_HAS_COMMA(__VA_ARGS__),                \
-                             GMOCK_PP_HAS_COMMA(GMOCK_PP_COMMA __VA_ARGS__), \
-                             GMOCK_PP_HAS_COMMA(__VA_ARGS__()),              \
+#define GMOCK_PP_IS_EMPTY(...)                                                 \
+  GMOCK_PP_INTERNAL_IS_EMPTY(GMOCK_PP_HAS_COMMA(__VA_ARGS__),                  \
+                             GMOCK_PP_HAS_COMMA(GMOCK_PP_COMMA __VA_ARGS__),   \
+                             GMOCK_PP_HAS_COMMA(__VA_ARGS__()),                \
                              GMOCK_PP_HAS_COMMA(GMOCK_PP_COMMA __VA_ARGS__()))
 
 // Evaluates to _Then if _Cond is 1 and _Else if _Cond is 0.
-#define GMOCK_PP_IF(_Cond, _Then, _Else) \
+#define GMOCK_PP_IF(_Cond, _Then, _Else)                                       \
   GMOCK_PP_CAT(GMOCK_PP_INTERNAL_IF_, _Cond)(_Then, _Else)
 
 // Similar to GMOCK_PP_IF but takes _Then and _Else in parentheses.
@@ -91,7 +91,7 @@
 // GMOCK_PP_GENERIC_IF(1, (a, b, c), (d, e, f)) => a, b, c
 // GMOCK_PP_GENERIC_IF(0, (a, b, c), (d, e, f)) => d, e, f
 //
-#define GMOCK_PP_GENERIC_IF(_Cond, _Then, _Else) \
+#define GMOCK_PP_GENERIC_IF(_Cond, _Then, _Else)                               \
   GMOCK_PP_REMOVE_PARENS(GMOCK_PP_IF(_Cond, _Then, _Else))
 
 // Evaluates to the number of arguments after expansion. Identifies 'empty' as
@@ -107,18 +107,18 @@
 // Requires: * the number of arguments after expansion is at most 15.
 //           * If the argument is a macro, it must be able to be called with one
 //             argument.
-#define GMOCK_PP_NARG0(...) \
+#define GMOCK_PP_NARG0(...)                                                    \
   GMOCK_PP_IF(GMOCK_PP_IS_EMPTY(__VA_ARGS__), 0, GMOCK_PP_NARG(__VA_ARGS__))
 
 // Expands to 1 if the first argument starts with something in parentheses,
 // otherwise to 0.
-#define GMOCK_PP_IS_BEGIN_PARENS(...)                              \
-  GMOCK_PP_HEAD(GMOCK_PP_CAT(GMOCK_PP_INTERNAL_IBP_IS_VARIADIC_R_, \
+#define GMOCK_PP_IS_BEGIN_PARENS(...)                                          \
+  GMOCK_PP_HEAD(GMOCK_PP_CAT(GMOCK_PP_INTERNAL_IBP_IS_VARIADIC_R_,             \
                              GMOCK_PP_INTERNAL_IBP_IS_VARIADIC_C __VA_ARGS__))
 
 // Expands to 1 is there is only one argument and it is enclosed in parentheses.
-#define GMOCK_PP_IS_ENCLOSED_PARENS(...)             \
-  GMOCK_PP_IF(GMOCK_PP_IS_BEGIN_PARENS(__VA_ARGS__), \
+#define GMOCK_PP_IS_ENCLOSED_PARENS(...)                                       \
+  GMOCK_PP_IF(GMOCK_PP_IS_BEGIN_PARENS(__VA_ARGS__),                           \
               GMOCK_PP_IS_EMPTY(GMOCK_PP_EMPTY __VA_ARGS__), 0)
 
 // Remove the parens, requires GMOCK_PP_IS_ENCLOSED_PARENS(args) => 1.
@@ -128,16 +128,16 @@
 // eK) as many of GMOCK_INTERNAL_NARG0 _Tuple.
 // Requires: * |_Macro| can be called with 3 arguments.
 //           * |_Tuple| expansion has no more than 15 elements.
-#define GMOCK_PP_FOR_EACH(_Macro, _Data, _Tuple)                        \
-  GMOCK_PP_CAT(GMOCK_PP_INTERNAL_FOR_EACH_IMPL_, GMOCK_PP_NARG0 _Tuple) \
+#define GMOCK_PP_FOR_EACH(_Macro, _Data, _Tuple)                               \
+  GMOCK_PP_CAT(GMOCK_PP_INTERNAL_FOR_EACH_IMPL_, GMOCK_PP_NARG0 _Tuple)        \
   (0, _Macro, _Data, _Tuple)
 
 // Expands to _Macro(0, _Data, ) _Macro(1, _Data, ) ... _Macro(K - 1, _Data, )
 // Empty if _K = 0.
 // Requires: * |_Macro| can be called with 3 arguments.
 //           * |_K| literal between 0 and 15
-#define GMOCK_PP_REPEAT(_Macro, _Data, _N)           \
-  GMOCK_PP_CAT(GMOCK_PP_INTERNAL_FOR_EACH_IMPL_, _N) \
+#define GMOCK_PP_REPEAT(_Macro, _Data, _N)                                     \
+  GMOCK_PP_CAT(GMOCK_PP_INTERNAL_FOR_EACH_IMPL_, _N)                           \
   (0, _Macro, _Data, GMOCK_PP_INTENRAL_EMPTY_TUPLE)
 
 // Increments the argument, requires the argument to be between 0 and 15.
@@ -164,17 +164,17 @@
 // tokens. We do that by using a "IDENTITY(MACRO PARENTHESIZED_ARGS)" macro. We
 // define one per possible macro that relies on this behavior. Note "_Args" must
 // be parenthesized.
-#define GMOCK_PP_INTERNAL_INTERNAL_16TH(_1, _2, _3, _4, _5, _6, _7, _8, _9, \
-                                        _10, _11, _12, _13, _14, _15, _16,  \
-                                        ...)                                \
+#define GMOCK_PP_INTERNAL_INTERNAL_16TH(_1, _2, _3, _4, _5, _6, _7, _8, _9,    \
+                                        _10, _11, _12, _13, _14, _15, _16,     \
+                                        ...)                                   \
   _16
-#define GMOCK_PP_INTERNAL_16TH(_Args) \
+#define GMOCK_PP_INTERNAL_16TH(_Args)                                          \
   GMOCK_PP_IDENTITY(GMOCK_PP_INTERNAL_INTERNAL_16TH _Args)
 #define GMOCK_PP_INTERNAL_INTERNAL_HEAD(_1, ...) _1
-#define GMOCK_PP_INTERNAL_HEAD(_Args) \
+#define GMOCK_PP_INTERNAL_HEAD(_Args)                                          \
   GMOCK_PP_IDENTITY(GMOCK_PP_INTERNAL_INTERNAL_HEAD _Args)
 #define GMOCK_PP_INTERNAL_INTERNAL_TAIL(_1, ...) __VA_ARGS__
-#define GMOCK_PP_INTERNAL_TAIL(_Args) \
+#define GMOCK_PP_INTERNAL_TAIL(_Args)                                          \
   GMOCK_PP_IDENTITY(GMOCK_PP_INTERNAL_INTERNAL_TAIL _Args)
 
 #define GMOCK_PP_INTERNAL_IBP_IS_VARIADIC_C(...) 1 _
@@ -214,66 +214,66 @@
 #define GMOCK_PP_INTERNAL_COMMA_IF_13 ,
 #define GMOCK_PP_INTERNAL_COMMA_IF_14 ,
 #define GMOCK_PP_INTERNAL_COMMA_IF_15 ,
-#define GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, _element) \
+#define GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, _element)              \
   _Macro(_i, _Data, _element)
 #define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_0(_i, _Macro, _Data, _Tuple)
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_1(_i, _Macro, _Data, _Tuple) \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_1(_i, _Macro, _Data, _Tuple)           \
   GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_2(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_1(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_2(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_1(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_3(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_2(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_3(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_2(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_4(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_3(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_4(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_3(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_5(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_4(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_5(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_4(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_6(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_5(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_6(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_5(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_7(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_6(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_7(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_6(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_8(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_7(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_8(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_7(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_9(_i, _Macro, _Data, _Tuple)    \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_8(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_9(_i, _Macro, _Data, _Tuple)           \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_8(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_10(_i, _Macro, _Data, _Tuple)   \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_9(GMOCK_PP_INC(_i), _Macro, _Data,    \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_10(_i, _Macro, _Data, _Tuple)          \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_9(GMOCK_PP_INC(_i), _Macro, _Data,           \
                                     (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_11(_i, _Macro, _Data, _Tuple)   \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_10(GMOCK_PP_INC(_i), _Macro, _Data,   \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_11(_i, _Macro, _Data, _Tuple)          \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_10(GMOCK_PP_INC(_i), _Macro, _Data,          \
                                      (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_12(_i, _Macro, _Data, _Tuple)   \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_11(GMOCK_PP_INC(_i), _Macro, _Data,   \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_12(_i, _Macro, _Data, _Tuple)          \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_11(GMOCK_PP_INC(_i), _Macro, _Data,          \
                                      (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_13(_i, _Macro, _Data, _Tuple)   \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_12(GMOCK_PP_INC(_i), _Macro, _Data,   \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_13(_i, _Macro, _Data, _Tuple)          \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_12(GMOCK_PP_INC(_i), _Macro, _Data,          \
                                      (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_14(_i, _Macro, _Data, _Tuple)   \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_13(GMOCK_PP_INC(_i), _Macro, _Data,   \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_14(_i, _Macro, _Data, _Tuple)          \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_13(GMOCK_PP_INC(_i), _Macro, _Data,          \
                                      (GMOCK_PP_TAIL _Tuple))
-#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_15(_i, _Macro, _Data, _Tuple)   \
-  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple) \
-  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_14(GMOCK_PP_INC(_i), _Macro, _Data,   \
+#define GMOCK_PP_INTERNAL_FOR_EACH_IMPL_15(_i, _Macro, _Data, _Tuple)          \
+  GMOCK_PP_INTERNAL_CALL_MACRO(_Macro, _i, _Data, GMOCK_PP_HEAD _Tuple)        \
+  GMOCK_PP_INTERNAL_FOR_EACH_IMPL_14(GMOCK_PP_INC(_i), _Macro, _Data,          \
                                      (GMOCK_PP_TAIL _Tuple))
 
-#endif  // GOOGLEMOCK_INCLUDE_GMOCK_INTERNAL_GMOCK_PP_H_
+#endif // GOOGLEMOCK_INCLUDE_GMOCK_INTERNAL_GMOCK_PP_H_

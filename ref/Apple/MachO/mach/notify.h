@@ -64,29 +64,29 @@
 #ifndef _MACH_NOTIFY_H_
 #define _MACH_NOTIFY_H_
 
-#include <mach/port.h>
 #include <mach/message.h>
 #include <mach/ndr.h>
+#include <mach/port.h>
 
 /*
  *  An alternative specification of the notification interface
  *  may be found in mach/notify.defs.
  */
 
-#define MACH_NOTIFY_FIRST               0100
-#define MACH_NOTIFY_PORT_DELETED        (MACH_NOTIFY_FIRST + 001)
+#define MACH_NOTIFY_FIRST 0100
+#define MACH_NOTIFY_PORT_DELETED (MACH_NOTIFY_FIRST + 001)
 /* A send or send-once right was deleted. */
-#define MACH_NOTIFY_SEND_POSSIBLE       (MACH_NOTIFY_FIRST + 002)
+#define MACH_NOTIFY_SEND_POSSIBLE (MACH_NOTIFY_FIRST + 002)
 /* Now possible to send using specified right */
-#define MACH_NOTIFY_PORT_DESTROYED      (MACH_NOTIFY_FIRST + 005)
+#define MACH_NOTIFY_PORT_DESTROYED (MACH_NOTIFY_FIRST + 005)
 /* A receive right was (would have been) deallocated */
-#define MACH_NOTIFY_NO_SENDERS          (MACH_NOTIFY_FIRST + 006)
+#define MACH_NOTIFY_NO_SENDERS (MACH_NOTIFY_FIRST + 006)
 /* Receive right has no extant send rights */
-#define MACH_NOTIFY_SEND_ONCE           (MACH_NOTIFY_FIRST + 007)
+#define MACH_NOTIFY_SEND_ONCE (MACH_NOTIFY_FIRST + 007)
 /* An extant send-once right died */
-#define MACH_NOTIFY_DEAD_NAME           (MACH_NOTIFY_FIRST + 010)
+#define MACH_NOTIFY_DEAD_NAME (MACH_NOTIFY_FIRST + 010)
 /* Send or send-once right died, leaving a dead-name */
-#define MACH_NOTIFY_LAST                (MACH_NOTIFY_FIRST + 015)
+#define MACH_NOTIFY_LAST (MACH_NOTIFY_FIRST + 015)
 
 typedef mach_port_t notify_port_t;
 
@@ -99,43 +99,43 @@ typedef mach_port_t notify_port_t;
  * related prototypes should be used).
  */
 typedef struct {
-	mach_msg_header_t   not_header;
-	NDR_record_t        NDR;
-	mach_port_name_t not_port;/* MACH_MSG_TYPE_PORT_NAME */
-	mach_msg_format_0_trailer_t trailer;
+  mach_msg_header_t not_header;
+  NDR_record_t NDR;
+  mach_port_name_t not_port; /* MACH_MSG_TYPE_PORT_NAME */
+  mach_msg_format_0_trailer_t trailer;
 } mach_port_deleted_notification_t;
 
 typedef struct {
-	mach_msg_header_t   not_header;
-	NDR_record_t        NDR;
-	mach_port_name_t not_port;/* MACH_MSG_TYPE_PORT_NAME */
-	mach_msg_format_0_trailer_t trailer;
+  mach_msg_header_t not_header;
+  NDR_record_t NDR;
+  mach_port_name_t not_port; /* MACH_MSG_TYPE_PORT_NAME */
+  mach_msg_format_0_trailer_t trailer;
 } mach_send_possible_notification_t;
 
 typedef struct {
-	mach_msg_header_t   not_header;
-	mach_msg_body_t     not_body;
-	mach_msg_port_descriptor_t not_port;/* MACH_MSG_TYPE_PORT_RECEIVE */
-	mach_msg_format_0_trailer_t trailer;
+  mach_msg_header_t not_header;
+  mach_msg_body_t not_body;
+  mach_msg_port_descriptor_t not_port; /* MACH_MSG_TYPE_PORT_RECEIVE */
+  mach_msg_format_0_trailer_t trailer;
 } mach_port_destroyed_notification_t;
 
 typedef struct {
-	mach_msg_header_t   not_header;
-	NDR_record_t        NDR;
-	mach_msg_type_number_t not_count;
-	mach_msg_format_0_trailer_t trailer;
+  mach_msg_header_t not_header;
+  NDR_record_t NDR;
+  mach_msg_type_number_t not_count;
+  mach_msg_format_0_trailer_t trailer;
 } mach_no_senders_notification_t;
 
 typedef struct {
-	mach_msg_header_t   not_header;
-	mach_msg_format_0_trailer_t trailer;
+  mach_msg_header_t not_header;
+  mach_msg_format_0_trailer_t trailer;
 } mach_send_once_notification_t;
 
 typedef struct {
-	mach_msg_header_t   not_header;
-	NDR_record_t        NDR;
-	mach_port_name_t not_port;/* MACH_MSG_TYPE_PORT_NAME */
-	mach_msg_format_0_trailer_t trailer;
+  mach_msg_header_t not_header;
+  NDR_record_t NDR;
+  mach_port_name_t not_port; /* MACH_MSG_TYPE_PORT_NAME */
+  mach_msg_format_0_trailer_t trailer;
 } mach_dead_name_notification_t;
 
-#endif  /* _MACH_NOTIFY_H_ */
+#endif /* _MACH_NOTIFY_H_ */

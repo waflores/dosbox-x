@@ -23,20 +23,16 @@
 
 #include "fluidsynth_priv.h"
 
-void fluid_midi_driver_settings(fluid_settings_t* settings);
-
+void fluid_midi_driver_settings(fluid_settings_t *settings);
 
 /*
  * fluid_midi_driver_t
  */
 
-struct _fluid_midi_driver_t
-{
-  char* name;
+struct _fluid_midi_driver_t {
+  char *name;
   handle_midi_event_func_t handler;
-  void* data;
+  void *data;
 };
 
-
-
-#endif  /* _FLUID_AUDRIVER_H */
+#endif /* _FLUID_AUDRIVER_H */

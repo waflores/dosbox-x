@@ -139,6 +139,6 @@ D3D12_GetRootSignatureData(D3D12_RootSignature rootSig, D3D12_SHADER_BYTECODE *o
     outBytecode->BytecodeLength = D3D12_rootsigs[rootSig].rs_shader_size;
 }
 
-#endif  /* SDL_VIDEO_RENDER_D3D12 && defined(__XBOXONE__) */
+#endif /* SDL_VIDEO_RENDER_D3D12 && defined(__XBOXONE__) */
 
 /* vi: set ts=4 sw=4 expandtab: */

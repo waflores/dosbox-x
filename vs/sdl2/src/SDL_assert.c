@@ -25,18 +25,18 @@
 #endif
 
 #include "SDL.h"
+#include "SDL_assert.h"
+#include "SDL_assert_c.h"
 #include "SDL_atomic.h"
 #include "SDL_messagebox.h"
 #include "SDL_video.h"
-#include "SDL_assert.h"
-#include "SDL_assert_c.h"
 #include "video/SDL_sysvideo.h"
 
 #if defined(__WIN32__) || defined(__GDK__)
 #ifndef WS_OVERLAPPEDWINDOW
 #define WS_OVERLAPPEDWINDOW 0
 #endif
-#else  /* fprintf, etc. */
+#else /* fprintf, etc. */
 #include <stdio.h>
 #include <stdlib.h>
 #endif

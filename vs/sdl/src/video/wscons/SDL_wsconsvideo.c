@@ -21,23 +21,23 @@
 */
 #include "SDL_config.h"
 
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
 #include <dev/wscons/wsdisplay_usl_io.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/time.h>
+#include <unistd.h>
 
-#include "SDL_video.h"
-#include "SDL_mouse.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
+#include "../SDL_pixels_c.h"
+#include "../SDL_sysvideo.h"
+#include "SDL_mouse.h"
+#include "SDL_video.h"
 
-#include "SDL_wsconsvideo.h"
 #include "SDL_wsconsevents_c.h"
 #include "SDL_wsconsmouse_c.h"
+#include "SDL_wsconsvideo.h"
 
 #define WSCONSVID_DRIVER_NAME "wscons"
 enum {
@@ -47,13 +47,16 @@ enum {
   WSCONS_ROTATE_CW = 270
 };
 
-#define min(a,b) ((a)<(b)?(a):(b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
 /* Initialization/Query functions */
 static int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat);
-static SDL_Rect **WSCONS_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags);
-static SDL_Surface *WSCONS_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags);
-static int WSCONS_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors);
+static SDL_Rect **WSCONS_ListModes(_THIS, SDL_PixelFormat *format,
+                                   Uint32 flags);
+static SDL_Surface *WSCONS_SetVideoMode(_THIS, SDL_Surface *current, int width,
+                                        int height, int bpp, Uint32 flags);
+static int WSCONS_SetColors(_THIS, int firstcolor, int ncolors,
+                            SDL_Color *colors);
 static void WSCONS_VideoQuit(_THIS);
 
 /* Hardware surface functions */
@@ -67,38 +70,32 @@ static WSCONS_bitBlit WSCONS_blit16;
 static WSCONS_bitBlit WSCONS_blit16blocked;
 static void WSCONS_UpdateRects(_THIS, int numrects, SDL_Rect *rects);
 
-void WSCONS_ReportError(char *fmt, ...)
-{
+void WSCONS_ReportError(char *fmt, ...) {
   char message[200];
   va_list vaArgs;
-  
+
   message[199] = '\0';
-  
+
   va_start(vaArgs, fmt);
   vsnprintf(message, 199, fmt, vaArgs);
   va_end(vaArgs);
 
-  SDL_SetError(message); 
+  SDL_SetError(message);
   fprintf(stderr, "WSCONS error: %s\n", message);
 }
 
 /* WSCONS driver bootstrap functions */
 
-static int WSCONS_Available(void)
-{
-  return 1;
-}
+static int WSCONS_Available(void) { return 1; }
 
-static void WSCONS_DeleteDevice(SDL_VideoDevice *device)
-{
+static void WSCONS_DeleteDevice(SDL_VideoDevice *device) {
   SDL_free(device->hidden);
   SDL_free(device);
 }
 
-static SDL_VideoDevice *WSCONS_CreateDevice(int devindex)
-{
+static SDL_VideoDevice *WSCONS_CreateDevice(int devindex) {
   SDL_VideoDevice *device;
-  
+
   /* Initialize all variables that we clean on shutdown */
   device = (SDL_VideoDevice *)SDL_malloc(sizeof(SDL_VideoDevice));
   if (device == NULL) {
@@ -106,16 +103,16 @@ static SDL_VideoDevice *WSCONS_CreateDevice(int devindex)
     return 0;
   }
   SDL_memset(device, 0, (sizeof *device));
-  device->hidden = 
-    (struct SDL_PrivateVideoData *)SDL_malloc((sizeof *device->hidden));
+  device->hidden =
+      (struct SDL_PrivateVideoData *)SDL_malloc((sizeof *device->hidden));
   if (device->hidden == NULL) {
     SDL_OutOfMemory();
     SDL_free(device);
-    return(0);
+    return (0);
   }
   SDL_memset(device->hidden, 0, (sizeof *device->hidden));
   device->hidden->fd = -1;
-  
+
   /* Set the function pointers */
   device->VideoInit = WSCONS_VideoInit;
   device->ListModes = WSCONS_ListModes;
@@ -130,21 +127,17 @@ static SDL_VideoDevice *WSCONS_CreateDevice(int devindex)
   device->InitOSKeymap = WSCONS_InitOSKeymap;
   device->PumpEvents = WSCONS_PumpEvents;
   device->free = WSCONS_DeleteDevice;
-  
+
   return device;
 }
 
-VideoBootStrap WSCONS_bootstrap = {
-  WSCONSVID_DRIVER_NAME,
-  "SDL wscons video driver",
-  WSCONS_Available,
-  WSCONS_CreateDevice
-};
+VideoBootStrap WSCONS_bootstrap = {WSCONSVID_DRIVER_NAME,
+                                   "SDL wscons video driver", WSCONS_Available,
+                                   WSCONS_CreateDevice};
 
 #define WSCONSDEV_FORMAT "/dev/ttyC%01x"
 
-int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
-{
+int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat) {
   char devnamebuf[30];
   char *devname;
   char *rotation;
@@ -153,16 +146,17 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
   size_t len, mapsize;
   int pagemask;
   int width, height;
-  
+
   devname = SDL_getenv("SDL_WSCONSDEV");
   if (devname == NULL) {
     int activeVT;
     if (ioctl(STDIN_FILENO, VT_GETACTIVE, &activeVT) == -1) {
-      WSCONS_ReportError("Unable to determine active terminal: %s", 
-			 strerror(errno));
+      WSCONS_ReportError("Unable to determine active terminal: %s",
+                         strerror(errno));
       return -1;
     }
-    SDL_snprintf(devnamebuf, sizeof(devnamebuf), WSCONSDEV_FORMAT, activeVT - 1);
+    SDL_snprintf(devnamebuf, sizeof(devnamebuf), WSCONSDEV_FORMAT,
+                 activeVT - 1);
     devname = devnamebuf;
   }
 
@@ -179,16 +173,15 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
     WSCONS_ReportError("ioctl WSDISPLAY_GTYPE: %s", strerror(errno));
     return -1;
   }
-  if (ioctl(private->fd, WSDISPLAYIO_LINEBYTES, &private->physlinebytes) == -1) {
+  if (ioctl(private->fd, WSDISPLAYIO_LINEBYTES, &private->physlinebytes) ==
+      -1) {
     WSCONS_ReportError("ioctl WSDISPLAYIO_LINEBYTES: %s", strerror(errno));
     return -1;
   }
   if (private->info.depth > 8) {
-    if (wstype == WSDISPLAY_TYPE_SUN24 ||
-	wstype == WSDISPLAY_TYPE_SUNCG12 ||
-	wstype == WSDISPLAY_TYPE_SUNCG14 ||
-	wstype == WSDISPLAY_TYPE_SUNTCX ||
-	wstype == WSDISPLAY_TYPE_SUNFFB) {
+    if (wstype == WSDISPLAY_TYPE_SUN24 || wstype == WSDISPLAY_TYPE_SUNCG12 ||
+        wstype == WSDISPLAY_TYPE_SUNCG14 || wstype == WSDISPLAY_TYPE_SUNTCX ||
+        wstype == WSDISPLAY_TYPE_SUNFFB) {
       private->redMask = 0x0000ff;
       private->greenMask = 0x00ff00;
       private->blueMask = 0xff0000;
@@ -206,7 +199,7 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
     WSCONS_ReportError("Displays with 8 bpp or less are not supported");
     return -1;
   }
-  
+
   private->rotate = WSCONS_ROTATE_NONE;
   rotation = SDL_getenv("SDL_VIDEO_WSCONS_ROTATION");
   if (rotation != NULL) {
@@ -232,45 +225,47 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
       printf("Rotating screen upside down\n");
     } else {
       WSCONS_ReportError("\"%s\" is not a valid value for "
-			 "SDL_VIDEO_WSCONS_ROTATION", rotation);
+                         "SDL_VIDEO_WSCONS_ROTATION",
+                         rotation);
       return -1;
     }
   }
 
   switch (private->info.depth) {
-    case 1:
-    case 4:
-    case 8:
+  case 1:
+  case 4:
+  case 8:
+    len = private->physlinebytes * private->info.height;
+    break;
+  case 16:
+    if (private->physlinebytes == private->info.width) {
+      len = private->info.width * private->info.height * sizeof(short);
+    } else {
       len = private->physlinebytes * private->info.height;
-      break;
-    case 16:
-      if (private->physlinebytes == private->info.width) {
-	len = private->info.width * private->info.height * sizeof(short);
-      } else {
-	len = private->physlinebytes * private->info.height;
-      }
-      if (private->rotate == WSCONS_ROTATE_NONE ||
-	  private->rotate == WSCONS_ROTATE_UD) {
-	private->blitFunc = WSCONS_blit16;
-      } else {
-	private->blitFunc = WSCONS_blit16blocked;
-      }
-      break;
-    case 32:
-      if (private->physlinebytes == private->info.width) {
-	len = private->info.width * private->info.height * sizeof(int);
-      } else {
-	len = private->physlinebytes * private->info.height;
-      }
-      break;
-    default:
-      WSCONS_ReportError("unsupported depth %d", private->info.depth);
-      return -1;
+    }
+    if (private->rotate == WSCONS_ROTATE_NONE ||
+        private->rotate == WSCONS_ROTATE_UD) {
+      private->blitFunc = WSCONS_blit16;
+    } else {
+      private->blitFunc = WSCONS_blit16blocked;
+    }
+    break;
+  case 32:
+    if (private->physlinebytes == private->info.width) {
+      len = private->info.width * private->info.height * sizeof(int);
+    } else {
+      len = private->physlinebytes * private->info.height;
+    }
+    break;
+  default:
+    WSCONS_ReportError("unsupported depth %d", private->info.depth);
+    return -1;
   }
 
   if (private->shadowFB && private->blitFunc == NULL) {
     WSCONS_ReportError("Using software buffer, but no blitter function is "
-		       "available for this %d bpp.", private->info.depth);
+                       "available for this %d bpp.",
+                       private->info.depth);
     return -1;
   }
 
@@ -281,9 +276,8 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
 
   pagemask = getpagesize() - 1;
   mapsize = ((int)len + pagemask) & ~pagemask;
-  private->physmem = (Uint8 *)mmap(NULL, mapsize,
-				   PROT_READ | PROT_WRITE, MAP_SHARED,
-				   private->fd, (off_t)0);
+  private->physmem = (Uint8 *)mmap(NULL, mapsize, PROT_READ | PROT_WRITE,
+                                   MAP_SHARED, private->fd, (off_t)0);
   if (private->physmem == (Uint8 *)MAP_FAILED) {
     private->physmem = NULL;
     WSCONS_ReportError("mmap: %s", strerror(errno));
@@ -291,7 +285,7 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
   }
   private->fbmem_len = len;
 
-  if (private->rotate == WSCONS_ROTATE_CW || 
+  if (private->rotate == WSCONS_ROTATE_CW ||
       private->rotate == WSCONS_ROTATE_CCW) {
     width = private->info.height;
     height = private->info.width;
@@ -311,27 +305,26 @@ int WSCONS_VideoInit(_THIS, SDL_PixelFormat *vformat)
     }
     private->fbstart = private->shadowmem;
     private->fblinebytes = width * ((private->info.depth + 7) / 8);
-  } else { 
+  } else {
     private->fbstart = private->physmem;
     private->fblinebytes = private->physlinebytes;
   }
-  
+
   private->SDL_modelist[0] = (SDL_Rect *)SDL_malloc(sizeof(SDL_Rect));
   private->SDL_modelist[0]->w = width;
   private->SDL_modelist[0]->h = height;
 
   vformat->BitsPerPixel = private->info.depth;
   vformat->BytesPerPixel = private->info.depth / 8;
-  
+
   if (WSCONS_InitKeyboard(this) == -1) {
     return -1;
   }
-  
+
   return 0;
 }
 
-SDL_Rect **WSCONS_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
-{
+SDL_Rect **WSCONS_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags) {
   if (format->BitsPerPixel == private->info.depth) {
     return private->SDL_modelist;
   } else {
@@ -339,13 +332,12 @@ SDL_Rect **WSCONS_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
   }
 }
 
-SDL_Surface *WSCONS_SetVideoMode(_THIS, SDL_Surface *current,
-				 int width, int height, int bpp, Uint32 flags)
-{
-  if (width != private->SDL_modelist[0]->w || 
+SDL_Surface *WSCONS_SetVideoMode(_THIS, SDL_Surface *current, int width,
+                                 int height, int bpp, Uint32 flags) {
+  if (width != private->SDL_modelist[0]->w ||
       height != private->SDL_modelist[0]->h) {
-    WSCONS_ReportError("Requested video mode %dx%d not supported.",
-		       width, height);
+    WSCONS_ReportError("Requested video mode %dx%d not supported.", width,
+                       height);
     return NULL;
   }
   if (bpp != private->info.depth) {
@@ -353,12 +345,8 @@ SDL_Surface *WSCONS_SetVideoMode(_THIS, SDL_Surface *current,
     return NULL;
   }
 
-  if (!SDL_ReallocFormat(current, 
-			 bpp, 
-			 private->redMask,
-			 private->greenMask,
-			 private->blueMask,
-			 0)) {
+  if (!SDL_ReallocFormat(current, bpp, private->redMask, private->greenMask,
+                         private->blueMask, 0)) {
     WSCONS_ReportError("Couldn't allocate new pixel format");
     return NULL;
   }
@@ -379,31 +367,16 @@ SDL_Surface *WSCONS_SetVideoMode(_THIS, SDL_Surface *current,
   return current;
 }
 
-static int WSCONS_AllocHWSurface(_THIS, SDL_Surface *surface)
-{
-  return -1;
-}
-static void WSCONS_FreeHWSurface(_THIS, SDL_Surface *surface)
-{
-}
+static int WSCONS_AllocHWSurface(_THIS, SDL_Surface *surface) { return -1; }
+static void WSCONS_FreeHWSurface(_THIS, SDL_Surface *surface) {}
 
-static int WSCONS_LockHWSurface(_THIS, SDL_Surface *surface)
-{
-  return 0;
-}
+static int WSCONS_LockHWSurface(_THIS, SDL_Surface *surface) { return 0; }
 
-static void WSCONS_UnlockHWSurface(_THIS, SDL_Surface *surface)
-{
-}
+static void WSCONS_UnlockHWSurface(_THIS, SDL_Surface *surface) {}
 
-static void WSCONS_blit16(Uint8 *byte_src_pos,
-			  int srcRightDelta, 
-			  int srcDownDelta, 
-			  Uint8 *byte_dst_pos,
-			  int dst_linebytes,
-			  int width,
-			  int height)
-{
+static void WSCONS_blit16(Uint8 *byte_src_pos, int srcRightDelta,
+                          int srcDownDelta, Uint8 *byte_dst_pos,
+                          int dst_linebytes, int width, int height) {
   int w;
   Uint16 *src_pos = (Uint16 *)byte_src_pos;
   Uint16 *dst_pos = (Uint16 *)byte_dst_pos;
@@ -425,14 +398,9 @@ static void WSCONS_blit16(Uint8 *byte_src_pos,
 #define BLOCKSIZE_W 32
 #define BLOCKSIZE_H 32
 
-static void WSCONS_blit16blocked(Uint8 *byte_src_pos,
-				 int srcRightDelta, 
-				 int srcDownDelta, 
-				 Uint8 *byte_dst_pos,
-				 int dst_linebytes,
-				 int width,
-				 int height)
-{
+static void WSCONS_blit16blocked(Uint8 *byte_src_pos, int srcRightDelta,
+                                 int srcDownDelta, Uint8 *byte_dst_pos,
+                                 int dst_linebytes, int width, int height) {
   int w;
   Uint16 *src_pos = (Uint16 *)byte_src_pos;
   Uint16 *dst_pos = (Uint16 *)byte_dst_pos;
@@ -441,13 +409,9 @@ static void WSCONS_blit16blocked(Uint8 *byte_src_pos,
     Uint16 *src = src_pos;
     Uint16 *dst = dst_pos;
     for (w = width; w > 0; w -= BLOCKSIZE_W) {
-      WSCONS_blit16((Uint8 *)src,
-		    srcRightDelta,
-		    srcDownDelta,
-		    (Uint8 *)dst,
-		    dst_linebytes,
-		    min(w, BLOCKSIZE_W),
-		    min(height, BLOCKSIZE_H));
+      WSCONS_blit16((Uint8 *)src, srcRightDelta, srcDownDelta, (Uint8 *)dst,
+                    dst_linebytes, min(w, BLOCKSIZE_W),
+                    min(height, BLOCKSIZE_H));
       src += srcRightDelta * BLOCKSIZE_W;
       dst += BLOCKSIZE_W;
     }
@@ -457,8 +421,7 @@ static void WSCONS_blit16blocked(Uint8 *byte_src_pos,
   }
 }
 
-static void WSCONS_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
-{
+static void WSCONS_UpdateRects(_THIS, int numrects, SDL_Rect *rects) {
   int width = private->SDL_modelist[0]->w;
   int height = private->SDL_modelist[0]->h;
   int bytesPerPixel = (private->info.depth + 7) / 8;
@@ -477,14 +440,14 @@ static void WSCONS_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
     int x1, y1, x2, y2;
     int scr_x1, scr_y1, scr_x2, scr_y2;
     int sha_x1, sha_y1;
-    int shadowRightDelta;  /* Address change when moving right in dest */
-    int shadowDownDelta;   /* Address change when moving down in dest */
+    int shadowRightDelta; /* Address change when moving right in dest */
+    int shadowDownDelta;  /* Address change when moving down in dest */
     Uint8 *src_start;
     Uint8 *dst_start;
 
-    x1 = rects[i].x; 
+    x1 = rects[i].x;
     y1 = rects[i].y;
-    x2 = x1 + rects[i].w; 
+    x2 = x1 + rects[i].w;
     y2 = y1 + rects[i].h;
 
     if (x1 < 0) {
@@ -512,65 +475,59 @@ static void WSCONS_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
     }
 
     switch (private->rotate) {
-      case WSCONS_ROTATE_NONE:
-	sha_x1 = scr_x1 = x1;
-	sha_y1 = scr_y1 = y1;
-	scr_x2 = x2;
-	scr_y2 = y2;
-	shadowRightDelta = 1;
-	shadowDownDelta = width;
-	break;
-      case WSCONS_ROTATE_CCW:
-	scr_x1 = y1;
-	scr_y1 = width - x2;
-	scr_x2 = y2;
-	scr_y2 = width - x1;
-	sha_x1 = x2 - 1;
-	sha_y1 = y1;
-	shadowRightDelta = width;
-	shadowDownDelta = -1;
-	break;
-      case WSCONS_ROTATE_UD:
-	scr_x1 = width - x2;
-	scr_y1 = height - y2;
-	scr_x2 = width - x1;
-	scr_y2 = height - y1;
-	sha_x1 = x2 - 1;
-	sha_y1 = y2 - 1;
-	shadowRightDelta = -1;
-	shadowDownDelta = -width;
-	break;
-      case WSCONS_ROTATE_CW:
-	scr_x1 = height - y2;
-	scr_y1 = x1;
-	scr_x2 = height - y1;
-	scr_y2 = x2;
-	sha_x1 = x1;
-	sha_y1 = y2 - 1;
-	shadowRightDelta = -width;
-	shadowDownDelta = 1;
-	break;
-      default:
-	WSCONS_ReportError("Unknown rotation");
-	return;
+    case WSCONS_ROTATE_NONE:
+      sha_x1 = scr_x1 = x1;
+      sha_y1 = scr_y1 = y1;
+      scr_x2 = x2;
+      scr_y2 = y2;
+      shadowRightDelta = 1;
+      shadowDownDelta = width;
+      break;
+    case WSCONS_ROTATE_CCW:
+      scr_x1 = y1;
+      scr_y1 = width - x2;
+      scr_x2 = y2;
+      scr_y2 = width - x1;
+      sha_x1 = x2 - 1;
+      sha_y1 = y1;
+      shadowRightDelta = width;
+      shadowDownDelta = -1;
+      break;
+    case WSCONS_ROTATE_UD:
+      scr_x1 = width - x2;
+      scr_y1 = height - y2;
+      scr_x2 = width - x1;
+      scr_y2 = height - y1;
+      sha_x1 = x2 - 1;
+      sha_y1 = y2 - 1;
+      shadowRightDelta = -1;
+      shadowDownDelta = -width;
+      break;
+    case WSCONS_ROTATE_CW:
+      scr_x1 = height - y2;
+      scr_y1 = x1;
+      scr_x2 = height - y1;
+      scr_y2 = x2;
+      sha_x1 = x1;
+      sha_y1 = y2 - 1;
+      shadowRightDelta = -width;
+      shadowDownDelta = 1;
+      break;
+    default:
+      WSCONS_ReportError("Unknown rotation");
+      return;
     }
 
     src_start = private->shadowmem + (sha_y1 * width + sha_x1) * bytesPerPixel;
-    dst_start = private->physmem + scr_y1 * private->physlinebytes + 
-      scr_x1 * bytesPerPixel;
+    dst_start = private->physmem + scr_y1 * private->physlinebytes +
+                scr_x1 * bytesPerPixel;
 
-    private->blitFunc(src_start,
-		      shadowRightDelta, 
-		      shadowDownDelta, 
-		      dst_start,
-		      private->physlinebytes,
-		      scr_x2 - scr_x1,
-		      scr_y2 - scr_y1);
+    private->blitFunc(src_start, shadowRightDelta, shadowDownDelta, dst_start,
+                      private->physlinebytes, scr_x2 - scr_x1, scr_y2 - scr_y1);
   }
 }
 
-int WSCONS_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
-{
+int WSCONS_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors) {
   return 0;
 }
 
@@ -578,8 +535,7 @@ int WSCONS_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
  * Note: If we are terminated, this could be called in the middle of
  * another SDL video routine -- notably UpdateRects.
  */
-void WSCONS_VideoQuit(_THIS)
-{
+void WSCONS_VideoQuit(_THIS) {
   int mode = WSDISPLAYIO_MODE_EMUL;
 
   if (private->shadowmem != NULL) {

@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -20,7 +20,6 @@
 
 #ifndef _FLUIDSYNTH_VERSION_H
 #define _FLUIDSYNTH_VERSION_H
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,14 +30,17 @@ extern "C" {
  * @brief Library version functions and defines
  */
 
-#define FLUIDSYNTH_VERSION       "1.1.6-noglib"           /**< String constant of libfluidsynth version. */
-#define FLUIDSYNTH_VERSION_MAJOR 1     /**< libfluidsynth major version integer constant. */
-#define FLUIDSYNTH_VERSION_MINOR 1     /**< libfluidsynth minor version integer constant. */
-#define FLUIDSYNTH_VERSION_MICRO 6     /**< libfluidsynth micro version integer constant. */
+#define FLUIDSYNTH_VERSION                                                     \
+  "1.1.6-noglib" /**< String constant of libfluidsynth version. */
+#define FLUIDSYNTH_VERSION_MAJOR                                               \
+  1 /**< libfluidsynth major version integer constant. */
+#define FLUIDSYNTH_VERSION_MINOR                                               \
+  1 /**< libfluidsynth minor version integer constant. */
+#define FLUIDSYNTH_VERSION_MICRO                                               \
+  6 /**< libfluidsynth micro version integer constant. */
 
 FLUIDSYNTH_API void fluid_version(int *major, int *minor, int *micro);
-FLUIDSYNTH_API char* fluid_version_str(void);
-
+FLUIDSYNTH_API char *fluid_version_str(void);
 
 #ifdef __cplusplus
 }

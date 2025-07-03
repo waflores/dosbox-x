@@ -4,10 +4,10 @@
  *  Provides functionality to parse command line arguments to the test harness.
  */
 
-#include <SDL.h>
+#include "SDL_visualtest_action_configparser.h"
 #include "SDL_visualtest_sut_configparser.h"
 #include "SDL_visualtest_variator_common.h"
-#include "SDL_visualtest_action_configparser.h"
+#include <SDL.h>
 
 #ifndef SDL_visualtest_harness_argparser_h_
 #define SDL_visualtest_harness_argparser_h_
@@ -58,12 +58,12 @@ typedef struct SDLVisualTest_HarnessState
  *
  * \return Non-zero on success, zero on failure.
  */
-int SDLVisualTest_ParseHarnessArgs(char** argv, SDLVisualTest_HarnessState* state);
+int SDLVisualTest_ParseHarnessArgs(char **argv, SDLVisualTest_HarnessState *state);
 
 /**
  * Frees any resources associated with the state object pointed to by \c state.
  */
-void SDLVisualTest_FreeHarnessState(SDLVisualTest_HarnessState* state);
+void SDLVisualTest_FreeHarnessState(SDLVisualTest_HarnessState *state);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

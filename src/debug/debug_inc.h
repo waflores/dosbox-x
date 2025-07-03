@@ -18,7 +18,6 @@
 
 /* Local Debug Function */
 
-
 #if C_DEBUG
 #include <curses.h>
 
@@ -40,83 +39,81 @@ extern const char *dbg_win_names[];
 
 class DBGBlock {
 public:
-    enum {
-        DATV_SEGMENTED=0,
-        DATV_VIRTUAL,
-        DATV_PHYSICAL
-    };
-    enum {
-        /* main not counted */
-        WINI_REG,
-        WINI_DATA,
-        WINI_CODE,
-        WINI_VAR,
-        WINI_OUT,
-        /* inp not counted */
+  enum { DATV_SEGMENTED = 0, DATV_VIRTUAL, DATV_PHYSICAL };
+  enum {
+    /* main not counted */
+    WINI_REG,
+    WINI_DATA,
+    WINI_CODE,
+    WINI_VAR,
+    WINI_OUT,
+    /* inp not counted */
 
-        WINI_MAX_INDEX
-    };
-    bool win_vis[WINI_MAX_INDEX] = {};
-    std::string win_title[WINI_MAX_INDEX];
-    unsigned char win_order[WINI_MAX_INDEX] = {};
-    unsigned int win_height[WINI_MAX_INDEX] = {};
+    WINI_MAX_INDEX
+  };
+  bool win_vis[WINI_MAX_INDEX] = {};
+  std::string win_title[WINI_MAX_INDEX];
+  unsigned char win_order[WINI_MAX_INDEX] = {};
+  unsigned int win_height[WINI_MAX_INDEX] = {};
+
 public:
-	DBGBlock() : win_main(NULL), win_reg(NULL), win_data(NULL), win_code(NULL),
-		win_var(NULL), win_out(NULL), win_inp(NULL), active_win(WINI_CODE), input_y(0), global_mask(0), data_view(0xFF) {
-        for (unsigned int i=0;i < WINI_MAX_INDEX;i++) {
-            win_height[i] = dbg_def_win_height[i];
-            win_title[i] = dbg_def_win_titles[i];
-            win_vis[i] = (i != WINI_VAR);
-            win_order[i] = i;
-        }
+  DBGBlock()
+      : win_main(NULL), win_reg(NULL), win_data(NULL), win_code(NULL),
+        win_var(NULL), win_out(NULL), win_inp(NULL), active_win(WINI_CODE),
+        input_y(0), global_mask(0), data_view(0xFF) {
+    for (unsigned int i = 0; i < WINI_MAX_INDEX; i++) {
+      win_height[i] = dbg_def_win_height[i];
+      win_title[i] = dbg_def_win_titles[i];
+      win_vis[i] = (i != WINI_VAR);
+      win_order[i] = i;
     }
+  }
+
 public:
-	WINDOW * win_main;					/* The Main Window (not counted in tab enumeration) */
+  WINDOW *win_main; /* The Main Window (not counted in tab enumeration) */
 
-	WINDOW * win_reg;					/* Register Window */
-	WINDOW * win_data;					/* Data Output window */
-	WINDOW * win_code;					/* Disassembly/Debug point Window */
-	WINDOW * win_var;					/* Variable Window */
-	WINDOW * win_out;					/* Text Output Window */
+  WINDOW *win_reg;  /* Register Window */
+  WINDOW *win_data; /* Data Output window */
+  WINDOW *win_code; /* Disassembly/Debug point Window */
+  WINDOW *win_var;  /* Variable Window */
+  WINDOW *win_out;  /* Text Output Window */
 
-    WINDOW * win_inp;                   /* Input window (not counted in tab enumeration) */
+  WINDOW *win_inp; /* Input window (not counted in tab enumeration) */
 
-    uint32_t active_win;					/* Current active window */
-	uint32_t input_y;
-	uint32_t global_mask;					/* Current msgmask */
+  uint32_t active_win; /* Current active window */
+  uint32_t input_y;
+  uint32_t global_mask; /* Current msgmask */
 
-    unsigned char data_view;
+  unsigned char data_view;
 
-    void set_data_view(unsigned int view);
+  void set_data_view(unsigned int view);
 
-    WINDOW *get_win(int idx);
-    WINDOW* &get_win_ref(int idx);
-    const char *get_winname(int idx);
-    const char *get_wintitle(int idx);
-    std::string windowlist_by_name(void);
-    int name_to_win(const char *name);
-    WINDOW *get_active_win(void);
-    int win_find_order(int wnd);
-    int win_prev_by_order(int order);
-    int win_next_by_order(int order);
-    void swap_order(int o1,int o2);
-    void next_window(void);
-    void prev_window(void);
+  WINDOW *get_win(int idx);
+  WINDOW *&get_win_ref(int idx);
+  const char *get_winname(int idx);
+  const char *get_wintitle(int idx);
+  std::string windowlist_by_name(void);
+  int name_to_win(const char *name);
+  WINDOW *get_active_win(void);
+  int win_find_order(int wnd);
+  int win_prev_by_order(int order);
+  int win_next_by_order(int order);
+  void swap_order(int o1, int o2);
+  void next_window(void);
+  void prev_window(void);
 };
 
-
 struct DASMLine {
-	uint32_t pc;
-	char dasm[80];
-	PhysPt ea;
-	uint16_t easeg;
-	uint32_t eaoff;
+  uint32_t pc;
+  char dasm[80];
+  PhysPt ea;
+  uint16_t easeg;
+  uint32_t eaoff;
 };
 
 extern DBGBlock dbg;
 
 /* Local Debug Stuff */
-Bitu DasmI386(char* buffer, PhysPt pc, uint32_t cur_ip, bool bit32);
-int  DasmLastOperandSize(void);
+Bitu DasmI386(char *buffer, PhysPt pc, uint32_t cur_ip, bool bit32);
+int DasmLastOperandSize(void);
 #endif
-

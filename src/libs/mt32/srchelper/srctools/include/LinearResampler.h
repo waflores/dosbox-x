@@ -25,16 +25,17 @@ static const unsigned int LINEAR_RESAMPER_CHANNEL_COUNT = 2;
 
 class LinearResampler : public ResamplerStage {
 public:
-	LinearResampler(double sourceSampleRate, double targetSampleRate);
-	~LinearResampler() {}
+  LinearResampler(double sourceSampleRate, double targetSampleRate);
+  ~LinearResampler() {}
 
-	unsigned int estimateInLength(const unsigned int outLength) const;
-	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength);
+  unsigned int estimateInLength(const unsigned int outLength) const;
+  void process(const FloatSample *&inSamples, unsigned int &inLength,
+               FloatSample *&outSamples, unsigned int &outLength);
 
 private:
-	const double inputToOutputRatio;
-	double position;
-	FloatSample lastInputSamples[LINEAR_RESAMPER_CHANNEL_COUNT];
+  const double inputToOutputRatio;
+  double position;
+  FloatSample lastInputSamples[LINEAR_RESAMPER_CHANNEL_COUNT];
 };
 
 } // namespace SRCTools

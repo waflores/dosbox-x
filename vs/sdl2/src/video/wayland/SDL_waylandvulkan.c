@@ -32,8 +32,8 @@
 #include "SDL_waylandwindow.h"
 
 #include "SDL_loadso.h"
-#include "SDL_waylandvulkan.h"
 #include "SDL_syswm.h"
+#include "SDL_waylandvulkan.h"
 
 #if defined(__OpenBSD__)
 #define DEFAULT_VULKAN "libvulkan.so"

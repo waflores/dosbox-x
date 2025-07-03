@@ -33,7 +33,8 @@
  * is close enough to denormal level, the macro forces the number to
  * 0.0f.  The original macro is:
  *
- * #define undenormalise(sample) if(((*(unsigned int*)&sample)&0x7f800000)==0) sample=0.0f
+ * #define undenormalise(sample) if(((*(unsigned int*)&sample)&0x7f800000)==0)
+ * sample=0.0f
  *
  * This will zero out a number when it reaches the denormal level.
  * Advantage: Maximum dynamic range Disadvantage: We'll have to check
@@ -43,11 +44,12 @@
  * every sample.
  */
 
-# if defined(WITH_FLOATX)
-# define zap_almost_zero(sample) (((*(unsigned int*)&(sample))&0x7f800000) < 0x08000000)?0.0f:(sample)
-# else
+#if defined(WITH_FLOATX)
+#define zap_almost_zero(sample)                                                \
+  (((*(unsigned int *)&(sample)) & 0x7f800000) < 0x08000000) ? 0.0f : (sample)
+#else
 /* 1e-20 was chosen as an arbitrary (small) threshold. */
-#define zap_almost_zero(sample) fabs(sample)<1e-10 ? 0 : sample;
+#define zap_almost_zero(sample) fabs(sample) < 1e-10 ? 0 : sample;
 #endif
 
 /* Denormalising part II:
@@ -60,10 +62,9 @@
  * problems.
  */
 
-
-//#define DC_OFFSET 0
+// #define DC_OFFSET 0
 #define DC_OFFSET 1e-8
-//#define DC_OFFSET 0.001f
+// #define DC_OFFSET 0.001f
 typedef struct _fluid_allpass fluid_allpass;
 typedef struct _fluid_comb fluid_comb;
 
@@ -74,68 +75,60 @@ struct _fluid_allpass {
   int bufidx;
 };
 
-void fluid_allpass_init(fluid_allpass* allpass);
-void fluid_allpass_setfeedback(fluid_allpass* allpass, fluid_real_t val);
-fluid_real_t fluid_allpass_getfeedback(fluid_allpass* allpass);
+void fluid_allpass_init(fluid_allpass *allpass);
+void fluid_allpass_setfeedback(fluid_allpass *allpass, fluid_real_t val);
+fluid_real_t fluid_allpass_getfeedback(fluid_allpass *allpass);
 
-void
-fluid_allpass_setbuffer(fluid_allpass* allpass, int size)
-{
+void fluid_allpass_setbuffer(fluid_allpass *allpass, int size) {
   allpass->bufidx = 0;
-  allpass->buffer = FLUID_ARRAY(fluid_real_t,size);
+  allpass->buffer = FLUID_ARRAY(fluid_real_t, size);
   allpass->bufsize = size;
 }
 
-void
-fluid_allpass_release(fluid_allpass* allpass)
-{
+void fluid_allpass_release(fluid_allpass *allpass) {
   FLUID_FREE(allpass->buffer);
 }
 
-void
-fluid_allpass_init(fluid_allpass* allpass)
-{
+void fluid_allpass_init(fluid_allpass *allpass) {
   int i;
   int len = allpass->bufsize;
-  fluid_real_t* buf = allpass->buffer;
+  fluid_real_t *buf = allpass->buffer;
   for (i = 0; i < len; i++) {
     buf[i] = DC_OFFSET; /* this is not 100 % correct. */
   }
 }
 
-void
-fluid_allpass_setfeedback(fluid_allpass* allpass, fluid_real_t val)
-{
+void fluid_allpass_setfeedback(fluid_allpass *allpass, fluid_real_t val) {
   allpass->feedback = val;
 }
 
-fluid_real_t
-fluid_allpass_getfeedback(fluid_allpass* allpass)
-{
+fluid_real_t fluid_allpass_getfeedback(fluid_allpass *allpass) {
   return allpass->feedback;
 }
 
-#define fluid_allpass_process(_allpass, _input) \
-{ \
-  fluid_real_t output; \
-  fluid_real_t bufout; \
-  bufout = _allpass.buffer[_allpass.bufidx]; \
-  output = bufout-_input; \
-  _allpass.buffer[_allpass.bufidx] = _input + (bufout * _allpass.feedback); \
-  if (++_allpass.bufidx >= _allpass.bufsize) { \
-    _allpass.bufidx = 0; \
-  } \
-  _input = output; \
-}
+#define fluid_allpass_process(_allpass, _input)                                \
+  {                                                                            \
+    fluid_real_t output;                                                       \
+    fluid_real_t bufout;                                                       \
+    bufout = _allpass.buffer[_allpass.bufidx];                                 \
+    output = bufout - _input;                                                  \
+    _allpass.buffer[_allpass.bufidx] = _input + (bufout * _allpass.feedback);  \
+    if (++_allpass.bufidx >= _allpass.bufsize) {                               \
+      _allpass.bufidx = 0;                                                     \
+    }                                                                          \
+    _input = output;                                                           \
+  }
 
-/*  fluid_real_t fluid_allpass_process(fluid_allpass* allpass, fluid_real_t input) */
+/*  fluid_real_t fluid_allpass_process(fluid_allpass* allpass, fluid_real_t
+ * input) */
 /*  { */
 /*    fluid_real_t output; */
 /*    fluid_real_t bufout; */
 /*    bufout = allpass->buffer[allpass->bufidx]; */
 /*    undenormalise(bufout); */
 /*    output = -input + bufout; */
-/*    allpass->buffer[allpass->bufidx] = input + (bufout * allpass->feedback); */
+/*    allpass->buffer[allpass->bufidx] = input + (bufout * allpass->feedback);
+ */
 /*    if (++allpass->bufidx >= allpass->bufsize) { */
 /*      allpass->bufidx = 0; */
 /*    } */
@@ -152,75 +145,57 @@ struct _fluid_comb {
   int bufidx;
 };
 
-void fluid_comb_setbuffer(fluid_comb* comb, int size);
-void fluid_comb_release(fluid_comb* comb);
-void fluid_comb_init(fluid_comb* comb);
-void fluid_comb_setdamp(fluid_comb* comb, fluid_real_t val);
-fluid_real_t fluid_comb_getdamp(fluid_comb* comb);
-void fluid_comb_setfeedback(fluid_comb* comb, fluid_real_t val);
-fluid_real_t fluid_comb_getfeedback(fluid_comb* comb);
+void fluid_comb_setbuffer(fluid_comb *comb, int size);
+void fluid_comb_release(fluid_comb *comb);
+void fluid_comb_init(fluid_comb *comb);
+void fluid_comb_setdamp(fluid_comb *comb, fluid_real_t val);
+fluid_real_t fluid_comb_getdamp(fluid_comb *comb);
+void fluid_comb_setfeedback(fluid_comb *comb, fluid_real_t val);
+fluid_real_t fluid_comb_getfeedback(fluid_comb *comb);
 
-void
-fluid_comb_setbuffer(fluid_comb* comb, int size)
-{
+void fluid_comb_setbuffer(fluid_comb *comb, int size) {
   comb->filterstore = 0;
   comb->bufidx = 0;
-  comb->buffer = FLUID_ARRAY(fluid_real_t,size);
+  comb->buffer = FLUID_ARRAY(fluid_real_t, size);
   comb->bufsize = size;
 }
 
-void
-fluid_comb_release(fluid_comb* comb)
-{
-  FLUID_FREE(comb->buffer);
-}
+void fluid_comb_release(fluid_comb *comb) { FLUID_FREE(comb->buffer); }
 
-void
-fluid_comb_init(fluid_comb* comb)
-{
+void fluid_comb_init(fluid_comb *comb) {
   int i;
-  fluid_real_t* buf = comb->buffer;
+  fluid_real_t *buf = comb->buffer;
   int len = comb->bufsize;
   for (i = 0; i < len; i++) {
     buf[i] = DC_OFFSET; /* This is not 100 % correct. */
   }
 }
 
-void
-fluid_comb_setdamp(fluid_comb* comb, fluid_real_t val)
-{
+void fluid_comb_setdamp(fluid_comb *comb, fluid_real_t val) {
   comb->damp1 = val;
   comb->damp2 = 1 - val;
 }
 
-fluid_real_t
-fluid_comb_getdamp(fluid_comb* comb)
-{
-  return comb->damp1;
-}
+fluid_real_t fluid_comb_getdamp(fluid_comb *comb) { return comb->damp1; }
 
-void
-fluid_comb_setfeedback(fluid_comb* comb, fluid_real_t val)
-{
+void fluid_comb_setfeedback(fluid_comb *comb, fluid_real_t val) {
   comb->feedback = val;
 }
 
-fluid_real_t
-fluid_comb_getfeedback(fluid_comb* comb)
-{
-  return comb->feedback;
-}
+fluid_real_t fluid_comb_getfeedback(fluid_comb *comb) { return comb->feedback; }
 
-#define fluid_comb_process(_comb, _input, _output) \
-{ \
-  fluid_real_t _tmp = _comb.buffer[_comb.bufidx]; \
-  _comb.filterstore = (_tmp * _comb.damp2) + (_comb.filterstore * _comb.damp1); \
-  _comb.buffer[_comb.bufidx] = _input + (_comb.filterstore * _comb.feedback); \
-  if (++_comb.bufidx >= _comb.bufsize) { \
-    _comb.bufidx = 0; \
-  } \
-  _output += _tmp; \
-}
+#define fluid_comb_process(_comb, _input, _output)                             \
+  {                                                                            \
+    fluid_real_t _tmp = _comb.buffer[_comb.bufidx];                            \
+    _comb.filterstore =                                                        \
+        (_tmp * _comb.damp2) + (_comb.filterstore * _comb.damp1);              \
+    _comb.buffer[_comb.bufidx] =                                               \
+        _input + (_comb.filterstore * _comb.feedback);                         \
+    if (++_comb.bufidx >= _comb.bufsize) {                                     \
+      _comb.bufidx = 0;                                                        \
+    }                                                                          \
+    _output += _tmp;                                                           \
+  }
 
 /* fluid_real_t fluid_comb_process(fluid_comb* comb, fluid_real_t input) */
 /* { */
@@ -228,9 +203,11 @@ fluid_comb_getfeedback(fluid_comb* comb)
 
 /*    output = comb->buffer[comb->bufidx]; */
 /*    undenormalise(output); */
-/*    comb->filterstore = (output * comb->damp2) + (comb->filterstore * comb->damp1); */
+/*    comb->filterstore = (output * comb->damp2) + (comb->filterstore *
+ * comb->damp1); */
 /*    undenormalise(comb->filterstore); */
-/*    comb->buffer[comb->bufidx] = input + (comb->filterstore * comb->feedback); */
+/*    comb->buffer[comb->bufidx] = input + (comb->filterstore * comb->feedback);
+ */
 /*    if (++comb->bufidx >= comb->bufsize) { */
 /*      comb->bufidx = 0; */
 /*    } */
@@ -240,7 +217,7 @@ fluid_comb_getfeedback(fluid_comb* comb)
 
 #define numcombs 8
 #define numallpasses 4
-#define	fixedgain 0.015f
+#define fixedgain 0.015f
 #define scalewet 3.0f
 #define scaledamp 1.0f
 #define scaleroom 0.28f
@@ -302,14 +279,13 @@ struct _fluid_revmodel_t {
   fluid_allpass allpassR[numallpasses];
 };
 
-static void fluid_revmodel_update(fluid_revmodel_t* rev);
-static void fluid_revmodel_init(fluid_revmodel_t* rev);
-void fluid_set_revmodel_buffers(fluid_revmodel_t* rev, fluid_real_t sample_rate);
+static void fluid_revmodel_update(fluid_revmodel_t *rev);
+static void fluid_revmodel_init(fluid_revmodel_t *rev);
+void fluid_set_revmodel_buffers(fluid_revmodel_t *rev,
+                                fluid_real_t sample_rate);
 
-fluid_revmodel_t*
-new_fluid_revmodel(fluid_real_t sample_rate)
-{
-  fluid_revmodel_t* rev;
+fluid_revmodel_t *new_fluid_revmodel(fluid_real_t sample_rate) {
+  fluid_revmodel_t *rev;
   rev = FLUID_NEW(fluid_revmodel_t);
   if (rev == NULL) {
     return NULL;
@@ -328,16 +304,15 @@ new_fluid_revmodel(fluid_real_t sample_rate)
   fluid_allpass_setfeedback(&rev->allpassR[3], 0.5f);
 
   rev->gain = fixedgain;
-  fluid_revmodel_set(rev,FLUID_REVMODEL_SET_ALL,initialroom,initialdamp,initialwidth,initialwet);
+  fluid_revmodel_set(rev, FLUID_REVMODEL_SET_ALL, initialroom, initialdamp,
+                     initialwidth, initialwet);
 
   return rev;
 }
 
-void
-delete_fluid_revmodel(fluid_revmodel_t* rev)
-{
+void delete_fluid_revmodel(fluid_revmodel_t *rev) {
   int i;
-  for (i = 0; i < numcombs;i++) {
+  for (i = 0; i < numcombs; i++) {
     fluid_comb_release(&rev->combL[i]);
     fluid_comb_release(&rev->combR[i]);
   }
@@ -349,46 +324,43 @@ delete_fluid_revmodel(fluid_revmodel_t* rev)
   FLUID_FREE(rev);
 }
 
-void
-fluid_set_revmodel_buffers(fluid_revmodel_t* rev, fluid_real_t sample_rate) {
+void fluid_set_revmodel_buffers(fluid_revmodel_t *rev,
+                                fluid_real_t sample_rate) {
 
-  float srfactor = sample_rate/44100.0f;
+  float srfactor = sample_rate / 44100.0f;
 
-  fluid_comb_setbuffer(&rev->combL[0], (int)(combtuningL1*srfactor));
-  fluid_comb_setbuffer(&rev->combR[0], (int)(combtuningR1*srfactor));
-  fluid_comb_setbuffer(&rev->combL[1], (int)(combtuningL2*srfactor));
-  fluid_comb_setbuffer(&rev->combR[1], (int)(combtuningR2*srfactor));
-  fluid_comb_setbuffer(&rev->combL[2], (int)(combtuningL3*srfactor));
-  fluid_comb_setbuffer(&rev->combR[2], (int)(combtuningR3*srfactor));
-  fluid_comb_setbuffer(&rev->combL[3], (int)(combtuningL4*srfactor));
-  fluid_comb_setbuffer(&rev->combR[3], (int)(combtuningR4*srfactor));
-  fluid_comb_setbuffer(&rev->combL[4], (int)(combtuningL5*srfactor));
-  fluid_comb_setbuffer(&rev->combR[4], (int)(combtuningR5*srfactor));
-  fluid_comb_setbuffer(&rev->combL[5], (int)(combtuningL6*srfactor));
-  fluid_comb_setbuffer(&rev->combR[5], (int)(combtuningR6*srfactor));
-  fluid_comb_setbuffer(&rev->combL[6], (int)(combtuningL7*srfactor));
-  fluid_comb_setbuffer(&rev->combR[6], (int)(combtuningR7*srfactor));
-  fluid_comb_setbuffer(&rev->combL[7], (int)(combtuningL8*srfactor));
-  fluid_comb_setbuffer(&rev->combR[7], (int)(combtuningR8*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassL[0], (int)(allpasstuningL1*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassR[0], (int)(allpasstuningR1*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassL[1], (int)(allpasstuningL2*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassR[1], (int)(allpasstuningR2*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassL[2], (int)(allpasstuningL3*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassR[2], (int)(allpasstuningR3*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassL[3], (int)(allpasstuningL4*srfactor));
-  fluid_allpass_setbuffer(&rev->allpassR[3], (int)(allpasstuningR4*srfactor));
+  fluid_comb_setbuffer(&rev->combL[0], (int)(combtuningL1 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[0], (int)(combtuningR1 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[1], (int)(combtuningL2 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[1], (int)(combtuningR2 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[2], (int)(combtuningL3 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[2], (int)(combtuningR3 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[3], (int)(combtuningL4 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[3], (int)(combtuningR4 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[4], (int)(combtuningL5 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[4], (int)(combtuningR5 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[5], (int)(combtuningL6 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[5], (int)(combtuningR6 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[6], (int)(combtuningL7 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[6], (int)(combtuningR7 * srfactor));
+  fluid_comb_setbuffer(&rev->combL[7], (int)(combtuningL8 * srfactor));
+  fluid_comb_setbuffer(&rev->combR[7], (int)(combtuningR8 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassL[0], (int)(allpasstuningL1 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassR[0], (int)(allpasstuningR1 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassL[1], (int)(allpasstuningL2 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassR[1], (int)(allpasstuningR2 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassL[2], (int)(allpasstuningL3 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassR[2], (int)(allpasstuningR3 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassL[3], (int)(allpasstuningL4 * srfactor));
+  fluid_allpass_setbuffer(&rev->allpassR[3], (int)(allpasstuningR4 * srfactor));
 
   /* Clear all buffers */
   fluid_revmodel_init(rev);
 }
 
-
-static void
-fluid_revmodel_init(fluid_revmodel_t* rev)
-{
+static void fluid_revmodel_init(fluid_revmodel_t *rev) {
   int i;
-  for (i = 0; i < numcombs;i++) {
+  for (i = 0; i < numcombs; i++) {
     fluid_comb_init(&rev->combL[i]);
     fluid_comb_init(&rev->combR[i]);
   }
@@ -398,16 +370,11 @@ fluid_revmodel_init(fluid_revmodel_t* rev)
   }
 }
 
-void
-fluid_revmodel_reset(fluid_revmodel_t* rev)
-{
-  fluid_revmodel_init(rev);
-}
+void fluid_revmodel_reset(fluid_revmodel_t *rev) { fluid_revmodel_init(rev); }
 
-void
-fluid_revmodel_processreplace(fluid_revmodel_t* rev, fluid_real_t *in,
-			     fluid_real_t *left_out, fluid_real_t *right_out)
-{
+void fluid_revmodel_processreplace(fluid_revmodel_t *rev, fluid_real_t *in,
+                                   fluid_real_t *left_out,
+                                   fluid_real_t *right_out) {
   int i, k = 0;
   fluid_real_t outL, outR, input;
 
@@ -442,10 +409,9 @@ fluid_revmodel_processreplace(fluid_revmodel_t* rev, fluid_real_t *in,
   }
 }
 
-void
-fluid_revmodel_processmix(fluid_revmodel_t* rev, fluid_real_t *in,
-			 fluid_real_t *left_out, fluid_real_t *right_out)
-{
+void fluid_revmodel_processmix(fluid_revmodel_t *rev, fluid_real_t *in,
+                               fluid_real_t *left_out,
+                               fluid_real_t *right_out) {
   int i, k = 0;
   fluid_real_t outL, outR, input;
 
@@ -461,8 +427,8 @@ fluid_revmodel_processmix(fluid_revmodel_t* rev, fluid_real_t *in,
 
     /* Accumulate comb filters in parallel */
     for (i = 0; i < numcombs; i++) {
-	    fluid_comb_process(rev->combL[i], input, outL);
-	    fluid_comb_process(rev->combR[i], input, outR);
+      fluid_comb_process(rev->combL[i], input, outL);
+      fluid_comb_process(rev->combR[i], input, outR);
     }
     /* Feed through allpasses in series */
     for (i = 0; i < numallpasses; i++) {
@@ -480,9 +446,7 @@ fluid_revmodel_processmix(fluid_revmodel_t* rev, fluid_real_t *in,
   }
 }
 
-static void
-fluid_revmodel_update(fluid_revmodel_t* rev)
-{
+static void fluid_revmodel_update(fluid_revmodel_t *rev) {
   /* Recalculate internal values after parameter change */
   int i;
 
@@ -510,10 +474,8 @@ fluid_revmodel_update(fluid_revmodel_t* rev)
  * @param width Reverb width
  * @param level Reverb level
  */
-void
-fluid_revmodel_set(fluid_revmodel_t* rev, int set, float roomsize,
-                   float damping, float width, float level)
-{
+void fluid_revmodel_set(fluid_revmodel_t *rev, int set, float roomsize,
+                        float damping, float width, float level) {
   if (set & FLUID_REVMODEL_SET_ROOMSIZE)
     rev->roomsize = (roomsize * scaleroom) + offsetroom;
 
@@ -523,19 +485,18 @@ fluid_revmodel_set(fluid_revmodel_t* rev, int set, float roomsize,
   if (set & FLUID_REVMODEL_SET_WIDTH)
     rev->width = width;
 
-  if (set & FLUID_REVMODEL_SET_LEVEL)
-  {
+  if (set & FLUID_REVMODEL_SET_LEVEL) {
     fluid_clip(level, 0.0f, 1.0f);
     rev->wet = level * scalewet;
   }
 
-  fluid_revmodel_update (rev);
+  fluid_revmodel_update(rev);
 }
 
-void
-fluid_revmodel_samplerate_change(fluid_revmodel_t* rev, fluid_real_t sample_rate) {
+void fluid_revmodel_samplerate_change(fluid_revmodel_t *rev,
+                                      fluid_real_t sample_rate) {
   int i;
-  for (i = 0; i < numcombs;i++) {
+  for (i = 0; i < numcombs; i++) {
     fluid_comb_release(&rev->combL[i]);
     fluid_comb_release(&rev->combR[i]);
   }

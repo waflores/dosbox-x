@@ -29,7 +29,7 @@
 
 #include "opus_types.h"
 
-#define WEIGHTS_SCALE (1.f/128)
+#define WEIGHTS_SCALE (1.f / 128)
 
 #define MAX_NEURONS 32
 

@@ -74,23 +74,22 @@ extern "C" {
 
 #ifndef DOXYGEN_SHOULD_IGNORE_THIS
 
-#ifndef SDLCALL  /* may not be defined with older SDL releases. */
+#ifndef SDLCALL /* may not be defined with older SDL releases. */
 #define SDLCALL
 #endif
 
 #ifdef SDL_SOUND_DLL_EXPORTS
-#  define SNDDECLSPEC __declspec(dllexport)
+#define SNDDECLSPEC __declspec(dllexport)
 #elif (__GNUC__ >= 3)
-#  define SNDDECLSPEC __attribute__((visibility("default")))
+#define SNDDECLSPEC __attribute__((visibility("default")))
 #else
-#  define SNDDECLSPEC
+#define SNDDECLSPEC
 #endif
 
 #define SOUND_VER_MAJOR 1
 #define SOUND_VER_MINOR 0
 #define SOUND_VER_PATCH 1
 #endif
-
 
 /**
  * \enum Sound_SampleFlags
@@ -107,17 +106,16 @@ extern "C" {
  * \sa Sound_SampleDecodeAll
  * \sa Sound_SampleSeek
  */
-typedef enum
-{
-    SOUND_SAMPLEFLAG_NONE    = 0x0, /**< No special attributes. */
+typedef enum {
+  SOUND_SAMPLEFLAG_NONE = 0x0, /**< No special attributes. */
 
-    /* these are set at sample creation time... */
-    SOUND_SAMPLEFLAG_CANSEEK = 0x1, /**< Sample can seek to arbitrary points. */
+  /* these are set at sample creation time... */
+  SOUND_SAMPLEFLAG_CANSEEK = 0x1, /**< Sample can seek to arbitrary points. */
 
-    /* these are set during decoding... */
-    SOUND_SAMPLEFLAG_EOF     = 0x2, /**< End of input stream. */
-    SOUND_SAMPLEFLAG_ERROR   = 0x4, /**< Unrecoverable error. */
-    SOUND_SAMPLEFLAG_EAGAIN  = 0x8  /**< Function would block, or temp error. */
+  /* these are set during decoding... */
+  SOUND_SAMPLEFLAG_EOF = 0x2,   /**< End of input stream. */
+  SOUND_SAMPLEFLAG_ERROR = 0x4, /**< Unrecoverable error. */
+  SOUND_SAMPLEFLAG_EAGAIN = 0x8 /**< Function would block, or temp error. */
 } Sound_SampleFlags;
 
 /**
@@ -132,13 +130,11 @@ typedef enum
  * \sa Sound_SampleNew
  * \sa Sound_SampleNewFromFile
  */
-typedef struct
-{
-    Uint16 format;  /**< Equivalent of SDL_AudioSpec.format. */
-    Uint8 channels; /**< Number of sound channels. 1 == mono, 2 == stereo. */
-    Uint32 rate;    /**< Sample rate; frequency of sample points per second. */
+typedef struct {
+  Uint16 format;  /**< Equivalent of SDL_AudioSpec.format. */
+  Uint8 channels; /**< Number of sound channels. 1 == mono, 2 == stereo. */
+  Uint32 rate;    /**< Sample rate; frequency of sample points per second. */
 } Sound_AudioInfo;
-
 
 /**
  * \struct Sound_DecoderInfo
@@ -159,15 +155,12 @@ typedef struct
  *
  * \sa Sound_AvailableDecoders
  */
-typedef struct
-{
-    const char **extensions; /**< File extensions, list ends with NULL. */
-    const char *description; /**< Human readable description of decoder. */
-    const char *author;      /**< "Name Of Author \<email@emailhost.dom\>" */
-    const char *url;         /**< URL specific to this decoder. */
+typedef struct {
+  const char **extensions; /**< File extensions, list ends with NULL. */
+  const char *description; /**< Human readable description of decoder. */
+  const char *author;      /**< "Name Of Author \<email@emailhost.dom\>" */
+  const char *url;         /**< URL specific to this decoder. */
 } Sound_DecoderInfo;
-
-
 
 /**
  * \struct Sound_Sample
@@ -178,17 +171,15 @@ typedef struct
  *  EVERY FIELD IN THIS IS READ-ONLY. Please use the API functions to
  *  change them.
  */
-typedef struct
-{
-    void *opaque;  /**< Internal use only. Don't touch. */
-    const Sound_DecoderInfo *decoder;  /**< Decoder used for this sample. */
-    Sound_AudioInfo desired;  /**< Desired audio format for conversion. */
-    Sound_AudioInfo actual;  /**< Actual audio format of sample. */
-    Uint8 *buffer;  /**< Decoded sound data lands in here. */
-    Uint32 buffer_size;  /**< Current size of (buffer), in bytes (Uint8). */
-    Sound_SampleFlags flags;  /**< Flags relating to this sample. */
+typedef struct {
+  void *opaque;                     /**< Internal use only. Don't touch. */
+  const Sound_DecoderInfo *decoder; /**< Decoder used for this sample. */
+  Sound_AudioInfo desired;          /**< Desired audio format for conversion. */
+  Sound_AudioInfo actual;           /**< Actual audio format of sample. */
+  Uint8 *buffer;                    /**< Decoded sound data lands in here. */
+  Uint32 buffer_size;      /**< Current size of (buffer), in bytes (Uint8). */
+  Sound_SampleFlags flags; /**< Flags relating to this sample. */
 } Sound_Sample;
-
 
 /**
  * \struct Sound_Version
@@ -203,13 +194,11 @@ typedef struct
  * \sa SOUND_VERSION
  * \sa Sound_GetLinkedVersion
  */
-typedef struct
-{
-    int major; /**< major revision */
-    int minor; /**< minor revision */
-    int patch; /**< patchlevel */
+typedef struct {
+  int major; /**< major revision */
+  int minor; /**< minor revision */
+  int patch; /**< patchlevel */
 } Sound_Version;
-
 
 /* functions and macros... */
 
@@ -229,13 +218,12 @@ typedef struct
  * \sa Sound_Version
  * \sa Sound_GetLinkedVersion
  */
-#define SOUND_VERSION(x) \
-{ \
-    (x)->major = SOUND_VER_MAJOR; \
-    (x)->minor = SOUND_VER_MINOR; \
-    (x)->patch = SOUND_VER_PATCH; \
-}
-
+#define SOUND_VERSION(x)                                                       \
+  {                                                                            \
+    (x)->major = SOUND_VER_MAJOR;                                              \
+    (x)->minor = SOUND_VER_MINOR;                                              \
+    (x)->patch = SOUND_VER_PATCH;                                              \
+  }
 
 /**
  * \fn void Sound_GetLinkedVersion(Sound_Version *ver)
@@ -268,7 +256,6 @@ typedef struct
  */
 SNDDECLSPEC void SDLCALL Sound_GetLinkedVersion(Sound_Version *ver);
 
-
 /**
  * \fn Sound_Init(void)
  * \brief Initialize SDL_sound.
@@ -285,7 +272,6 @@ SNDDECLSPEC void SDLCALL Sound_GetLinkedVersion(Sound_Version *ver);
  * \sa Sound_Quit
  */
 SNDDECLSPEC int SDLCALL Sound_Init(void);
-
 
 /**
  * \fn Sound_Quit(void)
@@ -310,7 +296,6 @@ SNDDECLSPEC int SDLCALL Sound_Init(void);
  * \sa Sound_Init
  */
 SNDDECLSPEC int SDLCALL Sound_Quit(void);
-
 
 /**
  * \fn const Sound_DecoderInfo **Sound_AvailableDecoders(void)
@@ -344,8 +329,7 @@ SNDDECLSPEC int SDLCALL Sound_Quit(void);
  *
  * \sa Sound_DecoderInfo
  */
-SNDDECLSPEC const Sound_DecoderInfo ** SDLCALL Sound_AvailableDecoders(void);
-
+SNDDECLSPEC const Sound_DecoderInfo **SDLCALL Sound_AvailableDecoders(void);
 
 /**
  * \fn const char *Sound_GetError(void)
@@ -362,8 +346,7 @@ SNDDECLSPEC const Sound_DecoderInfo ** SDLCALL Sound_AvailableDecoders(void);
  *
  * \sa Sound_ClearError
  */
-SNDDECLSPEC const char * SDLCALL Sound_GetError(void);
-
+SNDDECLSPEC const char *SDLCALL Sound_GetError(void);
 
 /**
  * \fn void Sound_ClearError(void)
@@ -375,9 +358,9 @@ SNDDECLSPEC const char * SDLCALL Sound_GetError(void);
  */
 SNDDECLSPEC void SDLCALL Sound_ClearError(void);
 
-
 /**
- * \fn Sound_Sample *Sound_NewSample(SDL_RWops *rw, const char *ext, Sound_AudioInfo *desired, Uint32 bufferSize)
+ * \fn Sound_Sample *Sound_NewSample(SDL_RWops *rw, const char *ext,
+ * Sound_AudioInfo *desired, Uint32 bufferSize)
  * \brief Start decoding a new sound sample.
  *
  * The data is read via an SDL_RWops structure (see SDL_rwops.h in the SDL
@@ -448,13 +431,14 @@ SNDDECLSPEC void SDLCALL Sound_ClearError(void);
  * \sa Sound_Rewind
  * \sa Sound_FreeSample
  */
-SNDDECLSPEC Sound_Sample * SDLCALL Sound_NewSample(SDL_RWops *rw,
-                                                   const char *ext,
-                                                   Sound_AudioInfo *desired,
-                                                   Uint32 bufferSize);
+SNDDECLSPEC Sound_Sample *SDLCALL Sound_NewSample(SDL_RWops *rw,
+                                                  const char *ext,
+                                                  Sound_AudioInfo *desired,
+                                                  Uint32 bufferSize);
 
 /**
- * \fn Sound_Sample *Sound_NewSampleFromMem(const Uint8 *data, Sound_AudioInfo *desired, Uint32 bufferSize)
+ * \fn Sound_Sample *Sound_NewSampleFromMem(const Uint8 *data, Sound_AudioInfo
+ * *desired, Uint32 bufferSize)
  * \brief Start decoding a new sound sample from a file on disk.
  *
  * This is identical to Sound_NewSample(), but it creates an SDL_RWops for you
@@ -479,15 +463,13 @@ SNDDECLSPEC Sound_Sample * SDLCALL Sound_NewSample(SDL_RWops *rw,
  * \sa Sound_Rewind
  * \sa Sound_FreeSample
  */
-SNDDECLSPEC Sound_Sample * SDLCALL Sound_NewSampleFromMem(const Uint8 *data,
-                                                      Uint32 size,
-                                                      const char *ext,
-                                                      Sound_AudioInfo *desired,
-                                                      Uint32 bufferSize);
-
+SNDDECLSPEC Sound_Sample *SDLCALL
+Sound_NewSampleFromMem(const Uint8 *data, Uint32 size, const char *ext,
+                       Sound_AudioInfo *desired, Uint32 bufferSize);
 
 /**
- * \fn Sound_Sample *Sound_NewSampleFromFile(const char *filename, Sound_AudioInfo *desired, Uint32 bufferSize)
+ * \fn Sound_Sample *Sound_NewSampleFromFile(const char *filename,
+ * Sound_AudioInfo *desired, Uint32 bufferSize)
  * \brief Start decoding a new sound sample from a file on disk.
  *
  * This is identical to Sound_NewSample(), but it creates an SDL_RWops for you
@@ -516,9 +498,8 @@ SNDDECLSPEC Sound_Sample * SDLCALL Sound_NewSampleFromMem(const Uint8 *data,
  * \sa Sound_Rewind
  * \sa Sound_FreeSample
  */
-SNDDECLSPEC Sound_Sample * SDLCALL Sound_NewSampleFromFile(const char *fname,
-                                                      Sound_AudioInfo *desired,
-                                                      Uint32 bufferSize);
+SNDDECLSPEC Sound_Sample *SDLCALL Sound_NewSampleFromFile(
+    const char *fname, Sound_AudioInfo *desired, Uint32 bufferSize);
 
 /**
  * \fn void Sound_FreeSample(Sound_Sample *sample)
@@ -535,7 +516,6 @@ SNDDECLSPEC Sound_Sample * SDLCALL Sound_NewSampleFromFile(const char *fname,
  * \sa Sound_NewSampleFromFile
  */
 SNDDECLSPEC void SDLCALL Sound_FreeSample(Sound_Sample *sample);
-
 
 /**
  * \fn Sint32 Sound_GetDuration(Sound_Sample *sample)
@@ -560,7 +540,6 @@ SNDDECLSPEC void SDLCALL Sound_FreeSample(Sound_Sample *sample);
  *           determined for any reason.
  */
 SNDDECLSPEC Sint32 SDLCALL Sound_GetDuration(Sound_Sample *sample);
-
 
 /**
  * \fn int Sound_SetBufferSize(Sound_Sample *sample, Uint32 new_size)
@@ -590,7 +569,6 @@ SNDDECLSPEC Sint32 SDLCALL Sound_GetDuration(Sound_Sample *sample);
 SNDDECLSPEC int SDLCALL Sound_SetBufferSize(Sound_Sample *sample,
                                             Uint32 new_size);
 
-
 /**
  * \fn Uint32 Sound_Decode(Sound_Sample *sample)
  * \brief Decode more of the sound data in a Sound_Sample.
@@ -611,7 +589,6 @@ SNDDECLSPEC int SDLCALL Sound_SetBufferSize(Sound_Sample *sample,
  * \sa Sound_Rewind
  */
 SNDDECLSPEC Uint32 SDLCALL Sound_Decode(Sound_Sample *sample);
-
 
 /**
  * \fn Uint32 Sound_DecodeAll(Sound_Sample *sample)
@@ -648,7 +625,6 @@ SNDDECLSPEC Uint32 SDLCALL Sound_Decode(Sound_Sample *sample);
  */
 SNDDECLSPEC Uint32 SDLCALL Sound_DecodeAll(Sound_Sample *sample);
 
-
 /**
  * \fn int Sound_Rewind(Sound_Sample *sample)
  * \brief Rewind a sample to the start.
@@ -681,7 +657,6 @@ SNDDECLSPEC Uint32 SDLCALL Sound_DecodeAll(Sound_Sample *sample);
  * \sa Sound_Seek
  */
 SNDDECLSPEC int SDLCALL Sound_Rewind(Sound_Sample *sample);
-
 
 /**
  * \fn int Sound_Seek(Sound_Sample *sample, Uint32 ms)
@@ -730,22 +705,30 @@ SNDDECLSPEC int SDLCALL Sound_Seek(Sound_Sample *sample, Uint32 ms);
 #ifdef __cplusplus
 }
 
-inline Sound_SampleFlags operator|(Sound_SampleFlags a, Sound_SampleFlags b)
-{return static_cast<Sound_SampleFlags>(static_cast<int>(a) | static_cast<int>(b));}
+inline Sound_SampleFlags operator|(Sound_SampleFlags a, Sound_SampleFlags b) {
+  return static_cast<Sound_SampleFlags>(static_cast<int>(a) |
+                                        static_cast<int>(b));
+}
 
-inline Sound_SampleFlags& operator|= (Sound_SampleFlags& a, Sound_SampleFlags b)
-{ return (Sound_SampleFlags&)((int&)a |= static_cast<int>(b)); }
+inline Sound_SampleFlags &operator|=(Sound_SampleFlags &a,
+                                     Sound_SampleFlags b) {
+  return (Sound_SampleFlags &)((int &)a |= static_cast<int>(b));
+}
 
-inline Sound_SampleFlags operator& (Sound_SampleFlags a, Sound_SampleFlags b)
-{ return (Sound_SampleFlags)((int)a & (int)b); }
+inline Sound_SampleFlags operator&(Sound_SampleFlags a, Sound_SampleFlags b) {
+  return (Sound_SampleFlags)((int)a & (int)b);
+}
 
-inline Sound_SampleFlags& operator&= (Sound_SampleFlags& a, Sound_SampleFlags b)
-{ return (Sound_SampleFlags&)((int&)a &= (int)b); }
+inline Sound_SampleFlags &operator&=(Sound_SampleFlags &a,
+                                     Sound_SampleFlags b) {
+  return (Sound_SampleFlags &)((int &)a &= (int)b);
+}
 
-inline Sound_SampleFlags& operator&= (Sound_SampleFlags& a, int b)
-{ return (Sound_SampleFlags&)((int&)a &= b); }
+inline Sound_SampleFlags &operator&=(Sound_SampleFlags &a, int b) {
+  return (Sound_SampleFlags &)((int &)a &= b);
+}
 #endif
 
-#endif  /* !defined _INCLUDE_SDL_SOUND_H_ */
+#endif /* !defined _INCLUDE_SDL_SOUND_H_ */
 
 /* end of SDL_sound.h ... */

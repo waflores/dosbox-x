@@ -1,3 +1,2 @@
-    
-extern struct BuiltinFileBlob bfb_SHUTDOWN_COM;
 
+extern struct BuiltinFileBlob bfb_SHUTDOWN_COM;

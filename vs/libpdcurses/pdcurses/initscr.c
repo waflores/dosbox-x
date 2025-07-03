@@ -97,13 +97,13 @@ char ttytype[128];
 
 const char *_curses_notice = "PDCurses 3.6 - Public Domain 2018";
 
-SCREEN *SP = (SCREEN*)NULL;           /* curses variables */
+SCREEN *SP = (SCREEN *)NULL;          /* curses variables */
 WINDOW *curscr = (WINDOW *)NULL;      /* the current screen image */
 WINDOW *stdscr = (WINDOW *)NULL;      /* the default screen window */
 WINDOW *pdc_lastscr = (WINDOW *)NULL; /* the last screen image */
 
-int LINES = 0;                        /* current terminal height */
-int COLS = 0;                         /* current terminal width */
+int LINES = 0; /* current terminal height */
+int COLS = 0;  /* current terminal width */
 int TABSIZE = 8;
 
 MOUSE_STATUS Mouse_status, pdc_mouse_status;
@@ -111,236 +111,215 @@ MOUSE_STATUS Mouse_status, pdc_mouse_status;
 extern RIPPEDOFFLINE linesripped[5];
 extern char linesrippedoff;
 
-WINDOW *Xinitscr(int argc, char *argv[])
-{
-    int i;
+WINDOW *Xinitscr(int argc, char *argv[]) {
+  int i;
 
-    PDC_LOG(("Xinitscr() - called\n"));
+  PDC_LOG(("Xinitscr() - called\n"));
 
-    if (SP && SP->alive)
-        return NULL;
+  if (SP && SP->alive)
+    return NULL;
 
-    if (PDC_scr_open(argc, argv) == ERR)
-    {
-        fprintf(stderr, "initscr(): Unable to create SP\n");
-        exit(8);
-    }
+  if (PDC_scr_open(argc, argv) == ERR) {
+    fprintf(stderr, "initscr(): Unable to create SP\n");
+    exit(8);
+  }
 
-    SP->autocr = TRUE;       /* cr -> lf by default */
-    SP->raw_out = FALSE;     /* tty I/O modes */
-    SP->raw_inp = FALSE;     /* tty I/O modes */
-    SP->cbreak = TRUE;
-    SP->save_key_modifiers = FALSE;
-    SP->return_key_modifiers = FALSE;
-    SP->echo = TRUE;
-    SP->visibility = 1;
-    SP->resized = FALSE;
-    SP->_trap_mbe = 0L;
-    SP->_map_mbe_to_key = 0L;
-    SP->linesrippedoff = 0;
-    SP->linesrippedoffontop = 0;
-    SP->delaytenths = 0;
-    SP->line_color = -1;
+  SP->autocr = TRUE;   /* cr -> lf by default */
+  SP->raw_out = FALSE; /* tty I/O modes */
+  SP->raw_inp = FALSE; /* tty I/O modes */
+  SP->cbreak = TRUE;
+  SP->save_key_modifiers = FALSE;
+  SP->return_key_modifiers = FALSE;
+  SP->echo = TRUE;
+  SP->visibility = 1;
+  SP->resized = FALSE;
+  SP->_trap_mbe = 0L;
+  SP->_map_mbe_to_key = 0L;
+  SP->linesrippedoff = 0;
+  SP->linesrippedoffontop = 0;
+  SP->delaytenths = 0;
+  SP->line_color = -1;
 
-    SP->orig_cursor = PDC_get_cursor_mode();
+  SP->orig_cursor = PDC_get_cursor_mode();
 
-    LINES = SP->lines;
-    COLS = SP->cols;
+  LINES = SP->lines;
+  COLS = SP->cols;
 
-    if (LINES < 2 || COLS < 2)
-    {
-        fprintf(stderr, "initscr(): LINES=%d COLS=%d: too small.\n",
-                LINES, COLS);
-        exit(4);
-    }
+  if (LINES < 2 || COLS < 2) {
+    fprintf(stderr, "initscr(): LINES=%d COLS=%d: too small.\n", LINES, COLS);
+    exit(4);
+  }
 
-    curscr = newwin(LINES, COLS, 0, 0);
-    if (!curscr)
-    {
-        fprintf(stderr, "initscr(): Unable to create curscr.\n");
-        exit(2);
-    }
+  curscr = newwin(LINES, COLS, 0, 0);
+  if (!curscr) {
+    fprintf(stderr, "initscr(): Unable to create curscr.\n");
+    exit(2);
+  }
 
-    pdc_lastscr = newwin(LINES, COLS, 0, 0);
-    if (!pdc_lastscr)
-    {
-        fprintf(stderr, "initscr(): Unable to create pdc_lastscr.\n");
-        exit(2);
-    }
+  pdc_lastscr = newwin(LINES, COLS, 0, 0);
+  if (!pdc_lastscr) {
+    fprintf(stderr, "initscr(): Unable to create pdc_lastscr.\n");
+    exit(2);
+  }
 
-    wattrset(pdc_lastscr, (chtype)(-1));
-    werase(pdc_lastscr);
+  wattrset(pdc_lastscr, (chtype)(-1));
+  werase(pdc_lastscr);
 
-    PDC_slk_initialize();
-    LINES -= SP->slklines;
+  PDC_slk_initialize();
+  LINES -= SP->slklines;
 
-    /* We have to sort out ripped off lines here, and reduce the height
-       of stdscr by the number of lines ripped off */
+  /* We have to sort out ripped off lines here, and reduce the height
+     of stdscr by the number of lines ripped off */
 
-    for (i = 0; i < linesrippedoff; i++)
-    {
-        if (linesripped[i].line < 0)
-            (*linesripped[i].init)(newwin(1, COLS, LINES - 1, 0), COLS);
-        else
-            (*linesripped[i].init)(newwin(1, COLS,
-                                   SP->linesrippedoffontop++, 0), COLS);
-
-        SP->linesrippedoff++;
-        LINES--;
-    }
-
-    linesrippedoff = 0;
-
-    stdscr = newwin(LINES, COLS, SP->linesrippedoffontop, 0);
-    if (!stdscr)
-    {
-        fprintf(stderr, "initscr(): Unable to create stdscr.\n");
-        exit(1);
-    }
-
-    wclrtobot(stdscr);
-
-    /* If preserving the existing screen, don't allow a screen clear */
-
-    if (SP->_preserve)
-    {
-        untouchwin(curscr);
-        untouchwin(stdscr);
-        stdscr->_clear = FALSE;
-        curscr->_clear = FALSE;
-    }
+  for (i = 0; i < linesrippedoff; i++) {
+    if (linesripped[i].line < 0)
+      (*linesripped[i].init)(newwin(1, COLS, LINES - 1, 0), COLS);
     else
-        curscr->_clear = TRUE;
+      (*linesripped[i].init)(newwin(1, COLS, SP->linesrippedoffontop++, 0),
+                             COLS);
 
-    PDC_init_atrtab();  /* set up default colors */
+    SP->linesrippedoff++;
+    LINES--;
+  }
 
-    MOUSE_X_POS = MOUSE_Y_POS = -1;
-    BUTTON_STATUS(1) = BUTTON_RELEASED;
-    BUTTON_STATUS(2) = BUTTON_RELEASED;
-    BUTTON_STATUS(3) = BUTTON_RELEASED;
-    Mouse_status.changes = 0;
+  linesrippedoff = 0;
 
-    SP->alive = TRUE;
+  stdscr = newwin(LINES, COLS, SP->linesrippedoffontop, 0);
+  if (!stdscr) {
+    fprintf(stderr, "initscr(): Unable to create stdscr.\n");
+    exit(1);
+  }
 
-    def_shell_mode();
+  wclrtobot(stdscr);
 
-    sprintf(ttytype, "pdcurses|PDCurses for %s", PDC_sysname());
+  /* If preserving the existing screen, don't allow a screen clear */
 
-    return stdscr;
-}
-
-WINDOW *initscr(void)
-{
-    PDC_LOG(("initscr() - called\n"));
-
-    return Xinitscr(0, NULL);
-}
-
-int endwin(void)
-{
-    PDC_LOG(("endwin() - called\n"));
-
-    /* Allow temporary exit from curses using endwin() */
-	if (SP == NULL) return ERR;
-
-    def_prog_mode();
-    PDC_scr_close();
-
-    SP->alive = FALSE;
-
-    return OK;
-}
-
-bool isendwin(void)
-{
-    PDC_LOG(("isendwin() - called\n"));
-
-    return SP ? !(SP->alive) : FALSE;
-}
-
-SCREEN *newterm(const char *type, FILE *outfd, FILE *infd)
-{
-    PDC_LOG(("newterm() - called\n"));
-
-    return Xinitscr(0, NULL) ? SP : NULL;
-}
-
-SCREEN *set_term(SCREEN *new)
-{
-    PDC_LOG(("set_term() - called\n"));
-
-    /* We only support one screen */
-
-    return (new == SP) ? SP : NULL;
-}
-
-void delscreen(SCREEN *sp)
-{
-    PDC_LOG(("delscreen() - called\n"));
-
-    if (sp != SP)
-        return;
-
-    PDC_slk_free();     /* free the soft label keys, if needed */
-
-    delwin(stdscr);
-    delwin(curscr);
-    delwin(pdc_lastscr);
-    stdscr = (WINDOW *)NULL;
-    curscr = (WINDOW *)NULL;
-    pdc_lastscr = (WINDOW *)NULL;
-
-    SP->alive = FALSE;
-
-    PDC_scr_free();     /* free SP */
-
-    SP = (SCREEN *)NULL;
-}
-
-int resize_term(int nlines, int ncols)
-{
-    PDC_LOG(("resize_term() - called: nlines %d\n", nlines));
-
-    if (!stdscr || PDC_resize_screen(nlines, ncols) == ERR)
-        return ERR;
-
-    SP->lines = PDC_get_rows();
-    LINES = SP->lines - SP->linesrippedoff - SP->slklines;
-    SP->cols = COLS = PDC_get_columns();
-
-    if (wresize(curscr, SP->lines, SP->cols) == ERR ||
-        wresize(stdscr, LINES, COLS) == ERR ||
-        wresize(pdc_lastscr, SP->lines, SP->cols) == ERR)
-        return ERR;
-
-    werase(pdc_lastscr);
+  if (SP->_preserve) {
+    untouchwin(curscr);
+    untouchwin(stdscr);
+    stdscr->_clear = FALSE;
+    curscr->_clear = FALSE;
+  } else
     curscr->_clear = TRUE;
 
-    if (SP->slk_winptr)
-    {
-        if (wresize(SP->slk_winptr, SP->slklines, COLS) == ERR)
-            return ERR;
+  PDC_init_atrtab(); /* set up default colors */
 
-        wmove(SP->slk_winptr, 0, 0);
-        wclrtobot(SP->slk_winptr);
-        PDC_slk_initialize();
-        slk_noutrefresh();
-    }
+  MOUSE_X_POS = MOUSE_Y_POS = -1;
+  BUTTON_STATUS(1) = BUTTON_RELEASED;
+  BUTTON_STATUS(2) = BUTTON_RELEASED;
+  BUTTON_STATUS(3) = BUTTON_RELEASED;
+  Mouse_status.changes = 0;
 
-    touchwin(stdscr);
-    wnoutrefresh(stdscr);
+  SP->alive = TRUE;
 
-    return OK;
+  def_shell_mode();
+
+  sprintf(ttytype, "pdcurses|PDCurses for %s", PDC_sysname());
+
+  return stdscr;
 }
 
-bool is_termresized(void)
-{
-    PDC_LOG(("is_termresized() - called\n"));
+WINDOW *initscr(void) {
+  PDC_LOG(("initscr() - called\n"));
 
-    return SP->resized;
+  return Xinitscr(0, NULL);
 }
 
-const char *curses_version(void)
-{
-    return _curses_notice;
+int endwin(void) {
+  PDC_LOG(("endwin() - called\n"));
+
+  /* Allow temporary exit from curses using endwin() */
+  if (SP == NULL)
+    return ERR;
+
+  def_prog_mode();
+  PDC_scr_close();
+
+  SP->alive = FALSE;
+
+  return OK;
 }
+
+bool isendwin(void) {
+  PDC_LOG(("isendwin() - called\n"));
+
+  return SP ? !(SP->alive) : FALSE;
+}
+
+SCREEN *newterm(const char *type, FILE *outfd, FILE *infd) {
+  PDC_LOG(("newterm() - called\n"));
+
+  return Xinitscr(0, NULL) ? SP : NULL;
+}
+
+SCREEN *set_term(SCREEN *new) {
+  PDC_LOG(("set_term() - called\n"));
+
+  /* We only support one screen */
+
+  return (new == SP) ? SP : NULL;
+}
+
+void delscreen(SCREEN *sp) {
+  PDC_LOG(("delscreen() - called\n"));
+
+  if (sp != SP)
+    return;
+
+  PDC_slk_free(); /* free the soft label keys, if needed */
+
+  delwin(stdscr);
+  delwin(curscr);
+  delwin(pdc_lastscr);
+  stdscr = (WINDOW *)NULL;
+  curscr = (WINDOW *)NULL;
+  pdc_lastscr = (WINDOW *)NULL;
+
+  SP->alive = FALSE;
+
+  PDC_scr_free(); /* free SP */
+
+  SP = (SCREEN *)NULL;
+}
+
+int resize_term(int nlines, int ncols) {
+  PDC_LOG(("resize_term() - called: nlines %d\n", nlines));
+
+  if (!stdscr || PDC_resize_screen(nlines, ncols) == ERR)
+    return ERR;
+
+  SP->lines = PDC_get_rows();
+  LINES = SP->lines - SP->linesrippedoff - SP->slklines;
+  SP->cols = COLS = PDC_get_columns();
+
+  if (wresize(curscr, SP->lines, SP->cols) == ERR ||
+      wresize(stdscr, LINES, COLS) == ERR ||
+      wresize(pdc_lastscr, SP->lines, SP->cols) == ERR)
+    return ERR;
+
+  werase(pdc_lastscr);
+  curscr->_clear = TRUE;
+
+  if (SP->slk_winptr) {
+    if (wresize(SP->slk_winptr, SP->slklines, COLS) == ERR)
+      return ERR;
+
+    wmove(SP->slk_winptr, 0, 0);
+    wclrtobot(SP->slk_winptr);
+    PDC_slk_initialize();
+    slk_noutrefresh();
+  }
+
+  touchwin(stdscr);
+  wnoutrefresh(stdscr);
+
+  return OK;
+}
+
+bool is_termresized(void) {
+  PDC_LOG(("is_termresized() - called\n"));
+
+  return SP->resized;
+}
+
+const char *curses_version(void) { return _curses_notice; }

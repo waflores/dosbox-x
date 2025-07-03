@@ -23,11 +23,10 @@
 
 #include "SDL_gemvideo.h"
 
-/* Variables and functions exported by SDL_sysevents.c to other parts 
+/* Variables and functions exported by SDL_sysevents.c to other parts
    of the native video subsystem (SDL_sysvideo.c) */
 
 extern void GEM_InitOSKeymap(_THIS);
 extern void GEM_PumpEvents(_THIS);
 
 /* end of SDL_gemevents_c.h */
-

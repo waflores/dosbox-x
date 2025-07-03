@@ -49,45 +49,40 @@ clipboard
 
 **man-end****************************************************************/
 
-int PDC_getclipboard(char **contents, long *length)
-{
-    PDC_LOG(("PDC_getclipboard() - called\n"));
+int PDC_getclipboard(char **contents, long *length) {
+  PDC_LOG(("PDC_getclipboard() - called\n"));
 
-    if (SDL_HasClipboardText() == SDL_FALSE)
-        return PDC_CLIP_EMPTY;
-    *contents = SDL_GetClipboardText();
-    *length = strlen(*contents);
+  if (SDL_HasClipboardText() == SDL_FALSE)
+    return PDC_CLIP_EMPTY;
+  *contents = SDL_GetClipboardText();
+  *length = strlen(*contents);
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_setclipboard(const char *contents, long length)
-{
-    PDC_LOG(("PDC_setclipboard() - called\n"));
+int PDC_setclipboard(const char *contents, long length) {
+  PDC_LOG(("PDC_setclipboard() - called\n"));
 
-    if (SDL_SetClipboardText(contents) != 0)
-        return PDC_CLIP_ACCESS_ERROR;
+  if (SDL_SetClipboardText(contents) != 0)
+    return PDC_CLIP_ACCESS_ERROR;
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_freeclipboard(char *contents)
-{
-    PDC_LOG(("PDC_freeclipboard() - called\n"));
+int PDC_freeclipboard(char *contents) {
+  PDC_LOG(("PDC_freeclipboard() - called\n"));
 
-    SDL_free(contents);
+  SDL_free(contents);
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }
 
-int PDC_clearclipboard(void)
-{
-    PDC_LOG(("PDC_clearclipboard() - called\n"));
+int PDC_clearclipboard(void) {
+  PDC_LOG(("PDC_clearclipboard() - called\n"));
 
-    if (SDL_HasClipboardText() == SDL_TRUE)
-    {
-        SDL_SetClipboardText(NULL);
-    }
+  if (SDL_HasClipboardText() == SDL_TRUE) {
+    SDL_SetClipboardText(NULL);
+  }
 
-    return PDC_CLIP_SUCCESS;
+  return PDC_CLIP_SUCCESS;
 }

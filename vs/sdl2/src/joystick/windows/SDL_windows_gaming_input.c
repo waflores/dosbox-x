@@ -22,12 +22,12 @@
 
 #ifdef SDL_JOYSTICK_WGI
 
+#include "../SDL_sysjoystick.h"
+#include "../hidapi/SDL_hidapijoystick_c.h"
 #include "SDL_assert.h"
 #include "SDL_atomic.h"
 #include "SDL_endian.h"
 #include "SDL_events.h"
-#include "../SDL_sysjoystick.h"
-#include "../hidapi/SDL_hidapijoystick_c.h"
 #include "SDL_rawinputjoystick_c.h"
 
 #include "../../core/windows/SDL_windows.h"
@@ -105,12 +105,10 @@ static const IID IID_IRacingWheelStatics2 = { 0xE666BCAA, 0xEDFD, 0x4323, { 0xA9
 typedef HRESULT(WINAPI *WindowsCreateStringReference_t)(PCWSTR sourceString, UINT32 length, HSTRING_HEADER *hstringHeader, HSTRING *string);
 typedef HRESULT(WINAPI *RoGetActivationFactory_t)(HSTRING activatableClassId, REFIID iid, void **factory);
 
-
 extern SDL_bool SDL_XINPUT_Enabled(void);
 extern SDL_bool SDL_DINPUT_JoystickPresent(Uint16 vendor, Uint16 product, Uint16 version);
 
-
-static SDL_bool SDL_IsXInputDevice(Uint16 vendor, Uint16 product, const char* name)
+static SDL_bool SDL_IsXInputDevice(Uint16 vendor, Uint16 product, const char *name)
 {
 #if defined(SDL_JOYSTICK_XINPUT) || defined(SDL_JOYSTICK_RAWINPUT)
     PRAWINPUTDEVICELIST raw_devices = NULL;

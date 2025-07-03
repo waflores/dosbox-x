@@ -20,20 +20,20 @@
 */
 #include "../../SDL_internal.h"
 
+#include "../SDL_syshaptic.h"
 #include "SDL.h"
 #include "SDL_error.h"
 #include "SDL_haptic.h"
-#include "../SDL_syshaptic.h"
 
 #ifdef SDL_HAPTIC_XINPUT
 
+#include "../../core/windows/SDL_xinput.h"
+#include "../../joystick/windows/SDL_windowsjoystick_c.h"
+#include "../../thread/SDL_systhread.h"
 #include "SDL_hints.h"
 #include "SDL_timer.h"
 #include "SDL_windowshaptic_c.h"
 #include "SDL_xinputhaptic_c.h"
-#include "../../core/windows/SDL_xinput.h"
-#include "../../joystick/windows/SDL_windowsjoystick_c.h"
-#include "../../thread/SDL_systhread.h"
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus

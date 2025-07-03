@@ -28,9 +28,9 @@
 #ifndef SDL_keyboard_h_
 #define SDL_keyboard_h_
 
-#include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_keycode.h"
+#include "SDL_stdinc.h"
 #include "SDL_video.h"
 
 #include "begin_code.h"
@@ -47,9 +47,9 @@ extern "C" {
  */
 typedef struct SDL_Keysym
 {
-    SDL_Scancode scancode;      /**< SDL physical key code - see SDL_Scancode for details */
-    SDL_Keycode sym;            /**< SDL virtual key code - see SDL_Keycode for details */
-    Uint16 mod;                 /**< current key modifiers */
+    SDL_Scancode scancode; /**< SDL physical key code - see SDL_Scancode for details */
+    SDL_Keycode sym;       /**< SDL virtual key code - see SDL_Keycode for details */
+    Uint16 mod;            /**< current key modifiers */
     Uint32 unused;
 } SDL_Keysym;
 
@@ -62,7 +62,7 @@ typedef struct SDL_Keysym
  *
  * \since This function is available since SDL 2.0.0.
  */
-extern DECLSPEC SDL_Window * SDLCALL SDL_GetKeyboardFocus(void);
+extern DECLSPEC SDL_Window *SDLCALL SDL_GetKeyboardFocus(void);
 
 /**
  * Get a snapshot of the current state of the keyboard.

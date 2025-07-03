@@ -21,21 +21,21 @@
 
 #ifdef __linux
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 #include <errno.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/file.h>
-#include <sys/mman.h>
-#include <linux/types.h>
-#include <linux/version.h>
 #include <linux/gpio.h>
 #include <linux/spi/spidev.h>
+#include <linux/types.h>
+#include <linux/version.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <unistd.h>
 
 #include "../RetroWave.h"
 
@@ -44,11 +44,12 @@ extern "C" {
 #endif
 
 typedef struct {
-	int fd_spi, fd_gpiochip;
-	int fd_gpioline;
+  int fd_spi, fd_gpiochip;
+  int fd_gpioline;
 } RetroWavePlatform_LinuxSPI;
 
-extern int retrowave_init_linux_spi(RetroWaveContext *ctx, const char *spi_dev, int cs_gpio_chip, int cs_gpio_line);
+extern int retrowave_init_linux_spi(RetroWaveContext *ctx, const char *spi_dev,
+                                    int cs_gpio_chip, int cs_gpio_line);
 extern void retrowave_deinit_linux_spi(RetroWaveContext *ctx);
 
 #ifdef __cplusplus

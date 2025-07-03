@@ -22,8 +22,8 @@
 
 #ifdef SDL_VIDEO_DRIVER_DIRECTFB
 
-#include "SDL_DirectFB_video.h"
 #include "SDL_DirectFB_modes.h"
+#include "SDL_DirectFB_video.h"
 
 #define DFB_MAX_MODES 200
 
@@ -33,7 +33,7 @@ struct screen_callback_t
     DFBScreenID screenid[DFB_MAX_SCREENS];
     DFBDisplayLayerID gralayer[DFB_MAX_SCREENS];
     DFBDisplayLayerID vidlayer[DFB_MAX_SCREENS];
-    int aux;                    /* auxiliary integer for callbacks */
+    int aux; /* auxiliary integer for callbacks */
 };
 
 struct modes_callback_t
@@ -44,7 +44,7 @@ struct modes_callback_t
 
 static DFBEnumerationResult EnumModesCallback(int width, int height, int bpp, void *data)
 {
-    struct modes_callback_t *modedata = (struct modes_callback_t *) data;
+    struct modes_callback_t *modedata = (struct modes_callback_t *)data;
     SDL_DisplayMode mode;
 
     mode.w = width;
@@ -62,7 +62,7 @@ static DFBEnumerationResult EnumModesCallback(int width, int height, int bpp, vo
 
 static DFBEnumerationResult EnumScreensCallback(DFBScreenID screen_id, DFBScreenDescription desc, void *callbackdata)
 {
-    struct screen_callback_t *devdata = (struct screen_callback_t *) callbackdata;
+    struct screen_callback_t *devdata = (struct screen_callback_t *)callbackdata;
 
     devdata->screenid[devdata->numscreens++] = screen_id;
     return DFENUM_OK;
@@ -70,7 +70,7 @@ static DFBEnumerationResult EnumScreensCallback(DFBScreenID screen_id, DFBScreen
 
 static DFBEnumerationResult EnumLayersCallback(DFBDisplayLayerID layer_id, DFBDisplayLayerDescription desc, void *callbackdata)
 {
-    struct screen_callback_t *devdata = (struct screen_callback_t *) callbackdata;
+    struct screen_callback_t *devdata = (struct screen_callback_t *)callbackdata;
 
     if (desc.caps & DLCAPS_SURFACE) {
         if ((desc.type & DLTF_GRAPHICS) && (desc.type & DLTF_VIDEO)) {
@@ -84,7 +84,7 @@ static DFBEnumerationResult EnumLayersCallback(DFBDisplayLayerID layer_id, DFBDi
     return DFENUM_OK;
 }
 
-static void CheckSetDisplayMode(_THIS, SDL_VideoDisplay * display, DFB_DisplayData * data, SDL_DisplayMode * mode)
+static void CheckSetDisplayMode(_THIS, SDL_VideoDisplay *display, DFB_DisplayData *data, SDL_DisplayMode *mode)
 {
     SDL_DFB_DEVICEDATA(_this);
     DFBDisplayLayerConfig config;
@@ -104,36 +104,33 @@ static void CheckSetDisplayMode(_THIS, SDL_VideoDisplay * display, DFB_DisplayDa
     data->layer->TestConfiguration(data->layer, &config, &failed);
     SDL_DFB_CHECKERR(data->layer->SetCooperativeLevel(data->layer,
                                                       DLSCL_SHARED));
-    if (failed == 0)
-    {
+    if (failed == 0) {
         SDL_AddDisplayMode(display, mode);
         SDL_DFB_LOG("Mode %d x %d Added\n", mode->w, mode->h);
-    }
-    else
+    } else
         SDL_DFB_ERR("Mode %d x %d not available: %x\n", mode->w,
-                      mode->h, failed);
+                    mode->h, failed);
 
     return;
-  error:
+error:
     return;
 }
 
-
 void DirectFB_SetContext(_THIS, SDL_Window *window)
 {
-#if (DFB_VERSION_ATLEAST(1,0,0))
+#if (DFB_VERSION_ATLEAST(1, 0, 0))
     /* FIXME: does not work on 1.0/1.2 with radeon driver
      *        the approach did work with the matrox driver
      *        This has simply no effect.
      */
 
     SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
-    DFB_DisplayData *dispdata = (DFB_DisplayData *) display->driverdata;
+    DFB_DisplayData *dispdata = (DFB_DisplayData *)display->driverdata;
 
     /* FIXME: should we handle the error */
     if (dispdata->vidIDinuse)
         SDL_DFB_CHECK(dispdata->vidlayer->SwitchContext(dispdata->vidlayer,
-                                                           DFB_TRUE));
+                                                        DFB_TRUE));
 #endif
 }
 
@@ -170,7 +167,8 @@ void DirectFB_InitModes(_THIS)
 
         SDL_DFB_CHECKERR(devdata->dfb->GetScreen(devdata->dfb,
                                                  screencbdata->screenid
-                                                 [i], &screen));
+                                                     [i],
+                                                 &screen));
 
         screencbdata->aux = i;
         SDL_DFB_CHECKERR(screen->EnumDisplayLayers(screen, &EnumLayersCallback,
@@ -187,7 +185,8 @@ void DirectFB_InitModes(_THIS)
     for (i = 0; i < screencbdata->numscreens; i++) {
         SDL_DFB_CHECKERR(devdata->dfb->GetDisplayLayer(devdata->dfb,
                                                        screencbdata->gralayer
-                                                       [i], &layer));
+                                                           [i],
+                                                       &layer));
 
         SDL_DFB_CHECKERR(layer->SetCooperativeLevel(layer,
                                                     DLSCL_ADMINISTRATIVE));
@@ -241,7 +240,7 @@ void DirectFB_InitModes(_THIS)
         display.current_mode = mode;
         display.driverdata = dispdata;
 
-#if (DFB_VERSION_ATLEAST(1,2,0))
+#if (DFB_VERSION_ATLEAST(1, 2, 0))
         dlc.flags =
             DLCONF_WIDTH | DLCONF_HEIGHT | DLCONF_PIXELFORMAT |
             DLCONF_OPTIONS;
@@ -254,17 +253,17 @@ void DirectFB_InitModes(_THIS)
     }
     SDL_DFB_FREE(screencbdata);
     return;
-  error:
+error:
     /* FIXME: Cleanup not complete, Free existing displays */
     SDL_DFB_FREE(dispdata);
     SDL_DFB_RELEASE(layer);
     return;
 }
 
-void DirectFB_GetDisplayModes(_THIS, SDL_VideoDisplay * display)
+void DirectFB_GetDisplayModes(_THIS, SDL_VideoDisplay *display)
 {
     SDL_DFB_DEVICEDATA(_this);
-    DFB_DisplayData *dispdata = (DFB_DisplayData *) display->driverdata;
+    DFB_DisplayData *dispdata = (DFB_DisplayData *)display->driverdata;
     SDL_DisplayMode mode;
     struct modes_callback_t data;
     int i;
@@ -295,7 +294,7 @@ error:
     return;
 }
 
-int DirectFB_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
+int DirectFB_SetDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
 {
     /*
      * FIXME: video mode switch is currently broken for 1.2.0
@@ -303,7 +302,7 @@ int DirectFB_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode *
      */
 
     SDL_DFB_DEVICEDATA(_this);
-    DFB_DisplayData *data = (DFB_DisplayData *) display->driverdata;
+    DFB_DisplayData *data = (DFB_DisplayData *)display->driverdata;
     DFBDisplayLayerConfig config, rconfig;
     DFBDisplayLayerConfigFlags fail = 0;
 
@@ -337,19 +336,16 @@ int DirectFB_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode *
 
     config.flags &= ~fail;
     SDL_DFB_CHECKERR(data->layer->SetConfiguration(data->layer, &config));
-#if (DFB_VERSION_ATLEAST(1,2,0))
+#if (DFB_VERSION_ATLEAST(1, 2, 0))
     /* Need to call this twice ! */
     SDL_DFB_CHECKERR(data->layer->SetConfiguration(data->layer, &config));
 #endif
 
     /* Double check */
     SDL_DFB_CHECKERR(data->layer->GetConfiguration(data->layer, &rconfig));
-    SDL_DFB_CHECKERR(data->
-                     layer->SetCooperativeLevel(data->layer, DLSCL_SHARED));
+    SDL_DFB_CHECKERR(data->layer->SetCooperativeLevel(data->layer, DLSCL_SHARED));
 
-    if ((config.width != rconfig.width) || (config.height != rconfig.height)
-        || ((mode->format != SDL_PIXELFORMAT_UNKNOWN)
-            && (config.pixelformat != rconfig.pixelformat))) {
+    if ((config.width != rconfig.width) || (config.height != rconfig.height) || ((mode->format != SDL_PIXELFORMAT_UNKNOWN) && (config.pixelformat != rconfig.pixelformat))) {
         SDL_DFB_ERR("Error setting mode %dx%d-%x\n", mode->w, mode->h,
                     mode->format);
         return -1;
@@ -361,7 +357,7 @@ int DirectFB_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode *
     display->current_mode = *mode;
 
     return 0;
-  error:
+error:
     return -1;
 }
 
@@ -372,7 +368,7 @@ void DirectFB_QuitModes(_THIS)
 
     for (i = 0; i < _this->num_displays; ++i) {
         SDL_VideoDisplay *display = &_this->displays[i];
-        DFB_DisplayData *dispdata = (DFB_DisplayData *) display->driverdata;
+        DFB_DisplayData *dispdata = (DFB_DisplayData *)display->driverdata;
 
         SDL_GetDesktopDisplayMode(i, &tmode);
         tmode.format = SDL_PIXELFORMAT_UNKNOWN;
@@ -382,19 +378,15 @@ void DirectFB_QuitModes(_THIS)
         DirectFB_SetDisplayMode(_this, display, &tmode);
 
         if (dispdata->layer) {
-            SDL_DFB_CHECK(dispdata->
-                          layer->SetCooperativeLevel(dispdata->layer,
-                                                     DLSCL_ADMINISTRATIVE));
-            SDL_DFB_CHECK(dispdata->
-                          layer->SetCursorOpacity(dispdata->layer, 0x00));
-            SDL_DFB_CHECK(dispdata->
-                          layer->SetCooperativeLevel(dispdata->layer,
-                                                     DLSCL_SHARED));
+            SDL_DFB_CHECK(dispdata->layer->SetCooperativeLevel(dispdata->layer,
+                                                               DLSCL_ADMINISTRATIVE));
+            SDL_DFB_CHECK(dispdata->layer->SetCursorOpacity(dispdata->layer, 0x00));
+            SDL_DFB_CHECK(dispdata->layer->SetCooperativeLevel(dispdata->layer,
+                                                               DLSCL_SHARED));
         }
 
         SDL_DFB_RELEASE(dispdata->layer);
         SDL_DFB_RELEASE(dispdata->vidlayer);
-
     }
 }
 

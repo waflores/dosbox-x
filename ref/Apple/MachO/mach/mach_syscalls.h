@@ -34,4 +34,4 @@
 
 #include <mach/mach_traps.h>
 
-#endif  /* _MACH_MACH_SYSCALLS_H_ */
+#endif /* _MACH_MACH_SYSCALLS_H_ */

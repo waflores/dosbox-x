@@ -33,7 +33,9 @@
    on success.
 */
 #ifdef SDL_PASSED_BEGINTHREAD_ENDTHREAD
-extern int SDL_SYS_CreateThread(SDL_Thread *thread, void *args, pfnSDL_CurrentBeginThread pfnBeginThread, pfnSDL_CurrentEndThread pfnEndThread);
+extern int SDL_SYS_CreateThread(SDL_Thread *thread, void *args,
+                                pfnSDL_CurrentBeginThread pfnBeginThread,
+                                pfnSDL_CurrentEndThread pfnEndThread);
 #else
 extern int SDL_SYS_CreateThread(SDL_Thread *thread, void *args);
 #endif

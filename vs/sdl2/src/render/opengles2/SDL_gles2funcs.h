@@ -56,7 +56,7 @@ SDL_PROC(void, glShaderBinary, (GLsizei, const GLuint *, GLenum, const void *, G
 #ifdef __NACL__
 SDL_PROC(void, glShaderSource, (GLuint, GLsizei, const GLchar **, const GLint *))
 #else
-SDL_PROC(void, glShaderSource, (GLuint, GLsizei, const GLchar* const*, const GLint *))
+SDL_PROC(void, glShaderSource, (GLuint, GLsizei, const GLchar *const *, const GLint *))
 #endif
 SDL_PROC(void, glTexImage2D, (GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const void *))
 SDL_PROC(void, glTexParameteri, (GLenum, GLenum, GLint))

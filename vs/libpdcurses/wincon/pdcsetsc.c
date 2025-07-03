@@ -37,92 +37,79 @@ pdcsetsc
 
 **man-end****************************************************************/
 
-int PDC_curs_set(int visibility)
-{
-    CONSOLE_CURSOR_INFO cci;
-    int ret_vis;
+int PDC_curs_set(int visibility) {
+  CONSOLE_CURSOR_INFO cci;
+  int ret_vis;
 
-    PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
+  PDC_LOG(("PDC_curs_set() - called: visibility=%d\n", visibility));
 
-    ret_vis = SP->visibility;
+  ret_vis = SP->visibility;
 
-    if (GetConsoleCursorInfo(pdc_con_out, &cci) == FALSE)
-        return ERR;
+  if (GetConsoleCursorInfo(pdc_con_out, &cci) == FALSE)
+    return ERR;
 
-    switch(visibility)
-    {
-    case 0:             /* invisible */
-        cci.bVisible = FALSE;
-        break;
-    case 2:             /* highly visible */
-        cci.bVisible = TRUE;
-        cci.dwSize = 95;
-        break;
-    default:            /* normal visibility */
-        cci.bVisible = TRUE;
-        cci.dwSize = SP->orig_cursor;
-        break;
-    }
+  switch (visibility) {
+  case 0: /* invisible */
+    cci.bVisible = FALSE;
+    break;
+  case 2: /* highly visible */
+    cci.bVisible = TRUE;
+    cci.dwSize = 95;
+    break;
+  default: /* normal visibility */
+    cci.bVisible = TRUE;
+    cci.dwSize = SP->orig_cursor;
+    break;
+  }
 
-    if (SetConsoleCursorInfo(pdc_con_out, &cci) == FALSE)
-        return ERR;
+  if (SetConsoleCursorInfo(pdc_con_out, &cci) == FALSE)
+    return ERR;
 
-    SP->visibility = visibility;
-    return ret_vis;
+  SP->visibility = visibility;
+  return ret_vis;
 }
 
-void PDC_set_title(const char *title)
-{
+void PDC_set_title(const char *title) {
 #ifdef PDC_WIDE
-    wchar_t wtitle[512];
+  wchar_t wtitle[512];
 #endif
-    PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
+  PDC_LOG(("PDC_set_title() - called:<%s>\n", title));
 
 #ifdef PDC_WIDE
-    PDC_mbstowcs(wtitle, title, 511);
-    SetConsoleTitleW(wtitle);
+  PDC_mbstowcs(wtitle, title, 511);
+  SetConsoleTitleW(wtitle);
 #else
-    SetConsoleTitleA(title);
+  SetConsoleTitleA(title);
 #endif
 }
 
-int PDC_set_blink(bool blinkon)
-{
-    if (pdc_color_started)
+int PDC_set_blink(bool blinkon) {
+  if (pdc_color_started) {
+    COLORS = 16;
+    if (pdc_conemu && pdc_ansi)
+      COLORS = 256;
+    else if (PDC_can_change_color()) /* is_nt */
     {
-        COLORS = 16;
-        if (pdc_conemu && pdc_ansi)
-            COLORS = 256;
-        else if (PDC_can_change_color()) /* is_nt */
-        {
-            if (SetConsoleMode(pdc_con_out, 0x0004)) /* VT */
-                COLORS = 256;
+      if (SetConsoleMode(pdc_con_out, 0x0004)) /* VT */
+        COLORS = 256;
 
-            SetConsoleMode(pdc_con_out, 0x0010); /* LVB */
-        }
+      SetConsoleMode(pdc_con_out, 0x0010); /* LVB */
     }
+  }
 
-    if (blinkon)
-    {
-        if (!(SP->termattrs & A_BLINK))
-        {
-            SP->termattrs |= A_BLINK;
-            pdc_last_blink = GetTickCount();
-        }
+  if (blinkon) {
+    if (!(SP->termattrs & A_BLINK)) {
+      SP->termattrs |= A_BLINK;
+      pdc_last_blink = GetTickCount();
     }
-    else
-    {
-        if (SP->termattrs & A_BLINK)
-        {
-            SP->termattrs &= ~A_BLINK;
-            PDC_blink_text();
-        }
+  } else {
+    if (SP->termattrs & A_BLINK) {
+      SP->termattrs &= ~A_BLINK;
+      PDC_blink_text();
     }
+  }
 
-    return OK;
+  return OK;
 }
 
-int PDC_set_bold(bool boldon)
-{
-    return boldon ? ERR : OK;
-}
+int PDC_set_bold(bool boldon) { return boldon ? ERR : OK; }

@@ -68,7 +68,7 @@
 #define _MACH_ARM_KERN_RETURN_H_
 
 #ifndef ASSEMBLER
-typedef int             kern_return_t;
-#endif  /* ASSEMBLER */
+typedef int kern_return_t;
+#endif /* ASSEMBLER */
 
-#endif  /* _MACH_ARM_KERN_RETURN_H_ */
+#endif /* _MACH_ARM_KERN_RETURN_H_ */

@@ -21,7 +21,8 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
  */
-/* $XFree86: xc/include/extensions/Xext.h,v 1.7 2005/01/27 03:03:09 dawes Exp $ */
+/* $XFree86: xc/include/extensions/Xext.h,v 1.7 2005/01/27 03:03:09 dawes Exp $
+ */
 
 #ifndef _XEXT_H_
 #define _XEXT_H_
@@ -31,15 +32,12 @@ in this Software without prior written authorization from The Open Group.
 _XFUNCPROTOBEGIN
 
 typedef int (*XExtensionErrorHandler)(Display *, _Xconst char *,
-				      _Xconst char *);
+                                      _Xconst char *);
 
-extern XExtensionErrorHandler XSetExtensionErrorHandler(
-	XExtensionErrorHandler handler
-);
+extern XExtensionErrorHandler
+XSetExtensionErrorHandler(XExtensionErrorHandler handler);
 
-extern int XMissingExtension(
-    Display*		/* dpy */,
-    _Xconst char*	/* ext_name */
+extern int XMissingExtension(Display * /* dpy */, _Xconst char * /* ext_name */
 );
 
 _XFUNCPROTOEND

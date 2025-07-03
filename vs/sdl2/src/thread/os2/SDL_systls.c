@@ -25,8 +25,8 @@
 
 #include "../../core/os2/SDL_os2.h"
 
-#include "SDL_thread.h"
 #include "../SDL_thread_c.h"
+#include "SDL_thread.h"
 
 #define INCL_DOSPROCESS
 #define INCL_DOSERRORS

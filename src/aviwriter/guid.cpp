@@ -17,13 +17,13 @@
  */
 
 #ifndef _MSC_VER
-# include <inttypes.h>
+#include <inttypes.h>
 #endif
 #include <string.h>
 
 #include "guid.h"
 
-unsigned char windows_IsEqualGUID(const windows_GUID *a,const windows_GUID *b) {
-	return (memcmp(a,b,sizeof(windows_GUID)) == 0) ? 1 : 0;
+unsigned char windows_IsEqualGUID(const windows_GUID *a,
+                                  const windows_GUID *b) {
+  return (memcmp(a, b, sizeof(windows_GUID)) == 0) ? 1 : 0;
 }
-

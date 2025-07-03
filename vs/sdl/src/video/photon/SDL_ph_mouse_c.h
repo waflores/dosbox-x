@@ -28,8 +28,8 @@
 
 /* Functions to be exported */
 extern void ph_FreeWMCursor(_THIS, WMcursor *cursor);
-extern WMcursor *ph_CreateWMCursor(_THIS,
-		Uint8 *data, Uint8 *mask, int w, int h, int hot_x, int hot_y);
+extern WMcursor *ph_CreateWMCursor(_THIS, Uint8 *data, Uint8 *mask, int w,
+                                   int h, int hot_x, int hot_y);
 extern PhCursorDef_t ph_GetWMPhCursor(WMcursor *cursor);
 extern int ph_ShowWMCursor(_THIS, WMcursor *cursor);
 extern void ph_WarpWMCursor(_THIS, Uint16 x, Uint16 y);

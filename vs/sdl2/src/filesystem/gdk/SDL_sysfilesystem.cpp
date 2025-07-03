@@ -20,14 +20,13 @@
 */
 #include "../../SDL_internal.h"
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* System dependent filesystem routines                                */
 
 #include "../../core/windows/SDL_windows.h"
+#include "SDL_filesystem.h"
 #include "SDL_hints.h"
 #include "SDL_system.h"
-#include "SDL_filesystem.h"
 #include <XGameSaveFiles.h>
 
 char *
@@ -88,7 +87,7 @@ SDL_GetPrefPath(const char *org, const char *app)
     char *folderPath;
     HRESULT result;
     const char *csid = SDL_GetHint("SDL_GDK_SERVICE_CONFIGURATION_ID");
-    
+
     if (!app) {
         SDL_InvalidParamError("app");
         return NULL;
@@ -110,7 +109,7 @@ SDL_GetPrefPath(const char *org, const char *app)
         return NULL;
     }
 
-    folderPath = (char*) SDL_malloc(MAX_PATH);
+    folderPath = (char *)SDL_malloc(MAX_PATH);
     do {
         result = XGameSaveFilesGetFolderWithUiResult(&block, MAX_PATH, folderPath);
     } while (result == E_PENDING);
@@ -133,6 +132,5 @@ SDL_GetPrefPath(const char *org, const char *app)
     }
     return folderPath;
 }
-
 
 /* vi: set ts=4 sw=4 expandtab: */

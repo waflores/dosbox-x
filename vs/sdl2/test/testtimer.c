@@ -14,15 +14,16 @@
    platform
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "SDL.h"
 #include "SDL_test.h"
 
 #define DEFAULT_RESOLUTION 1
 
-static int test_sdl_delay_within_bounds(void) {
+static int test_sdl_delay_within_bounds(void)
+{
     const int testDelay = 100;
     const int marginOfError = 25;
     Uint64 result;
@@ -63,7 +64,7 @@ static Uint32 SDLCALL
 callback(Uint32 interval, void *param)
 {
     int value = (int)(uintptr_t)param;
-    SDL_assert( value == 1 || value == 2 || value == 3 );
+    SDL_assert(value == 1 || value == 2 || value == 3);
     SDL_Log("Timer %" SDL_PRIu32 " : param = %d\n", interval, value);
     return interval;
 }

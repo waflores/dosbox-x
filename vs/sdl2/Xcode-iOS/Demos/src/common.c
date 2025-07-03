@@ -12,8 +12,7 @@
     Produces a random int x, min <= x <= max
     following a uniform distribution
 */
-int
-randomInt(int min, int max)
+int randomInt(int min, int max)
 {
     return min + rand() % (max - min + 1);
 }
@@ -22,14 +21,12 @@ randomInt(int min, int max)
     Produces a random float x, min <= x <= max
     following a uniform distribution
  */
-float
-randomFloat(float min, float max)
+float randomFloat(float min, float max)
 {
-    return rand() / (float) RAND_MAX *(max - min) + min;
+    return rand() / (float)RAND_MAX * (max - min) + min;
 }
 
-void
-fatalError(const char *string)
+void fatalError(const char *string)
 {
     printf("%s: %s\n", string, SDL_GetError());
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, string, SDL_GetError(), NULL);
@@ -49,7 +46,7 @@ updateDeltaTime(void)
     }
 
     curTime = SDL_GetPerformanceCounter();
-    deltaTime = (double) (curTime - prevTime) / (double) SDL_GetPerformanceFrequency();
+    deltaTime = (double)(curTime - prevTime) / (double)SDL_GetPerformanceFrequency();
     prevTime = curTime;
 
     return deltaTime;

@@ -241,7 +241,6 @@ typedef struct _SDL_GamepadMapping
 extern SDL_bool SDL_PrivateJoystickGetAutoGamepadMapping(int device_index,
                                                          SDL_GamepadMapping *out);
 
-
 typedef struct
 {
     const char *included_hint_name;

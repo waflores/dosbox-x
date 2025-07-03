@@ -23,13 +23,13 @@
 #define _SDL_vitavideo_h
 
 #include "../../SDL_internal.h"
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
-#include <psp2/types.h>
 #include <psp2/display.h>
 #include <psp2/ime_dialog.h>
 #include <psp2/sysmodule.h>
+#include <psp2/types.h>
 
 typedef struct SDL_VideoData
 {
@@ -83,8 +83,8 @@ void VITA_SetWindowGrab(_THIS, SDL_Window *window, SDL_bool grabbed);
 void VITA_DestroyWindow(_THIS, SDL_Window *window);
 
 /* Window manager function */
-SDL_bool VITA_GetWindowWMInfo(_THIS, SDL_Window * window,
-                             struct SDL_SysWMinfo *info);
+SDL_bool VITA_GetWindowWMInfo(_THIS, SDL_Window *window,
+                              struct SDL_SysWMinfo *info);
 
 #ifdef SDL_VIDEO_DRIVER_VITA
 #if defined(SDL_VIDEO_VITA_PVR_OGL)

@@ -21,9 +21,9 @@
 #define FLUIDINC
 #include "config.h"
 #if !C_FLUIDSYNTH && defined(WIN32) && !defined(C_HX_DOS)
+#include "fluid_conv.h"
 #include "fluid_iir_filter.h"
 #include "fluid_sys.h"
-#include "fluid_conv.h"
 
 /**
  * Applies a lowpass filter with variable cutoff frequency and quality factor.
@@ -46,10 +46,8 @@
  * - dsp_hist1: same
  * - dsp_hist2: same
  */
-void 
-fluid_iir_filter_apply(fluid_iir_filter_t* iir_filter,
-                       fluid_real_t *dsp_buf, int count)
-{
+void fluid_iir_filter_apply(fluid_iir_filter_t *iir_filter,
+                            fluid_real_t *dsp_buf, int count) {
   /* IIR filter sample history */
   fluid_real_t dsp_hist1 = iir_filter->hist1;
   fluid_real_t dsp_hist2 = iir_filter->hist2;
@@ -67,40 +65,40 @@ fluid_iir_filter_apply(fluid_iir_filter_t* iir_filter,
   /* filter (implement the voice filter according to SoundFont standard) */
 
   /* Check for denormal number (too close to zero). */
-  if (fabs (dsp_hist1) < 1e-20) dsp_hist1 = 0.0f;  /* FIXME JMG - Is this even needed? */
+  if (fabs(dsp_hist1) < 1e-20)
+    dsp_hist1 = 0.0f; /* FIXME JMG - Is this even needed? */
 
   /* Two versions of the filter loop. One, while the filter is
-  * changing towards its new setting. The other, if the filter
-  * doesn't change.
-  */
+   * changing towards its new setting. The other, if the filter
+   * doesn't change.
+   */
 
-  if (dsp_filter_coeff_incr_count > 0)
-  {
+  if (dsp_filter_coeff_incr_count > 0) {
     fluid_real_t dsp_a1_incr = iir_filter->a1_incr;
     fluid_real_t dsp_a2_incr = iir_filter->a2_incr;
     fluid_real_t dsp_b02_incr = iir_filter->b02_incr;
     fluid_real_t dsp_b1_incr = iir_filter->b1_incr;
 
-
-    /* Increment is added to each filter coefficient filter_coeff_incr_count times. */
-    for (dsp_i = 0; dsp_i < count; dsp_i++)
-    {
+    /* Increment is added to each filter coefficient filter_coeff_incr_count
+     * times. */
+    for (dsp_i = 0; dsp_i < count; dsp_i++) {
       /* The filter is implemented in Direct-II form. */
       dsp_centernode = dsp_buf[dsp_i] - dsp_a1 * dsp_hist1 - dsp_a2 * dsp_hist2;
-      dsp_buf[dsp_i] = dsp_b02 * (dsp_centernode + dsp_hist2) + dsp_b1 * dsp_hist1;
+      dsp_buf[dsp_i] =
+          dsp_b02 * (dsp_centernode + dsp_hist2) + dsp_b1 * dsp_hist1;
       dsp_hist2 = dsp_hist1;
       dsp_hist1 = dsp_centernode;
 
-      if (dsp_filter_coeff_incr_count-- > 0)
-      {
+      if (dsp_filter_coeff_incr_count-- > 0) {
         fluid_real_t old_b02 = dsp_b02;
-	dsp_a1 += dsp_a1_incr;
-	dsp_a2 += dsp_a2_incr;
-	dsp_b02 += dsp_b02_incr;
-	dsp_b1 += dsp_b1_incr;
+        dsp_a1 += dsp_a1_incr;
+        dsp_a2 += dsp_a2_incr;
+        dsp_b02 += dsp_b02_incr;
+        dsp_b1 += dsp_b1_incr;
 
-        /* Compensate history to avoid the filter going havoc with large frequency changes */
-	if (iir_filter->compensate_incr && fabs(dsp_b02) > 0.001) {
+        /* Compensate history to avoid the filter going havoc with large
+         * frequency changes */
+        if (iir_filter->compensate_incr && fabs(dsp_b02) > 0.001) {
           fluid_real_t compensate = old_b02 / dsp_b02;
           dsp_centernode *= compensate;
           dsp_hist1 *= compensate;
@@ -108,13 +106,14 @@ fluid_iir_filter_apply(fluid_iir_filter_t* iir_filter,
         }
       }
     } /* for dsp_i */
-  }
-  else /* The filter parameters are constant.  This is duplicated to save time. */
+  } else /* The filter parameters are constant.  This is duplicated to save
+            time. */
   {
-    for (dsp_i = 0; dsp_i < count; dsp_i++)
-    { /* The filter is implemented in Direct-II form. */
+    for (dsp_i = 0; dsp_i < count;
+         dsp_i++) { /* The filter is implemented in Direct-II form. */
       dsp_centernode = dsp_buf[dsp_i] - dsp_a1 * dsp_hist1 - dsp_a2 * dsp_hist2;
-      dsp_buf[dsp_i] = dsp_b02 * (dsp_centernode + dsp_hist2) + dsp_b1 * dsp_hist1;
+      dsp_buf[dsp_i] =
+          dsp_b02 * (dsp_centernode + dsp_hist2) + dsp_b1 * dsp_hist1;
       dsp_hist2 = dsp_hist1;
       dsp_hist1 = dsp_centernode;
     }
@@ -128,74 +127,64 @@ fluid_iir_filter_apply(fluid_iir_filter_t* iir_filter,
   iir_filter->b1 = dsp_b1;
   iir_filter->filter_coeff_incr_count = dsp_filter_coeff_incr_count;
 
-  fluid_check_fpe ("voice_filter");
+  fluid_check_fpe("voice_filter");
 }
 
-
-void 
-fluid_iir_filter_reset(fluid_iir_filter_t* iir_filter)
-{
+void fluid_iir_filter_reset(fluid_iir_filter_t *iir_filter) {
   iir_filter->hist1 = 0;
   iir_filter->hist2 = 0;
   iir_filter->last_fres = -1.;
   iir_filter->filter_startup = 1;
 }
 
-void 
-fluid_iir_filter_set_fres(fluid_iir_filter_t* iir_filter, 
-                          fluid_real_t fres)
-{
+void fluid_iir_filter_set_fres(fluid_iir_filter_t *iir_filter,
+                               fluid_real_t fres) {
   iir_filter->fres = fres;
   iir_filter->last_fres = -1.;
 }
 
+void fluid_iir_filter_set_q_dB(fluid_iir_filter_t *iir_filter,
+                               fluid_real_t q_dB) {
+  /* The 'sound font' Q is defined in dB. The filter needs a linear
+     q. Convert. */
+  iir_filter->q_lin = (fluid_real_t)(pow(10.0f, q_dB / 20.0f));
 
-void 
-fluid_iir_filter_set_q_dB(fluid_iir_filter_t* iir_filter, 
-                          fluid_real_t q_dB)
-{
-    /* The 'sound font' Q is defined in dB. The filter needs a linear
-       q. Convert. */
-    iir_filter->q_lin = (fluid_real_t) (pow(10.0f, q_dB / 20.0f));
+  /* SF 2.01 page 59:
+   *
+   *  The SoundFont specs ask for a gain reduction equal to half the
+   *  height of the resonance peak (Q).  For example, for a 10 dB
+   *  resonance peak, the gain is reduced by 5 dB.  This is done by
+   *  multiplying the total gain with sqrt(1/Q).  `Sqrt' divides dB
+   *  by 2 (100 lin = 40 dB, 10 lin = 20 dB, 3.16 lin = 10 dB etc)
+   *  The gain is later factored into the 'b' coefficients
+   *  (numerator of the filter equation).  This gain factor depends
+   *  only on Q, so this is the right place to calculate it.
+   */
+  iir_filter->filter_gain = (fluid_real_t)(1.0 / sqrt(iir_filter->q_lin));
 
-    /* SF 2.01 page 59:
-     *
-     *  The SoundFont specs ask for a gain reduction equal to half the
-     *  height of the resonance peak (Q).  For example, for a 10 dB
-     *  resonance peak, the gain is reduced by 5 dB.  This is done by
-     *  multiplying the total gain with sqrt(1/Q).  `Sqrt' divides dB
-     *  by 2 (100 lin = 40 dB, 10 lin = 20 dB, 3.16 lin = 10 dB etc)
-     *  The gain is later factored into the 'b' coefficients
-     *  (numerator of the filter equation).  This gain factor depends
-     *  only on Q, so this is the right place to calculate it.
-     */
-    iir_filter->filter_gain = (fluid_real_t) (1.0 / sqrt(iir_filter->q_lin));
-
-    /* The synthesis loop will have to recalculate the filter coefficients. */
-    iir_filter->last_fres = -1.;
-
+  /* The synthesis loop will have to recalculate the filter coefficients. */
+  iir_filter->last_fres = -1.;
 }
 
-
-static inline void 
-fluid_iir_filter_calculate_coefficients(fluid_iir_filter_t* iir_filter, 
-                                        int transition_samples, 
-                                        fluid_real_t output_rate)
-{
+static inline void
+fluid_iir_filter_calculate_coefficients(fluid_iir_filter_t *iir_filter,
+                                        int transition_samples,
+                                        fluid_real_t output_rate) {
 
   /*
-    * Those equations from Robert Bristow-Johnson's `Cookbook
-    * formulae for audio EQ biquad filter coefficients', obtained
-    * from Harmony-central.com / Computer / Programming. They are
-    * the result of the bilinear transform on an analogue filter
-    * prototype. To quote, `BLT frequency warping has been taken
-    * into account for both significant frequency relocation and for
-    * bandwidth readjustment'. */
+   * Those equations from Robert Bristow-Johnson's `Cookbook
+   * formulae for audio EQ biquad filter coefficients', obtained
+   * from Harmony-central.com / Computer / Programming. They are
+   * the result of the bilinear transform on an analogue filter
+   * prototype. To quote, `BLT frequency warping has been taken
+   * into account for both significant frequency relocation and for
+   * bandwidth readjustment'. */
 
-  fluid_real_t omega = (fluid_real_t) (2.0 * M_PI * 
-                       (iir_filter->last_fres / ((float) output_rate)));
-  fluid_real_t sin_coeff = (fluid_real_t) sin(omega);
-  fluid_real_t cos_coeff = (fluid_real_t) cos(omega);
+  fluid_real_t omega =
+      (fluid_real_t)(2.0 * M_PI *
+                     (iir_filter->last_fres / ((float)output_rate)));
+  fluid_real_t sin_coeff = (fluid_real_t)sin(omega);
+  fluid_real_t cos_coeff = (fluid_real_t)cos(omega);
   fluid_real_t alpha_coeff = sin_coeff / (2.0f * iir_filter->q_lin);
   fluid_real_t a0_inv = 1.0f / (1.0f + alpha_coeff);
 
@@ -211,26 +200,23 @@ fluid_iir_filter_calculate_coefficients(fluid_iir_filter_t* iir_filter,
   fluid_real_t a1_temp = -2.0f * cos_coeff * a0_inv;
   fluid_real_t a2_temp = (1.0f - alpha_coeff) * a0_inv;
   fluid_real_t b1_temp = (1.0f - cos_coeff) * a0_inv * iir_filter->filter_gain;
-   /* both b0 -and- b2 */
+  /* both b0 -and- b2 */
   fluid_real_t b02_temp = b1_temp * 0.5f;
 
   iir_filter->compensate_incr = 0;
 
-  if (iir_filter->filter_startup || (transition_samples == 0))
-  {
-   /* The filter is calculated, because the voice was started up.
-    * In this case set the filter coefficients without delay.
-    */
+  if (iir_filter->filter_startup || (transition_samples == 0)) {
+    /* The filter is calculated, because the voice was started up.
+     * In this case set the filter coefficients without delay.
+     */
     iir_filter->a1 = a1_temp;
     iir_filter->a2 = a2_temp;
     iir_filter->b02 = b02_temp;
     iir_filter->b1 = b1_temp;
     iir_filter->filter_coeff_incr_count = 0;
     iir_filter->filter_startup = 0;
-//       printf("Setting initial filter coefficients.\n");
-  }
-  else
-  {
+    //       printf("Setting initial filter coefficients.\n");
+  } else {
 
     /* The filter frequency is changed.  Calculate an increment
      * factor, so that the new setting is reached after one buffer
@@ -252,14 +238,11 @@ fluid_iir_filter_calculate_coefficients(fluid_iir_filter_t* iir_filter,
     /* Have to add the increments filter_coeff_incr_count times. */
     iir_filter->filter_coeff_incr_count = transition_samples;
   }
-  fluid_check_fpe ("voice_write filter calculation");
+  fluid_check_fpe("voice_write filter calculation");
 }
 
-
-void fluid_iir_filter_calc(fluid_iir_filter_t* iir_filter, 
-                           fluid_real_t output_rate, 
-                           fluid_real_t fres_mod)
-{
+void fluid_iir_filter_calc(fluid_iir_filter_t *iir_filter,
+                           fluid_real_t output_rate, fluid_real_t fres_mod) {
   fluid_real_t fres;
 
   /* calculate the frequency of the resonant filter in Hz */
@@ -284,21 +267,18 @@ void fluid_iir_filter_calc(fluid_iir_filter_t* iir_filter,
     fres = 5;
 
   /* if filter enabled and there is a significant frequency change.. */
-  if ((abs ((int)(fres - iir_filter->last_fres)) > 0.01))
-  {
-   /* The filter coefficients have to be recalculated (filter
-    * parameters have changed). Recalculation for various reasons is
-    * forced by setting last_fres to -1.  The flag filter_startup
-    * indicates, that the DSP loop runs for the first time, in this
-    * case, the filter is set directly, instead of smoothly fading
-    * between old and new settings. */
+  if ((abs((int)(fres - iir_filter->last_fres)) > 0.01)) {
+    /* The filter coefficients have to be recalculated (filter
+     * parameters have changed). Recalculation for various reasons is
+     * forced by setting last_fres to -1.  The flag filter_startup
+     * indicates, that the DSP loop runs for the first time, in this
+     * case, the filter is set directly, instead of smoothly fading
+     * between old and new settings. */
     iir_filter->last_fres = fres;
-    fluid_iir_filter_calculate_coefficients(iir_filter, FLUID_BUFSIZE,  
+    fluid_iir_filter_calculate_coefficients(iir_filter, FLUID_BUFSIZE,
                                             output_rate);
   }
 
-
-  fluid_check_fpe ("voice_write DSP coefficients");
-
+  fluid_check_fpe("voice_write DSP coefficients");
 }
 #endif

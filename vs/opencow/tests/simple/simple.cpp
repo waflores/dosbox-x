@@ -33,54 +33,50 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <windows.h>
 #include <tchar.h>
+#include <windows.h>
 
-#define UNUSED_ARG(x)	((void)(x))
+#define UNUSED_ARG(x) ((void)(x))
 
 #ifdef _DEBUG
-# define OPENCOW_DLL    "opencowD.dll"
+#define OPENCOW_DLL "opencowD.dll"
 #else
-# define OPENCOW_DLL    "opencow.dll"
+#define OPENCOW_DLL "opencow.dll"
 #endif
 
-extern "C" HMODULE __stdcall 
-LoadOpencowLibrary(void)
-{
-    HMODULE hModule = ::LoadLibraryA(".\\" OPENCOW_DLL);
-    if (hModule)
-        ::MessageBoxA(NULL, "Loaded .\\" OPENCOW_DLL, "simple", MB_OK);
-    else
-        ::MessageBoxA(NULL, "Failed to load .\\" OPENCOW_DLL, "simple", MB_OK);
-    return hModule;
+extern "C" HMODULE __stdcall LoadOpencowLibrary(void) {
+  HMODULE hModule = ::LoadLibraryA(".\\" OPENCOW_DLL);
+  if (hModule)
+    ::MessageBoxA(NULL, "Loaded .\\" OPENCOW_DLL, "simple", MB_OK);
+  else
+    ::MessageBoxA(NULL, "Failed to load .\\" OPENCOW_DLL, "simple", MB_OK);
+  return hModule;
 }
-extern "C" HMODULE (__stdcall *_PfnLoadUnicows)(void) = &LoadOpencowLibrary;
+extern "C" HMODULE(__stdcall *_PfnLoadUnicows)(void) = &LoadOpencowLibrary;
 
-int _tmain(int argc, _TCHAR* argv[])
-{
-	UNUSED_ARG(argc);
-	UNUSED_ARG(argv);
+int _tmain(int argc, _TCHAR *argv[]) {
+  UNUSED_ARG(argc);
+  UNUSED_ARG(argv);
 
-    TCHAR szCurrentDir[MAX_PATH];
-    szCurrentDir[0] = 0;
-    GetCurrentDirectory(MAX_PATH, szCurrentDir);
+  TCHAR szCurrentDir[MAX_PATH];
+  szCurrentDir[0] = 0;
+  GetCurrentDirectory(MAX_PATH, szCurrentDir);
 
-    WIN32_FIND_DATA findData;
-    HANDLE hFind = FindFirstFile(_T("*.*"), &findData);
-    if (hFind) {
-        BOOL bContinue = TRUE;
-        while (bContinue) {
-            if (MessageBox(NULL, findData.cFileName, szCurrentDir, MB_OKCANCEL) == IDCANCEL)
-                bContinue = FALSE;
-            else
-                bContinue = FindNextFile(hFind, &findData);
-        }
-        FindClose(hFind);
+  WIN32_FIND_DATA findData;
+  HANDLE hFind = FindFirstFile(_T("*.*"), &findData);
+  if (hFind) {
+    BOOL bContinue = TRUE;
+    while (bContinue) {
+      if (MessageBox(NULL, findData.cFileName, szCurrentDir, MB_OKCANCEL) ==
+          IDCANCEL)
+        bContinue = FALSE;
+      else
+        bContinue = FindNextFile(hFind, &findData);
     }
-    else {
-        MessageBox(NULL, _T("No files"), _T("simple"), MB_OK);
-    }
+    FindClose(hFind);
+  } else {
+    MessageBox(NULL, _T("No files"), _T("simple"), MB_OK);
+  }
 
-	return 0;
+  return 0;
 }
-

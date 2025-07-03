@@ -2,9 +2,9 @@
  * Joystick test suite
  */
 
+#include "../src/joystick/usb_ids.h"
 #include "SDL.h"
 #include "SDL_test.h"
-#include "../src/joystick/usb_ids.h"
 
 /* ================= Test Case Implementation ================== */
 

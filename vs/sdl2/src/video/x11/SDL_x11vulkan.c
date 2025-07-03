@@ -31,10 +31,10 @@
 /*#include <xcb/xcb.h>*/
 
 #if defined(__OpenBSD__)
-#define DEFAULT_VULKAN "libvulkan.so"
+#define DEFAULT_VULKAN  "libvulkan.so"
 #define DEFAULT_X11_XCB "libX11-xcb.so"
 #else
-#define DEFAULT_VULKAN "libvulkan.so.1"
+#define DEFAULT_VULKAN  "libvulkan.so.1"
 #define DEFAULT_X11_XCB "libX11-xcb.so.1"
 #endif
 

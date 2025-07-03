@@ -15,10 +15,8 @@
  *
  */
 
-
 #define FT_MAKE_OPTION_SINGLE_OBJECT
 
-#include "ft-hb.c"
 #include "afblue.c"
 #include "afcjk.c"
 #include "afdummy.c"
@@ -30,6 +28,6 @@
 #include "afmodule.c"
 #include "afranges.c"
 #include "afshaper.c"
-
+#include "ft-hb.c"
 
 /* END */

@@ -16,13 +16,12 @@
 #ifndef __ZIPCRC_H__
 #define __ZIPCRC_H__
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * The definition of the used algorithm.
@@ -32,7 +31,6 @@ extern "C" {
  *****************************************************************************/
 #define CRC_ALGO_TABLE_DRIVEN 1
 
-
 /**
  * The type of the CRC values.
  *
@@ -40,17 +38,12 @@ extern "C" {
  *****************************************************************************/
 typedef uint_fast32_t zipcrc_t;
 
-
 /**
  * Calculate the initial crc value.
  *
  * \return     The initial crc value.
  *****************************************************************************/
-static inline zipcrc_t zipcrc_init(void)
-{
-    return 0xffffffff;
-}
-
+static inline zipcrc_t zipcrc_init(void) { return 0xffffffff; }
 
 /**
  * Update the crc value with new data.
@@ -62,21 +55,18 @@ static inline zipcrc_t zipcrc_init(void)
  *****************************************************************************/
 zipcrc_t zipcrc_update(zipcrc_t crc, const void *data, size_t data_len);
 
-
 /**
  * Calculate the final crc value.
  *
  * \param crc  The current crc value.
  * \return     The final crc value.
  *****************************************************************************/
-static inline zipcrc_t zipcrc_finalize(zipcrc_t crc)
-{
-    return crc ^ 0xffffffff;
+static inline zipcrc_t zipcrc_finalize(zipcrc_t crc) {
+  return crc ^ 0xffffffff;
 }
 
-
 #ifdef __cplusplus
-}           /* closing brace for extern "C" */
+} /* closing brace for extern "C" */
 #endif
 
-#endif      /* __ZIPCRC_H__ */
+#endif /* __ZIPCRC_H__ */

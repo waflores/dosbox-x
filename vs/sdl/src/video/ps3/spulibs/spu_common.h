@@ -30,25 +30,25 @@
 #ifndef _SPU_COMMON_H
 #define _SPU_COMMON_H
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 /* Tag management */
-#define DMA_WAIT_TAG(_tag)     \
-    mfc_write_tag_mask(1<<(_tag)); \
-    mfc_read_tag_status_all();
+#define DMA_WAIT_TAG(_tag)                                                     \
+  mfc_write_tag_mask(1 << (_tag));                                             \
+  mfc_read_tag_status_all();
 
 /* SPU mailbox messages */
-#define SPU_READY	0
-#define SPU_START	1
-#define SPU_FIN		2
-#define SPU_EXIT	3
+#define SPU_READY 0
+#define SPU_START 1
+#define SPU_FIN 2
+#define SPU_EXIT 3
 
 /* Tags */
-#define RETR_BUF	0
-#define STR_BUF		1
-#define TAG_INIT	2
+#define RETR_BUF 0
+#define STR_BUF 1
+#define TAG_INIT 2
 
 /* Buffersizes */
 #define MAX_HDTV_WIDTH 1920
@@ -58,51 +58,54 @@
 
 /* fb_writer ppu/spu exchange parms */
 struct fb_writer_parms_t {
-	uint8_t *data;
-	uint8_t *center;
-	uint32_t out_line_stride;
-	uint32_t in_line_stride;
-	uint32_t bounded_input_height;
-	uint32_t bounded_input_width;
-	uint32_t fb_pixel_size;
+  uint8_t *data;
+  uint8_t *center;
+  uint32_t out_line_stride;
+  uint32_t in_line_stride;
+  uint32_t bounded_input_height;
+  uint32_t bounded_input_width;
+  uint32_t fb_pixel_size;
 
-	/* This padding is to fulfill the need for 16 byte alignment. On parm change, update! */
-	char padding[4];
+  /* This padding is to fulfill the need for 16 byte alignment. On parm change,
+   * update! */
+  char padding[4];
 } __attribute__((aligned(128)));
 
 /* yuv2rgb ppu/spu exchange parms */
 struct yuv2rgb_parms_t {
-	uint8_t* y_plane;
-	uint8_t* v_plane;
-	uint8_t* u_plane;
+  uint8_t *y_plane;
+  uint8_t *v_plane;
+  uint8_t *u_plane;
 
-	uint8_t* dstBuffer;
+  uint8_t *dstBuffer;
 
-	unsigned int src_pixel_width;
-	unsigned int src_pixel_height;
+  unsigned int src_pixel_width;
+  unsigned int src_pixel_height;
 
-	/* This padding is to fulfill the need for 16 byte alignment. On parm change, update! */
-	char padding[128 - ((4 * sizeof(uint8_t *) + 2 * sizeof(unsigned int)) & 0x7F)];
+  /* This padding is to fulfill the need for 16 byte alignment. On parm change,
+   * update! */
+  char padding[128 -
+               ((4 * sizeof(uint8_t *) + 2 * sizeof(unsigned int)) & 0x7F)];
 } __attribute__((aligned(128)));
 
 /* bilin_scaler ppu/spu exchange parms */
 struct scale_parms_t {
-	uint8_t* y_plane;
-	uint8_t* v_plane;
-	uint8_t* u_plane;
+  uint8_t *y_plane;
+  uint8_t *v_plane;
+  uint8_t *u_plane;
 
-	uint8_t* dstBuffer;
+  uint8_t *dstBuffer;
 
-	unsigned int src_pixel_width;
-	unsigned int src_pixel_height;
+  unsigned int src_pixel_width;
+  unsigned int src_pixel_height;
 
-	unsigned int dst_pixel_width;
-	unsigned int dst_pixel_height;
+  unsigned int dst_pixel_width;
+  unsigned int dst_pixel_height;
 
-	/* This padding is to fulfill the need for 16 byte alignment. On parm change, update! */
-	char padding[128 - ((4 * sizeof(uint8_t *) + 4 * sizeof(unsigned int)) & 0x7F)];
+  /* This padding is to fulfill the need for 16 byte alignment. On parm change,
+   * update! */
+  char padding[128 -
+               ((4 * sizeof(uint8_t *) + 4 * sizeof(unsigned int)) & 0x7F)];
 } __attribute__((aligned(128)));
 
 #endif /* _SPU_COMMON_H */
-
-

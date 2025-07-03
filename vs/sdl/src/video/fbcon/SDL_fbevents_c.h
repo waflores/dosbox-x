@@ -23,7 +23,7 @@
 
 #include "SDL_fbvideo.h"
 
-/* Variables and functions exported by SDL_sysevents.c to other parts 
+/* Variables and functions exported by SDL_sysevents.c to other parts
    of the native video subsystem (SDL_sysvideo.c)
 */
 extern int FB_OpenKeyboard(_THIS);

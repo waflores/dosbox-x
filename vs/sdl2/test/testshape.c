@@ -9,11 +9,11 @@
   including commercial applications, and to alter it and redistribute it
   freely.
 */
-#include <stdlib.h>
-#include <math.h>
-#include <stdio.h>
 #include "SDL.h"
 #include "SDL_shape.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define SHAPED_WINDOW_X         150
 #define SHAPED_WINDOW_Y         150

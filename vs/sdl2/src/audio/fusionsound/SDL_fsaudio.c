@@ -31,18 +31,18 @@
 #endif
 #include <unistd.h>
 
-#include "SDL_timer.h"
-#include "SDL_audio.h"
 #include "../SDL_audio_c.h"
+#include "SDL_audio.h"
 #include "SDL_fsaudio.h"
+#include "SDL_timer.h"
 
 #include <fusionsound/fusionsound_version.h>
 
 /* #define SDL_AUDIO_DRIVER_FUSIONSOUND_DYNAMIC "libfusionsound.so" */
 
 #ifdef SDL_AUDIO_DRIVER_FUSIONSOUND_DYNAMIC
-#include "SDL_name.h"
 #include "SDL_loadso.h"
+#include "SDL_name.h"
 #else
 #define SDL_NAME(X) X
 #endif
@@ -52,27 +52,27 @@ typedef DFBResult DirectResult;
 #endif
 
 /* Buffers to use - more than 2 gives a lot of latency */
-#define FUSION_BUFFERS              (2)
+#define FUSION_BUFFERS (2)
 
 #ifdef SDL_AUDIO_DRIVER_FUSIONSOUND_DYNAMIC
 
 static const char *fs_library = SDL_AUDIO_DRIVER_FUSIONSOUND_DYNAMIC;
 static void *fs_handle = NULL;
 
-static DirectResult (*SDL_NAME(FusionSoundInit)) (int *argc, char *(*argv[]));
-static DirectResult (*SDL_NAME(FusionSoundCreate)) (IFusionSound **
-                                                   ret_interface);
+static DirectResult (*SDL_NAME(FusionSoundInit))(int *argc, char *(*argv[]));
+static DirectResult (*SDL_NAME(FusionSoundCreate))(IFusionSound **
+                                                       ret_interface);
 
-#define SDL_FS_SYM(x) { #x, (void **) (char *) &SDL_NAME(x) }
+#define SDL_FS_SYM(x) { #x, (void **)(char *)&SDL_NAME(x) }
 static struct
 {
     const char *name;
     void **func;
 } fs_functions[] = {
-/* *INDENT-OFF* */
+    /* *INDENT-OFF* */
     SDL_FS_SYM(FusionSoundInit),
     SDL_FS_SYM(FusionSoundCreate),
-/* *INDENT-ON* */
+    /* *INDENT-ON* */
 };
 
 #undef SDL_FS_SYM
@@ -145,12 +145,10 @@ static void SDL_FS_PlayDevice(_THIS)
 #endif
 }
 
-
 static Uint8 *SDL_FS_GetDeviceBuf(_THIS)
 {
     return (this->hidden->mixbuf);
 }
-
 
 static void SDL_FS_CloseDevice(_THIS)
 {
@@ -163,7 +161,6 @@ static void SDL_FS_CloseDevice(_THIS)
     SDL_free(this->hidden->mixbuf);
     SDL_free(this->hidden);
 }
-
 
 static int SDL_FS_OpenDevice(_THIS, const char *devname)
 {
@@ -211,7 +208,7 @@ static int SDL_FS_OpenDevice(_THIS, const char *devname)
     bytes = SDL_AUDIO_BITSIZE(test_format) / 8;
 
     /* Retrieve the main sound interface. */
-    ret = SDL_NAME(FusionSoundCreate) (&this->hidden->fs);
+    ret = SDL_NAME(FusionSoundCreate)(&this->hidden->fs);
     if (ret) {
         return SDL_SetError("Unable to initialize FusionSound: %d", ret);
     }
@@ -220,7 +217,7 @@ static int SDL_FS_OpenDevice(_THIS, const char *devname)
 
     /* Fill stream description. */
     desc.flags = FSSDF_SAMPLERATE | FSSDF_BUFFERSIZE |
-        FSSDF_CHANNELS | FSSDF_SAMPLEFORMAT | FSSDF_PREBUFFER;
+                 FSSDF_CHANNELS | FSSDF_SAMPLEFORMAT | FSSDF_PREBUFFER;
     desc.samplerate = this->spec.freq;
     desc.buffersize = this->spec.size * FUSION_BUFFERS;
     desc.channels = this->spec.channels;
@@ -236,7 +233,7 @@ static int SDL_FS_OpenDevice(_THIS, const char *devname)
 
     /* See what we got */
     desc.flags = FSSDF_SAMPLERATE | FSSDF_BUFFERSIZE |
-        FSSDF_CHANNELS | FSSDF_SAMPLEFORMAT;
+                 FSSDF_CHANNELS | FSSDF_SAMPLEFORMAT;
     ret = this->hidden->stream->GetDescription(this->hidden->stream, &desc);
 
     this->spec.freq = desc.samplerate;
@@ -249,7 +246,7 @@ static int SDL_FS_OpenDevice(_THIS, const char *devname)
 
     /* Allocate mixing buffer */
     this->hidden->mixlen = this->spec.size;
-    this->hidden->mixbuf = (Uint8 *) SDL_malloc(this->hidden->mixlen);
+    this->hidden->mixbuf = (Uint8 *)SDL_malloc(this->hidden->mixlen);
     if (!this->hidden->mixbuf) {
         return SDL_OutOfMemory();
     }
@@ -259,26 +256,23 @@ static int SDL_FS_OpenDevice(_THIS, const char *devname)
     return 0;
 }
 
-
 static void SDL_FS_Deinitialize(void)
 {
     UnloadFusionSoundLibrary();
 }
 
-
-static SDL_bool SDL_FS_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool SDL_FS_Init(SDL_AudioDriverImpl *impl)
 {
     if (LoadFusionSoundLibrary() < 0) {
         return SDL_FALSE;
     } else {
         DirectResult ret;
 
-        ret = SDL_NAME(FusionSoundInit) (NULL, NULL);
+        ret = SDL_NAME(FusionSoundInit)(NULL, NULL);
         if (ret) {
             UnloadFusionSoundLibrary();
-            SDL_SetError
-                ("FusionSound: SDL_FS_init failed (FusionSoundInit: %d)",
-                 ret);
+            SDL_SetError("FusionSound: SDL_FS_init failed (FusionSoundInit: %d)",
+                         ret);
             return SDL_FALSE;
         }
     }
@@ -292,9 +286,8 @@ static SDL_bool SDL_FS_Init(SDL_AudioDriverImpl * impl)
     impl->Deinitialize = SDL_FS_Deinitialize;
     impl->OnlyHasDefaultOutputDevice = SDL_TRUE;
 
-    return SDL_TRUE;   /* this audio target is available. */
+    return SDL_TRUE; /* this audio target is available. */
 }
-
 
 AudioBootStrap FUSIONSOUND_bootstrap = {
     "fusionsound", "FusionSound", SDL_FS_Init, SDL_FALSE

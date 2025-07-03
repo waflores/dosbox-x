@@ -23,8 +23,8 @@
 #ifndef SDL_waylandopengles_h_
 #define SDL_waylandopengles_h_
 
-#include "../SDL_sysvideo.h"
 #include "../SDL_egl_c.h"
+#include "../SDL_sysvideo.h"
 
 typedef struct SDL_PrivateGLESData
 {
@@ -32,9 +32,9 @@ typedef struct SDL_PrivateGLESData
 } SDL_PrivateGLESData;
 
 /* OpenGLES functions */
-#define Wayland_GLES_GetAttribute SDL_EGL_GetAttribute
+#define Wayland_GLES_GetAttribute   SDL_EGL_GetAttribute
 #define Wayland_GLES_GetProcAddress SDL_EGL_GetProcAddress
-#define Wayland_GLES_UnloadLibrary SDL_EGL_UnloadLibrary
+#define Wayland_GLES_UnloadLibrary  SDL_EGL_UnloadLibrary
 
 extern int Wayland_GLES_LoadLibrary(_THIS, const char *path);
 extern SDL_GLContext Wayland_GLES_CreateContext(_THIS, SDL_Window *window);

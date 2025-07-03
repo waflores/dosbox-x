@@ -25,11 +25,11 @@
 
 #ifndef SDL_JOYSTICK_DISABLED
 
-#define SCREEN_WIDTH    512
-#define SCREEN_HEIGHT   320
+#define SCREEN_WIDTH  512
+#define SCREEN_HEIGHT 320
 
-#define BUTTON_SIZE     50
-#define AXIS_SIZE       50
+#define BUTTON_SIZE 50
+#define AXIS_SIZE   50
 
 #define BUTTON_SIZE 50
 #define AXIS_SIZE   50
@@ -750,10 +750,10 @@ void loop(void *arg)
                     b = 0;
                 } else {
                     r = 0;
-                    b = (Uint8)(((int)(x)*255) / 32767);
+                    b = (Uint8)(((int)(x) * 255) / 32767);
                 }
                 if (y > 0) {
-                    g = (Uint8)(((int)(y)*255) / 32767);
+                    g = (Uint8)(((int)(y) * 255) / 32767);
                 } else {
                     g = 0;
                 }
@@ -974,8 +974,7 @@ int main(int argc, char *argv[])
 
 #else
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL compiled without Joystick support.\n");
     return 1;
