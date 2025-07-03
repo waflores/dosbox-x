@@ -2,6 +2,15 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    // "options": {
+    //     "shell": {
+    //         "executable": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    //         "args": [
+    //             "-File",
+    //             "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\Launch-VsDevShell.ps1\"",
+    //         ],
+    //     }
+    // },
     "tasks": [
         {
             "label": "build Windows SDL1 Debug Win32",
@@ -94,7 +103,7 @@
         {
             "label": "build Windows SDL2 Debug Win64",
             "type": "shell",
-            "command": "msbuild",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\Bin\\amd64\\msbuild",
             "args": [
                 "/property:GenerateFullPaths=true",
                 "/p:Configuration='Debug SDL2'",
